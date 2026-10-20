@@ -1,32 +1,37 @@
-# Web publication status
+# CHARETT web publication
 
-The app is implemented and locally browser-tested. A publicly accessible website is **not yet verified**. Do not describe the ChatGPT chat URL, a cloud localhost address, or an authenticated GitHub raw download as a working public preview.
+The public website is live at **https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/**. Choose **Skip for now** or complete intake. No download, installation or GitHub login is needed.
 
-## Confirmed GitHub blocker
+## Verified public-browser result
 
-GitHub Actions run `39483248888`, for source commit `bab4ddf6ad126ac509836dd12e033b4374820a3a`, read the actual repository configuration: `private: true`, `has_pages: false`. Reading Pages returned HTTP 404. An authorized attempt to enable Pages from the fictional-only `gh-pages` branch returned HTTP 403, `Resource not accessible by integration`. Repository visibility was not changed. No external browser success is claimed.
+GitHub Actions run `39485299213` completed successfully on **20 October 2026 at 21:40 CEST** (19:40 UTC), for source commit `de2d8aa89aaf644cdd4fcc6dfb134ad647aafc73`.
 
-The owner must open the repository's **Settings → Pages**, choose **Deploy from a branch**, select **gh-pages** and **/(root)**, then save. Account support for Pages on a private repository is not established. If GitHub reports an account-plan restriction, record the exact message and choose an appropriate separate hosting destination; do not change repository visibility as a workaround.
+- GitHub reported Pages `built`, `public: true`, source `gh-pages` at `/`.
+- An unauthenticated HTTPS fetch returned HTTP 200. The published HTML matched the intended standalone demo byte for byte: SHA-256 `04c4a0db63b109beefe6247313911d0fc2edcb2c2071b03c7ef8caef1521b4c6`.
+- Fresh Chrome contexts without a login passed at 1440×1000 and 390×844, including mobile touch emulation.
+- Both exercised all eight topics, topic reloads, horizontal-overflow checks, wardrobe editing, community comments, simulated rich-card messaging and round trips, reviewed coach changes, plan updates and profile navigation.
+- Both completed without browser, HTTP or failed-request errors. The actual public-page desktop and mobile screenshots were retrieved and visually inspected.
 
-The `Verify CHARETT publication` Actions workflow reads the actual Pages URL, compares the public HTML with the intended demo, and tests it in fresh Chromium contexts without a login on desktop and mobile. Its result is recorded on the separate `charett-publication-status` branch, including configuration errors on failure. After the owner enables Pages, rerun that workflow or trigger a new matching source push, retrieve the new evidence branch commit, verify it refers to the intended source commit, and inspect its browser results and screenshots before sharing the URL. Passing local-fixture checks explicitly leave `publicBrowserVerified` false.
+The `charett-publication-status` branch holds `configuration.json`, `outcome.json`, `browser-verification.json`, `desktop.png` and `mobile.png`. Evidence commit: `77c817c215935849483ba58b5877da09b8349efe`. The browser report explicitly records `localFixture: false` and `publicBrowserVerified: true`. Its source commit, URL and HTML checksum were checked against the intended publication before the link was supplied.
 
-## Prepared delivery
+This is browser verification in Chrome at two viewport sizes. Physical mobile devices, Safari and Firefox are not claimed as tested.
 
-The remote `gh-pages` branch contains exactly `.nojekyll`, `README.md` and `index.html`. The index is the self-contained demo with hash routing and embedded licensed editorial images, fonts and notices. No owner photos, personal routines, uploaded reference PDFs, secrets, or build brief are in that publication branch. The application source and design are unchanged.
+## Published content and privacy
 
-The generated page was tested with Chromium at 1440×1000 and 390×844 under the repository's `/Looksmaxx-coach/` path. Both runs exercised all eight topics, topic reloads, wardrobe editing, community comments, simulated rich-card messaging and reviewed coach changes. They completed with no browser errors, no supplementary resource requests and no horizontal overflow. The mobile layout was visually inspected.
+The `gh-pages` branch contains exactly `.nojekyll`, `README.md` and `index.html`. The index embeds the app and licensed editorial images, fonts and notices. Hash routes preserve navigation and reloads under `/Looksmaxx-coach/` without server rewrites. The existing application design and features are unchanged.
 
-## Current external blocker
+Only fictional demo content is embedded. Owner photos, personal routines, reference PDFs, credentials and the original build brief are not in the website branch. Personal profile edits, photos, routines and logs remain in the current browser tab; the main README documents the limited allowlisted fictional preferences kept in localStorage. AI, shopping, visualizations and social activity remain labelled simulations.
 
-The running cloud egress proxy returns CONNECT 403 for the GitHub API and the prospective GitHub Pages host. Browser navigation reports `ERR_TUNNEL_CONNECTION_FAILED`. An additional turn-scoped network grant did not remove this proxy restriction. This does not prove that Pages is active, that the account supports Pages for this repository, or that a public visitor can load it.
+GitHub reported the repository itself as public during this check. Its visibility was changed outside the agent's actions; the agent did not change repository visibility.
 
-The cloud configuration draft preserves the package-manager preset and adds `api.github.com` and `chrisjelammers1907-lab.github.io` to the allowed destinations. The draft was saved successfully; applying it to runtime requires the environment settings flow. A saved draft is not a deployed website or evidence of working network access.
+## Verification and maintenance
 
-## Finish after access is applied
+The `Verify CHARETT publication` workflow reads the real Pages configuration with read-only Pages permission, tests the reported URL without a login and records the result on the separate evidence branch. It runs on matching demo-source pushes, verification tags matching `charett-verify-*`, or manual dispatch. Local fixture tests deliberately leave `publicBrowserVerified` false.
 
-1. Read repository visibility, Pages status and permissions through the GitHub API using supported injected authentication. Do not print credentials or change repository visibility.
-2. Enable branch-based Pages from `gh-pages` at `/` if authorized account capabilities permit it. If the account or token cannot enable Pages, report the exact API response and the smallest necessary owner action.
-3. Wait for the actual deployment to complete. Test its reported URL in a fresh browser context without a GitHub login, at mobile and desktop sizes. Verify the app loads, the eight topic routes work, deep-link reloads succeed, representative interactions work, and there are no browser/HTTP errors.
-4. Only send a visitor link after that external browser check passes. Report authentication, plan or publication failures honestly.
+After app changes, regenerate the standalone export, update the fictional-only `gh-pages` index, let Pages finish building and rerun the public-browser check. Do not present source edits as deployed until the published HTML matches and the external browser checks pass.
 
-Earlier authenticated raw-file checks do not establish anonymous download access. No public URL is claimed in this document.
+## Resolved delivery failures
+
+Earlier raw GitHub download checks used the cloud proxy's repository authentication, while the repository was private. They did not prove anonymous availability. GitHub subsequently confirmed `has_pages: false`; an automated attempt to activate Pages returned HTTP 403, `Resource not accessible by integration`. The owner enabled branch-based Pages, after which the public checks above succeeded.
+
+This cloud machine still receives egress-proxy CONNECT 403 for the external site. The successful public checks ran in the GitHub-hosted runner, outside that restricted network. A saved environment draft, a localhost test and the ChatGPT chat URL are not evidence of a working public website.

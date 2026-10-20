@@ -1,5 +1,7 @@
 # CHARETT standalone demo
 
+For direct browser access, **[open the published CHARETT demo](https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/)**. That website was verified without a login in Chrome at desktop and mobile sizes; choose **Skip for now** to start testing.
+
 This folder contains the interactive fictional demo as one HTML file. App code, editorial images, fonts and license notices are embedded. No personal PDFs, photos, routines, secrets or health profile are included. The original application source is unchanged.
 
 To open on a personal computer:

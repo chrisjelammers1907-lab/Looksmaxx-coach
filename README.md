@@ -2,6 +2,12 @@
 
 A polished English-language personal appearance and lifestyle **interactive demo** for mobile and desktop. React 19, TypeScript, Vite, React Router and a shared typed local store. Original editorial identity, eight directly routable topics, three clothing themes, private routines/progress, outfit building, a fictional community and clearly simulated coach/messages/shopping/visualizations.
 
+## Open the demo
+
+**[Open CHARETT](https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/)** and choose **Skip for now** or complete the intake. No download or installation is needed.
+
+The published website was verified without a login in Chrome at desktop and mobile sizes. All eight topics, route reloads, wardrobe editing, comments, simulated linked-card messaging, coach changes and profile navigation passed without browser errors. See [publication evidence](docs/WEB_PUBLICATION.md). Only fictional demo content is included; personal edits and uploads remain local to the current tab as described below.
+
 ## Run
 
 Use Node **24.19.0** (`.nvmrc`) and npm. No API keys, backend, database, payment account or secrets are needed.
