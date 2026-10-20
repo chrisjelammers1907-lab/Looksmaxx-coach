@@ -1,6 +1,6 @@
 {
-  "runId": 39482896966,
-  "sourceCommit": "1a97751ccb051008f8b1d10cf553e17c2b7f1fac",
+  "runId": 39483248888,
+  "sourceCommit": "bab4ddf6ad126ac509836dd12e033b4374820a3a",
   "publicBrowserVerified": false,
   "repository": {
     "private": true,
@@ -10,5 +10,9 @@
   "pages": {
     "httpStatus": 404,
     "message": "Not Found"
+  },
+  "pagesActivation": {
+    "httpStatus": 403,
+    "message": "Resource not accessible by integration"
   }
 }
