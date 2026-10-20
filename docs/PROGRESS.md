@@ -1,0 +1,61 @@
+# Delivery checkpoints and verification
+
+Date: 2026-10-19. The prepared workflow is an interactive local CHARETT demo. Production integrations and publication are separate operations.
+
+## Completed checkpoints
+
+1. Read the complete brief before implementation and preserved it byte-for-byte in BUILD_BRIEF.md. Inspected the previously empty repository, available Node/Chromium tools, and the 15 actually attached PDFs. Source text stayed outside the checkout; no owner facts or medical protocols were inferred.
+2. Built the responsive editorial shell, clean eight-topic home, two-step skippable intake and shared private profile. No new worktree was created. All interface and seeded content is English.
+3. Implemented owned-product/wardrobe CRUD and ordering, AM/PM routines and weekly schedules, editable routine library across all topics, training schedules/history/volume, food estimates/targets, hair comparisons, fragrance shortlist and topic notes.
+4. Implemented three remembered clothing themes across every clothing view, outfit building/editing/duplication, item metadata/links/dates and explicit handling of unknown or mixed-currency prices. Added separately labelled private real worn-outfit photos and simulated diagram previews.
+5. Implemented one fictional community with audience previews, structured posts, filtering/search/sort, creator profiles, follows, likes, private saves, comments, editable copies, reports, blocks and coherent removed/restricted content. Local rich-card conversations enforce access again after deletion/audience changes.
+6. Implemented deterministic contextual coach responses and reviewed plan proposals. Photos are not analyzed. Personal uploads stay in tab memory; edited/generated inspiration is excluded from real comparisons. Reset and private-information removal are available.
+7. Inspected actual mobile and desktop screenshots of Home, Skincare, dark Clothing wardrobe, Explore, Coach and Messages. Corrected the mobile hero overflow, secondary-text contrast, topic/profile tab resets, form labels and dialog focus/background behavior. The app has no horizontal page overflow on the tested routes, and no browser page errors were recorded.
+8. Reinstalled from the frozen lockfile with `bash scripts/setup.sh`; its dependency installation and production build passed. Saved that complete `install_script` and service/readiness `start_skill` in the cloud configuration draft. Removed temporary unused custom network additions while retaining the package-manager preset. Saving did not execute, publish or validate a new task restoration.
+
+## Verified checks
+
+| Check                                 | Observed result                                                                                                                    |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Fresh `npm ci` through setup script   | Passed; lockfile used, integrity/TLS verification retained                                                                         |
+| TypeScript and production build       | Passed; compiled Vite bundle generated                                                                                             |
+| ESLint                                | Passed                                                                                                                             |
+| Prettier source/test/config check     | Passed                                                                                                                             |
+| Vitest domain suite                   | 11 tests passed; no skipped tests                                                                                                  |
+| Chromium main journeys                | 30 cases passed across 1440×1000 and 390×844 before the final expanded regression run                                              |
+| Additional privacy/access/theme suite | 10 cases passed across both sizes after the dialog accessibility correction                                                        |
+| Full final regression                 | 40 passed in the final combined run; no failed or skipped cases                                                                    |
+| Automated accessibility sweep         | 28 route/viewport scans (14 routes × 2 widths), no WCAG A/AA/2.1 AA axe violations in the sampled states                           |
+| Dark clothing tabs + edit modal       | Axe scans passed in the additional privacy suite                                                                                   |
+| Production preview browser smoke      | Home, Clothing, Gym, Explore, Coach and Messages returned HTTP 200, rendered expected headings and produced no browser page errors |
+| Brief preservation                    | `cmp` passed against the uploaded original                                                                                         |
+| Repository hygiene                    | Only intended app/docs/assets/config/tests; no uploaded PDFs, owner photos, raw chat exports or secret files included              |
+
+Tests exercise actual browser behavior, not just open ports: create/edit/delete flows, known/unknown price handling, theme persistence/scope, social state, copy/edit, audience preview, linked-card navigation and access changes, local photos, nutrition/workout logging and reviewed plan changes. Corrupt images are rejected; edited/generated inspiration cannot enter real-photo comparisons; a private worn-outfit upload is absent from public previews and localStorage. Test photo fixtures are bundled stock references, never owner photos or fabricated achieved transformations.
+
+Public screenshot artifacts: [desktop Home](screenshots/home-desktop.png) and [mobile Home](screenshots/home-mobile.png). Other inspected captures and detailed diagnostic reports remain outside the committed app or in ignored test-output folders. Screenshots contain only fictional starter content and licensed editorial assets.
+
+## Limits and next steps
+
+Chromium is the tested engine. Safari/Firefox, screen-reader usability, actual multi-user authorization, real AI quality, real shopping availability, account security and real message delivery were not tested or claimed. Automated axe scans are not a complete accessibility audit. There are no live APIs or real notifications.
+
+Current OpenAI/Supabase commercial pricing was still blocked by the proxy on the final check. COST_ESTIMATE.md includes dated official Cloudflare source rates, infrastructure-only subtotals and explicit unknown-rate formulas for 10/100/1,000 users. It does not present a guessed all-in budget.
+
+The implementation is available in the current checkout and the development server runs on port 5173. Nothing has been pushed to GitHub or deployed to an external host. Review/save the reusable environment draft in settings and publish the environment to retain its prepared snapshot; that user action and fresh-task restoration remain unverified. A real private beta starts with the authentication/storage/authorization gates in PRODUCTION_ROADMAP.md.
+
+## 2026-10-20 — Web preview repair
+
+The user reported the outer ChatGPT visualization displaying a generic visualization error. Investigation confirmed that the app itself rendered at port 5173 without JavaScript or failed-request errors, while Vite returned HTTP 403 for non-local Host headers and no service listened on port 3000. These are concrete preview-serving problems; they do not establish the exact cause of the platform's generic UI message.
+
+Changes are limited to serving configuration, startup documentation and regression tests. `npm run web-preview` now builds the existing app and serves it on `0.0.0.0:3000`. Development remains on `0.0.0.0:5173`. Both ports are strict. The exact `chatgpt.com` gateway and the known cloud-environment subdomains are explicitly allowed; an unrelated test hostname still receives HTTP 403. Application components, styles, assets, private storage rules and features were not changed. The rebuilt application JavaScript/CSS content hashes match the previous build.
+
+Verification completed:
+
+- Production build and TypeScript compilation passed.
+- ESLint, formatting and all 11 domain tests passed.
+- All **44 browser tests passed** at desktop 1440px and mobile 390px, including four new preview regression cases.
+- The compiled app was opened in Chromium through a real local forwarding server carrying the ChatGPT Host header. Tests clicked every topic card and each primary navigation destination, reloaded topic deep links, and exercised browser back/forward navigation. No JavaScript errors, failed requests or missing assets were observed in those preview tests.
+- New compiled-preview screenshots were inspected at both viewport sizes. Existing layout and content were retained. Diagnostic screenshots remain outside the checkout in `/tmp/charett-preview-repair/`; no owner content was used.
+- The compiled preview is running on port 3000 and the development server on port 5173. Reusable `start_skill` instructions were saved successfully in the environment draft; the install script and unrelated configuration were preserved. Saving does not publish the draft or restart future tasks.
+
+The supplied `https://chatgpt.com/local/...` URL was also attempted in Chromium, but the execution environment's network proxy rejected the connection with `ERR_TUNNEL_CONNECTION_FAILED`. This is separate from the application's inbound Host validation. The authenticated outer visualization UI could not be inspected or reset from this environment. The verified result is the running compiled app and its gateway-forwarded browser journeys, not proof that the platform's generic visualization error has cleared. Refresh the existing visualization to retry it against the running preview; no external deployment or publication was performed.

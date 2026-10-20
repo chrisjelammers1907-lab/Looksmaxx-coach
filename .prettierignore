@@ -1,0 +1,8 @@
+node_modules
+dist
+playwright-report
+test-results
+package-lock.json
+docs/BUILD_BRIEF.md
+docs/ASSET_LICENSE_CREATIVE_TIM.txt
+public/assets

@@ -1,0 +1,87 @@
+import { describe, expect, it } from "vitest";
+import { makeInitialState, seedItems, seedPosts } from "../src/lib/data";
+import {
+  totalPrice,
+  safePurchaseUrl,
+  maySharePost,
+  mayViewPost,
+  workoutVolume,
+} from "../src/lib/domain";
+import { demoCoach } from "../src/lib/services";
+describe("outfit price accounting", () => {
+  it("totals known prices in a single currency", () =>
+    expect(totalPrice(seedItems.slice(0, 3))).toBe("€177.00"));
+  it("distinguishes unknown values from free items", () => {
+    expect(totalPrice([{ ...seedItems[0], price: 0 }])).toBe("€0.00");
+    expect(totalPrice([{ ...seedItems[0], price: null }])).toBe(
+      "Price unavailable",
+    );
+  });
+  it("keeps a partial subtotal explicit", () =>
+    expect(totalPrice([seedItems[0], { ...seedItems[1], price: null }])).toBe(
+      "€59.00 + unpriced items",
+    ));
+  it("never adds mixed currencies", () =>
+    expect(
+      totalPrice([seedItems[0], { ...seedItems[1], currency: "USD" }]),
+    ).toContain("Mixed currencies"));
+  it("handles empty outfits", () =>
+    expect(totalPrice([])).toBe("No items yet"));
+});
+describe("access and purchase boundaries", () => {
+  it("rejects unsafe and unavailable links", () => {
+    expect(safePurchaseUrl("javascript:alert(1)")).toBeNull();
+    expect(safePurchaseUrl("http://example.com")).toBeNull();
+    expect(safePurchaseUrl("")).toBeNull();
+    expect(safePurchaseUrl("https://example.com/item")).toBe(
+      "https://example.com/item",
+    );
+  });
+  it("allows public posts and forbids private recipient access", () => {
+    expect(maySharePost(seedPosts[0])).toBe(true);
+    expect(maySharePost({ ...seedPosts[0], audience: "private" })).toBe(false);
+    expect(mayViewPost({ ...seedPosts[0], audience: "private" }, "mira")).toBe(
+      true,
+    );
+    expect(mayViewPost({ ...seedPosts[0], audience: "private" }, "noor")).toBe(
+      false,
+    );
+  });
+  it("denies removed, follower-restricted and blocked content", () => {
+    expect(mayViewPost(undefined)).toBe(false);
+    expect(maySharePost(undefined)).toBe(false);
+    expect(maySharePost({ ...seedPosts[0], audience: "followers" })).toBe(
+      false,
+    );
+    expect(mayViewPost(seedPosts[0], "you", ["mira"])).toBe(false);
+  });
+});
+describe("meaningful workout and coach behavior", () => {
+  it("calculates logged training volume", () =>
+    expect(workoutVolume(3, 8, 14)).toBe(336));
+  it("uses explicit context, labels photo feedback, and leaves routines unchanged", async () => {
+    const state = makeInitialState();
+    state.profile.goals = "Try a simpler wardrobe";
+    const before = JSON.stringify(state);
+    const result = await demoCoach.reply({
+      text: "Review my photo",
+      topic: "clothing",
+      hasPhoto: true,
+      state,
+    });
+    expect(result.text).toContain("Try a simpler wardrobe");
+    expect(result.text).toContain("The linen shirt");
+    expect(result.text).toContain("has not been analyzed");
+    expect(result.proposal).toContain("owned pieces");
+    expect(JSON.stringify(state)).toBe(before);
+  });
+  it("does not turn medication questions into dose advice", async () => {
+    const result = await demoCoach.reply({
+      text: "What DNP dose?",
+      hasPhoto: false,
+      state: makeInitialState(),
+    });
+    expect(result.text).toContain("cannot diagnose");
+    expect(result.text).toContain("qualified clinician");
+  });
+});
