@@ -32,7 +32,15 @@ const browser = await chromium.launch({
   args: ["--no-sandbox"],
 });
 try {
-  const response = await globalThis.fetch(`${base}/`);
+  let response;
+  for (let attempt = 0; attempt < 12; attempt++) {
+    response = await globalThis.fetch(`${base}/`, {
+      signal: globalThis.AbortSignal.timeout(15000),
+    });
+    if (response.status === 200 || fixture) break;
+    if (![404, 502, 503].includes(response.status)) break;
+    await new Promise((resolve) => globalThis.setTimeout(resolve, 5000));
+  }
   expect(response.status).toBe(200);
   const received = Buffer.from(await response.arrayBuffer());
   const expected = fs.readFileSync("demo/CHARETT-demo.html");

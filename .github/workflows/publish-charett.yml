@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
-      pages: read
+      pages: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,6 +45,16 @@ jobs:
                   : { status: data.status, html_url: data.html_url, build_type: data.build_type, source: data.source, public: data.public };
               } catch (error) {
                 status[name] = { httpStatus: error.status, message: error.message.split('\n')[0] };
+              }
+            }
+            if (status.pages.httpStatus === 404) {
+              try {
+                const { data } = await github.request('POST /repos/{owner}/{repo}/pages', {
+                  ...context.repo, build_type: 'legacy', source: { branch: 'gh-pages', path: '/' }
+                });
+                status.pages = { status: data.status, html_url: data.html_url, build_type: data.build_type, source: data.source, public: data.public };
+              } catch (error) {
+                status.pagesActivation = { httpStatus: error.status, message: error.message.split('\n')[0] };
               }
             }
             fs.writeFileSync('/tmp/charett-publication/configuration.json', JSON.stringify(status, null, 2));
