@@ -7,6 +7,10 @@
     {
       "viewport": "desktop",
       "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
       "routeReloads": true,
       "wardrobeEdit": true,
       "comments": true,
@@ -18,6 +22,10 @@
     {
       "viewport": "mobile",
       "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
       "routeReloads": true,
       "wardrobeEdit": true,
       "comments": true,
@@ -27,5 +35,5 @@
       "errors": []
     }
   ],
-  "htmlSha256": "04c4a0db63b109beefe6247313911d0fc2edcb2c2071b03c7ef8caef1521b4c6"
+  "htmlSha256": "29d80ee85a5e99d0c29e0c8f943c0f336ebc5359f48f03da84165518d22aee81"
 }
