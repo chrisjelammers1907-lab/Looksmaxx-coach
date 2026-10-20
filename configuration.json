@@ -1,18 +1,20 @@
 {
-  "runId": 39483248888,
-  "sourceCommit": "bab4ddf6ad126ac509836dd12e033b4374820a3a",
+  "runId": 39485299213,
+  "sourceCommit": "de2d8aa89aaf644cdd4fcc6dfb134ad647aafc73",
   "publicBrowserVerified": false,
   "repository": {
-    "private": true,
-    "has_pages": false,
-    "visibility": "private"
+    "private": false,
+    "has_pages": true,
+    "visibility": "public"
   },
   "pages": {
-    "httpStatus": 404,
-    "message": "Not Found"
-  },
-  "pagesActivation": {
-    "httpStatus": 403,
-    "message": "Resource not accessible by integration"
+    "status": "built",
+    "html_url": "https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/",
+    "build_type": "legacy",
+    "source": {
+      "branch": "gh-pages",
+      "path": "/"
+    },
+    "public": true
   }
 }

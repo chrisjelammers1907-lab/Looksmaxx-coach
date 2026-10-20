@@ -1,0 +1,31 @@
+{
+  "url": "https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/",
+  "authentication": "none; fresh browser contexts",
+  "localFixture": false,
+  "publicBrowserVerified": true,
+  "results": [
+    {
+      "viewport": "desktop",
+      "eightTopics": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "eightTopics": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    }
+  ],
+  "htmlSha256": "04c4a0db63b109beefe6247313911d0fc2edcb2c2071b03c7ef8caef1521b4c6"
+}
