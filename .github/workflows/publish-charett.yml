@@ -1,0 +1,106 @@
+name: Verify CHARETT publication
+
+on:
+  push:
+    branches: [demo/charett-preview]
+    paths:
+      - .github/workflows/publish-charett.yml
+      - scripts/verify-published-demo.mjs
+      - demo/CHARETT-demo.html
+  workflow_dispatch:
+
+concurrency:
+  group: charett-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Inspect actual repository and Pages configuration
+        id: inspection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            fs.mkdirSync('/tmp/charett-publication', { recursive: true });
+            const status = { runId: context.runId, sourceCommit: context.sha, publicBrowserVerified: false };
+            for (const [name, endpoint] of [['repository', 'GET /repos/{owner}/{repo}'], ['pages', 'GET /repos/{owner}/{repo}/pages']]) {
+              try {
+                const { data } = await github.request(endpoint, context.repo);
+                status[name] = name === 'repository'
+                  ? { private: data.private, has_pages: data.has_pages, visibility: data.visibility }
+                  : { status: data.status, html_url: data.html_url, build_type: data.build_type, source: data.source, public: data.public };
+              } catch (error) {
+                status[name] = { httpStatus: error.status, message: error.message.split('\n')[0] };
+              }
+            }
+            fs.writeFileSync('/tmp/charett-publication/configuration.json', JSON.stringify(status, null, 2));
+            if (status.pages.html_url) core.setOutput('page_url', status.pages.html_url);
+            else core.setFailed(`Pages has no configured website. ${status.pages.message || ''}`);
+      - name: Install browser-test dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Test the deployed URL without a login
+        env:
+          CHARETT_PUBLIC_URL: ${{ steps.inspection.outputs.page_url }}
+        run: node scripts/verify-published-demo.mjs
+      - name: Retain publication evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: charett-publication-evidence
+          path: /tmp/charett-publication
+
+  record:
+    if: always()
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: charett-publication-evidence
+          path: /tmp/charett-publication
+      - name: Record the actual outcome on a separate evidence branch
+        env:
+          PUBLICATION_RESULT: ${{ needs.publish.result }}
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import { execFileSync } from 'node:child_process';
+          const dir = '/tmp/charett-publication';
+          fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(path.join(dir, 'outcome.json'), JSON.stringify({
+            result: process.env.PUBLICATION_RESULT,
+            runId: process.env.GITHUB_RUN_ID,
+            sourceCommit: process.env.GITHUB_SHA,
+            completedAt: new Date().toISOString()
+          }, null, 2));
+          const git = (args, input) => execFileSync('git', args, { input, encoding: 'utf8' }).trim();
+          const files = fs.readdirSync(dir).filter(name => /\.(json|png)$/.test(name));
+          const entries = files.map(name => `100644 blob ${git(['hash-object', '-w', '--stdin'], fs.readFileSync(path.join(dir, name)))}\t${name}\n`).join('');
+          const tree = git(['mktree'], entries);
+          let parent = [];
+          const ref = 'refs/heads/charett-publication-status';
+          const previous = git(['ls-remote', '--heads', 'origin', ref]).split(/\s/)[0];
+          if (previous) { git(['fetch', 'origin', ref]); parent = ['-p', previous]; }
+          const commit = git(['-c', 'user.name=github-actions[bot]', '-c', 'user.email=41898282+github-actions[bot]@users.noreply.github.com', 'commit-tree', tree, ...parent, '-m', 'Record CHARETT publication and public-browser verification']);
+          git(['push', 'origin', `${commit}:${ref}`]);
+          JS
