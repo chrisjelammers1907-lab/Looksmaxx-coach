@@ -2,6 +2,14 @@
 
 The app is implemented and locally browser-tested. A publicly accessible website is **not yet verified**. Do not describe the ChatGPT chat URL, a cloud localhost address, or an authenticated GitHub raw download as a working public preview.
 
+## Confirmed GitHub blocker
+
+GitHub Actions run `39483248888`, for source commit `bab4ddf6ad126ac509836dd12e033b4374820a3a`, read the actual repository configuration: `private: true`, `has_pages: false`. Reading Pages returned HTTP 404. An authorized attempt to enable Pages from the fictional-only `gh-pages` branch returned HTTP 403, `Resource not accessible by integration`. Repository visibility was not changed. No external browser success is claimed.
+
+The owner must open the repository's **Settings → Pages**, choose **Deploy from a branch**, select **gh-pages** and **/(root)**, then save. Account support for Pages on a private repository is not established. If GitHub reports an account-plan restriction, record the exact message and choose an appropriate separate hosting destination; do not change repository visibility as a workaround.
+
+The `Verify CHARETT publication` Actions workflow reads the actual Pages URL, compares the public HTML with the intended demo, and tests it in fresh Chromium contexts without a login on desktop and mobile. Its result is recorded on the separate `charett-publication-status` branch, including configuration errors on failure. After the owner enables Pages, rerun that workflow or trigger a new matching source push, retrieve the new evidence branch commit, verify it refers to the intended source commit, and inspect its browser results and screenshots before sharing the URL. Passing local-fixture checks explicitly leave `publicBrowserVerified` false.
+
 ## Prepared delivery
 
 The remote `gh-pages` branch contains exactly `.nojekyll`, `README.md` and `index.html`. The index is the self-contained demo with hash routing and embedded licensed editorial images, fonts and notices. No owner photos, personal routines, uploaded reference PDFs, secrets, or build brief are in that publication branch. The application source and design are unchanged.
