@@ -30,3 +30,7 @@ Raw reference PDFs, owner facts/photos/routines and secrets remain outside Git. 
 2. Feed/composer/media, natural-question coach and privacy controls.
 3. Editorial styling, accessibility and full regression checks.
 4. Standalone rebuild, Pages publication, external browser verification and evidence.
+
+## Completion
+
+All four milestones are complete. Local validation passed (58 browser regressions, 15 domain tests, targeted menu checks, build/typecheck/lint/formatting and the final standalone fixture). The second-version public website passed fresh Chrome desktop/mobile journeys in Actions run `39496395487`; its exact served HTML matches the built export. See WEB_PUBLICATION.md and the saved public verification record. No private owner media or raw PDFs were committed.

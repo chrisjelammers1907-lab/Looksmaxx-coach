@@ -1,37 +1,41 @@
-# CHARETT web publication
+# CHARETT public website — second version
 
-The public website is live at **https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/**. Choose **Skip for now** or complete intake. No download, installation or GitHub login is needed.
+**https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/**
 
-## Verified public-browser result
+The second version is live. Existing open tabs should be refreshed to load it. Choose **Skip for now** or complete the optional introduction. No installation or GitHub login is needed.
 
-GitHub Actions run `39485299213` completed successfully on **20 October 2026 at 21:40 CEST** (19:40 UTC), for source commit `de2d8aa89aaf644cdd4fcc6dfb134ad647aafc73`.
+## Public verification
 
-- GitHub reported Pages `built`, `public: true`, source `gh-pages` at `/`.
-- An unauthenticated HTTPS fetch returned HTTP 200. The published HTML matched the intended standalone demo byte for byte: SHA-256 `04c4a0db63b109beefe6247313911d0fc2edcb2c2071b03c7ef8caef1521b4c6`.
+GitHub Actions run `39496395487` completed successfully on **20 October 2026 at 22:58 CEST** (20:58 UTC).
+
+- Verified source commit: `d34a1c7c84f9249797616fa6ae1d775022a03922`.
+- Pages content commit: `fdab8857b858288997b3837a5c87f0370d0c9ffd`, branch `gh-pages`, root `/`.
+- Evidence commit: `33ca97ab9837314b1d8ab5e2fd42649a536ce261`, branch `charett-publication-status`.
+- The actual unauthenticated HTTPS HTML matched the intended standalone file byte for byte: SHA-256 `29d80ee85a5e99d0c29e0c8f943c0f336ebc5359f48f03da84165518d22aee81`.
 - Fresh Chrome contexts without a login passed at 1440×1000 and 390×844, including mobile touch emulation.
-- Both exercised all eight topics, topic reloads, horizontal-overflow checks, wardrobe editing, community comments, simulated rich-card messaging and round trips, reviewed coach changes, plan updates and profile navigation.
-- Both completed without browser, HTTP or failed-request errors. The actual public-page desktop and mobile screenshots were retrieved and visually inspected.
+- Both exercised For You, video playback, all eight category routes and their beginner guides, route reloads, wardrobe editing, comments, simulated linked-card sharing and round trips, reviewed coach changes, plan updates, account/profile navigation and About us.
+- No browser, HTTP or failed-request errors occurred. Actual public-page desktop and mobile screenshots were retrieved and visually inspected.
 
-The `charett-publication-status` branch holds `configuration.json`, `outcome.json`, `browser-verification.json`, `desktop.png` and `mobile.png`. Evidence commit: `77c817c215935849483ba58b5877da09b8349efe`. The browser report explicitly records `localFixture: false` and `publicBrowserVerified: true`. Its source commit, URL and HTML checksum were checked against the intended publication before the link was supplied.
+The initial configuration snapshot reported Pages as `building`. The verifier waited until the public HTML matched the new export before exercising it; the actual served bytes and successful browser journeys establish which version was checked. The separate browser report records `localFixture: false` and `publicBrowserVerified: true`.
 
-This is browser verification in Chrome at two viewport sizes. Physical mobile devices, Safari and Firefox are not claimed as tested.
+[Public verification record](verification/iteration-2-public.json), [desktop screenshot](screenshots/home-desktop.png), [mobile screenshot](screenshots/home-mobile.png).
 
-## Published content and privacy
+## Local verification
 
-The `gh-pages` branch contains exactly `.nojekyll`, `README.md` and `index.html`. The index embeds the app and licensed editorial images, fonts and notices. Hash routes preserve navigation and reloads under `/Looksmaxx-coach/` without server rewrites. The existing application design and features are unchanged.
+The full 58-test browser regression run passed, along with 15 domain tests, type checking, lint, formatting and the normal production build. After the last menu fix, the two affected desktop/mobile navigation journeys passed again. The final standalone export was also tested on both viewport sizes under `/Looksmaxx-coach/` before publication, with `publicBrowserVerified: false` for the local fixture. See [PROGRESS.md](PROGRESS.md).
 
-Only fictional demo content is embedded. Owner photos, personal routines, reference PDFs, credentials and the original build brief are not in the website branch. Personal profile edits, photos, routines and logs remain in the current browser tab; the main README documents the limited allowlisted fictional preferences kept in localStorage. AI, shopping, visualizations and social activity remain labelled simulations.
+These are Chrome checks at two viewport sizes. Physical mobile devices, Safari, Firefox, real accounts, live model responses and real message delivery are not claimed as tested.
 
-GitHub reported the repository itself as public during this check. Its visibility was changed outside the agent's actions; the agent did not change repository visibility.
+## Content and privacy
 
-## Verification and maintenance
+Only fictional demo content and licensed editorial assets are embedded in the three-file website branch: `.nojekyll`, `README.md`, `index.html`. Owner photos, personal routines, PDFs, health profiles, credentials and the original build brief are excluded from that branch.
 
-The `Verify CHARETT publication` workflow reads the real Pages configuration with read-only Pages permission, tests the reported URL without a login and records the result on the separate evidence branch. It runs on matching demo-source pushes, verification tags matching `charett-verify-*`, or manual dispatch. Local fixture tests deliberately leave `publicBrowserVerified` false.
+Personal uploads and edits stay in the browser tab; original photos/videos cannot enter public demo posts. Public/private account settings, follower approval and independent journal audience preferences are local simulations, not production authentication. AI responses, feed ordering, shopping, visualizations and social activity remain clearly labelled demos.
 
-After app changes, regenerate the standalone export, update the fictional-only `gh-pages` index, let Pages finish building and rerun the public-browser check. Do not present source edits as deployed until the published HTML matches and the external browser checks pass.
+Beginner guides map the supplied reference files to useful educational material and explain which claims were not adopted. No clinical review, treatment protocol, live official-page verification or guaranteed result is claimed. Direct AAD, FDA, NHS and Victoria’s Secret access was blocked by the cloud egress proxy; see SOURCE_INVENTORY.md. Enlarged feed images have the requested pixel dimensions but do not gain source detail. The video is a labelled silent motion study made from licensed stock photography.
 
-## Resolved delivery failures
+## Maintenance
 
-Earlier raw GitHub download checks used the cloud proxy's repository authentication, while the repository was private. They did not prove anonymous availability. GitHub subsequently confirmed `has_pages: false`; an automated attempt to activate Pages returned HTTP 403, `Resource not accessible by integration`. The owner enabled branch-based Pages, after which the public checks above succeeded.
+Run `node scripts/build-standalone.mjs` after source changes, update the fictional-only `gh-pages` index, then trigger the `Verify CHARETT publication` workflow. It can run on matching demo-source pushes, tags matching `charett-verify-*`, or manual dispatch. It waits for the intended HTML checksum before testing the actual Pages URL and records results on the separate evidence branch. Inspect that evidence and its source commit before supplying a visitor link.
 
-This cloud machine still receives egress-proxy CONNECT 403 for the external site. The successful public checks ran in the GitHub-hosted runner, outside that restricted network. A saved environment draft, a localhost test and the ChatGPT chat URL are not evidence of a working public website.
+This cloud machine still blocks direct access to the external Pages host. Successful public checks run in the GitHub-hosted runner. A cloud-local test, authenticated raw download, saved environment draft or ChatGPT chat URL does not prove a public website works. Earlier 404 delivery failures are resolved by the verified Pages publication above.
