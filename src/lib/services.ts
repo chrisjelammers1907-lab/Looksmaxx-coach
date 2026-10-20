@@ -1,5 +1,6 @@
 import type { DemoState, TopicId } from "./types";
 import { topicName } from "./domain";
+import { guides } from "./guides";
 export interface CoachRequest {
   text: string;
   topic?: TopicId;
@@ -9,6 +10,7 @@ export interface CoachRequest {
 export interface CoachResponse {
   text: string;
   proposal?: string;
+  guide?: TopicId;
 }
 export interface CoachingService {
   reply(request: CoachRequest): Promise<CoachResponse>;
@@ -22,41 +24,90 @@ export interface ImageGenerationService {
 export interface ShoppingSearchService {
   search(): Promise<{ status: "simulated"; results: [] }>;
 }
+export function inferCoachTopic(
+  text: string,
+  fallback?: TopicId,
+): TopicId | undefined {
+  const rules: [TopicId, RegExp][] = [
+    [
+      "grooming",
+      /\b(brows?|eyebrows?|lashes|eyelash|groom|shav|beard|makeup|concealer)/i,
+    ],
+    [
+      "skincare",
+      /\b(skin|acne|cleanser|moisturi|sunscreen|spf|irritat|retinol|serum|tretinoin|spironolactone)/i,
+    ],
+    ["hair", /\b(hair|barber|shampoo|conditioner|fringe|scalp)/i],
+    [
+      "clothing",
+      /\b(outfit|wardrobe|cloth|wear|shirt|denim|dress|style|fit|colour|color|shoes|jacket)/i,
+    ],
+    [
+      "gym",
+      /\b(gym|workout|train|exercise|protein|calori|nutrition|food|meal|posture|mobility|weight|muscle)/i,
+    ],
+    ["smile", /\b(teeth|tooth|dental|smile|floss|gum|whiten)/i],
+    ["fragrance", /\b(fragrance|perfume|scent|cologne)/i],
+    ["photos", /\b(journal|progress|before|after|comparison)/i],
+  ];
+  return (
+    rules.find(([, pattern]) => pattern.test(text))?.[0] ||
+    fallback ||
+    (/\b(photo|picture|image)/i.test(text) ? "photos" : undefined)
+  );
+}
 export const demoCoach: CoachingService = {
-  async reply({ text, topic, hasPhoto, state }) {
-    await new Promise((resolve) => setTimeout(resolve, 650));
+  async reply({ text, topic: entryTopic, hasPhoto, state }) {
+    await new Promise((resolve) => setTimeout(resolve, 450));
+    const topic = inferCoachTopic(
+      text,
+      entryTopic || [...state.chat].reverse().find((m) => m.guide)?.guide,
+    );
     const owned =
       state.items
-        .filter((i) => !topic || i.topic === topic)
-        .map((i) => i.name)
+        .filter((item) => !topic || item.topic === topic)
         .slice(0, 4)
-        .join(", ") || "No relevant products entered";
-    const routines =
-      state.routines
-        .filter((r) => !topic || r.topic === topic)
-        .map((r) => r.title)
-        .join(", ") || "No relevant routines entered";
-    const caution =
-      /medicat|dnp|steroid|testosterone|spironolactone|dose|diagnos|ghk|mk.?677|mounjaro|anavar|score|bone/i.test(
+        .map((item) => item.name)
+        .join(", ") || "No relevant items entered yet";
+    const medical =
+      /medicat|dnp|steroid|testosterone|spironolactone|dos(e|age)|diagnos|ghk|mk.?677|mounjaro|anavar|attractiveness score|bone measur/i.test(
         text,
       );
-    const advice: Record<string, string> = {
+    const guide = topic ? guides[topic] : undefined;
+    const opening =
+      state.profile.coachStyle === "direct"
+        ? "Let’s make this practical."
+        : "Let’s find a manageable starting point for you.";
+    const specific: Partial<Record<TopicId, string>> = {
       skincare:
-        "1. Start with the products you already tolerate. A gentle cleanse, moisturizer and sunscreen are an example starting point.\n2. Keep a dated note of comfort or irritation. Full ingredients and your response matter; compatibility is uncertain.\n3. Review one change at a time. Persistent irritation belongs with a qualified clinician.",
+        "Keep cleansing, moisturising and sun protection as separate jobs. Start with what you already tolerate, then record one change at a time. Compatibility depends on full formulas and your response; a product name is not enough to establish it.",
       clothing:
-        "1. Start with an outfit from your owned pieces. This respects your budget and shows what is missing.\n2. Compare fit at shoulders and length using your own notes; no fit is inferred from an image.\n3. Try one neutral combination and save what feels like you. Price suggestions in this demo are examples.",
-      hair: "1. Save two references with a texture you enjoy. A reference is not a prediction of your result.\n2. Note your own length, texture and maintenance preference.\n3. Try gentle styling with products you already tolerate; color changes may need a qualified stylist.",
-      gym: "1. Review your current training schedule rather than assuming example history is current.\n2. Log one comfortable session and a meal with a clearly stated estimate source.\n3. Include a comfortable movement break. Nutrition targets are user-entered examples, not calculated requirements.",
+        "Build one complete outfit from your own pieces first. Compare fit and colours for the occasion you actually have in mind. A reference is a starting point; adjust it to your preferences instead of replacing your whole wardrobe.",
+      hair: "Save a couple of references and note what you like about their length, texture or colour. Compare maintenance as well as appearance. A visualization is inspiration, not a prediction of a result.",
+      gym: "Start with your current week and comfortable experience level. Log exercises, sets, repetitions and load; keep nutrition estimates and their sources separate from measured facts. The demo’s starter targets are not calculated personal requirements.",
       grooming:
-        "1. Choose the detail you want to maintain, without chasing a single ideal shape.\n2. Keep tools clean and make small changes only if comfortable.\n3. Write down what you like so your routine reflects your preference.",
+        "Start with clean tools and a small, reversible change. Brow shape and darkness are preferences, not universal ideals. Keep ordinary hair dyes and heated tools away from your eyes; lash-growth claims in the references do not establish suitability for you.",
       smile:
-        "1. Keep a manageable daily brushing and interdental-care routine following professional and product guidance.\n2. Note your own comfort.\n3. A dental professional can address symptoms or clinical concerns. No whitening result or diagnosis can be predicted here.",
+        "Keep daily brushing and interdental care manageable, following suitable dental and product guidance. A photo cannot diagnose a dental problem or predict whitening. A dental professional can help with clinical questions.",
       fragrance:
-        "1. Start from your collection and the occasion.\n2. Compare your own notes over time; scents develop differently.\n3. Shortlist within your stated budget before shopping. Example prices and products are not live offers.",
+        "Start with what you own, how it smells to you over time and the setting you want it for. Compare samples within your budget rather than assuming a popular scent will suit everyone.",
       photos:
-        "1. Select two real photos from the same topic.\n2. Keep lighting, pose, lens and editing as consistent as possible.\n3. Record a neutral observation. No measurement, attractiveness score or transformation is inferred.",
-      general:
-        "1. Pick one manageable daily ritual connected to your goal.\n2. Start with what you own instead of buying a complete routine.\n3. Review how it fits your week before adding more. Your plan is editable, and no existing routine will be overwritten.",
+        "Keep dates, light, camera distance and pose consistent when comparing real progress. Record a neutral observation. Separate edited or generated inspiration from real photos, and keep your journal audience independent of account visibility.",
+    };
+    const nextQuestion: Partial<Record<TopicId, string>> = {
+      skincare:
+        "Which products are you using now, and how does your skin feel?",
+      clothing:
+        "Which occasion are you dressing for, and which owned pieces would you like to use?",
+      hair: "What length, texture and maintenance level are you aiming for?",
+      gym: "What is your current experience, and how many sessions fit your week?",
+      grooming:
+        "Are you interested in maintenance, shaping or a reversible cosmetic change?",
+      smile:
+        "Are you organising daily care, or is there a symptom you need help describing to a professional?",
+      fragrance: "What do you already enjoy, and when do you want to wear it?",
+      photos:
+        "What would you like to observe, and do you have comparable dates and lighting?",
     };
     const proposal =
       topic === "clothing"
@@ -68,9 +119,11 @@ export const demoCoach: CoachingService = {
             : topic === "hair"
               ? "Review two saved hairstyle references"
               : "Spend five minutes reviewing my personal routine";
+    const priceQuestion = /budget|buy|shop|cost|price|afford/i.test(text);
     return {
-      text: `${state.profile.coachStyle === "direct" ? "Let’s choose a clear next step." : "A little consistency can be a kind place to start."}\n\nPROFILE CONTEXT · FICTIONAL STARTER OR YOUR SESSION EDITS\nGoal: ${state.profile.goals || "Not provided"}. Preferences: ${state.profile.preferences || "Not provided"}. Restrictions: ${state.profile.restrictions || "Not provided; none assumed"}. Budget: ${state.profile.currency} ${state.profile.budget}.\nOwned: ${owned}.\nRoutines: ${routines}. Current plan: ${state.goals.length} goals.\n\nEXAMPLE ${topic ? topicName[topic].toUpperCase() : "GENERAL"} GUIDANCE\n${caution ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. Uploaded PDFs and prior AI suggestions are unvalidated references. Discuss treatment questions with a qualified clinician.\n\n" : ""}${advice[topic || "general"]}\n\n${hasPhoto ? "PHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. A real review would need your context; this demo can only suggest consistent lighting and user-controlled observations.\n\n" : ""}This is a deterministic demo response, not a live AI assessment.`,
+      text: `${opening}\n\n${medical ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. The uploaded treatment references are unvalidated. Discuss treatment questions with a qualified clinician.\n\n" : ""}${topic ? `ABOUT ${topicName[topic].toUpperCase()}\n` : "YOUR NEXT STEP\n"}${topic ? specific[topic] : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words."}\n\nYour stated goal: ${state.profile.goals || "Not provided"}.\nOwned items in this context: ${owned}.${priceQuestion ? `\nYour saved budget: ${state.profile.currency} ${state.profile.budget}. Demo prices are examples, not live offers.` : ""}\n\n${(topic ? nextQuestion[topic] : undefined) || "What would you like to work on first?"}${hasPhoto ? "\n\nPHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. No feature measurement or diagnosis is inferred." : ""}\n\nSimulated coach · This sample uses message keywords and your session context; it is not a live AI assessment.${guide ? " The linked beginner guide explains the reference material behind this topic." : ""}`,
       proposal,
+      guide: topic,
     };
   },
 };

@@ -7,6 +7,8 @@ import {
   mayViewPost,
   workoutVolume,
 } from "../src/lib/domain";
+import { feedDimensions } from "../src/lib/media";
+import { inferCoachTopic } from "../src/lib/services";
 import { demoCoach } from "../src/lib/services";
 describe("outfit price accounting", () => {
   it("totals known prices in a single currency", () =>
@@ -83,5 +85,51 @@ describe("meaningful workout and coach behavior", () => {
     });
     expect(result.text).toContain("cannot diagnose");
     expect(result.text).toContain("qualified clinician");
+  });
+});
+
+describe("second-version privacy and format invariants", () => {
+  it("caps both portrait extremes at the required pixel sizes", () => {
+    expect(feedDimensions(400, 400)).toEqual({ width: 1080, height: 1350 });
+    expect(feedDimensions(300, 900)).toEqual({ width: 1080, height: 1920 });
+    expect(feedDimensions(2160, 3240)).toEqual({ width: 1080, height: 1620 });
+    expect(() => feedDimensions(0, 100)).toThrow();
+  });
+  it("a public post never overrides a private account", () => {
+    const post = { ...seedPosts[0], author: "you" };
+    expect(mayViewPost(post, "visitor", [], "private")).toBe(false);
+    expect(mayViewPost(post, "mira", [], "private", ["mira"])).toBe(true);
+    expect(mayViewPost(post, "noor", [], "private", ["mira"])).toBe(false);
+    expect(maySharePost(post, [], "private", "mira", ["mira"])).toBe(true);
+    expect(maySharePost(post, [], "private", "noor", ["mira"])).toBe(false);
+    expect(mayViewPost(post, "visitor", [], "public")).toBe(true);
+  });
+  it("private originals never become accessible through audience switches", () => {
+    const post = {
+      ...seedPosts[0],
+      author: "you",
+      media: {
+        kind: "image" as const,
+        src: "data:image/jpeg;base64,private",
+        width: 1080,
+        height: 1350,
+        origin: "private-upload" as const,
+        label: "Private",
+      },
+    };
+    expect(maySharePost(post, [], "public", "mira", ["mira"])).toBe(false);
+    expect(mayViewPost(post, "mira", [], "public", ["mira"])).toBe(false);
+    expect(
+      mayViewPost({ ...post, audience: "private" }, "mira", [], "private", [
+        "mira",
+      ]),
+    ).toBe(false);
+    expect(mayViewPost(post, "you", [], "private")).toBe(true);
+  });
+  it("uses a clear new question before old context and keeps vague followups in context", () => {
+    expect(inferCoachTopic("My skin feels dry", "clothing")).toBe("skincare");
+    expect(inferCoachTopic("Review my photo", "clothing")).toBe("clothing");
+    expect(inferCoachTopic("Which hair colour should I try?")).toBe("hair");
+    expect(inferCoachTopic("Help me with my eyebrow shape")).toBe("grooming");
   });
 });

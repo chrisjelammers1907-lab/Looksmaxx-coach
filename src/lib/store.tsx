@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { DemoState } from "./types";
 import { makeInitialState, seedPosts } from "./data";
+import { releasePrivateMedia } from "./media";
 const STORAGE_KEY = "charett-demo-v1";
 export type Patch = (state: DemoState) => DemoState;
 interface Store {
@@ -75,7 +76,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     const timer = setTimeout(() => setNotice(""), 4500);
     return () => clearTimeout(timer);
   }, [notice]);
+  useEffect(() => () => releasePrivateMedia(), []);
   const reset = () => {
+    releasePrivateMedia();
     localStorage.removeItem(STORAGE_KEY);
     setState(makeInitialState());
     toast("Demo reset. Private session content removed.");

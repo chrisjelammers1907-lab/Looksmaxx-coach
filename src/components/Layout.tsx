@@ -1,99 +1,134 @@
 import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
 import {
   Home,
-  Compass,
+  Grid2X2,
   MessageCircle,
   ListChecks,
   UserRound,
   Sparkles,
   ArrowUpRight,
-  ChevronRight,
+  BookOpen,
   LockKeyhole,
 } from "lucide-react";
-import { useEffect } from "react";
-import { topics } from "../lib/data";
+import { useEffect, useRef } from "react";
 import { useDemo } from "../lib/store";
 const nav = [
   { to: "/", label: "Home", icon: Home },
-  { to: "/explore", label: "Explore", icon: Compass },
-  { to: "/plan", label: "My plan", icon: ListChecks },
+  { to: "/categories", label: "Categories", icon: Grid2X2 },
+  { to: "/coach", label: "AI Coach", icon: Sparkles },
+  { to: "/plan", label: "My Plan", icon: ListChecks },
   { to: "/messages", label: "Messages", icon: MessageCircle },
-  { to: "/profile", label: "My profile", icon: UserRound },
 ];
 export default function Layout() {
   const { state } = useDemo();
   const location = useLocation();
+  const menu = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `CHARETT — ${location.pathname === "/" ? "Your everyday, elevated." : location.pathname.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")}`;
-  }, [location.pathname]);
+    if (menu.current) menu.current.open = false;
+    document.title = `CHARETT — ${location.pathname === "/" ? "For You" : location.pathname.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")}`;
+  }, [location.pathname, location.search]);
+  const active = (to: string) =>
+    to === "/categories" && location.pathname.startsWith("/topics/");
   return (
     <>
-      <a href="#main" className="skip-link">
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById("main")?.focus();
+        }}
+      >
         Skip to content
       </a>
       <aside className="sidebar">
         <Link className="wordmark" to="/">
           CHARETT<span>THE ART OF BECOMING</span>
         </Link>
-        <div className="nav-label">YOUR SPACE</div>
+        <div className="nav-label">YOUR EVERYDAY EDIT</div>
         <nav className="primary-nav" aria-label="Main navigation">
           {nav.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} end={to === "/"}>
+            <NavLink
+              key={to}
+              to={to}
+              end={to === "/"}
+              className={({ isActive }) =>
+                isActive || active(to) ? "active" : ""
+              }
+            >
               <Icon size={19} />
               {label}
               {label === "Messages" && <span className="nav-dot" />}
             </NavLink>
           ))}
         </nav>
-        <div className="nav-label topic-nav-label">THE EDIT</div>
-        <nav className="topic-nav" aria-label="Topic navigation">
-          {topics.map((t) => (
-            <NavLink key={t.id} to={`/topics/${t.id}`}>
-              {t.title}
-              <ChevronRight size={13} />
-            </NavLink>
-          ))}
-        </nav>
-        <Link className="sidebar-coach" to="/coach">
-          <Sparkles size={20} />
-          <strong>
-            A little guidance,
-            <br />a lot of possibility.
-          </strong>
+        <div className="sidebar-story">
+          <span className="eyebrow">STYLE · SELF-CARE · PROGRESS</span>
+          <p>
+            Small steps.
+            <br />
+            <em>Your own direction.</em>
+          </p>
+          <BookOpen size={19} />
           <span>
-            Meet your coach <ArrowUpRight size={15} />
+            Beginner guides live
+            <br />
+            inside every category.
           </span>
-          <small>SIMULATED AI DEMO</small>
+        </div>
+        <Link className="sidebar-about" to="/about">
+          About us <ArrowUpRight size={15} />
         </Link>
         <Link to="/profile" className="sidebar-user">
           <span className="avatar">{state.profile.name.slice(0, 1)}</span>
           <span>
             {state.profile.name}
-            <small>Private test profile</small>
+            <small>
+              {state.profile.visibility === "private"
+                ? "Private account"
+                : "Public account"}{" "}
+              · demo
+            </small>
           </span>
           <LockKeyhole size={14} />
         </Link>
       </aside>
       <div className="app-content">
-        <div className="topbar">
+        <header className="topbar">
           <Link className="mobile-brand" to="/">
             CHARETT
           </Link>
-          <span className="topbar-note">A considered approach to you.</span>
+          <span className="topbar-note">
+            Style. Self-care. Your own direction.
+          </span>
           <div className="topbar-right">
+            <Link className="topbar-about" to="/about">
+              About us
+            </Link>
             <span className="demo-pill">
               <i /> INTERACTIVE DEMO
             </span>
-            <Link
-              to="/profile"
-              aria-label="Open private profile"
-              className="avatar small"
-            >
-              {state.profile.name.slice(0, 1)}
-            </Link>
+            <details className="profile-menu" ref={menu}>
+              <summary aria-label="Open profile and menu">
+                <span className="avatar small">
+                  {state.profile.name.slice(0, 1)}
+                </span>
+              </summary>
+              <nav aria-label="Profile menu">
+                <Link to="/profile">
+                  <UserRound size={16} /> My profile
+                </Link>
+                <Link to="/profile?saved=true">
+                  <BookOpen size={16} /> Private saves
+                </Link>
+                <Link to="/about">
+                  About us <ArrowUpRight size={15} />
+                </Link>
+              </nav>
+            </details>
           </div>
-        </div>
+        </header>
         <main id="main" tabIndex={-1}>
           <Outlet />
         </main>
@@ -101,21 +136,22 @@ export default function Layout() {
           <span>
             CHARETT <i>·</i> Your everyday, elevated.
           </span>
-          <span>
-            Fictional demo · Local activity · Private uploads stay in this
-            session
-          </span>
+          <Link to="/about">About us & demo privacy</Link>
+          <span>Fictional activity · Private uploads stay in this tab</span>
         </footer>
       </div>
       <nav className="mobile-nav" aria-label="Mobile navigation">
         {nav.map(({ to, label, icon: Icon }) => (
-          <NavLink key={to} to={to} end={to === "/"}>
+          <NavLink
+            key={to}
+            to={to}
+            end={to === "/"}
+            className={({ isActive }) =>
+              isActive || active(to) ? "active" : ""
+            }
+          >
             <Icon size={21} />
-            <span>
-              {label
-                .replace("My plan", "Plan")
-                .replace("My profile", "Profile")}
-            </span>
+            <span>{label === "My Plan" ? "My Plan" : label}</span>
           </NavLink>
         ))}
       </nav>

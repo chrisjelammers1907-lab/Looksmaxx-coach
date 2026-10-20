@@ -45,7 +45,15 @@ export default function MessagesPage() {
   };
   const blocked = state.blocked.includes(selected);
   const thread = state.messages[selected] || [];
-  const attachable = state.posts.filter((p) => maySharePost(p, state.blocked));
+  const attachable = state.posts.filter((p) =>
+    maySharePost(
+      p,
+      state.blocked,
+      state.profile.visibility,
+      selected,
+      state.approvedFollowers,
+    ),
+  );
   const send = () => {
     if ((!text.trim() && !card) || blocked || !creator) return;
     if (
@@ -53,6 +61,9 @@ export default function MessagesPage() {
       !maySharePost(
         state.posts.find((p) => p.id === card.id),
         state.blocked,
+        state.profile.visibility,
+        selected,
+        state.approvedFollowers,
       )
     ) {
       toast("That card is no longer accessible. Nothing was sent.");
@@ -334,10 +345,10 @@ export default function MessagesPage() {
           onClose={() => setAttach(false)}
         >
           <Notice>
-            Only accessible public demo content is listed. Private outfits,
-            products, photos, routines and restricted posts remain private.
-            Create a fictional public post with an audience preview to share a
-            copy.
+            Only demo content accessible to this recipient is listed. Private
+            originals, products, photos, routines and restricted posts remain
+            private. Create a fictional public post with an audience preview to
+            share a copy.
           </Notice>
           <div className="attach-list">
             {attachable.map((p) => (

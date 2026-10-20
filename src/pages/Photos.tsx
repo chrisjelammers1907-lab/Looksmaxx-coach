@@ -66,6 +66,7 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
               id: uid(),
               data,
               mediaKind: "real",
+              audience: "private",
               topic: topic === "photos" ? "skincare" : topic,
               date: today(),
               note: "",
@@ -113,6 +114,10 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
                 <small>
                   {dateLabel(p.date)} · {topicName[p.topic]}
                 </small>
+                <span className="journal-audience">
+                  Sharing preference: {p.audience || "private"} · Original stays
+                  private
+                </span>
                 <h3>{p.tag}</h3>
                 <p>{p.note || "No observation added."}</p>
                 <div className="card-controls">
@@ -269,6 +274,31 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
                 comparisons
               </option>
             </Select>
+            <Select
+              label="Journal audience"
+              value={draft.audience || "private"}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  audience: e.target.value as
+                    "private" | "followers" | "public",
+                })
+              }
+            >
+              <option value="private">Only me · private by default</option>
+              <option value="followers">
+                Approved followers · sharing preference
+              </option>
+              <option value="public">Public · sharing preference</option>
+            </Select>
+            {draft.audience && draft.audience !== "private" && (
+              <Notice icon="private">
+                Sharing preferences are simulated. Your original uploaded photo
+                stays private in this tab; this action does not publish it to
+                the feed or send it to anyone. Account privacy still limits
+                recipient access.
+              </Notice>
+            )}
             <Field
               label="Tag"
               value={draft.tag}

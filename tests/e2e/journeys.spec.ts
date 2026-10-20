@@ -189,10 +189,12 @@ test("outfit builder saves, edits, duplicates and deletes", async ({
 test("public outfit journey: preview, social actions, copy, share, edit and removed card", async ({
   page,
 }) => {
-  await open(page, "/topics/clothing?tab=outfits");
+  await open(page, "/profile");
+  await page.getByLabel("Account visibility").selectOption("public");
+  await go(page, "/topics/clothing?tab=outfits");
   await page.getByRole("link", { name: "Preview & share outfit" }).click();
   await page
-    .getByLabel("Post text (fictional demo content only)")
+    .getByLabel("Caption")
     .fill("A fictional weekend outfit for this demo.");
   await page.getByLabel("Audience", { exact: true }).selectOption("public");
   await page
@@ -224,7 +226,7 @@ test("public outfit journey: preview, social actions, copy, share, edit and remo
   await expect(page.locator(".outgoing .linked-card")).toBeVisible();
   await page.locator(".outgoing .linked-card").click();
   await page.getByRole("button", { name: "Edit post", exact: true }).click();
-  await page.getByLabel("Post title").fill("A revised weekend");
+  await page.getByLabel("Post title (optional)").fill("A revised weekend");
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();
@@ -263,8 +265,8 @@ test("following, saved feed, comments and local moderation", async ({
   await page.getByRole("button", { name: "Submit demo report" }).click();
   await go(page, "/explore");
   await page.getByRole("tab", { name: "Following", exact: true }).click();
-  await expect(page.locator(".post-card")).toHaveCount(2);
-  await page.getByRole("tab", { name: "Privately saved" }).click();
+  await expect(page.locator(".post-card")).toHaveCount(3);
+  await go(page, "/profile?saved=true");
   await expect(page.locator(".post-card")).toHaveCount(1);
   await go(page, "/post/p1");
   await page.getByRole("button", { name: "Block creator" }).click();
@@ -279,6 +281,7 @@ test("following, saved feed, comments and local moderation", async ({
 });
 test("community filters and routine copying", async ({ page }) => {
   await open(page, "/explore");
+  await page.getByRole("button", { name: "Search and filter posts" }).click();
   await page.getByLabel("Topic", { exact: true }).selectOption("skincare");
   await expect(page.locator(".post-card")).toHaveCount(1);
   await page.getByLabel("Search posts").fill("nothing matches");
@@ -479,10 +482,8 @@ test("private audience cannot be shared, reset removes session content", async (
   page,
 }) => {
   await open(page, "/explore?compose=new");
-  await page.getByLabel("Post title").fill("A private demo thought");
-  await page
-    .getByLabel("Post text (fictional demo content only)")
-    .fill("Only for my test session.");
+  await page.getByLabel("Post title (optional)").fill("A private demo thought");
+  await page.getByLabel("Caption").fill("Only for my test session.");
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();

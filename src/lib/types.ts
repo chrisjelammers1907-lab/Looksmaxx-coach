@@ -10,6 +10,7 @@ export type TopicId =
 export type ClothingStyle = "old-money" | "dark-casual" | "minimalist";
 export type Audience = "public" | "followers" | "private";
 export interface Profile {
+  visibility: "public" | "private";
   name: string;
   handle: string;
   bio: string;
@@ -61,7 +62,7 @@ export interface Outfit {
 export interface Post {
   id: string;
   author: string;
-  topic: TopicId;
+  topic: TopicId | "";
   title: string;
   body: string;
   image: string;
@@ -73,6 +74,16 @@ export interface Post {
   season: string;
   tags: string;
   date: string;
+  media?: FeedMedia;
+}
+export interface FeedMedia {
+  kind: "image" | "video";
+  src: string;
+  width: number;
+  height: number;
+  origin: "editorial" | "private-upload";
+  label: string;
+  poster?: string;
 }
 export interface Creator {
   id: string;
@@ -99,6 +110,7 @@ export interface Message {
   time: string;
 }
 export interface Photo {
+  audience?: Audience;
   mediaKind: "real" | "inspiration";
   id: string;
   data: string;
@@ -136,8 +148,11 @@ export interface ChatMessage {
   photo?: string;
   proposal?: string;
   applied?: boolean;
+  guide?: TopicId;
 }
 export interface DemoState {
+  approvedFollowers: string[];
+  incomingRequests: string[];
   profile: Profile;
   intake: boolean;
   style: ClothingStyle;

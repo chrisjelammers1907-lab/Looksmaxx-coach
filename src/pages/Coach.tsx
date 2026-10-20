@@ -12,7 +12,7 @@ import { useDemo } from "../lib/store";
 import { topics } from "../lib/data";
 import { uid } from "../lib/domain";
 import { demoCoach } from "../lib/services";
-import type { TopicId, ChatMessage } from "../lib/types";
+import type { ChatMessage } from "../lib/types";
 import {
   Area,
   Button,
@@ -20,12 +20,11 @@ import {
   Modal,
   Notice,
   PageHeader,
-  Select,
 } from "../components/ui";
 export default function CoachPage() {
   const { state, update, toast } = useDemo();
   const [params] = useSearchParams();
-  const [topic, setTopic] = useState(params.get("topic") || "general");
+  const topic = topics.find((t) => t.id === params.get("topic"))?.id;
   const [text, setText] = useState("");
   const [photo, setPhoto] = useState("");
   const [busy, setBusy] = useState(false);
@@ -53,7 +52,7 @@ export default function CoachPage() {
     try {
       const response = await demoCoach.reply({
         text: request,
-        topic: topic === "general" ? undefined : (topic as TopicId),
+        topic,
         hasPhoto: !!photo,
         state,
       });
@@ -73,8 +72,8 @@ export default function CoachPage() {
     <div className="coach-page">
       <PageHeader
         eyebrow="A LITTLE GUIDANCE. YOUR OWN DIRECTION."
-        title="Your personal coach."
-        description="Thoughtful ideas, grounded in what you choose to share."
+        title="Your AI Coach."
+        description="Ask in your own words. Your question sets the direction."
         action={
           <Link to="/plan" className="button secondary">
             <ListChecks size={16} />
@@ -83,45 +82,14 @@ export default function CoachPage() {
         }
       />
       <Notice>
-        SIMULATED AI · Deterministic sample responses. No live model, photo
-        analysis, diagnosis or real image generation. Proposals need your
-        review.
+        SIMULATED AI · Sample replies use your message and session context. No
+        live model or photo analysis. You review every proposed plan change.
       </Notice>
       <div className="coach-layout">
         <section
           className="coach-conversation"
           aria-label="Demo coach conversation"
         >
-          <div className="coach-controls">
-            <Select
-              label="Conversation topic"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-            >
-              <option value="general">Your whole picture</option>
-              {topics.map((t) => (
-                <option value={t.id} key={t.id}>
-                  {t.title}
-                </option>
-              ))}
-            </Select>
-            <Select
-              label="Coaching style"
-              value={state.profile.coachStyle}
-              onChange={(e) =>
-                update((s) => ({
-                  ...s,
-                  profile: {
-                    ...s.profile,
-                    coachStyle: e.target.value as "supportive" | "direct",
-                  },
-                }))
-              }
-            >
-              <option value="supportive">Calm & supportive</option>
-              <option value="direct">Direct & constructive</option>
-            </Select>
-          </div>
           <div className="chat-messages" aria-live="polite">
             {!state.chat.length && (
               <div className="coach-welcome">
@@ -167,6 +135,15 @@ export default function CoachPage() {
                   />
                 )}
                 <p className="preserve-text">{m.text}</p>
+                {m.guide && (
+                  <Link
+                    className="coach-source-link"
+                    to={`/topics/${m.guide}/guide`}
+                  >
+                    Read the beginner’s guide · References included{" "}
+                    <ArrowUpRight size={14} />
+                  </Link>
+                )}
                 {m.proposal && (
                   <div className="proposal-card">
                     <span className="eyebrow">PROPOSED · NOT APPLIED</span>

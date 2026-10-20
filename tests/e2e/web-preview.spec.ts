@@ -36,6 +36,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
+  gateway.closeAllConnections();
   await new Promise<void>((resolve, reject) =>
     gateway.close((error) => (error ? reject(error) : resolve())),
   );
@@ -80,7 +81,7 @@ test("compiled preview loads and navigates through the gateway on mobile and des
 
   const response = await page.goto(gatewayOrigin);
   expect(response?.status()).toBe(200);
-  await expect(page.locator("h1")).toHaveText("Your everyday, elevated.");
+  await expect(page.locator("h1")).toHaveText("Your daily edit.");
   await page.getByRole("button", { name: "Skip for now" }).click();
   const navigation = page.getByRole("navigation", {
     name:
@@ -100,7 +101,10 @@ test("compiled preview loads and navigates through the gateway on mobile and des
     "fragrance",
     "photos",
   ]) {
-    await page.locator(`main a[href="/topics/${topic}"]`).click();
+    await navigation
+      .getByRole("link", { name: "Categories", exact: true })
+      .click();
+    await page.locator(`main a[href="/topics/${topic}"]`).first().click();
     await expect(page).toHaveURL(`${gatewayOrigin}/topics/${topic}`);
     await expect(page.locator("h1")).toBeVisible();
     expect(
@@ -114,31 +118,27 @@ test("compiled preview loads and navigates through the gateway on mobile and des
   }
 
   for (const [path, label] of [
-    ["/explore", "Explore"],
-    ["/plan", "plan"],
+    ["/categories", "Categories"],
+    ["/plan", "My Plan"],
     ["/messages", "Messages"],
-    ["/profile", "profile"],
+    ["/coach", "AI Coach"],
   ]) {
-    await navigation
-      .getByRole("link", { name: new RegExp(label, "i") })
-      .click();
+    await navigation.getByRole("link", { name: label, exact: true }).click();
     await expect(page).toHaveURL(`${gatewayOrigin}${path}`);
     await expect(page.locator("h1")).toBeVisible();
   }
-  await navigation.getByRole("link", { name: "Home", exact: true }).click();
+  await page.getByLabel("Open profile and menu").click();
   await page
-    .getByRole("link", { name: "Meet your personal coach", exact: true })
+    .getByRole("navigation", { name: "Profile menu" })
+    .getByRole("link", { name: "About us", exact: true })
     .click();
-  await expect(page).toHaveURL(`${gatewayOrigin}/coach`);
-  await expect(
-    page.getByRole("heading", { name: "Your personal coach." }),
-  ).toBeVisible();
-  await page.goBack();
-  await expect(page.locator("h1")).toHaveText("Your everyday, elevated.");
-  await page.goForward();
-  await expect(
-    page.getByRole("heading", { name: "Your personal coach." }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(`${gatewayOrigin}/about`);
+  await page.getByLabel("Open profile and menu").click();
+  await page
+    .getByRole("navigation", { name: "Profile menu" })
+    .getByRole("link", { name: "My profile", exact: true })
+    .click();
+  await expect(page).toHaveURL(`${gatewayOrigin}/profile`);
   await page.evaluate(() => document.fonts.ready);
   await testInfo.attach("compiled-preview-navigation", {
     body: await page.screenshot({ fullPage: true }),

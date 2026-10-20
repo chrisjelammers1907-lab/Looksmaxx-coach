@@ -6,7 +6,16 @@ import {
   useSearchParams,
   useLocation,
 } from "react-router-dom";
-import { Plus, Search, Eye, Pencil, Trash2, ArrowLeft } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Eye,
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  SlidersHorizontal,
+  Sparkles,
+} from "lucide-react";
 import { useDemo } from "../lib/store";
 import { seedItems, seedPosts, topics } from "../lib/data";
 import type { Audience, Post, TopicId } from "../lib/types";
@@ -24,6 +33,7 @@ import {
 } from "../components/ui";
 import { ItemBreakdown } from "../components/Items";
 import { PostCard } from "../components/Social";
+import { MediaPicker, PostMedia } from "../components/FeedMedia";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -33,7 +43,9 @@ function CommunityContent() {
   const makePost = (): Post => ({
     id: uid(),
     author: "you",
-    topic: outfit ? "clothing" : (params.get("topic") as TopicId) || "clothing",
+    topic: outfit
+      ? "clothing"
+      : topics.find((t) => t.id === params.get("topic"))?.id || "",
     title: outfit?.title || "",
     body: "",
     image: "hero",
@@ -48,16 +60,17 @@ function CommunityContent() {
       : [],
     steps: [],
     audience: "private",
-    style: outfit?.style || state.style,
-    occasion: outfit?.occasion || "Everyday",
-    season: outfit?.season || "All seasons",
+    style: outfit?.style || "",
+    occasion: outfit?.occasion || "",
+    season: outfit?.season || "",
     tags: "",
     date: today(),
   });
   const [composer, setComposer] = useState(params.has("compose"));
   const [draft, setDraft] = useState<Post>(makePost);
   const [preview, setPreview] = useState(false);
-  const [feed, setFeed] = useState("explore");
+  const [feed, setFeed] = useState(params.get("feed") || "for-you");
+  const [showFilters, setShowFilters] = useState(false);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState(params.get("topic") || "all");
   const [style, setStyle] = useState(params.get("style") || "all");
@@ -77,7 +90,9 @@ function CommunityContent() {
     }
   };
   const visible = state.posts
-    .filter((p) => mayViewPost(p, "you", state.blocked))
+    .filter(
+      (p) => p.audience !== "private" && mayViewPost(p, "you", state.blocked),
+    )
     .filter(
       (p) =>
         (feed !== "following" || state.following.includes(p.author)) &&
@@ -125,82 +140,75 @@ function CommunityContent() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (!draft.title.trim() || !draft.body.trim()) return;
+            if (
+              !draft.body.trim() ||
+              (draft.media?.origin === "private-upload" &&
+                draft.audience !== "private")
+            )
+              return;
+            setDraft({
+              ...draft,
+              title: draft.title.trim() || draft.body.trim().slice(0, 70),
+            });
             setPreview(true);
           }}
         >
           <Notice>
             LOCAL SOCIAL DEMO · Only fictional example content belongs here.
             Your real photos, personal routines, intake, logs and private notes
-            stay out of public demo posts. Uploaded images cannot be attached.
+            stay private. Only fictional examples can be shared publicly in this
+            demo.
           </Notice>
-          <div className="form-grid">
-            <Select
-              label="Post topic"
-              value={draft.topic}
-              onChange={(e) =>
-                setDraft({
-                  ...draft,
-                  topic: e.target.value as TopicId,
-                  image:
-                    topics.find((t) => t.id === e.target.value)?.image ||
-                    "hero",
-                  style: e.target.value === "clothing" ? state.style : "",
-                })
-              }
-            >
-              {topics.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.title}
-                </option>
-              ))}
-            </Select>
-            <Select
-              label="Attach structured example content"
-              value=""
-              onChange={(e) => {
-                const source = seedPosts.find((p) => p.id === e.target.value);
-                if (source)
-                  setDraft({
-                    ...draft,
-                    topic: source.topic,
-                    items: structuredClone(source.items),
-                    steps: [...source.steps],
-                    image: source.image,
-                    style: source.style,
-                  });
-              }}
-            >
-              <option value="">Choose a fictional example</option>
-              {seedPosts.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
-                </option>
-              ))}
-            </Select>
-          </div>
           <Field
-            label="Post title"
-            required
+            label="Post title (optional)"
             maxLength={100}
             value={draft.title}
             onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           />
           <Area
-            label="Post text (fictional demo content only)"
+            label="Caption"
             required
             maxLength={1500}
             value={draft.body}
             onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           />
+          <MediaPicker
+            value={
+              draft.media?.origin === "private-upload" ? draft.media : undefined
+            }
+            onChange={(media) => setDraft({ ...draft, media })}
+          />
           <div className="form-grid">
             <Select
               label="Editorial reference image"
-              value={draft.image}
-              onChange={(e) => setDraft({ ...draft, image: e.target.value })}
+              value={
+                draft.media?.kind === "video" &&
+                draft.media.origin === "editorial"
+                  ? "motion"
+                  : draft.image
+              }
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  image: e.target.value === "motion" ? "hero" : e.target.value,
+                  media:
+                    e.target.value === "motion"
+                      ? {
+                          kind: "video",
+                          src: "motion",
+                          poster: "hero",
+                          width: 1080,
+                          height: 1920,
+                          origin: "editorial",
+                          label: "Editorial motion study",
+                        }
+                      : undefined,
+                })
+              }
             >
               {Object.entries({
                 hero: "Tailored style",
+                motion: "Editorial motion study · video",
                 style: "Fashion inspiration",
                 skin: "Skincare reference",
                 hair: "Hair reference",
@@ -227,85 +235,161 @@ function CommunityContent() {
               </option>
               <option value="public">Public · fictional demo community</option>
             </Select>
-            <Select
-              label="Style tag"
-              value={draft.style}
-              onChange={(e) => setDraft({ ...draft, style: e.target.value })}
-            >
-              <option value="">Not applicable</option>
-              <option value="old-money">Old money</option>
-              <option value="dark-casual">Dark casual</option>
-              <option value="minimalist">Minimalist</option>
-            </Select>
-            <Select
-              label="Occasion"
-              value={draft.occasion}
-              onChange={(e) => setDraft({ ...draft, occasion: e.target.value })}
-            >
-              {["Everyday", "Weekend", "Work", "Evening", "Travel"].map((v) => (
-                <option key={v}>{v}</option>
-              ))}
-            </Select>
-            <Select
-              label="Season"
-              value={draft.season}
-              onChange={(e) => setDraft({ ...draft, season: e.target.value })}
-            >
-              {["All seasons", "Spring", "Summer", "Autumn", "Winter"].map(
-                (v) => (
-                  <option key={v}>{v}</option>
-                ),
-              )}
-            </Select>
-            <Field
-              label="Tags (comma-separated)"
-              value={draft.tags}
-              onChange={(e) => setDraft({ ...draft, tags: e.target.value })}
-            />
           </div>
-          <Area
-            label="Example routine steps (one per line)"
-            value={draft.steps.join("\n")}
-            onChange={(e) =>
-              setDraft({
-                ...draft,
-                steps: e.target.value.split("\n").filter(Boolean),
-              })
-            }
-          />
-          <p className="small-text">
-            Structured items:{" "}
-            {draft.items.map((i) => i.name).join(", ") || "None"}. Prices,
-            brands, stores and links will be visible in the preview.
-          </p>
-          <div className="button-row">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setDraft({ ...draft, items: [] })}
-            >
-              Remove attached items
-            </Button>
-            {draft.topic === "clothing" && (
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() =>
+          {draft.audience !== "private" &&
+            state.profile.visibility === "private" && (
+              <Notice icon="private">
+                Your account is private. Only approved followers can access this
+                post; a public audience selection does not override account
+                privacy.
+              </Notice>
+            )}
+          {draft.media?.origin === "private-upload" &&
+            draft.audience !== "private" && (
+              <p className="error" role="alert">
+                Personal test uploads stay private. Choose Only me or remove the
+                upload to share a fictional editorial example.
+              </p>
+            )}
+          <details className="composer-details">
+            <summary>Topic & additional details (optional)</summary>
+            <div className="form-grid">
+              <Select
+                label="Post topic"
+                value={draft.topic}
+                onChange={(e) =>
                   setDraft({
                     ...draft,
-                    items: structuredClone(seedItems.slice(0, 3)),
+                    topic: e.target.value as TopicId,
+                    image:
+                      topics.find((t) => t.id === e.target.value)?.image ||
+                      "hero",
+                    style: e.target.value === "clothing" ? state.style : "",
                   })
                 }
               >
-                Attach example outfit
+                <option value="">No topic</option>
+                {topics.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Attach structured example content"
+                value=""
+                onChange={(e) => {
+                  const source = seedPosts.find((p) => p.id === e.target.value);
+                  if (source)
+                    setDraft({
+                      ...draft,
+                      topic: source.topic,
+                      items: structuredClone(source.items),
+                      steps: [...source.steps],
+                      image: source.image,
+                      style: source.style,
+                    });
+                }}
+              >
+                <option value="">Choose a fictional example</option>
+                {seedPosts.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div className="form-grid">
+              <Select
+                label="Style tag"
+                value={draft.style}
+                onChange={(e) => setDraft({ ...draft, style: e.target.value })}
+              >
+                <option value="">Not applicable</option>
+                <option value="old-money">Old money</option>
+                <option value="dark-casual">Dark casual</option>
+                <option value="minimalist">Minimalist</option>
+              </Select>
+              <Select
+                label="Occasion"
+                value={draft.occasion}
+                onChange={(e) =>
+                  setDraft({ ...draft, occasion: e.target.value })
+                }
+              >
+                {["Everyday", "Weekend", "Work", "Evening", "Travel"].map(
+                  (v) => (
+                    <option key={v}>{v}</option>
+                  ),
+                )}
+              </Select>
+              <Select
+                label="Season"
+                value={draft.season}
+                onChange={(e) => setDraft({ ...draft, season: e.target.value })}
+              >
+                {["All seasons", "Spring", "Summer", "Autumn", "Winter"].map(
+                  (v) => (
+                    <option key={v}>{v}</option>
+                  ),
+                )}
+              </Select>
+              <Field
+                label="Tags (comma-separated)"
+                value={draft.tags}
+                onChange={(e) => setDraft({ ...draft, tags: e.target.value })}
+              />
+            </div>
+            <Area
+              label="Example routine steps (one per line)"
+              value={draft.steps.join("\n")}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  steps: e.target.value.split("\n").filter(Boolean),
+                })
+              }
+            />
+            <p className="small-text">
+              Structured items:{" "}
+              {draft.items.map((i) => i.name).join(", ") || "None"}. Prices,
+              brands, stores and links will be visible in the preview.
+            </p>
+            <div className="button-row">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setDraft({ ...draft, items: [] })}
+              >
+                Remove attached items
               </Button>
-            )}
-          </div>
+              {draft.topic === "clothing" && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() =>
+                    setDraft({
+                      ...draft,
+                      items: structuredClone(seedItems.slice(0, 3)),
+                    })
+                  }
+                >
+                  Attach example outfit
+                </Button>
+              )}
+            </div>
+          </details>
           <div className="modal-actions">
             <Button type="button" variant="ghost" onClick={close}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button
+              type="submit"
+              disabled={
+                draft.media?.origin === "private-upload" &&
+                draft.audience !== "private"
+              }
+            >
               <Eye size={16} />
               Preview audience & content
             </Button>
@@ -315,17 +399,14 @@ function CommunityContent() {
         <>
           <Notice icon={draft.audience === "private" ? "private" : "info"}>
             {draft.audience === "public"
-              ? "Public: title, post text, editorial reference image, tags, structured item details and routine steps below will be visible in the local demo."
+              ? "Public: title, caption, selected editorial media, tags, structured item details and routine steps below will be visible in the local demo."
               : draft.audience === "followers"
                 ? "Followers: simulated restricted audience. Rich-card sending is disabled because recipient access is not established."
                 : "Only you: this post remains private and cannot be delivered through a shared card."}{" "}
-            Your intake, original routines and uploaded photos are excluded.
+            Your intake and original private routines are excluded. Private test
+            media can only be saved to Only me.
           </Notice>
-          <img
-            className="post-preview-image"
-            src={asset(draft.image)}
-            alt="Editorial reference selected for this post"
-          />
+          <PostMedia post={draft} />
           <h3>{draft.title}</h3>
           <p className="small-text">
             Posting as {state.profile.name} · local demo profile. Your private
@@ -333,7 +414,13 @@ function CommunityContent() {
           </p>
           <p className="preserve-text">{draft.body}</p>
           <div className="tag-row">
-            <span className="pill">Audience: {draft.audience}</span>
+            <span className="pill">
+              Audience:{" "}
+              {draft.audience === "public" &&
+              state.profile.visibility === "private"
+                ? "Approved followers · private account"
+                : draft.audience}
+            </span>
             <span className="tag">
               {draft.style} · {draft.occasion} · {draft.season}
             </span>
@@ -381,9 +468,9 @@ function CommunityContent() {
   if (id)
     return (
       <div className="community-detail">
-        <Link to="/explore" className="text-link">
+        <Link to="/" className="text-link">
           <ArrowLeft size={15} />
-          Back to Explore
+          Back to your feed
         </Link>
         {mayViewPost(current, "you", state.blocked) && current ? (
           <>
@@ -440,7 +527,7 @@ function CommunityContent() {
                   saved: s.saved.filter((v) => v !== id),
                   likes: s.likes.filter((v) => v !== id),
                 }));
-                navigate("/explore");
+                navigate("/");
               }}
             >
               Delete post
@@ -451,11 +538,45 @@ function CommunityContent() {
     );
   return (
     <div className="explore-page">
-      <PageHeader
-        eyebrow="GOOD THINGS, SHARED"
-        title="A little inspiration."
-        description="Different perspectives. Everyday rituals. Find something that feels like you."
-        action={
+      <section className="feed-hero">
+        <div>
+          <span className="eyebrow">STYLE · SELF-CARE · PROGRESS</span>
+          <h1>
+            Your daily <em>edit.</em>
+          </h1>
+          <p>
+            Discover inspiration, build your routines and track your
+            progress—with a personal AI coach to guide you.
+          </p>
+          <span className="feed-hero-note">
+            <Sparkles size={12} /> A fictional community. Your own direction.
+          </span>
+        </div>
+        <img
+          src={asset("style")}
+          alt="Licensed stock fashion editorial, not a fictional creator"
+        />
+        <span className="feed-monogram">C</span>
+      </section>
+      <div className="feed-bar">
+        <Tabs
+          value={feed}
+          onChange={setFeed}
+          tabs={[
+            { id: "for-you", label: "For You" },
+            { id: "following", label: "Following" },
+          ]}
+        />
+        <div className="feed-bar-actions">
+          <Button
+            variant="secondary"
+            aria-expanded={showFilters}
+            aria-label="Search and filter posts"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <SlidersHorizontal size={17} />
+            <span className="desktop-filter-label">Search & filters</span>
+          </Button>
           <Button
             onClick={() => {
               setDraft(makePost());
@@ -463,113 +584,112 @@ function CommunityContent() {
               setPreview(false);
             }}
           >
-            <Plus size={16} />
-            Create a post
+            <Plus size={17} /> Create a post
           </Button>
-        }
-      />
-      <Notice>
-        FICTIONAL COMMUNITY DEMO · Editorial reference images, fictional
-        creators, local likes and follows. No real accounts or multi-user
-        synchronization.
-      </Notice>
-      <Tabs
-        value={feed}
-        onChange={setFeed}
-        tabs={[
-          { id: "explore", label: "Discover" },
-          { id: "following", label: "Following" },
-          { id: "saved", label: "Privately saved" },
-        ]}
-      />
-      <div className="explore-toolbar">
-        <div className="search-field">
-          <Search size={17} />
-          <Field
-            label="Search posts"
-            placeholder="Search the edit…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
         </div>
-        <Select
-          label="Topic"
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-        >
-          <option value="all">All topics</option>
-          {topics.map((t) => (
-            <option value={t.id} key={t.id}>
-              {t.title}
-            </option>
-          ))}
-        </Select>
-        <Select
-          label="Sort"
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-        >
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="popular">Liked first</option>
-          <option value="budget">Example price: low first</option>
-        </Select>
       </div>
-      <details className="filter-details">
-        <summary>Refine by style, occasion, season, tags & budget</summary>
-        <div className="filter-grid">
-          <Select
-            label="Style"
-            value={style}
-            onChange={(e) => setStyle(e.target.value)}
-          >
-            <option value="all">All styles</option>
-            {["old-money", "dark-casual", "minimalist"].map((v) => (
-              <option key={v} value={v}>
-                {v.replace("-", " ")}
-              </option>
-            ))}
-          </Select>
-          <Select
-            label="Occasion"
-            value={occasion}
-            onChange={(e) => setOccasion(e.target.value)}
-          >
-            <option value="all">All occasions</option>
-            {["Everyday", "Weekend", "Work", "Evening", "Travel"].map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </Select>
-          <Select
-            label="Season"
-            value={season}
-            onChange={(e) => setSeason(e.target.value)}
-          >
-            <option value="all">All seasons</option>
-            {["Autumn", "Winter", "Spring", "Summer"].map((v) => (
-              <option key={v}>{v}</option>
-            ))}
-          </Select>
-          <Field
-            label="Contains tag"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-          />
-          <Field
-            label={`Max total (${state.profile.currency})`}
-            type="number"
-            min="0"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            hint="Excludes unknown and mixed-currency totals"
-          />
+      <p className="feed-disclosure">
+        Demo feed · Fictional creators, local interactions and sample ordering.
+      </p>
+      {showFilters && (
+        <section
+          className="feed-filter-panel"
+          aria-label="Feed search and filters"
+        >
+          <div className="explore-toolbar">
+            <div className="search-field">
+              <Search size={17} />
+              <Field
+                label="Search posts"
+                placeholder="Search captions and titles…"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+            <Select
+              label="Topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+            >
+              <option value="all">All topics, including untagged posts</option>
+              {topics.map((t) => (
+                <option value={t.id} key={t.id}>
+                  {t.title}
+                </option>
+              ))}
+            </Select>
+            <Select
+              label="Sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="popular">Liked first</option>
+              <option value="budget">Example price: low first</option>
+            </Select>
+          </div>
+          <details className="filter-details">
+            <summary>Outfit details & tags</summary>
+            <div className="filter-grid">
+              <Select
+                label="Style"
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
+              >
+                <option value="all">All styles</option>
+                {["old-money", "dark-casual", "minimalist"].map((v) => (
+                  <option key={v} value={v}>
+                    {v.replace("-", " ")}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Occasion"
+                value={occasion}
+                onChange={(e) => setOccasion(e.target.value)}
+              >
+                <option value="all">All occasions</option>
+                {["Everyday", "Weekend", "Work", "Evening", "Travel"].map(
+                  (v) => (
+                    <option key={v}>{v}</option>
+                  ),
+                )}
+              </Select>
+              <Select
+                label="Season"
+                value={season}
+                onChange={(e) => setSeason(e.target.value)}
+              >
+                <option value="all">All seasons</option>
+                {["Autumn", "Winter", "Spring", "Summer"].map((v) => (
+                  <option key={v}>{v}</option>
+                ))}
+              </Select>
+              <Field
+                label="Contains tag"
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+              />
+              <Field
+                label={`Max total (${state.profile.currency})`}
+                type="number"
+                min="0"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                hint="Excludes unknown and mixed-currency totals"
+              />
+            </div>
+          </details>
+        </section>
+      )}
+      {showFilters && (
+        <div className="feed-count">
+          {visible.length} demo {visible.length === 1 ? "post" : "posts"}
         </div>
-      </details>
-      <div className="feed-count">
-        {visible.length} considered {visible.length === 1 ? "find" : "finds"}
-      </div>
+      )}
       {visible.length ? (
-        <div className="community-grid">
+        <div className="community-grid feed-grid">
           {visible.map((p) => (
             <PostCard key={p.id} post={p} />
           ))}
@@ -585,7 +705,7 @@ function CommunityContent() {
             <Button
               variant="secondary"
               onClick={() => {
-                setFeed("explore");
+                setFeed("for-you");
                 setTopic("all");
                 setStyle("all");
                 setOccasion("all");

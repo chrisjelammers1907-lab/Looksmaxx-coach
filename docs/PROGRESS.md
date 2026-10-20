@@ -59,3 +59,15 @@ Verification completed:
 - The compiled preview is running on port 3000 and the development server on port 5173. Reusable `start_skill` instructions were saved successfully in the environment draft; the install script and unrelated configuration were preserved. Saving does not publish the draft or restart future tasks.
 
 The supplied `https://chatgpt.com/local/...` URL was also attempted in Chromium, but the execution environment's network proxy rejected the connection with `ERR_TUNNEL_CONNECTION_FAILED`. This is separate from the application's inbound Host validation. The authenticated outer visualization UI could not be inspected or reset from this environment. The verified result is the running compiled app and its gateway-forwarded browser journeys, not proof that the platform's generic visualization error has cleared. Refresh the existing visualization to retry it against the running preview; no external deployment or publication was performed.
+
+## Second version — local validation 2026-10-20
+
+Implemented the accepted iteration in `ITERATION_2.md`: Home For You/Following photo/video feed, explicit Categories/AI Coach navigation, eight permanent beginner guides, About us, optional post topics, on-demand filters/details, natural-question sample coaching, portrait processing, account/follower/journal privacy demonstrations, recipient rechecks and stronger green/cream/rose editorial surfaces. Existing topic tools and My Plan remain.
+
+Checkpoints found and fixed: vague photo questions losing conversation context, unnecessary default style tags on untagged posts, low-contrast metadata, access checks in both share entry points, mobile About us navigation and the avatar menu staying open on query-only navigation.
+
+Validation: 15 domain tests passed; the full 58-test Chromium regression run passed at 1440×1000 and 390×844. After the last menu fix, its two targeted desktop/mobile journeys passed again. Typecheck, lint, formatting and the normal production build passed. The final standalone export is separately tested under `/Looksmaxx-coach/`, with its own evidence distinguishing local fixtures from public tests. Desktop/mobile screenshots of Home, Categories, guides, About us, coach and profile were inspected; no horizontal overflow was found on the inspected routes.
+
+Source notes and limitations: reference-based guides are original educational summaries; unvalidated medical protocols and discriminatory claims were not adopted. Current AAD/FDA/NHS and Victoria’s Secret pages were blocked by the workspace proxy; no current clinical validation or live visual-site inspection is claimed. Stock image sources are 400×400 and browser enlargement does not add detail. The 5-second video is a silent licensed-still motion study. Real AI, secure authentication and real social delivery remain future work.
+
+Public deployment verification is recorded separately in WEB_PUBLICATION.md after its own run completes.

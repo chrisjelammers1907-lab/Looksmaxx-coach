@@ -8,6 +8,7 @@ import {
 } from "react";
 import {
   X,
+  BookOpen,
   ArrowUpRight,
   Plus,
   ImagePlus,
@@ -148,11 +149,8 @@ export function SectionTitle({
 export function TopicLinks({ topic }: { topic: string }) {
   return (
     <div className="topic-links">
-      <Link to={`/coach?topic=${topic}`}>
-        <Sparkles size={16} /> Ask your coach <ArrowUpRight size={16} />
-      </Link>
-      <Link to={`/explore?topic=${topic}`}>
-        Explore the community <ArrowUpRight size={16} />
+      <Link to={`/topics/${topic}/guide`}>
+        <BookOpen size={16} /> Beginner’s guide <ArrowUpRight size={16} />
       </Link>
     </div>
   );

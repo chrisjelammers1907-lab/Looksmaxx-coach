@@ -33,7 +33,7 @@ test("copied workout routines remain editable in the personal plan", async ({
   await expect(
     page.getByRole("tab", { name: "Public demo posts" }),
   ).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator(".post-card")).toHaveCount(2);
+  await expect(page.locator(".post-card")).toHaveCount(3);
 });
 test("corrupt images are rejected and generated inspiration is excluded from progress", async ({
   page,
@@ -75,28 +75,33 @@ test("a private worn-outfit photo never enters a public post preview", async ({
   await expect(page.getByText("Real worn photo · Private")).toBeVisible();
   await page.getByRole("link", { name: "Preview & share outfit" }).click();
   await page
-    .getByLabel("Post text (fictional demo content only)")
+    .getByLabel("Caption")
     .fill("An explicitly fictional outfit reference.");
   await page.getByLabel("Audience", { exact: true }).selectOption("public");
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();
-  expect(
-    await page
-      .getByRole("dialog")
-      .locator("img")
-      .evaluateAll((imgs) =>
-        imgs.some((img) => img.getAttribute("src")?.startsWith("data:")),
-      ),
-  ).toBe(false);
+  await expect(
+    page.getByRole("dialog").locator('[data-media-origin="editorial"]'),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("dialog").locator('[data-media-origin="private-upload"]'),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("dialog").getByAltText("Real worn-outfit private preview"),
+  ).toHaveCount(0);
 });
 test("recipient access is rechecked after a public post becomes private", async ({
   page,
 }) => {
-  await start(page, "/explore?compose=new");
-  await page.getByLabel("Post title").fill("A temporary public example");
+  await start(page, "/profile");
+  await page.getByLabel("Account visibility").selectOption("public");
+  await go(page, "/explore?compose=new");
   await page
-    .getByLabel("Post text (fictional demo content only)")
+    .getByLabel("Post title (optional)")
+    .fill("A temporary public example");
+  await page
+    .getByLabel("Caption")
     .fill("This fictional example will become private.");
   await page.getByLabel("Audience", { exact: true }).selectOption("public");
   await page

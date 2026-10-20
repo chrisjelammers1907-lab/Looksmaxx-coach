@@ -20,3 +20,7 @@ CHARETT is an English-language, responsive local demonstration for all genders. 
 Only clothing theme, onboarding completion and fictional social interactions may persist in localStorage. Personal profile edits, routines, uploads, wardrobe edits, logs, coach and messages stay in memory until reload. All newly created posts remain memory-only; private photos cannot be attached to demo posts. This is a conservative demo boundary, not account security. No paid APIs, real auth, payments, live shopping, image analysis/generation, or network messaging.
 
 Production integrations are recorded in PRODUCTION_ROADMAP.md. The attached brief remains the authoritative complete requirement list.
+
+## Second-version update — 2026-10-20
+
+The accepted changes are recorded in [ITERATION_2.md](ITERATION_2.md). Home is now the For You/Following media feed; the eight-topic launchpad lives at Categories. Navigation explicitly includes AI Coach. Every category has a permanent beginner-guide entry and the public About us page explains the product and demo. Topic selection and extra post fields are optional; the coach follows the message without a topic selector. Forest green, warm cream and dusty rose provide stronger section contrast while retaining typography and clothing themes. Account/journal audiences and recipient checks remain local demonstrations; original uploaded photos/videos remain private. All prior wardrobe, routine, training, nutrition, comparison, messaging and social journeys remain selected.

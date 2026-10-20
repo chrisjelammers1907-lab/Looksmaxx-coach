@@ -8,9 +8,13 @@ import "@fontsource/cormorant-garamond/latin-400.css";
 import "@fontsource/cormorant-garamond/latin-500.css";
 import "@fontsource/cormorant-garamond/latin-400-italic.css";
 import "./styles.css";
+import "./v2.css";
 import { DemoProvider } from "./lib/store";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
+import Categories from "./pages/Categories";
+import Guide from "./pages/Guide";
+import About from "./pages/About";
 import Topic from "./pages/Topic";
 import Clothing from "./pages/Clothing";
 import Community from "./pages/Community";
@@ -25,6 +29,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="about" element={<About />} />
+            <Route path="topics/:topic/guide" element={<Guide />} />
             <Route path="topics/clothing" element={<Clothing />} />
             <Route path="topics/:topic" element={<Topic />} />
             <Route path="explore" element={<Community />} />

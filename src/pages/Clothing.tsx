@@ -97,6 +97,7 @@ export default function ClothingPage() {
           </Link>
         }
       />
+      <TopicLinks topic="clothing" />
       <div className="style-switcher" aria-label="Clothing theme">
         {themes.map((t) => (
           <button
@@ -408,7 +409,7 @@ export default function ClothingPage() {
           </p>
         </>
       )}
-      <TopicLinks topic="clothing" />
+
       {editing && (
         <Modal
           title={

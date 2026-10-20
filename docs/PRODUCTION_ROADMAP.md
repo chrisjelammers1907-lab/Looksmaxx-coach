@@ -41,3 +41,7 @@ Validate product use on the responsive web first. Then assess a PWA and/or a nat
 ## Release gates and backlog
 
 Real accounts must pass authorization tests for every audience and rich-card transition. Media deletion, abuse/report handling, quotas, billing caps and restore tests must pass before launch. Human moderation capacity and provider rates need explicit approval. Trademark/domain availability for CHARETT is unverified. Additional styles, wear analytics, advanced training programming, live integrations and subscriptions remain backlog decisions, not automatic scope expansion.
+
+## Second-version additions
+
+Before real photo/video publishing: implement authenticated, server-enforced account and per-entry audiences; follower-request approval; access-checked media URLs and shared cards; private originals; consent-based publication of explicit derivatives; upload limits, virus checks, video transcoding/posters/captions, content moderation and deletion of derivatives. Replace sample feed ordering with a transparent ranking policy and user controls. The keyword-based demo coach must be replaced by a real service with consented context and a curated, reviewed knowledge source; guide provenance does not automatically validate the uploaded PDFs.

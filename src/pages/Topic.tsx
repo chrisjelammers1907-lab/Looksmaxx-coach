@@ -103,9 +103,7 @@ function TopicContent() {
                 </>
               )}
             </h2>
-            <Link className="text-link" to={`/coach?topic=${topic.id}`}>
-              A little guidance from your coach <ArrowUpRight size={17} />
-            </Link>
+            <p className="topic-purpose">{topic.subtitle}</p>
           </div>
           <img
             src={asset(topic.image)}
@@ -186,9 +184,6 @@ function TopicContent() {
                         ? "This is a personal care space, not a clinical assessment. We do not diagnose dental conditions or predict whitening results."
                         : "Start from your preferences. There is no single look, shape or scent that works for everyone."}
                   </p>
-                  <Link to={`/coach?topic=${topic.id}`}>
-                    Discuss with the demo coach <ArrowUpRight size={14} />
-                  </Link>
                 </div>
               </div>
               {topic.id === "skincare" && (

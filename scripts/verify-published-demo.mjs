@@ -32,19 +32,20 @@ const browser = await chromium.launch({
   args: ["--no-sandbox"],
 });
 try {
-  let response;
-  for (let attempt = 0; attempt < 12; attempt++) {
-    response = await globalThis.fetch(`${base}/`, {
-      signal: globalThis.AbortSignal.timeout(15000),
-    });
-    if (response.status === 200 || fixture) break;
-    if (![404, 502, 503].includes(response.status)) break;
-    await new Promise((resolve) => globalThis.setTimeout(resolve, 5000));
-  }
-  expect(response.status).toBe(200);
-  const received = Buffer.from(await response.arrayBuffer());
   const expected = fs.readFileSync("demo/CHARETT-demo.html");
   const digest = (data) => createHash("sha256").update(data).digest("hex");
+  let received, status;
+  for (let attempt = 0; attempt < 24; attempt++) {
+    const response = await globalThis.fetch(`${base}/`, {
+      signal: globalThis.AbortSignal.timeout(15000),
+    });
+    status = response.status;
+    received = Buffer.from(await response.arrayBuffer());
+    if (status === 200 && digest(received) === digest(expected)) break;
+    if (fixture || ![200, 404, 502, 503].includes(status)) break;
+    await new Promise((resolve) => globalThis.setTimeout(resolve, 5000));
+  }
+  expect(status).toBe(200);
   expect(digest(received)).toBe(digest(expected));
   evidence.htmlSha256 = digest(received);
   for (const [name, width, height] of [
@@ -72,9 +73,23 @@ try {
       (await page.goto(`${base}/`, { waitUntil: "networkidle" })).status(),
     ).toBe(200);
     await page.getByRole("button", { name: "Skip for now" }).click();
-    await expect(page.locator("h1")).toHaveText("Your everyday, elevated.");
+    await expect(page.locator("h1")).toHaveText("Your daily edit.");
     await page.evaluate(() => globalThis.document.fonts.ready);
-    await page.screenshot({ path: `${output}/${name}.png`, fullPage: true });
+    await expect(
+      page.getByRole("tab", { name: "For You", exact: true }),
+    ).toHaveAttribute("aria-selected", "true");
+    await expect(
+      page.locator(".feed-grid .post-media img").first(),
+    ).toBeVisible();
+    const clip = page.locator(".feed-grid video").first();
+    await clip.scrollIntoViewIfNeeded();
+    await clip.evaluate((node) => node.play());
+    await expect
+      .poll(() => clip.evaluate((node) => node.currentTime))
+      .toBeGreaterThan(0.15);
+    await clip.evaluate((node) => node.pause());
+    await page.evaluate(() => globalThis.scrollTo(0, 0));
+    await page.screenshot({ path: `${output}/${name}.png`, fullPage: false });
     const nav = page.getByRole("navigation", {
       name: name === "mobile" ? "Mobile navigation" : "Main navigation",
       exact: true,
@@ -89,7 +104,8 @@ try {
       "fragrance",
       "photos",
     ]) {
-      await page.locator(`main a[href="#/topics/${topic}"]`).click();
+      await nav.getByRole("link", { name: "Categories", exact: true }).click();
+      await page.locator(`main a[href="#/topics/${topic}"]`).first().click();
       expect(new URL(page.url()).hash).toBe(`#/topics/${topic}`);
       await expect(page.locator("h1")).toBeVisible();
       expect((await page.reload()).status()).toBe(200);
@@ -101,9 +117,18 @@ try {
             globalThis.innerWidth,
         ),
       ).toBe(false);
+      await page
+        .locator(".topic-links")
+        .getByRole("link", { name: /Beginner’s guide/ })
+        .click();
+      await expect(
+        page.getByRole("heading", { name: "Where this guide comes from" }),
+      ).toBeVisible();
+      expect((await page.reload()).status()).toBe(200);
       await nav.getByRole("link", { name: "Home", exact: true }).click();
     }
-    await page.locator('main a[href="#/topics/clothing"]').click();
+    await nav.getByRole("link", { name: "Categories", exact: true }).click();
+    await page.locator('main a[href="#/topics/clothing"]').first().click();
     await page.getByRole("button", { name: /Dark casual/ }).click();
     await page.getByRole("tab", { name: "My wardrobe", exact: true }).click();
     await page.getByRole("button", { name: "Add item" }).click();
@@ -114,7 +139,7 @@ try {
     await expect(
       page.getByRole("heading", { name: "Fictional publication test item" }),
     ).toBeVisible();
-    await nav.getByRole("link", { name: "Explore", exact: true }).click();
+    await nav.getByRole("link", { name: "Home", exact: true }).click();
     await page
       .getByRole("link", { name: "The art of a simple Sunday", exact: true })
       .click();
@@ -138,9 +163,8 @@ try {
       }),
     ).toBeVisible();
     await nav.getByRole("link", { name: "Home", exact: true }).click();
-    await page
-      .getByRole("link", { name: "Meet your personal coach", exact: true })
-      .click();
+    await nav.getByRole("link", { name: "AI Coach", exact: true }).click();
+    await expect(page.getByRole("combobox")).toHaveCount(0);
     await page
       .getByLabel("Ask your demo coach")
       .fill("Help me simplify my routine");
@@ -153,12 +177,27 @@ try {
         exact: true,
       }),
     ).toBeVisible();
-    await nav.getByRole("link", { name: /profile/i }).click();
+    await page.getByLabel("Open profile and menu").click();
+    await page
+      .getByRole("navigation", { name: "Profile menu" })
+      .getByRole("link", { name: "My profile", exact: true })
+      .click();
+    await expect(page.getByLabel("Account visibility")).toHaveValue("private");
+    await page.getByLabel("Open profile and menu").click();
+    await page
+      .getByRole("navigation", { name: "Profile menu" })
+      .getByRole("link", { name: "About us", exact: true })
+      .click();
+    await expect(page.locator("h1")).toContainText("A little intention.");
     await expect(page.locator("h1")).toBeVisible();
     expect(errors).toEqual([]);
     evidence.results.push({
       viewport: name,
       eightTopics: true,
+      eightGuides: true,
+      feedVideo: true,
+      aboutPage: true,
+      optionalCoachTopic: true,
       routeReloads: true,
       wardrobeEdit: true,
       comments: true,

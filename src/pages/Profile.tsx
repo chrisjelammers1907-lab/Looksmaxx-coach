@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
   ArrowUpRight,
   LockKeyhole,
@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
-import { topicName } from "../lib/domain";
+import { topicName, mayViewPost } from "../lib/domain";
 import { FollowButton, PostCard } from "../components/Social";
 import {
   Area,
@@ -30,7 +30,9 @@ function ProfileContent() {
   const { state, update, toast, reset } = useDemo();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(state.profile);
-  const [tab, setTab] = useState("posts");
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState(params.has("saved") ? "saved" : "posts");
+  const [publicPreview, setPublicPreview] = useState(false);
   const [confirm, setConfirm] = useState("");
   const creator = creators.find((c) => c.id === id);
   const own = !id;
@@ -100,7 +102,10 @@ function ProfileContent() {
             {own && (
               <span>
                 <LockKeyhole size={12} />
-                Private test profile
+                {state.profile.visibility === "private"
+                  ? "Private account"
+                  : "Public account"}{" "}
+                · demo
               </span>
             )}
           </div>
@@ -149,6 +154,139 @@ function ProfileContent() {
           isolation. Reload clears personal edits; theme and fictional social
           preferences may persist locally.
         </Notice>
+      )}
+      {own && (
+        <section className="privacy-panel" aria-label="Account privacy">
+          <div>
+            <span className="eyebrow">YOUR AUDIENCE, YOUR CHOICE</span>
+            <h2>Account privacy</h2>
+            <p>
+              Account visibility and journal visibility are separate. Your
+              journal, original uploads, routines and intake stay private until
+              a separate, explicit action.
+            </p>
+          </div>
+          <div>
+            <Select
+              label="Account visibility"
+              value={state.profile.visibility}
+              onChange={(e) =>
+                update((s) => ({
+                  ...s,
+                  profile: {
+                    ...s.profile,
+                    visibility: e.target.value as "public" | "private",
+                  },
+                }))
+              }
+            >
+              <option value="private">Private · approved followers</option>
+              <option value="public">
+                Public · explicitly shared demo posts
+              </option>
+            </Select>
+            <Button variant="secondary" onClick={() => setPublicPreview(true)}>
+              Preview as a visitor
+            </Button>
+            <p className="small-text">
+              Local privacy simulation, not secure authentication. No real
+              follow requests or uploads are sent.
+            </p>
+          </div>
+          {state.profile.visibility === "private" && (
+            <div className="follow-request-panel">
+              <h3>Follower requests · demo</h3>
+              {state.incomingRequests.length ? (
+                state.incomingRequests.map((id) => (
+                  <div className="list-row" key={id}>
+                    <span>
+                      {creators.find((c) => c.id === id)?.name} · fictional
+                    </span>
+                    <Button
+                      variant="secondary small"
+                      onClick={() =>
+                        update((s) => ({
+                          ...s,
+                          approvedFollowers: [
+                            ...new Set([...s.approvedFollowers, id]),
+                          ],
+                          incomingRequests: s.incomingRequests.filter(
+                            (v) => v !== id,
+                          ),
+                        }))
+                      }
+                    >
+                      Accept request
+                    </Button>
+                    <Button
+                      variant="ghost small"
+                      onClick={() =>
+                        update((s) => ({
+                          ...s,
+                          incomingRequests: s.incomingRequests.filter(
+                            (v) => v !== id,
+                          ),
+                        }))
+                      }
+                    >
+                      Decline
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <p className="small-text">No pending requests.</p>
+              )}
+              <p className="small-text">
+                {state.approvedFollowers.length} approved fictional follower(s).
+                Only approved recipients can open restricted shared cards.
+              </p>
+            </div>
+          )}
+        </section>
+      )}
+      {publicPreview && (
+        <Modal
+          title="Visitor preview · simulated"
+          onClose={() => setPublicPreview(false)}
+        >
+          <p className="eyebrow">@{state.profile.handle}</p>
+          {state.profile.visibility === "private" ? (
+            <div className="empty">
+              <LockKeyhole />
+              <h3>This account is private.</h3>
+              <p>
+                Unapproved visitors cannot see posts. Personal uploads and
+                journal originals remain private.
+              </p>
+            </div>
+          ) : (
+            <>
+              <h3>{state.profile.name}</h3>
+              <p>{state.profile.bio}</p>
+              <p>
+                Only explicitly public fictional posts appear below. Personal
+                goals, intake, routines, saves and original uploads are
+                excluded.
+              </p>
+              {posts
+                .filter((p) =>
+                  mayViewPost(
+                    p,
+                    "visitor",
+                    state.blocked,
+                    state.profile.visibility,
+                    state.approvedFollowers,
+                  ),
+                )
+                .map((p) => (
+                  <div className="visitor-post" key={p.id}>
+                    <strong>{p.title}</strong>
+                    <p>{p.body}</p>
+                  </div>
+                ))}
+            </>
+          )}
+        </Modal>
       )}
       <Tabs
         value={tab}
@@ -463,7 +601,7 @@ function ProfileContent() {
           <p>
             {confirm === "reset"
               ? "This removes your session content and resets locally saved fictional interactions and clothing themes."
-              : "This removes profile details, routines, private photos, collection edits, notes, logs, coach conversations and messages from this session. Fictional public content remains."}
+              : "This removes profile details, routines, private photos, your posts, collection edits, notes, logs, coach conversations and messages from this session. Fictional public content remains."}
           </p>
           <Button
             variant="danger"
@@ -510,5 +648,6 @@ function ProfileContent() {
 
 export default function ProfilePage() {
   const { id } = useParams();
-  return <ProfileContent key={id || "you"} />;
+  const [params] = useSearchParams();
+  return <ProfileContent key={(id || "you") + params.toString()} />;
 }

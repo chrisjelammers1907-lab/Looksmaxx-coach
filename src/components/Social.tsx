@@ -24,6 +24,7 @@ import {
 } from "../lib/domain";
 import { Button, Field, Modal, Notice, Select } from "./ui";
 import { ItemBreakdown } from "./Items";
+import { PostMedia } from "./FeedMedia";
 export function FollowButton({ creator }: { creator: string }) {
   const { state, update } = useDemo();
   if (creator === "you") return null;
@@ -52,21 +53,25 @@ export function ShareDialog({
   const [text, setText] = useState("Thought you might like this.");
   const navigate = useNavigate();
   const post = state.posts.find((p) => p.id === card.id);
-  const accessible = maySharePost(post, state.blocked);
+  const accessible = maySharePost(
+    post,
+    state.blocked,
+    state.profile.visibility,
+    recipient,
+    state.approvedFollowers,
+  );
   return (
     <Modal title="Share a little inspiration" onClose={onClose}>
       <Notice>
         SIMULATED PRIVATE MESSAGING · No real recipient, delivery or secure
-        communication. Public demo posts are accessible; private items and
-        follower-only posts are not exposed.
+        communication. Recipient access is checked again when a linked card is
+        opened. Personal uploaded originals stay private.
       </Notice>
       {accessible ? (
         <>
           <div className="share-card-preview">
             <strong>{post?.title}</strong>
-            <span>
-              Public post · Visible to the selected fictional recipient
-            </span>
+            <span>Visible to this fictional recipient · Local demo only</span>
           </div>
           <form
             onSubmit={(e) => {
@@ -114,9 +119,23 @@ export function ShareDialog({
         </>
       ) : (
         <>
+          <Select
+            label="Check recipient access"
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+          >
+            {creators
+              .filter((c) => !state.blocked.includes(c.id))
+              .map((c) => (
+                <option value={c.id} key={c.id}>
+                  {c.name} · fictional
+                </option>
+              ))}
+          </Select>
           <p>
-            This {card.kind} is private, restricted, removed or unavailable. A
-            linked card would not give the recipient access.
+            This {card.kind} is private, restricted, removed or unavailable to
+            the selected recipient. A linked card would not give the recipient
+            access.
           </p>
           <p>
             To share your own content, create a public post and review exactly
@@ -145,7 +164,16 @@ export function LinkedCard({
 }) {
   const { state } = useDemo();
   const post = state.posts.find((p) => p.id === card.id);
-  if (!post || !mayViewPost(post, viewer, state.blocked))
+  if (
+    !post ||
+    !mayViewPost(
+      post,
+      viewer,
+      state.blocked,
+      state.profile.visibility,
+      state.approvedFollowers,
+    )
+  )
     return (
       <div className="linked-card unavailable">
         <strong>Content unavailable</strong>
@@ -157,7 +185,7 @@ export function LinkedCard({
       <img src={asset(post.image)} alt="" />
       <div>
         <span>
-          {topicName[post.topic]} · {post.audience}
+          {topicName[post.topic] || "Community"} · {post.audience}
         </span>
         <strong>{post.title}</strong>
         <small>
@@ -185,6 +213,8 @@ export function PostCard({
   const creator = creators.find((c) => c.id === post.author);
   const own = post.author === "you";
   const copy = () => {
+    const copiedTopic = post.topic;
+    if (!copiedTopic) return;
     update((s) => {
       const copied = post.items.map((i) => ({
         ...i,
@@ -220,7 +250,7 @@ export function PostCard({
                 ...s.routines,
                 {
                   id: uid(),
-                  topic: post.topic,
+                  topic: copiedTopic,
                   title: `${post.title} — my copy`,
                   time: "Anytime",
                   schedule: "Review before use",
@@ -255,16 +285,10 @@ export function PostCard({
         </Link>
         <FollowButton creator={post.author} />
       </div>
-      <Link className="post-image" to={`/post/${post.id}`}>
-        <img
-          src={asset(post.image)}
-          alt={`${post.title} — editorial reference, not a photo of its fictional creator`}
-        />
-        <span className="image-tag">Editorial reference · {post.audience}</span>
-      </Link>
+      <PostMedia post={post} />
       <div className="post-body">
         <div className="eyebrow">
-          {topicName[post.topic]}{" "}
+          {topicName[post.topic] || "Community"}{" "}
           {post.style && ` / ${post.style.replace("-", " ")}`}
         </div>
         <Link to={`/post/${post.id}`}>
@@ -346,12 +370,14 @@ export function PostCard({
               Fictional community content. Make your own editable copy and
               review suitability. No treatment recommendation is implied.
             </Notice>
-            <Button variant="secondary" onClick={copy}>
-              <Copy size={15} />
-              {post.topic === "clothing"
-                ? "Copy outfit to my wardrobe"
-                : "Copy routine / collection"}
-            </Button>
+            {post.topic && (post.items.length > 0 || post.steps.length > 0) && (
+              <Button variant="secondary" onClick={copy}>
+                <Copy size={15} />
+                {post.topic === "clothing"
+                  ? "Copy outfit to my wardrobe"
+                  : "Copy routine / collection"}
+              </Button>
+            )}
             <h4>Conversation</h4>
             {(state.comments[post.id] || []).map((c) => (
               <div className="comment" key={c.id}>

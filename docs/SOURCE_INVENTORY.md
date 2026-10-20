@@ -46,3 +46,11 @@ Four stock portraits are bundled from the MIT-licensed [Creative Tim Paper Kit 2
 Eight original SVG still-life/product illustrations were created for this demo. They are not photos of real products, AI outputs, or achieved results. Fontsource packages supply Cormorant Garamond and DM Sans with their bundled open font licenses. No runtime image/font download is required.
 
 Direct access to images.unsplash.com and commercial pricing pages was rejected by the environment's egress proxy (HTTP 403). Public assets and official Cloudflare pricing source were available through the platform's GitHub route. No verification or proxy access controls were bypassed. Unused network draft additions are removed in the final reusable environment configuration.
+
+## Second-version content use — 2026-10-20
+
+The original editorial guides in `src/lib/guides.ts` now visibly map the supplied reference material to skincare, clothing/colour comparisons, hair, brows/lashes/grooming and progress journaling. Skincare, makeup, brow and lash extracts were read in detail for their practical topics and unsupported claims. The remaining files were inspected for subject, anecdotes, treatment instructions and claims. This remains a content review, not a comprehensive scientific/medical validation. Raw text and images were not imported.
+
+Examples deliberately excluded: mixing sunscreen with other products as a validated protection method; hair dye/heated tools near eyes; oil-based lash-growth promises; universal aesthetic or racial hierarchies; drug recipes/doses, sourcing and guaranteed treatment outcomes. The medication PDFs are acknowledged in the guide source notes, not converted into beginner protocols. No dedicated smile-care or fragrance reference was supplied; those guides clearly state that their general educational/editorial content is original.
+
+AAD, FDA and NHS resources are listed as further reading. Direct current-page verification is blocked by this cloud egress policy, so no live evidence review or medical endorsement is claimed. The Victoria’s Secret homepage was also blocked; no claim to inspect its current layout or reuse its assets is made. The implementation follows the owner’s requested editorial/photo direction and CHARETT’s existing brand tokens.

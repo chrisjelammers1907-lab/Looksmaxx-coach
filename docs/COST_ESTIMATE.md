@@ -52,3 +52,9 @@ Per-user monthly AI/search cost:
 An all-in numeric total is intentionally **unconfirmed** because current model, image, search and authentication rates were not accessible. Check [OpenAI official API pricing](https://openai.com/api/pricing/), the selected search provider and [Supabase pricing](https://supabase.com/pricing) or another managed auth quote before filling the variables. Do not substitute guessed or outdated rates. No provider account or subscription was created.
 
 Economical starting choices: keep AI disabled for a small private beta; bundle a shared database/storage plan; cap context; resize images with consent; make image generation opt-in; cache permitted shopping results; enforce per-user quotas and hard spend alerts. Decide the exact provider and budget only after rate verification and a measured beta.
+
+## Video scope added in the second version
+
+The subtotals above model the original image-based assumptions and are not a priced production video service. For an illustrative beta, 5 uploads/user/month × 20 seconds × 2 Mbps is approximately 25 MB/user/month; 12 months of retention adds 0.3 GB/user (3 / 30 / 300 GB at 10 / 100 / 1,000 users). At 200 complete 5 MB clip plays/user/month, delivery adds roughly 1 GB/user/month before caching or adaptive bitrate savings. These are usage assumptions, not observed production usage.
+
+Apply the verified storage rate to total retained image-plus-video bytes, sharing the same free allowance once. Add separately quoted transcoding, moderation, authenticated delivery/CDN and any streaming-service fees; do not present the old infrastructure subtotal as an all-in video budget. No service, paid plan or account was purchased for this demo.

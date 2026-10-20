@@ -8,6 +8,14 @@ A polished English-language personal appearance and lifestyle **interactive demo
 
 The published website was verified without a login in Chrome at desktop and mobile sizes. All eight topics, route reloads, wardrobe editing, comments, simulated linked-card messaging, coach changes and profile navigation passed without browser errors. See [publication evidence](docs/WEB_PUBLICATION.md). Only fictional demo content is included; personal edits and uploads remain local to the current tab as described below.
 
+## Second-version experience
+
+Home is the **For You / Following** photo-and-video feed. **Categories** explains all eight topic tools and gives permanent access to a beginner guide in each. **AI Coach**, **My Plan** and **Messages** are main navigation items. Profile/private saves and **About us** are accessible from the avatar menu.
+
+The coach has no topic filter; clearly labelled sample replies use the question and session context. Post topics and extra metadata are optional. Search and refinement are hidden until requested. Feed photos are proportionally framed to 1080 × 1350–1920, and private test videos support MP4/WebM within the displayed limits. Personal uploads remain private; only fictional editorial examples can be shared in public demo posts. Account visibility and each journal audience preference are separate local simulations.
+
+Read [the accepted feedback and review gates](docs/ITERATION_2.md). The guides visibly explain how the supplied reference files were used, distinguish unsupported claims, and provide official further-reading links. They are general education, not treatment protocols or validated personal medical advice.
+
 ## Run
 
 Use Node **24.19.0** (`.nvmrc`) and npm. No API keys, backend, database, payment account or secrets are needed.
@@ -42,16 +50,18 @@ npm run build
 npm run preview -- --port 4173
 ```
 
+For the standalone Pages export, run `node scripts/build-standalone.mjs`; it regenerates `demo/CHARETT-demo.html` with embedded assets and hash routes.
+
 For future static hosting, serve `dist/` and rewrite unknown app routes to `index.html`. No deployment or publication is performed by these commands.
 
 ## Try the selected journeys
 
 1. Complete or skip the two-step intake. Edit shared preferences in **My profile**. The starter profile is fictional; it does not contain the owner's facts.
-2. Explore all eight topics from Home. Add/edit/reorder/delete owned products; create AM/PM routines and weekly schedules. Hair offers saved comparisons and a labelled visualization placeholder. Grooming, smile care and fragrance have editable personal collections and notes.
+2. Explore all eight topics from Categories. Add/edit/reorder/delete owned products; create AM/PM routines and weekly schedules. Hair offers saved comparisons and a labelled visualization placeholder. Grooming, smile care and fragrance have editable personal collections and notes.
 3. Open **Clothing & Style**. Switch Old money / Dark casual / Minimalist; each theme stays within that entire section and persists locally. Add wardrobe items with optional private photos, build/edit/save/duplicate outfits, inspect known/unknown/mixed-currency prices, and optionally attach a private real worn-outfit photo.
-4. **Preview & share outfit** creates a separate fictional post draft with an explicit audience. The preview shows the author identity, public text, tags, editorial reference and structured item details. Private uploaded images are excluded. Do not enter real personal routines into public demo posts.
+4. For public sharing, make the demo account public in **My profile → Account privacy**, or approve the fictional recipient as a follower of the private account. **Preview & share outfit** creates a separate fictional post draft with an explicit audience. The preview shows the author identity, public text, tags, editorial reference and structured item details. Private uploaded images are excluded. Do not enter real personal routines into public demo posts.
 5. Explore posts, filter by topic/style/occasion/season/tags/budget, follow fictional creators, like, privately save, comment, and copy outfits or routines. Copies are independent editable private content, never an automatic medical recommendation. All copied topic routines are accessible in **My plan → private ritual library**.
-6. Share a public post/outfit/product/routine reference as a rich card in **Messages**. Simulated requests can be accepted/declined; conversations can be reported or blocked. Deleted or newly private content becomes unavailable to recipients. No message leaves the browser.
+6. Share an accessible editorial post/outfit/product/routine reference as a rich card in **Messages**. Simulated requests can be accepted/declined; conversations can be reported or blocked. Deleted or newly private content becomes unavailable to recipients. No message leaves the browser.
 7. Log a workout, edit its sets/reps/load, review history/volume, edit the training week, log food estimates and change nutrition targets. Food sources are manually entered; no food database or individualized target calculation is claimed.
 8. Add two private real progress photos of the same topic, date/tag them and use the comparison slider. Edited/generated inspiration is a separate category excluded from progress comparisons. Delete either photo or reload to remove session content.
 9. Ask the **simulated coach**, optionally attach a private photo, inspect a proposed goal and apply it intentionally. Sample feedback never claims to analyze the photo. Existing routines never change silently.

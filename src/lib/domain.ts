@@ -33,15 +33,36 @@ export function mayViewPost(
   post: Post | undefined,
   viewer = "you",
   blocked: string[] = [],
+  accountVisibility: "public" | "private" = "public",
+  approvedFollowers: string[] = [],
 ) {
-  return (
-    !!post &&
-    !blocked.includes(post.author) &&
-    (post.audience === "public" || post.author === viewer)
-  );
+  if (!post || blocked.includes(post.author)) return false;
+  if (post.author === viewer) return true;
+  if (post.media?.origin === "private-upload" || post.audience === "private")
+    return false;
+  if (
+    post.author === "you" &&
+    (accountVisibility === "private" || post.audience === "followers")
+  )
+    return approvedFollowers.includes(viewer);
+  return post.audience === "public";
 }
-export function maySharePost(post: Post | undefined, blocked: string[] = []) {
-  return !!post && !blocked.includes(post.author) && post.audience === "public";
+export function maySharePost(
+  post: Post | undefined,
+  blocked: string[] = [],
+  accountVisibility: "public" | "private" = "public",
+  recipient?: string,
+  approvedFollowers: string[] = [],
+) {
+  if (!post || post.audience === "private") return false;
+  if (post.media?.origin === "private-upload") return false;
+  return mayViewPost(
+    post,
+    recipient || "visitor",
+    blocked,
+    accountVisibility,
+    approvedFollowers,
+  );
 }
 export function workoutVolume(sets: number, reps: number, weight: number) {
   return sets * reps * weight;
@@ -53,7 +74,7 @@ export const dateLabel = (date: string) =>
     year: "numeric",
   });
 export const asset = (key: string) =>
-  `/assets/${key}.${["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
+  `/assets/${key}.${key === "motion" ? "mp4" : ["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
 export const topicName: Record<string, string> = {
   skincare: "Skincare",
   clothing: "Clothing & Style",
