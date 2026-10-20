@@ -1,9 +1,13 @@
-# CHARETT web demo
+# CHARETT public demo
 
-Generated static website. Serve this branch from its root with GitHub Pages.
-The app, licensed stock images and fonts are embedded in index.html.
-Hash routes support navigation and reloads without server rewrites.
-Only fictional demo content is included. AI and social activity are simulations.
-No personal PDFs, photos, routines, credentials or original build brief are published here.
+This branch serves the self-contained CHARETT website from its root.
+Home is For You/Following; Categories contains eight tools and beginner guides.
+AI Coach, My Plan and Messages are available in navigation; About us is public.
 
-Website publication and anonymous browser validation remain unverified.
+Only fictional demo content and licensed editorial assets are embedded.
+No owner photos, personal routines, PDFs, original brief or credentials are included.
+AI, social activity, accounts and messaging remain labelled simulations.
+
+Source and documentation: demo/charett-preview branch.
+The Verify CHARETT publication workflow checks the actual public URL in Chrome
+without a login and records results on charett-publication-status.
