@@ -9,6 +9,9 @@
       "eightTopics": true,
       "eightGuides": true,
       "feedVideo": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
       "aboutPage": true,
       "optionalCoachTopic": true,
       "routeReloads": true,
@@ -24,6 +27,9 @@
       "eightTopics": true,
       "eightGuides": true,
       "feedVideo": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
       "aboutPage": true,
       "optionalCoachTopic": true,
       "routeReloads": true,
@@ -35,5 +41,5 @@
       "errors": []
     }
   ],
-  "htmlSha256": "29d80ee85a5e99d0c29e0c8f943c0f336ebc5359f48f03da84165518d22aee81"
+  "htmlSha256": "5fde55df6c5f4979b7e779764bba8e094710e541ca71498c31fc2677075deb25"
 }
