@@ -1,43 +1,43 @@
-# CHARETT public website — publication status
-
-**22 October 2026:** the third-iteration editorial design and post sounds are complete and locally checked. Publishing the update is temporarily blocked by rejected GitHub authentication. The public evidence below verifies the **second version**, not the new local export. See ITERATION_3.md and verification/iteration-3-local.json. Do not tell visitors the new design/sounds are live until public verification succeeds.
+# CHARETT public website — editorial design and post sounds
 
 **https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/**
 
-The second version is live. Existing open tabs should be refreshed to load it. Choose **Skip for now** or complete the optional introduction. No installation or GitHub login is needed.
+The third iteration is live. Refresh an existing tab to load the new design. No installation or GitHub login is needed. Choose **Skip for now** or complete the optional introduction.
 
 ## Public verification
 
-GitHub Actions run `39496395487` completed successfully on **20 October 2026 at 22:58 CEST** (20:58 UTC).
+GitHub Actions run `39843465689` completed successfully on **22 October 2026 at 21:50 CEST** (19:50 UTC).
 
-- Verified source commit: `d34a1c7c84f9249797616fa6ae1d775022a03922`.
-- Pages content commit: `fdab8857b858288997b3837a5c87f0370d0c9ffd`, branch `gh-pages`, root `/`.
-- Evidence commit: `33ca97ab9837314b1d8ab5e2fd42649a536ce261`, branch `charett-publication-status`.
-- The actual unauthenticated HTTPS HTML matched the intended standalone file byte for byte: SHA-256 `29d80ee85a5e99d0c29e0c8f943c0f336ebc5359f48f03da84165518d22aee81`.
-- Fresh Chrome contexts without a login passed at 1440×1000 and 390×844, including mobile touch emulation.
-- Both exercised For You, video playback, all eight category routes and their beginner guides, route reloads, wardrobe editing, comments, simulated linked-card sharing and round trips, reviewed coach changes, plan updates, account/profile navigation and About us.
-- No browser, HTTP or failed-request errors occurred. Actual public-page desktop and mobile screenshots were retrieved and visually inspected.
+- Verified source commit: `351b11755f6601fb6a96ab3c230c22898a8f9917`.
+- Pages content commit: `02f599b9f7b8084b98127879027ce51aaa62e8d0`, branch `gh-pages`, root `/`.
+- Evidence commit: `3231dbc36d265934ae9715bb5301242b452cf2ec`, branch `charett-publication-status`.
+- The actual unauthenticated HTTPS HTML matched the intended standalone file byte for byte: SHA-256 `5fde55df6c5f4979b7e779764bba8e094710e541ca71498c31fc2677075deb25`.
+- Fresh Chrome contexts without a login passed at 1440 × 1000 and 390 × 844, including mobile touch emulation.
+- Both exercised For You, video playback with an attached sound, photo-sound playback, choosing/previewing/attaching a sound to a new private post and setting its volume, all eight category routes/guides, route reloads, wardrobe editing, comments, linked-card sharing and round trips, reviewed coach changes, plan updates, profile navigation and About us.
+- No browser, HTTP or failed-request errors occurred. The actual public screenshots were retrieved and visually inspected.
 
-The initial configuration snapshot reported Pages as `building`. The verifier waited until the public HTML matched the new export before exercising it; the actual served bytes and successful browser journeys establish which version was checked. The separate browser report records `localFixture: false` and `publicBrowserVerified: true`.
+The initial configuration snapshot reported Pages as `building`. The verifier waited until the public HTML matched the intended export before exercising it. The browser report records `localFixture: false` and `publicBrowserVerified: true`.
 
-[Public verification record](verification/iteration-2-public.json), [desktop screenshot](screenshots/home-desktop.png), [mobile screenshot](screenshots/home-mobile.png).
+[Public verification record](verification/iteration-3-public.json), [desktop screenshot](screenshots/home-desktop.png), [mobile screenshot](screenshots/home-mobile.png). The second-version evidence remains in verification/iteration-2-public.json.
 
 ## Local verification
 
-The full 58-test browser regression run passed, along with 15 domain tests, type checking, lint, formatting and the normal production build. After the last menu fix, the two affected desktop/mobile navigation journeys passed again. The final standalone export was also tested on both viewport sizes under `/Looksmaxx-coach/` before publication, with `publicBrowserVerified: false` for the local fixture. See [PROGRESS.md](PROGRESS.md).
+The 64-case browser regression run passed 63 cases and found an animated-sidebar contrast failure. Removing the colour/background transition resolved it; both affected desktop/mobile accessibility journeys passed on rerun. Every selected case has passed across these runs; a single all-green 64-case rerun is not claimed. The six new sound cases cover previews, selection, photo/video playback, volume mixing, removal, single-player coordination and viewport/navigation cleanup.
 
-These are Chrome checks at two viewport sizes. Physical mobile devices, Safari, Firefox, real accounts, live model responses and real message delivery are not claimed as tested.
+Fifteen domain tests, type checking, lint, formatting and the normal production build passed. Ten important pages were inspected at both viewport sizes with no overflow or exceptions. My Plan also passed a focused accessibility scan at both sizes after the colour corrections. The final standalone export passed both viewport journeys under `/Looksmaxx-coach/` before publication, correctly marking the local fixture as not public verification. The compiled preview was restarted and its mobile sound/navigation/guide journey passed.
+
+These are Chrome checks at two viewport sizes. Physical phones, Safari, Firefox, real accounts, live AI replies and real message delivery are not claimed as tested. The optional standalone file was tested over HTTP; managed-browser policy prevented direct `file://` checks.
 
 ## Content and privacy
 
-Only fictional demo content and licensed editorial assets are embedded in the three-file website branch: `.nojekyll`, `README.md`, `index.html`. Owner photos, personal routines, PDFs, health profiles, credentials and the original build brief are excluded from that branch.
+The three-file website branch contains only `.nojekyll`, `README.md` and `index.html`. It embeds fictional demo content, licensed stock, original labelled AI editorial inspiration and three original instrumental sounds. Owner photos, routines, PDFs, health profiles, credentials and the original build brief are excluded from that branch. Media are bundled; no third-party music-streaming catalogue is connected.
 
-Personal uploads and edits stay in the browser tab; original photos/videos cannot enter public demo posts. Public/private account settings, follower approval and independent journal audience preferences are local simulations, not production authentication. AI responses, feed ordering, shopping, visualizations and social activity remain clearly labelled demos.
+Personal uploads and edits stay in the browser tab; uploaded originals cannot enter public demo posts. Account privacy, follower approvals and independent journal audience choices remain local simulations. AI coach replies, ranking, shopping, in-app generation and social activity stay clearly labelled demos. The static editorial assets were generated for this iteration and are not customers, exact product depictions, achieved progress or real try-on results. The five-second motion study animates a fictional AI still, with optional separately controlled instrumental audio.
 
-Beginner guides map the supplied reference files to useful educational material and explain which claims were not adopted. No clinical review, treatment protocol, live official-page verification or guaranteed result is claimed. Direct AAD, FDA, NHS and Victoria’s Secret access was blocked by the cloud egress proxy; see SOURCE_INVENTORY.md. Enlarged feed images have the requested pixel dimensions but do not gain source detail. The video is a labelled silent motion study made from licensed stock photography.
+Beginner guides retain the attachment-to-guide mapping and distinguish cautious basics and preferences from unverified source claims. No clinical review, treatment protocol, live official-page verification or guaranteed result is claimed. Direct AAD, FDA, NHS and Victoria’s Secret access was blocked by the cloud proxy. Upscaled licensed portraits do not gain source detail; the new editorial still lifes have higher-resolution source assets. See ASSET_CREDITS.md and SOURCE_INVENTORY.md.
 
 ## Maintenance
 
-Run `node scripts/build-standalone.mjs` after source changes, update the fictional-only `gh-pages` index, then trigger the `Verify CHARETT publication` workflow. It can run on matching demo-source pushes, tags matching `charett-verify-*`, or manual dispatch. It waits for the intended HTML checksum before testing the actual Pages URL and records results on the separate evidence branch. Inspect that evidence and its source commit before supplying a visitor link.
+Run `node scripts/build-standalone.mjs` after source changes, refresh the ZIP, publish the exact fictional-only export to `gh-pages`, then trigger the Verify CHARETT publication workflow. It runs on matching source pushes, tags matching `charett-verify-*`, or manual dispatch. Check the intended source commit, exact HTML checksum, public browser results and screenshots before handing over a link.
 
-This cloud machine still blocks direct access to the external Pages host. Successful public checks run in the GitHub-hosted runner. A cloud-local test, authenticated raw download, saved environment draft or ChatGPT chat URL does not prove a public website works. Earlier 404 delivery failures are resolved by the verified Pages publication above.
+This cloud machine still blocks direct access to the Pages host (CONNECT 403); real public verification runs on the GitHub-hosted runner. A temporary Git authentication rejection during this iteration resolved on a later native-Git check. Both pushes then succeeded without the owner needing to change a token or setting. No credential was exposed, stored in source or replaced. Publication is no longer blocked.
