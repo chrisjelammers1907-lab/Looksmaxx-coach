@@ -155,11 +155,12 @@ export const seedItems: Item[] = [
 export const seedPosts: Post[] = [
   {
     id: "p1",
+    sound: { id: "sound-soft", volume: 0.65, originalVolume: 0 },
     author: "mira",
     topic: "clothing",
     title: "The art of a simple Sunday",
     body: "A linen shirt, familiar denim, and nowhere to rush. Three pieces I keep coming back to.",
-    image: "hero",
+    image: "tailoring",
     items: seedItems.slice(0, 3),
     steps: [],
     audience: "public",
@@ -175,7 +176,7 @@ export const seedPosts: Post[] = [
     topic: "skincare",
     title: "My slower morning ritual",
     body: "Keeping my routine simple made it easier to stay consistent. This is a fictional example, not treatment advice.",
-    image: "skin",
+    image: "ritual",
     items: seedItems.filter((i) => i.topic === "skincare"),
     steps: [
       "Gentle cleanse if needed",
@@ -275,7 +276,7 @@ export const seedPosts: Post[] = [
     topic: "fragrance",
     title: "Notes for an autumn evening",
     body: "Cedar, citrus, and a little warmth. A fictional collection, with example prices.",
-    image: "fragrance",
+    image: "ritual",
     items: [seedItems[9]],
     steps: [
       "Try on skin if suitable",
@@ -330,8 +331,8 @@ seedPosts.push({
   author: "mira",
   topic: "",
   title: "A moment in motion",
-  body: "A short editorial motion study. Style is in the little details. This demo clip animates a licensed stock still; it is not recorded footage of this fictional creator.",
-  image: "grooming",
+  body: "An afternoon in cream and forest. A short motion study with an original CHARETT sound. This clip animates fictional AI editorial imagery; it is not recorded footage, a real creator or a try-on result.",
+  image: "campaign",
   items: [],
   steps: [],
   audience: "public",
@@ -343,12 +344,13 @@ seedPosts.push({
   media: {
     kind: "video",
     src: "motion",
-    poster: "grooming",
+    poster: "campaign",
     width: 1080,
-    height: 1920,
+    height: 1350,
     origin: "editorial",
-    label: "Editorial motion study",
+    label: "AI editorial motion study",
   },
+  sound: { id: "sound-golden", volume: 0.65, originalVolume: 0 },
 });
 export const makeInitialState = (): DemoState => ({
   approvedFollowers: [],

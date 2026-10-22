@@ -9,6 +9,7 @@ import "@fontsource/cormorant-garamond/latin-500.css";
 import "@fontsource/cormorant-garamond/latin-400-italic.css";
 import "./styles.css";
 import "./v2.css";
+import "./editorial.css";
 import { DemoProvider } from "./lib/store";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";

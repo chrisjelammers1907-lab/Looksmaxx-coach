@@ -74,7 +74,7 @@ export const dateLabel = (date: string) =>
     year: "numeric",
   });
 export const asset = (key: string) =>
-  `/assets/${key}.${key === "motion" ? "mp4" : ["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
+  `/assets/${key}.${key.startsWith("sound-") ? "mp3" : key === "motion" ? "mp4" : ["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
 export const topicName: Record<string, string> = {
   skincare: "Skincare",
   clothing: "Clothing & Style",

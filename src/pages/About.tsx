@@ -25,9 +25,12 @@ export default function AboutPage() {
           <span className="about-wordmark">C</span>
         </div>
         <img
-          src={asset("style")}
-          alt="Licensed stock fashion editorial, not a CHARETT customer"
+          src={asset("campaign")}
+          alt="AI fashion editorial inspiration with two fictional adults, not CHARETT customers"
         />
+        <span className="hero-image-credit">
+          AI editorial · fictional inspiration
+        </span>
       </header>
       <section className="about-story">
         <span className="eyebrow">WHY WE’RE HERE</span>

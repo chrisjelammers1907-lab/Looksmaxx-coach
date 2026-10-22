@@ -72,7 +72,7 @@ function ProfileContent() {
         description={
           own
             ? "One profile. Thoughtful preferences. Always yours to change."
-            : "Fictional creator profile · Stock post images are references, not photographs of this person."
+            : "Fictional creator profile · Editorial images are references, not photographs of this person."
         }
       />
       <div className="profile-hero">

@@ -1,0 +1,13 @@
+CHARETT original demo media — 22 October 2026
+
+campaign.jpg, ritual.jpg and tailoring.jpg are AI-generated fictional editorial
+inspiration created for this demo. They do not depict customers, transformations,
+real products or generated try-on results. motion.mp4 animates campaign.jpg.
+
+sound-golden.mp3 (Golden hour), sound-after.mp3 (After hours) and sound-soft.mp3
+(Soft focus) are original synthesized instrumental arrangements created for this
+demo, without sampled recordings, vocals or third-party songs. Source generator:
+scripts/create-demo-sounds.py. No commercial music catalogue is included.
+
+The separate Creative Tim / font / icon notices apply to their respective
+bundled third-party assets. See docs/ASSET_CREDITS.md in the source repository.

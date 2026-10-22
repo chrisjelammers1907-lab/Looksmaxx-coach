@@ -17,6 +17,7 @@ for (const name of fs.readdirSync(assetDir)) {
     ".png": "image/png",
     ".webp": "image/webp",
     ".mp4": "video/mp4",
+    ".mp3": "audio/mpeg",
   }[ext];
   if (!type) continue;
   assets[path.basename(name, ext)] =
@@ -93,7 +94,7 @@ const notices = fs
   .join("\n\n");
 html = html.replace(
   "</html>",
-  `<!--\nCHARETT standalone local demo. Fictional data only. AI, shopping and social features are simulated.\nBundled photographs: Creative Tim Paper Kit 2 (MIT), source photographer filenames documented in the project.\n${notices.replaceAll("--", "—")}\n-->\n</html>`,
+  `<!--\nCHARETT standalone local demo. Fictional data only. AI coach, shopping and social features are simulated.\nStock portraits: Creative Tim Paper Kit 2 (MIT), source photographer filenames documented in the project.\nOriginal AI editorial assets: campaign, ritual, tailoring; fictional inspiration, never customers or results.\nOriginal synthesized demo instrumentals: Golden hour, After hours, Soft focus; no third-party songs.\n${notices.replaceAll("--", "—")}\n-->\n</html>`,
 );
 const output = path.join(root, "demo/CHARETT-demo.html");
 fs.writeFileSync(output, html);
@@ -101,7 +102,7 @@ console.log(
   JSON.stringify({
     output,
     bytes: fs.statSync(output).size,
-    embeddedImages: Object.keys(assets).length,
+    embeddedMediaAssets: Object.keys(assets).length,
     router: "HashRouter (standalone export only)",
   }),
 );

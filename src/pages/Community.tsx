@@ -34,6 +34,7 @@ import {
 import { ItemBreakdown } from "../components/Items";
 import { PostCard } from "../components/Social";
 import { MediaPicker, PostMedia } from "../components/FeedMedia";
+import { SoundPicker } from "../components/Sounds";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -48,7 +49,7 @@ function CommunityContent() {
       : topics.find((t) => t.id === params.get("topic"))?.id || "",
     title: outfit?.title || "",
     body: "",
-    image: "hero",
+    image: "campaign",
     items: outfit
       ? state.items
           .filter((i) => outfit.itemIds.includes(i.id))
@@ -190,24 +191,28 @@ function CommunityContent() {
               onChange={(e) =>
                 setDraft({
                   ...draft,
-                  image: e.target.value === "motion" ? "hero" : e.target.value,
+                  image:
+                    e.target.value === "motion" ? "campaign" : e.target.value,
                   media:
                     e.target.value === "motion"
                       ? {
                           kind: "video",
                           src: "motion",
-                          poster: "hero",
+                          poster: "campaign",
                           width: 1080,
-                          height: 1920,
+                          height: 1350,
                           origin: "editorial",
-                          label: "Editorial motion study",
+                          label: "AI editorial motion study",
                         }
                       : undefined,
                 })
               }
             >
               {Object.entries({
-                hero: "Tailored style",
+                campaign: "AI editorial · cream & forest tailoring",
+                ritual: "AI editorial · beauty still life",
+                tailoring: "AI editorial · Sunday outfit flat lay",
+                hero: "Licensed style reference",
                 motion: "Editorial motion study · video",
                 style: "Fashion inspiration",
                 skin: "Skincare reference",
@@ -251,6 +256,11 @@ function CommunityContent() {
                 upload to share a fictional editorial example.
               </p>
             )}
+          <SoundPicker
+            value={draft.sound}
+            video={draft.media?.kind === "video"}
+            onChange={(sound) => setDraft({ ...draft, sound })}
+          />
           <details className="composer-details">
             <summary>Topic & additional details (optional)</summary>
             <div className="form-grid">
@@ -553,11 +563,20 @@ function CommunityContent() {
           </span>
         </div>
         <img
-          src={asset("style")}
-          alt="Licensed stock fashion editorial, not a fictional creator"
+          src={asset("campaign")}
+          alt="AI editorial inspiration: two adults in cream and forest tailoring on a sunlit terrace; not real members"
         />
+        <span className="hero-image-credit">
+          AI editorial · fictional inspiration
+        </span>
         <span className="feed-monogram">C</span>
       </section>
+      <div className="editorial-ribbon" aria-hidden="true">
+        <span>THE ART OF BECOMING</span>
+        <i />A little inspiration. Entirely you.
+        <i />
+        <span>THE CHARETT EDIT</span>
+      </div>
       <div className="feed-bar">
         <Tabs
           value={feed}

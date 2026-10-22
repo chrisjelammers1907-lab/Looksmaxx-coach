@@ -1,0 +1,45 @@
+{
+  "url": "http://127.0.0.1:43365/Looksmaxx-coach/",
+  "authentication": "none; fresh browser contexts",
+  "localFixture": true,
+  "publicBrowserVerified": false,
+  "results": [
+    {
+      "viewport": "desktop",
+      "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    }
+  ],
+  "htmlSha256": "5fde55df6c5f4979b7e779764bba8e094710e541ca71498c31fc2677075deb25"
+}

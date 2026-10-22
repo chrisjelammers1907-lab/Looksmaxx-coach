@@ -83,11 +83,18 @@ try {
     ).toBeVisible();
     const clip = page.locator(".feed-grid video").first();
     await clip.scrollIntoViewIfNeeded();
-    await clip.evaluate((node) => node.play());
+    await page.getByRole("button", { name: "Play sound Golden hour", exact: true }).click();
     await expect
       .poll(() => clip.evaluate((node) => node.currentTime))
       .toBeGreaterThan(0.15);
-    await clip.evaluate((node) => node.pause());
+    const videoSound = page.locator(".post-sound audio").first();
+    await expect.poll(() => videoSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
+    await page.getByRole("button", { name: "Pause sound Golden hour", exact: true }).click();
+    await expect.poll(() => videoSound.evaluate((node) => node.paused)).toBe(true);
+    await page.getByRole("button", { name: "Play sound Soft focus", exact: true }).click();
+    const photoSound = page.locator(".post-sound audio").nth(1);
+    await expect.poll(() => photoSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
+    await page.getByRole("button", { name: "Pause sound Soft focus", exact: true }).click();
     await page.evaluate(() => globalThis.scrollTo(0, 0));
     await page.screenshot({ path: `${output}/${name}.png`, fullPage: false });
     const nav = page.getByRole("navigation", {
@@ -139,6 +146,23 @@ try {
     await expect(
       page.getByRole("heading", { name: "Fictional publication test item" }),
     ).toBeVisible();
+    await nav.getByRole("link", { name: "Home", exact: true }).click();
+    await page.getByRole("button", { name: "Create a post", exact: true }).click();
+    await page.getByLabel("Caption", { exact: true }).fill("A fictional publication sound test");
+    await page.getByRole("button", { name: "Add sound", exact: true }).click();
+    await page.getByRole("button", { name: "Preview After hours", exact: true }).click();
+    const soundPreview = page.locator(".sound-picker audio");
+    await expect.poll(() => soundPreview.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
+    await page.getByRole("button", { name: "Use After hours", exact: true }).click();
+    await page.getByLabel("Added sound volume", { exact: true }).fill("0.35");
+    await page.getByRole("button", { name: "Preview audience & content" }).click();
+    await page.getByRole("button", { name: "Save private post", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "A fictional publication sound test", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Play sound After hours", exact: true }).click();
+    const attachedSound = page.locator(".post-sound audio");
+    await expect.poll(() => attachedSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
+    expect(await attachedSound.evaluate((node) => node.volume)).toBeCloseTo(0.35);
+    await page.getByRole("button", { name: "Pause sound After hours", exact: true }).click();
     await nav.getByRole("link", { name: "Home", exact: true }).click();
     await page
       .getByRole("link", { name: "The art of a simple Sunday", exact: true })
@@ -196,6 +220,9 @@ try {
       eightTopics: true,
       eightGuides: true,
       feedVideo: true,
+      photoSound: true,
+      videoSound: true,
+      soundPreviewAndAttachment: true,
       aboutPage: true,
       optionalCoachTopic: true,
       routeReloads: true,

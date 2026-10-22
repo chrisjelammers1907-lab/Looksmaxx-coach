@@ -20,3 +20,7 @@ Reusable install_script and start_skill fields were saved successfully to the en
 ## Second-version update — 2026-10-20
 
 The accepted changes are recorded in [ITERATION_2.md](ITERATION_2.md). Home is now the For You/Following media feed; the eight-topic launchpad lives at Categories. Navigation explicitly includes AI Coach. Every category has a permanent beginner-guide entry and the public About us page explains the product and demo. Topic selection and extra post fields are optional; the coach follows the message without a topic selector. Forest green, warm cream and dusty rose provide stronger section contrast while retaining typography and clothing themes. Account/journal audiences and recipient checks remain local demonstrations; original uploaded photos/videos remain private. All prior wardrobe, routine, training, nutrition, comparison, messaging and social journeys remain selected.
+
+## Third iteration
+
+See ITERATION_3.md for the original editorial direction, optional photo/video sounds and the verification/publication gates. Existing journeys and privacy rules remain regression requirements; cosmetic changes do not replace functionality. Commercial song licensing and production media processing belong in the production roadmap.

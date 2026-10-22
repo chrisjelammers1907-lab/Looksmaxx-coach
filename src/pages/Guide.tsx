@@ -4,6 +4,7 @@ import { guides } from "../lib/guides";
 import { topics } from "../lib/data";
 import { asset } from "../lib/domain";
 import { Empty } from "../components/ui";
+import { isAIEditorial, topicEditorial } from "../lib/editorial";
 export default function GuidePage() {
   const { topic } = useParams();
   const entry = topics.find((t) => t.id === topic);
@@ -31,9 +32,12 @@ export default function GuidePage() {
           </span>
         </div>
         <img
-          src={asset(entry.image)}
+          src={asset(topicEditorial(entry.id, entry.image))}
           alt={`${entry.title} editorial illustration`}
         />
+        {isAIEditorial(topicEditorial(entry.id, entry.image)) && (
+          <span className="hero-image-credit">AI editorial inspiration</span>
+        )}
       </header>
       <div className="guide-layout">
         <nav aria-label="Guide chapters" className="guide-contents">

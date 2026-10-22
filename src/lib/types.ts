@@ -75,6 +75,12 @@ export interface Post {
   tags: string;
   date: string;
   media?: FeedMedia;
+  sound?: PostSound;
+}
+export interface PostSound {
+  id: string;
+  volume: number;
+  originalVolume: number;
 }
 export interface FeedMedia {
   kind: "image" | "video";

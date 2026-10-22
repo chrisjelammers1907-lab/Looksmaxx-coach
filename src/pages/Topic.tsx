@@ -21,6 +21,7 @@ import Items from "../components/Items";
 import Routines from "../components/Routines";
 import Gym from "./Gym";
 import Photos from "./Photos";
+import { isAIEditorial, topicEditorial } from "../lib/editorial";
 function TopicContent() {
   const { topic: id } = useParams();
   const topic = topics.find((t) => t.id === id);
@@ -106,9 +107,12 @@ function TopicContent() {
             <p className="topic-purpose">{topic.subtitle}</p>
           </div>
           <img
-            src={asset(topic.image)}
-            alt={`${topic.title} stock editorial reference`}
+            src={asset(topicEditorial(topic.id, topic.image))}
+            alt={`${topic.title} ${isAIEditorial(topicEditorial(topic.id, topic.image)) ? "AI fictional" : "licensed or illustrated"} editorial reference`}
           />
+          {isAIEditorial(topicEditorial(topic.id, topic.image)) && (
+            <span className="hero-image-credit">AI editorial inspiration</span>
+          )}
         </div>
       )}
       <TopicLinks topic={topic.id} />

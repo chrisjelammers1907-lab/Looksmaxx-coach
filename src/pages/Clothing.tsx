@@ -146,11 +146,17 @@ export default function ClothingPage() {
               </span>
             </div>
             <img
-              src={asset(state.style === "dark-casual" ? "style" : "hero")}
-              alt="Stock clothing editorial reference"
+              src={asset(state.style === "dark-casual" ? "style" : "campaign")}
+              alt={
+                state.style === "dark-casual"
+                  ? "Licensed stock clothing editorial reference"
+                  : "AI fashion editorial inspiration, not real customers or a try-on result"
+              }
             />
             <span className="clothing-hero-label">
-              STOCK EDITORIAL INSPIRATION
+              {state.style === "dark-casual"
+                ? "LICENSED EDITORIAL INSPIRATION"
+                : "AI EDITORIAL · FICTIONAL INSPIRATION"}
             </span>
           </section>
           <div className="quick-grid">

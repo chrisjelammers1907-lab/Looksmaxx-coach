@@ -71,3 +71,14 @@ Validation: 15 domain tests passed; the full 58-test Chromium regression run pas
 Source notes and limitations: reference-based guides are original educational summaries; unvalidated medical protocols and discriminatory claims were not adopted. Current AAD/FDA/NHS and Victoria’s Secret pages were blocked by the workspace proxy; no current clinical validation or live visual-site inspection is claimed. Stock image sources are 400×400 and browser enlargement does not add detail. The 5-second video is a silent licensed-still motion study. Real AI, secure authentication and real social delivery remain future work.
 
 Public deployment verification is recorded separately in WEB_PUBLICATION.md after its own run completes.
+
+
+## 22 October 2026 — editorial design and post sounds
+
+Preserved the approved navigation, all eight tools/guides, privacy and social journeys. Added original labelled AI campaign/still-life imagery, coherent forest/ivory/rose/amber styling across ten pages, and three original sound loops for photo/video posts. Working previews, mixing, post playback, edit/removal, one player at a time and viewport/navigation cleanup. No third-party commercial tracks, new medical claims or private owner content were added.
+
+Validation: 15 domain tests; typecheck, lint, formatting and build passed. Final broad browser run: 63/64 passed; the remaining animated-navigation contrast failure was fixed and both affected desktop/mobile accessibility cases passed on rerun. All 64 selected cases have passing evidence across the runs. Six sound cases passed, including the private-session boundary. Ten routes at both viewport sizes were inspected, without overflow or exceptions. Final standalone local fixture passed both viewports including sounds, all topics/guides, reloads, wardrobe, comments, linked cards and coach/plan; it correctly records publicBrowserVerified=false.
+
+The ready standalone HTML is 3,451,984 bytes, SHA-256 5fde55df6c5f4979b7e779764bba8e094710e541ca71498c31fc2677075deb25. Its size includes all images/audio/video/fonts and does not require external media requests. The expected standalone chunk-size warning does not indicate build failure.
+
+Publication is pending renewed GitHub authorization: native Git began returning a username prompt; the existing environment token was then explicitly rejected as invalid. No new public deployment or successful external browser verification is claimed. The prior public version remains the last verified deployment.

@@ -58,3 +58,7 @@ Economical starting choices: keep AI disabled for a small private beta; bundle a
 The subtotals above model the original image-based assumptions and are not a priced production video service. For an illustrative beta, 5 uploads/user/month × 20 seconds × 2 Mbps is approximately 25 MB/user/month; 12 months of retention adds 0.3 GB/user (3 / 30 / 300 GB at 10 / 100 / 1,000 users). At 200 complete 5 MB clip plays/user/month, delivery adds roughly 1 GB/user/month before caching or adaptive bitrate savings. These are usage assumptions, not observed production usage.
 
 Apply the verified storage rate to total retained image-plus-video bytes, sharing the same free allowance once. Add separately quoted transcoding, moderation, authenticated delivery/CDN and any streaming-service fees; do not present the old infrastructure subtotal as an all-in video budget. No service, paid plan or account was purchased for this demo.
+
+## Post-sound scope added 22 October 2026
+
+The demo's three original bundled loops use no paid music API or commercial catalogue. This does not estimate the cost of commercial music licensing. Rights-holder rates, territory coverage and any audio identification/transcoding service were not available and must be quoted before adding a production catalogue. Include preview audio requests/bytes and mixed video renditions in the media-storage and delivery assumptions above; avoid counting a separately delivered audio track again when it is already mixed into a rendition.

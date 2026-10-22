@@ -90,3 +90,7 @@ Reference PDFs were extracted and spot-inspected outside the checkout, not valid
 - [Production roadmap](docs/PRODUCTION_ROADMAP.md) and [10/100/1,000-user cost model](docs/COST_ESTIMATE.md).
 
 Current official AI/auth pricing could not be verified through the network policy, so the cost model gives verified infrastructure subtotals and explicit AI/search/auth formulas rather than a fabricated all-in total. Safari, Firefox, real accounts, real message delivery and model outputs are not claimed as verified. CHARETT trademark/domain availability is unverified.
+
+### Editorial design and post sounds
+
+The third iteration adds original, labelled AI editorial imagery and a consistent forest/ivory/rose/amber visual direction. Home remains For You and all eight category tools/guides remain available. To try sounds: **Create a post → Add sound → preview an instrumental → Use sound → adjust volume → Preview audience & content → Save private post**. Sounds work with photos and videos; video posts also expose original-video volume. Use the sound play button below a post's image. Playback pauses when leaving the viewport, hiding the tab or navigating away; starting another media item pauses the previous one. Posts, chosen sounds and uploads stay in session. The library contains three original demo instrumentals, not commercial songs. See `docs/ITERATION_3.md` and `docs/ASSET_CREDITS.md`.

@@ -1,4 +1,6 @@
-# CHARETT public website — second version
+# CHARETT public website — publication status
+
+**22 October 2026:** the third-iteration editorial design and post sounds are complete and locally checked. Publishing the update is temporarily blocked by rejected GitHub authentication. The public evidence below verifies the **second version**, not the new local export. See ITERATION_3.md and verification/iteration-3-local.json. Do not tell visitors the new design/sounds are live until public verification succeeds.
 
 **https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/**
 
