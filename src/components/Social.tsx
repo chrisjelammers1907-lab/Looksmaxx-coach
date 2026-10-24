@@ -220,6 +220,7 @@ export function PostCard({
   const [report, setReport] = useState(false);
   const [reason, setReason] = useState("Misleading or unsafe advice");
   const [showProducts, setShowProducts] = useState(false);
+  const [captionOpen, setCaptionOpen] = useState(false);
   const creator = creators.find((c) => c.id === post.author);
   const own = post.author === "you";
   const copy = () => {
@@ -282,6 +283,9 @@ export function PostCard({
   const commentCount = state.comments[post.id]?.length || 0;
   const long = post.body.length > 125;
   const shortBody = long ? `${post.body.slice(0, 122).trimEnd()}…` : post.body;
+  // Photo captions show two lines first, then expand in place.
+  const captionLong = post.body.length > 80;
+  const captionShort = post.body.slice(0, 80).replace(/\s+\S*$/, "");
   const topicLine = [
     topicName[post.topic],
     post.style && post.style.replace("-", " "),
@@ -420,18 +424,19 @@ export function PostCard({
               >
                 {handle}
               </Link>{" "}
-              {expanded ? post.body : shortBody}
-              {long && !expanded && (
-                <>
-                  {" "}
-                  <button
-                    type="button"
-                    className="caption-more"
-                    onClick={() => setDetail(true)}
-                  >
-                    more
-                  </button>
-                </>
+              {expanded || captionOpen || !captionLong
+                ? post.body
+                : captionShort}
+              {captionLong && !expanded && !captionOpen && (
+                <button
+                  type="button"
+                  className="caption-more"
+                  aria-expanded={false}
+                  aria-label={`Read more of ${post.title}`}
+                  onClick={() => setCaptionOpen(true)}
+                >
+                  … more
+                </button>
               )}
             </p>
             {tags.length > 0 && (

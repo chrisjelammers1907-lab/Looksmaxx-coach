@@ -161,3 +161,73 @@ test("direct messages and coach use a pill composer and chat bubbles", async ({
   await expect(page.locator(".chat-message.coach .chat-bubble")).toHaveCount(1);
   await noAxeViolations(page);
 });
+
+test("stories open in a viewer and your own story can be added", async ({
+  page,
+}) => {
+  await open(page);
+  const row = page.getByRole("region", { name: "Stories" });
+  await row.getByRole("button", { name: "View story from mira.edits" }).click();
+  const viewer = page.getByRole("dialog", { name: "Story" });
+  await expect(viewer.getByRole("status")).toContainText("Story 1 of 2");
+  await viewer.getByRole("button", { name: "Next story" }).click();
+  await expect(viewer.getByRole("status")).toContainText("Story 2 of 2");
+  await viewer.getByRole("button", { name: "Close story" }).click();
+  await expect(viewer).toHaveCount(0);
+  await expect(
+    row.getByRole("button", { name: "View story from mira.edits" }),
+  ).toHaveClass(/seen/);
+
+  await row.getByRole("button", { name: "Add to your story" }).click();
+  const composer = page.getByRole("dialog", { name: "Add to your story" });
+  await composer.getByLabel("Text").fill("Leg day, done.");
+  await composer.getByRole("button", { name: "Share to story" }).click();
+  await row.getByRole("button", { name: "View your story" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Story" }).getByRole("status"),
+  ).toContainText("Leg day, done.");
+});
+
+test("long captions expand in place and push Shop the look down", async ({
+  page,
+}, info) => {
+  await open(page);
+  const post = page.locator(".post-card").filter({
+    has: page.getByRole("heading", {
+      name: "My slower morning ritual",
+      exact: true,
+    }),
+  });
+  const shop = post.locator(".shop-row");
+  // Measure inside the card: clicking may scroll the page.
+  const offset = async () =>
+    (await shop.boundingBox())!.y - (await post.boundingBox())!.y;
+  const before = await offset();
+  await post
+    .getByRole("button", {
+      name: "Read more of My slower morning ritual",
+    })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(post.locator(".post-body .post-caption")).toContainText(
+    "not treatment advice",
+  );
+  // On wide columns the full text can still fit in two lines.
+  if (info.project.name === "mobile")
+    expect(await offset()).toBeGreaterThan(before);
+  else expect(await offset()).toBeGreaterThanOrEqual(before);
+});
+
+test("plan shows one day with routine and task filters", async ({ page }) => {
+  await open(page, "/plan");
+  await expect(page.getByText("Your next check-in")).toHaveCount(0);
+  await expect(page.getByText(/tasks done/)).toBeVisible();
+  const filters = page.getByLabel("Show in plan");
+  await filters.getByRole("button", { name: "Tasks", exact: true }).click();
+  await expect(page.locator(".routine-card")).toHaveCount(0);
+  await expect(page.locator(".goal-row").first()).toBeVisible();
+  await filters.getByRole("button", { name: "Routines", exact: true }).click();
+  await expect(page.locator(".goal-row")).toHaveCount(0);
+  await expect(page.locator(".routine-card").first()).toBeVisible();
+  await noAxeViolations(page);
+});

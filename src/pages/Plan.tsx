@@ -1,42 +1,47 @@
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import {
-  Check,
-  Plus,
-  Pencil,
-  Trash2,
-  CalendarDays,
-  ArrowUpRight,
-} from "lucide-react";
+import { useSearchParams } from "react-router-dom";
+import { Check, Plus, Pencil, Trash2 } from "lucide-react";
 import { useDemo } from "../lib/store";
 import type { Goal, TopicId } from "../lib/types";
 import { topics } from "../lib/data";
 import Routines from "../components/Routines";
-import { dateLabel, today, uid } from "../lib/domain";
+import { uid } from "../lib/domain";
 import {
   Button,
   Empty,
   Field,
   Modal,
-  Notice,
   PageHeader,
   SectionTitle,
-  Select,
 } from "../components/ui";
+type PlanFilter = "all" | "routines" | "tasks";
 export default function PlanPage() {
   const { state, update, toast } = useDemo();
   const [editing, setEditing] = useState<Goal | null>(null);
   const [params] = useSearchParams();
-  const [routineTopic, setRoutineTopic] = useState<TopicId>(
-    topics.find((t) => t.id === params.get("routine"))?.id || "skincare",
+  const requested = topics.find((t) => t.id === params.get("routine"))?.id;
+  const [filter, setFilter] = useState<PlanFilter>(
+    requested ? "routines" : "all",
+  );
+  const routineTopics = topics.filter((t) =>
+    state.routines.some((r) => r.topic === t.id),
+  );
+  const [routineTopic, setRoutineTopic] = useState<TopicId | "all">(
+    requested || "all",
   );
   const completed = state.goals.filter((g) => g.done).length;
+  const total = state.goals.length;
+  const ring = 2 * Math.PI * 26;
+  const todayLabel = new Date().toLocaleDateString("en", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
   return (
     <div className="plan-page">
       <PageHeader
-        eyebrow="PROGRESS, NOT PERFECTION"
-        title="One thoughtful step."
-        description="A living plan. Small commitments. Room to change your mind."
+        eyebrow={todayLabel}
+        title="Your day."
         action={
           <Button
             onClick={() =>
@@ -44,124 +49,135 @@ export default function PlanPage() {
             }
           >
             <Plus size={16} />
-            Add a goal
+            Add a task
           </Button>
         }
       />
-      <div className="plan-overview">
-        <div>
-          <span className="eyebrow">YOUR OWN PACE</span>
-          <h2>
-            {completed}
-            <em> / {state.goals.length}</em>
-          </h2>
-          <p>little intentions completed</p>
-        </div>
-        <div>
-          <CalendarDays size={30} />
-          <h3>Your next check-in</h3>
-          <Field
-            label="Scheduled check-in date"
-            type="date"
-            min={today()}
-            value={state.checkIn}
-            onChange={(e) => update((s) => ({ ...s, checkIn: e.target.value }))}
+      <div className="plan-progress">
+        <svg viewBox="0 0 60 60" aria-hidden="true">
+          <circle cx="30" cy="30" r="26" className="track" />
+          <circle
+            cx="30"
+            cy="30"
+            r="26"
+            className="value"
+            strokeDasharray={ring}
+            strokeDashoffset={total ? ring * (1 - completed / total) : ring}
           />
-          <p>
-            {state.checkIn
-              ? dateLabel(state.checkIn)
-              : "Choose when to reflect."}
-          </p>
-        </div>
-      </div>
-      <Notice icon="private">
-        Your editable plan is private and stays in this session. Coach proposals
-        always need your review before being applied.
-      </Notice>
-      {["Daily", "Weekly"].map((cadence) => (
-        <section key={cadence}>
-          <SectionTitle title={`${cadence} intentions`} />
-          <div className="goal-list">
-            {state.goals
-              .filter((g) => g.cadence === cadence)
-              .map((g) => (
-                <div className={`goal-row ${g.done ? "done" : ""}`} key={g.id}>
-                  <button
-                    className="goal-check"
-                    aria-label={`Complete ${g.text}`}
-                    aria-pressed={g.done}
-                    onClick={() =>
-                      update((s) => ({
-                        ...s,
-                        goals: s.goals.map((x) =>
-                          x.id === g.id ? { ...x, done: !x.done } : x,
-                        ),
-                      }))
-                    }
-                  >
-                    {g.done && <Check size={17} />}
-                  </button>
-                  <span>{g.text}</span>
-                  <button
-                    className="icon-button"
-                    aria-label={`Edit ${g.text}`}
-                    onClick={() => setEditing(g)}
-                  >
-                    <Pencil size={15} />
-                  </button>
-                  <button
-                    className="icon-button"
-                    aria-label={`Delete ${g.text}`}
-                    onClick={() =>
-                      update((s) => ({
-                        ...s,
-                        goals: s.goals.filter((x) => x.id !== g.id),
-                      }))
-                    }
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              ))}
-          </div>
-        </section>
-      ))}
-      {!state.goals.length && (
-        <Empty title="A little space for a new intention.">
-          Add a goal or ask your demo coach for a proposal.
-        </Empty>
-      )}
-      <div className="editorial-note">
-        <CalendarDays size={25} />
+        </svg>
         <div>
-          <h3>A moment to reflect.</h3>
-          <p>
-            At your check-in, consider what felt manageable, what did not, and
-            what you would like to change. The demo does not send notifications.
-          </p>
-          <Link to="/coach">
-            Review my plan with the demo coach <ArrowUpRight size={15} />
-          </Link>
+          <strong>
+            {completed} of {total} tasks done
+          </strong>
+          <span>{state.routines.length} routines for today</span>
         </div>
       </div>
-      <SectionTitle
-        title="Your private ritual library"
-        subtitle="Originals and community copies stay editable. Review every copied routine before using it."
-      />
-      <Select
-        label="Routine topic"
-        value={routineTopic}
-        onChange={(e) => setRoutineTopic(e.target.value as TopicId)}
-      >
-        {topics.map((topic) => (
-          <option key={topic.id} value={topic.id}>
-            {topic.title}
-          </option>
+      <div className="plan-filters chip-scroller" aria-label="Show in plan">
+        {(
+          [
+            ["all", "All"],
+            ["routines", "Routines"],
+            ["tasks", "Tasks"],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className="chip"
+            aria-pressed={filter === id}
+            onClick={() => setFilter(id)}
+          >
+            {label}
+          </button>
         ))}
-      </Select>
-      <Routines key={routineTopic} topic={routineTopic} />
+      </div>
+      {filter !== "routines" && (
+        <section className="plan-section">
+          <SectionTitle title="Tasks" />
+          <div className="goal-list">
+            {state.goals.map((g) => (
+              <div className={`goal-row ${g.done ? "done" : ""}`} key={g.id}>
+                <button
+                  className="goal-check"
+                  aria-label={`Complete ${g.text}`}
+                  aria-pressed={g.done}
+                  onClick={() =>
+                    update((s) => ({
+                      ...s,
+                      goals: s.goals.map((x) =>
+                        x.id === g.id ? { ...x, done: !x.done } : x,
+                      ),
+                    }))
+                  }
+                >
+                  {g.done && <Check size={17} />}
+                </button>
+                <span>{g.text}</span>
+                <button
+                  className="icon-button"
+                  aria-label={`Edit ${g.text}`}
+                  onClick={() => setEditing(g)}
+                >
+                  <Pencil size={15} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={`Delete ${g.text}`}
+                  onClick={() =>
+                    update((s) => ({
+                      ...s,
+                      goals: s.goals.filter((x) => x.id !== g.id),
+                    }))
+                  }
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ))}
+          </div>
+          {!state.goals.length && (
+            <Empty title="No tasks for today.">
+              Add a task or ask your coach for a suggestion.
+            </Empty>
+          )}
+        </section>
+      )}
+      {filter !== "tasks" && (
+        <section className="plan-section">
+          {routineTopics.length > 1 && (
+            <div
+              className="plan-topic-chips chip-scroller"
+              aria-label="Routine category"
+            >
+              <button
+                type="button"
+                className="chip"
+                aria-pressed={routineTopic === "all"}
+                onClick={() => setRoutineTopic("all")}
+              >
+                All categories
+              </button>
+              {routineTopics.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  className="chip"
+                  aria-pressed={routineTopic === t.id}
+                  onClick={() => setRoutineTopic(t.id)}
+                >
+                  {t.title}
+                </button>
+              ))}
+            </div>
+          )}
+          <Routines
+            key={routineTopic}
+            topic={routineTopic === "all" ? undefined : routineTopic}
+          />
+        </section>
+      )}
       {editing && (
-        <Modal title="Your intention" onClose={() => setEditing(null)}>
+        <Modal title="Your task" onClose={() => setEditing(null)}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -176,26 +192,13 @@ export default function PlanPage() {
             }}
           >
             <Field
-              label="Goal"
+              label="Task"
               required
               value={editing.text}
               maxLength={150}
               onChange={(e) => setEditing({ ...editing, text: e.target.value })}
             />
-            <Select
-              label="Cadence"
-              value={editing.cadence}
-              onChange={(e) =>
-                setEditing({
-                  ...editing,
-                  cadence: e.target.value as "Daily" | "Weekly",
-                })
-              }
-            >
-              <option>Daily</option>
-              <option>Weekly</option>
-            </Select>
-            <Button type="submit">Save goal</Button>
+            <Button type="submit">Save task</Button>
           </form>
         </Modal>
       )}

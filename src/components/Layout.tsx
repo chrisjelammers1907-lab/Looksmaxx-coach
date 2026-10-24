@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useDemo } from "../lib/store";
-import CategoryRail from "./CategoryRail";
 const nav = [
   { to: "/", label: "Home", icon: Home },
   { to: "/categories", label: "Categories", icon: Grid2X2 },
@@ -47,7 +46,7 @@ export default function Layout() {
           <div className="brand-bar">
             <span className="brand-note" aria-hidden="true" />
             <Link className="wordmark" to="/" aria-label="CHARETT home">
-              CHARETT<span>THE ART OF BECOMING</span>
+              CHARETT<span>The art of becoming</span>
             </Link>
             <div className="topbar-right">
               <Link className="topbar-about" to="/about">
@@ -89,9 +88,6 @@ export default function Layout() {
             ))}
           </nav>
         </header>
-        {(location.pathname === "/" ||
-          location.pathname === "/categories" ||
-          location.pathname === "/explore") && <CategoryRail />}
         <div className="app-content">
           <main id="main" tabIndex={-1}>
             <Outlet />

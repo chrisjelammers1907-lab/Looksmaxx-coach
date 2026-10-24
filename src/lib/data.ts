@@ -1,4 +1,11 @@
-import type { Creator, DemoState, Item, Post, TopicId } from "./types";
+import type {
+  Creator,
+  DemoState,
+  Item,
+  Post,
+  Story,
+  TopicId,
+} from "./types";
 import { today } from "./domain";
 export const topics: {
   id: TopicId;
@@ -371,6 +378,37 @@ seedPosts.push({
   tags: "editorial, slideshow",
   date: "2026-10-19",
 });
+export const seedStories: Story[] = [
+  {
+    id: "s-mira-1",
+    author: "mira",
+    image: "tailoring",
+    text: "Sunday uniform.",
+    time: "2h",
+  },
+  { id: "s-mira-2", author: "mira", image: "campaign", time: "2h" },
+  {
+    id: "s-noor-1",
+    author: "noor",
+    image: "ritual",
+    text: "PM routine · three steps, no rush.",
+    time: "5h",
+  },
+  {
+    id: "s-james-1",
+    author: "james",
+    background: "forest",
+    text: "New PR · Squat 95 → 100 kg",
+    time: "1h",
+  },
+  {
+    id: "s-james-2",
+    author: "james",
+    image: "gym",
+    text: "Upper day done.",
+    time: "1h",
+  },
+];
 export const makeInitialState = (): DemoState => ({
   approvedFollowers: [],
   incomingRequests: ["mira"],
@@ -553,4 +591,6 @@ export const makeInitialState = (): DemoState => ({
   hairSaved: [],
   chat: [],
   checkIn: today(),
+  stories: [],
+  seenStories: [],
 });

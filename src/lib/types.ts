@@ -159,6 +159,15 @@ export interface ChatMessage {
   applied?: boolean;
   guide?: TopicId;
 }
+export interface Story {
+  id: string;
+  author: string;
+  /** Editorial asset key; omitted for text-only stories. */
+  image?: string;
+  background?: "forest" | "ivory" | "champagne";
+  text?: string;
+  time: string;
+}
 export interface DemoState {
   approvedFollowers: string[];
   incomingRequests: string[];
@@ -186,4 +195,6 @@ export interface DemoState {
   hairSaved: string[];
   chat: ChatMessage[];
   checkIn: string;
+  stories: Story[];
+  seenStories: string[];
 }

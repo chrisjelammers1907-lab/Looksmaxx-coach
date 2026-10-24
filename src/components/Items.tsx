@@ -203,7 +203,8 @@ export default function Items({
                 </div>
                 {shortlist && (
                   <Button
-                    variant="ghost"
+                    variant="secondary small"
+                    className="shortlist-button"
                     onClick={() =>
                       update((s) => ({
                         ...s,

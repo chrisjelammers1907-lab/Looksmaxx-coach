@@ -67,16 +67,16 @@ test("the framed site fits small phones, tablets and desktop with visible side g
   }
 });
 
-test("category images navigate and Photos/Reels keep Following independent", async ({
+test("category list navigates and Photos/Reels keep Following independent", async ({
   page,
 }) => {
   await open(page);
-  const rail = page.getByRole("navigation", {
-    name: "Browse categories",
-    exact: true,
-  });
-  await expect(rail.getByRole("link")).toHaveCount(8);
-  await rail.locator('a[href="/topics/hair"]').click();
+  // Home no longer repeats the category row; Categories is a single list.
+  await expect(page.locator(".category-strip")).toHaveCount(0);
+  await go(page, "/categories");
+  const list = page.getByRole("list", { name: "Your eight categories" });
+  await expect(list.locator(".category-row")).toHaveCount(8);
+  await list.locator('a.category-row[href="/topics/hair"]').click();
   await expect(page).toHaveURL(/\/topics\/hair$/);
   await go(page, "/");
   await expect(

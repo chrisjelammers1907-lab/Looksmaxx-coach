@@ -160,11 +160,14 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  bare = false,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  /** Renders without the standard heading, for full-bleed viewers. */
+  bare?: boolean;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
@@ -223,21 +226,23 @@ export function Modal({
     >
       <div
         ref={panel}
-        className={`modal ${wide ? "wide" : ""}`}
+        className={`modal ${wide ? "wide" : ""} ${bare ? "bare" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
       >
-        <div className="modal-heading">
-          <h2>{title}</h2>
-          <button
-            className="icon-button"
-            aria-label="Close dialog"
-            onClick={onClose}
-          >
-            <X />
-          </button>
-        </div>
+        {!bare && (
+          <div className="modal-heading">
+            <h2>{title}</h2>
+            <button
+              className="icon-button"
+              aria-label="Close dialog"
+              onClick={onClose}
+            >
+              <X />
+            </button>
+          </div>
+        )}
         {children}
       </div>
     </div>,

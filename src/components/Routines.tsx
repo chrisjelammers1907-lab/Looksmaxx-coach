@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
 import { useDemo } from "../lib/store";
 import type { Routine, TopicId } from "../lib/types";
-import { uid } from "../lib/domain";
+import { topicName, uid } from "../lib/domain";
+import { topics } from "../lib/data";
 import {
   Area,
   Button,
@@ -13,26 +14,23 @@ import {
   SectionTitle,
   Select,
 } from "./ui";
-export default function Routines({ topic }: { topic: TopicId }) {
+export default function Routines({ topic }: { topic?: TopicId }) {
   const { state, update, toast } = useDemo();
   const [editing, setEditing] = useState<Routine | null>(null);
   const [builder, setBuilder] = useState(false);
   const [done, setDone] = useState<string[]>([]);
-  const routines = state.routines.filter((r) => r.topic === topic);
+  const routines = state.routines.filter((r) => !topic || r.topic === topic);
   const blank = (): Routine => ({
     id: uid(),
-    topic,
+    topic: topic || "skincare",
     title: "",
-    time: topic === "skincare" ? "AM" : "Anytime",
+    time: !topic || topic === "skincare" ? "AM" : "Anytime",
     schedule: "Daily",
     steps: [],
   });
   return (
     <>
-      <SectionTitle
-        title="Rituals that fit your life"
-        subtitle="Private routines · Edit every step before making it yours."
-      >
+      <SectionTitle title="Routines">
         <div className="button-row">
           {topic === "skincare" && (
             <Button variant="ghost" onClick={() => setBuilder(true)}>
@@ -51,7 +49,10 @@ export default function Routines({ topic }: { topic: TopicId }) {
           <article className="routine-card" key={r.id}>
             <div className="routine-top">
               <span className="pill">{r.time}</span>
-              <span className="muted small-text">{r.schedule}</span>
+              <span className="muted small-text">
+                {!topic && `${topicName[r.topic]} · `}
+                {r.schedule}
+              </span>
             </div>
             <h3>{r.title}</h3>
             <ol className="routine-steps">
@@ -129,6 +130,21 @@ export default function Routines({ topic }: { topic: TopicId }) {
               toast("Routine saved. Your existing plan was not changed.");
             }}
           >
+            {!topic && (
+              <Select
+                label="Category"
+                value={editing.topic}
+                onChange={(e) =>
+                  setEditing({ ...editing, topic: e.target.value as TopicId })
+                }
+              >
+                {topics.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </Select>
+            )}
             <Field
               label="Routine name"
               required

@@ -34,6 +34,7 @@ import { ItemBreakdown } from "../components/Items";
 import { PostCard } from "../components/Social";
 import { MediaPicker, PostMedia, mediaLabel } from "../components/FeedMedia";
 import { SoundPicker } from "../components/Sounds";
+import StoriesRow from "../components/Stories";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -623,6 +624,7 @@ function CommunityContent() {
   return (
     <div className="explore-page">
       <h1 className="visually-hidden">Your daily edit.</h1>
+      <StoriesRow />
       <div className="feed-header">
         <span className="feed-header-spacer" aria-hidden="true" />
         <div className="feed-tabs">
@@ -662,7 +664,7 @@ function CommunityContent() {
           </button>
         </div>
       </div>
-      <div className="feed-chips">
+      <div className="feed-format-row">
         <div
           className="feed-format-tabs"
           role="tablist"
@@ -706,7 +708,8 @@ function CommunityContent() {
             </button>
           ))}
         </div>
-        <span className="chip-divider" aria-hidden="true" />
+      </div>
+      <div className="feed-chips">
         <div className="chip-scroller" aria-label="Filter by style or topic">
           <button
             type="button"
