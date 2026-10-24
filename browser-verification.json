@@ -9,6 +9,10 @@
       "eightTopics": true,
       "eightGuides": true,
       "feedVideo": true,
+      "separatePhotoAndReelFeeds": true,
+      "independentFollowingAndFormat": true,
+      "photoReelSlideshow": true,
+      "boundedLayout": true,
       "photoSound": true,
       "videoSound": true,
       "soundPreviewAndAttachment": true,
@@ -27,6 +31,10 @@
       "eightTopics": true,
       "eightGuides": true,
       "feedVideo": true,
+      "separatePhotoAndReelFeeds": true,
+      "independentFollowingAndFormat": true,
+      "photoReelSlideshow": true,
+      "boundedLayout": true,
       "photoSound": true,
       "videoSound": true,
       "soundPreviewAndAttachment": true,
@@ -41,5 +49,5 @@
       "errors": []
     }
   ],
-  "htmlSha256": "5fde55df6c5f4979b7e779764bba8e094710e541ca71498c31fc2677075deb25"
+  "htmlSha256": "3e66f6ba79ff553e5e3d0e34e0d26b6542e19dd4ae999e40c2b3a80bc2238917"
 }
