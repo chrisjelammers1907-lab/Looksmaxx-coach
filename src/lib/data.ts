@@ -1,11 +1,4 @@
-import type {
-  Creator,
-  DemoState,
-  Item,
-  Post,
-  Story,
-  TopicId,
-} from "./types";
+import type { Creator, DemoState, Item, Post, Story, TopicId } from "./types";
 import { today } from "./domain";
 export const topics: {
   id: TopicId;
