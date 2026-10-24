@@ -311,12 +311,12 @@ test("messages compose, rich routine card, request controls and blocking", async
       .locator(".thread")
       .getByText(/Thanks for accepting this simulated request/),
   ).toBeVisible();
-  await page.getByLabel("Your demo message").fill("A fictional hello.");
+  await page.getByLabel("Message", { exact: true }).fill("A fictional hello.");
   await page.getByRole("button", { name: "Attach linked card" }).click();
   await dialog(page)
     .getByRole("button", { name: /My slower morning ritual/ })
     .click();
-  await page.getByRole("button", { name: "Simulate send" }).click();
+  await page.getByRole("button", { name: "Send message" }).click();
   await expect(page.locator(".outgoing")).toContainText("A fictional hello.");
   await page.locator(".outgoing .linked-card").click();
   await expect(

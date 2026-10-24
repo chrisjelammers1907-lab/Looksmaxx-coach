@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { topics } from "../lib/data";
 import { asset } from "../lib/domain";
 import { topicEditorial } from "../lib/editorial";
@@ -18,11 +18,10 @@ export default function CategoryRail() {
   return (
     <section className="category-strip" aria-label="Explore your everyday">
       <div className="category-strip-heading">
-        <span className="eyebrow">EXPLORE YOUR EVERYDAY</span>
-        <span>Eight categories. Your own direction.</span>
-        <span className="category-swipe-hint">
-          8 areas · swipe to explore →
-        </span>
+        <span className="eyebrow">Explore</span>
+        <Link to="/categories" className="category-see-all">
+          See all
+        </Link>
       </div>
       <nav className="category-rail" aria-label="Browse categories">
         {topics.map((topic, index) => (
@@ -35,7 +34,7 @@ export default function CategoryRail() {
         ))}
       </nav>
       <small className="category-strip-credit">
-        Editorial references · AI images & licensed stock · illustrations
+        AI editorial images & licensed stock
       </small>
     </section>
   );

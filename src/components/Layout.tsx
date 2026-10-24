@@ -45,9 +45,7 @@ export default function Layout() {
       <div className="site-shell">
         <header className="site-header">
           <div className="brand-bar">
-            <span className="brand-note">
-              STYLE. SELF-CARE. YOUR OWN DIRECTION.
-            </span>
+            <span className="brand-note" aria-hidden="true" />
             <Link className="wordmark" to="/" aria-label="CHARETT home">
               CHARETT<span>THE ART OF BECOMING</span>
             </Link>
@@ -99,11 +97,8 @@ export default function Layout() {
             <Outlet />
           </main>
           <footer className="footer">
-            <span>
-              CHARETT <i>·</i> Your everyday, elevated.
-            </span>
-            <Link to="/about">About us & demo privacy</Link>
-            <span>Fictional activity · Private uploads stay in this tab</span>
+            <span className="footer-mark">CHARETT</span>
+            <Link to="/about">About us & privacy</Link>
           </footer>
         </div>
       </div>
@@ -117,8 +112,8 @@ export default function Layout() {
               isActive || active(to) ? "active" : ""
             }
           >
-            <Icon size={21} />
-            <span>{label === "My Plan" ? "My Plan" : label}</span>
+            <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+            <span>{label}</span>
           </NavLink>
         ))}
       </nav>

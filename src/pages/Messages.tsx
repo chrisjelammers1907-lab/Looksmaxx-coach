@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
-  ArrowUpRight,
+  ArrowUp,
   Flag,
   Link2,
-  Plus,
   Send,
-  ShieldCheck,
+  SquarePen,
   UserX,
   X,
 } from "lucide-react";
@@ -16,15 +15,7 @@ import { creators } from "../lib/data";
 import { uid, maySharePost } from "../lib/domain";
 import type { CardRef } from "../lib/types";
 import { LinkedCard } from "../components/Social";
-import {
-  Area,
-  Button,
-  Empty,
-  Modal,
-  Notice,
-  PageHeader,
-  Select,
-} from "../components/ui";
+import { Button, Modal, Notice, Select } from "../components/ui";
 export default function MessagesPage() {
   const { state, update, toast } = useDemo();
   const [params, setParams] = useSearchParams();
@@ -89,57 +80,42 @@ export default function MessagesPage() {
     setCard(undefined);
     toast("Simulated delivery. Message stays in this local session.");
   };
+  const conversations = creators.filter(
+    (c) =>
+      !state.blocked.includes(c.id) &&
+      (state.messages[c.id] || c.id === selected),
+  );
   return (
     <div className="messages-page">
-      <PageHeader
-        eyebrow="GOOD CONVERSATIONS START HERE"
-        title="A little connection."
-        description="An inbox for inspiration, thoughtful notes and shared ideas."
-        action={
-          <Button onClick={() => setNewMessage(true)}>
-            <Plus size={16} />
-            New demo message
-          </Button>
-        }
-      />
-      <Notice>
-        SIMULATED MESSAGING · Fictional recipients, local session threads, no
-        real delivery, authentication or secure private communication.
-      </Notice>
+      <h1 className="visually-hidden">Messages</h1>
       <div className={`inbox-layout ${selected ? "has-selection" : ""}`}>
         <aside className="inbox-list">
-          <h2>Your conversations</h2>
-          {creators
-            .filter(
-              (c) =>
-                !state.blocked.includes(c.id) &&
-                (state.messages[c.id] || c.id === selected),
-            )
-            .map((c) => (
-              <button
-                className={`conversation-preview ${selected === c.id ? "selected" : ""}`}
-                key={c.id}
-                onClick={() => choose(c.id)}
-              >
-                <span className="avatar">{c.initials}</span>
-                <span>
-                  <strong>{c.name}</strong>
-                  <small>
-                    {state.messages[c.id]?.at(-1)?.text ||
-                      "Start a local conversation"}
-                  </small>
-                </span>
-                <ArrowUpRight size={14} />
-              </button>
-            ))}
+          <header className="inbox-header">
+            <span className="inbox-title" aria-hidden="true">
+              Messages
+            </span>
+            <button
+              type="button"
+              className="icon-button"
+              aria-label="New demo message"
+              onClick={() => setNewMessage(true)}
+            >
+              <SquarePen size={21} strokeWidth={1.7} />
+            </button>
+          </header>
+          <p className="inbox-note">
+            Demo inbox · fictional people, nothing is sent
+          </p>
           {state.profile.messageRequests && request === "pending" && (
             <div className="message-request">
-              <span className="eyebrow">DEMO MESSAGE REQUEST</span>
-              <h3>James Ellis</h3>
-              <p>A fictional creator would like to connect.</p>
-              <div className="button-row">
+              <span className="avatar">JE</span>
+              <div>
+                <strong>james.everyday</strong>
+                <small>Wants to send you a message</small>
+              </div>
+              <div className="message-request-actions">
                 <Button
-                  variant="secondary small"
+                  variant="small"
                   onClick={() => {
                     setRequest("accepted");
                     update((s) => ({
@@ -173,8 +149,34 @@ export default function MessagesPage() {
               </div>
             </div>
           )}
-          <Link className="text-link" to="/profile">
-            Message request controls <ArrowUpRight size={13} />
+          <div className="conversation-list">
+            {conversations.map((c) => {
+              const last = state.messages[c.id]?.at(-1);
+              return (
+                <button
+                  className={`conversation-preview ${selected === c.id ? "selected" : ""}`}
+                  key={c.id}
+                  aria-current={selected === c.id ? "true" : undefined}
+                  onClick={() => choose(c.id)}
+                >
+                  <span className="avatar">{c.initials}</span>
+                  <span className="conversation-text">
+                    <strong>{c.name}</strong>
+                    <small>
+                      <span className="conversation-snippet">
+                        {last
+                          ? `${last.author === "you" ? "You: " : ""}${last.text || "Shared a post"}`
+                          : "Start a conversation"}
+                      </span>
+                      {last?.time && <span> · {last.time}</span>}
+                    </small>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <Link className="inbox-settings" to="/profile">
+            Message settings
           </Link>
         </aside>
         <section className="conversation" aria-label="Selected conversation">
@@ -186,19 +188,24 @@ export default function MessagesPage() {
                   aria-label="Back to inbox"
                   onClick={() => setParams({})}
                 >
-                  <ArrowLeft size={18} />
+                  <ArrowLeft size={20} />
                 </button>
-                <span className="avatar">{creator.initials}</span>
-                <Link to={`/profile/${creator.id}`}>
-                  <strong>{creator.name}</strong>
-                  <small>Fictional recipient · Simulated thread</small>
+                <Link
+                  to={`/profile/${creator.id}`}
+                  className="conversation-person"
+                >
+                  <span className="avatar">{creator.initials}</span>
+                  <span>
+                    <strong>{creator.name}</strong>
+                    <small>{creator.handle}</small>
+                  </span>
                 </Link>
                 <button
                   className="icon-button"
                   aria-label="Report conversation"
                   onClick={() => setReport(true)}
                 >
-                  <Flag size={16} />
+                  <Flag size={18} strokeWidth={1.7} />
                 </button>
                 <button
                   className="icon-button"
@@ -214,39 +221,51 @@ export default function MessagesPage() {
                     );
                   }}
                 >
-                  <UserX size={17} />
+                  <UserX size={19} strokeWidth={1.7} />
                 </button>
               </header>
               <div className="thread" aria-live="polite">
-                {!thread.length && (
-                  <div className="conversation-empty">
-                    <ShieldCheck size={25} />
-                    <p>
-                      Start a fictional conversation. Your private content is
-                      never exposed by a shared link.
-                    </p>
-                  </div>
-                )}
-                {thread.map((m) => (
-                  <div
-                    className={`message-bubble ${m.author === "you" ? "outgoing" : "incoming"}`}
-                    key={m.id}
+                <div className="thread-intro">
+                  <span className="avatar large">{creator.initials}</span>
+                  <strong>{creator.name}</strong>
+                  <small>
+                    {creator.handle} · {creator.followers} followers
+                  </small>
+                  <Link
+                    to={`/profile/${creator.id}`}
+                    className="button secondary small"
                   >
-                    {m.text && <p>{m.text}</p>}
-                    {m.card && (
-                      <LinkedCard
-                        card={m.card}
-                        viewer={m.author === "you" ? selected : "you"}
-                      />
-                    )}
-                    <small>
-                      {m.time} ·{" "}
-                      {m.author === "you"
-                        ? "Simulated delivery"
-                        : "Fictional message"}
-                    </small>
-                  </div>
-                ))}
+                    View profile
+                  </Link>
+                </div>
+                {thread.map((m, index) => {
+                  const next = thread[index + 1];
+                  const lastInGroup = !next || next.author !== m.author;
+                  return (
+                    <div
+                      className={`message-row ${m.author === "you" ? "outgoing-row" : "incoming-row"} ${lastInGroup ? "group-end" : ""}`}
+                      key={m.id}
+                    >
+                      {m.author !== "you" && (
+                        <span className="avatar tiny" aria-hidden="true">
+                          {lastInGroup ? creator.initials : ""}
+                        </span>
+                      )}
+                      <div
+                        className={`message-bubble ${m.author === "you" ? "outgoing" : "incoming"}`}
+                      >
+                        {m.text && <p>{m.text}</p>}
+                        {m.card && (
+                          <LinkedCard
+                            card={m.card}
+                            viewer={m.author === "you" ? selected : "you"}
+                          />
+                        )}
+                        {lastInGroup && <small>{m.time}</small>}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <form
                 className="message-composer"
@@ -268,45 +287,61 @@ export default function MessagesPage() {
                     </button>
                   </div>
                 )}
-                <Area
-                  label="Your demo message"
-                  placeholder="Share a thought…"
-                  value={text}
-                  maxLength={2000}
-                  onChange={(e) => setText(e.target.value)}
-                />
-                <div className="composer-actions">
-                  <Button
+                <div className="composer-pill">
+                  <button
                     type="button"
-                    variant="ghost"
+                    className="icon-button"
+                    aria-label="Attach linked card"
                     onClick={() => setAttach(true)}
                   >
-                    <Link2 size={16} />
-                    Attach linked card
-                  </Button>
-                  <Button type="submit" disabled={!text.trim() && !card}>
-                    <Send size={16} />
-                    Simulate send
-                  </Button>
+                    <Link2 size={20} strokeWidth={1.7} />
+                  </button>
+                  <textarea
+                    aria-label="Message"
+                    placeholder="Message…"
+                    rows={1}
+                    value={text}
+                    maxLength={2000}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        send();
+                      }
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className="send-button"
+                    aria-label="Send message"
+                    disabled={!text.trim() && !card}
+                  >
+                    <ArrowUp size={19} strokeWidth={2} />
+                  </button>
                 </div>
               </form>
             </>
           ) : (
-            <Empty
-              title={
-                blocked
-                  ? "This recipient is blocked."
-                  : "A little room for a conversation."
-              }
-            >
+            <div className="conversation-empty">
+              <span className="conversation-empty-icon">
+                <Send size={30} strokeWidth={1.4} />
+              </span>
+              <h2>
+                {blocked ? "This recipient is blocked." : "Your messages"}
+              </h2>
               {blocked ? (
                 <Link to="/profile">
                   Manage blocked creators in your profile.
                 </Link>
               ) : (
-                "Choose a fictional conversation or compose a new demo message."
+                <>
+                  <p>Send a private note or share a post with a friend.</p>
+                  <Button onClick={() => setNewMessage(true)}>
+                    Send message
+                  </Button>
+                </>
               )}
-            </Empty>
+            </div>
           )}
         </section>
       </div>

@@ -127,14 +127,10 @@ test("category images navigate and Photos/Reels keep Following independent", asy
   const caption = await photo.locator(".post-caption").boundingBox();
   expect(picture).not.toBeNull();
   expect(caption).not.toBeNull();
-  expect(caption!.x).toBeGreaterThanOrEqual(picture!.x);
-  expect(caption!.y).toBeGreaterThanOrEqual(picture!.y);
-  expect(caption!.x + caption!.width).toBeLessThanOrEqual(
-    picture!.x + picture!.width + 1,
-  );
-  expect(caption!.y + caption!.height).toBeLessThanOrEqual(
-    picture!.y + picture!.height + 1,
-  );
+  // Photo captions sit below the image, Instagram-style; reels keep overlays.
+  expect(caption!.y).toBeGreaterThanOrEqual(picture!.y + picture!.height);
+  await expect(photo.locator(".post-media .post-caption")).toHaveCount(0);
+  await expect(photo.locator(".post-likes")).toHaveText("24 likes");
   const like = photo.getByRole("button", {
     name: "Like The art of a simple Sunday",
     exact: true,

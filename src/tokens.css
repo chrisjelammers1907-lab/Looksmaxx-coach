@@ -1,0 +1,62 @@
+/*
+ * CHARETT design tokens — the single source of truth for colour, radius,
+ * elevation and motion. Every other stylesheet refers to these variables.
+ *
+ * Palette: deep forest green with warm ivory, champagne and a green-black ink.
+ * Text pairs (WCAG 2.1 contrast):
+ *   --ink on --ivory 15.3:1 · --muted on --ivory 6.4:1 · --muted on --linen 5.3:1
+ *   --gold-deep on --ivory 5.6:1 · --forest on --cream 10.2:1
+ *   --on-dark on --forest 10.6:1 · --on-dark-muted on --forest 6.9:1
+ *   --champagne on --forest 5.1:1 (accent text on dark only; decorative on light)
+ */
+:root {
+  /* Greens */
+  --forest: #123d32;
+  --forest-deep: #0b2a22;
+  --forest-soft: #1d4a3d;
+  --forest-ink: #08201a;
+
+  /* Neutrals */
+  --ivory: #f8f4ec;
+  --porcelain: #fdfbf7;
+  --cream: #f1ebe0;
+  --linen: #e7dfd0;
+  --line: #e0d7c7;
+  --line-strong: #cfc3ae;
+  --sand: #d6c8ae;
+  --stone: #9d927f;
+
+  /* Metallic accent */
+  --champagne: #c5a46d;
+  --champagne-soft: #ece0c6;
+  --gold-deep: #684b1e;
+
+  /* Text */
+  --ink: #15201b;
+  --muted: #524e46;
+  --on-dark: #f6f0e4;
+  --on-dark-muted: #cdc3ae;
+  --danger: #8f3a32;
+
+  /* Legacy aliases kept so older rules resolve to the new palette. */
+  --green: var(--forest);
+  --paper: var(--ivory);
+  --beige: var(--cream);
+  --canvas: var(--linen);
+  --rose: var(--linen);
+  --sage: var(--cream);
+  --amber: var(--champagne);
+
+  /* Shape, depth and motion */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(8 32 26 / 6%), 0 2px 8px rgb(8 32 26 / 5%);
+  --shadow: 0 2px 6px rgb(8 32 26 / 6%), 0 18px 48px rgb(8 32 26 / 9%);
+  --shadow-float: 0 10px 30px rgb(8 32 26 / 22%), 0 2px 6px rgb(8 32 26 / 12%);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
+}

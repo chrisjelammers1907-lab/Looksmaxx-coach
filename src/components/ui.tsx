@@ -296,17 +296,21 @@ export function Tabs({
 export function ImageInput({
   label = "Choose a private photo",
   onImage,
+  iconOnly = false,
 }: {
   label?: string;
   onImage: (data: string) => void;
+  iconOnly?: boolean;
 }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   return (
-    <div>
+    <div className={iconOnly ? "image-input icon-only" : undefined}>
       <label className="upload">
-        <ImagePlus size={22} />
-        <span>{loading ? "Reading photo…" : label}</span>
+        <ImagePlus size={iconOnly ? 20 : 22} strokeWidth={iconOnly ? 1.7 : 2} />
+        <span className={iconOnly ? "visually-hidden" : undefined}>
+          {loading ? "Reading photo…" : label}
+        </span>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"

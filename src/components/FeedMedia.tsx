@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ImagePlus,
-  Film,
   Music2,
   Play,
   Pause,
@@ -15,6 +14,25 @@ import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
 const editorialPhotos = new Map<string, Promise<string>>();
+export function mediaLabel(post: Post, image = post.image) {
+  return (
+    post.media?.label ||
+    (["campaign", "ritual", "tailoring"].includes(image)
+      ? "AI editorial inspiration"
+      : [
+            "skin",
+            "gym",
+            "smile",
+            "fragrance",
+            "shirt",
+            "tee",
+            "denim",
+            "food",
+          ].includes(image)
+        ? "Original editorial illustration"
+        : "Licensed editorial reference")
+  );
+}
 export function PostMedia({
   post,
   children,
@@ -70,6 +88,12 @@ export function PostMedia({
       return;
     }
     setPhoto("");
+    // Vector illustrations have no intrinsic pixel size; CSS cover-crops them.
+    const source = asset(currentImage);
+    if (source.endsWith(".svg") || source.startsWith("data:image/svg")) {
+      setPhoto(source);
+      return;
+    }
     let active = true;
     const cacheKey = `${currentImage}:${isReel ? 1920 : 1350}`;
     if (!editorialPhotos.has(cacheKey))
@@ -117,22 +141,7 @@ export function PostMedia({
       document.removeEventListener("visibilitychange", hidden);
     };
   }, [isVideo, sound?.id]);
-  const label =
-    media?.label ||
-    (["campaign", "ritual", "tailoring"].includes(currentImage)
-      ? "AI editorial inspiration"
-      : [
-            "skin",
-            "gym",
-            "smile",
-            "fragrance",
-            "shirt",
-            "tee",
-            "denim",
-            "food",
-          ].includes(currentImage)
-        ? "Original editorial illustration"
-        : "Licensed editorial reference");
+  const label = mediaLabel(post, currentImage);
   return (
     <div className="post-media-wrap" ref={container}>
       <div
@@ -223,10 +232,6 @@ export function PostMedia({
             {failed ? "This image could not load." : "Preparing photo…"}
           </span>
         )}
-        <span className="image-tag">
-          {isVideo ? <Film size={12} /> : null}
-          {label} · {post.audience}
-        </span>
         {hasSlides && (
           <div className="slide-controls">
             <button

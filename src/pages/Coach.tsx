@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
+  ArrowUp,
   ArrowUpRight,
-  Send,
   Sparkles,
   X,
   ListChecks,
@@ -13,14 +13,7 @@ import { topics } from "../lib/data";
 import { uid } from "../lib/domain";
 import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
-import {
-  Area,
-  Button,
-  ImageInput,
-  Modal,
-  Notice,
-  PageHeader,
-} from "../components/ui";
+import { Button, ImageInput, Modal, Notice } from "../components/ui";
 export default function CoachPage() {
   const { state, update, toast } = useDemo();
   const [params] = useSearchParams();
@@ -70,41 +63,36 @@ export default function CoachPage() {
   };
   return (
     <div className="coach-page">
-      <PageHeader
-        eyebrow="A LITTLE GUIDANCE. YOUR OWN DIRECTION."
-        title="Your AI Coach."
-        description="Ask in your own words. Your question sets the direction."
-        action={
-          <Link to="/plan" className="button secondary">
-            <ListChecks size={16} />
-            My plan
-          </Link>
-        }
-      />
-      <Notice>
-        SIMULATED AI · Sample replies use your message and session context. No
-        live model or photo analysis. You review every proposed plan change.
-      </Notice>
       <div className="coach-layout">
         <section
           className="coach-conversation"
           aria-label="Demo coach conversation"
         >
+          <header className="coach-header">
+            <span className="coach-orb small" aria-hidden="true">
+              <Sparkles size={18} />
+            </span>
+            <div>
+              <h1>CHARETT Coach</h1>
+              <small>AI coach · demo replies</small>
+            </div>
+            <Link to="/plan" className="button secondary small">
+              <ListChecks size={15} />
+              My plan
+            </Link>
+          </header>
           <div className="chat-messages" aria-live="polite">
             {!state.chat.length && (
               <div className="coach-welcome">
                 <span className="coach-orb">
-                  <Sparkles size={28} />
+                  <Sparkles size={26} />
                 </span>
-                <div className="eyebrow">LET’S START WITH YOU</div>
                 <h2>
-                  Good changes start
-                  <br />
-                  with a <em>conversation.</em>
+                  What would you like to <em>work on?</em>
                 </h2>
                 <p>
-                  Ask about a ritual, an outfit, or a small next step. Your
-                  goals and owned items shape the example response.
+                  Ask about skin, hair, outfits or training. Your goals and the
+                  things you own shape each reply.
                 </p>
                 <div className="prompt-chips">
                   {[
@@ -114,7 +102,6 @@ export default function CoachPage() {
                   ].map((q) => (
                     <button key={q} onClick={() => send(q)}>
                       {q}
-                      <ArrowUpRight size={14} />
                     </button>
                   ))}
                 </div>
@@ -122,49 +109,64 @@ export default function CoachPage() {
             )}
             {state.chat.map((m) => (
               <div className={`chat-message ${m.author}`} key={m.id}>
-                <span className="chat-author">
-                  {m.author === "you"
-                    ? "You · private session"
-                    : "CHARETT · Simulated coach"}
-                </span>
-                {m.photo && (
-                  <img
-                    className="chat-photo"
-                    src={m.photo}
-                    alt="Your private attached photo — not analyzed"
-                  />
+                {m.author === "coach" && (
+                  <span className="coach-orb tiny" aria-hidden="true">
+                    <Sparkles size={12} />
+                  </span>
                 )}
-                <p className="preserve-text">{m.text}</p>
-                {m.guide && (
-                  <Link
-                    className="coach-source-link"
-                    to={`/topics/${m.guide}/guide`}
-                  >
-                    Read the beginner’s guide · References included{" "}
-                    <ArrowUpRight size={14} />
-                  </Link>
-                )}
-                {m.proposal && (
-                  <div className="proposal-card">
-                    <span className="eyebrow">PROPOSED · NOT APPLIED</span>
-                    <p>{m.proposal}</p>
-                    <Button
-                      variant="secondary"
-                      disabled={m.applied}
-                      onClick={() => setProposal(m)}
+                <div className="chat-bubble">
+                  <span className="visually-hidden">
+                    {m.author === "you" ? "You:" : "Coach:"}
+                  </span>
+                  {m.photo && (
+                    <img
+                      className="chat-photo"
+                      src={m.photo}
+                      alt="Your private attached photo — not analyzed"
+                    />
+                  )}
+                  <p className="preserve-text">{m.text}</p>
+                  {m.guide && (
+                    <Link
+                      className="coach-source-link"
+                      to={`/topics/${m.guide}/guide`}
                     >
-                      {m.applied
-                        ? "Applied to your plan"
-                        : "Inspect proposed change"}
-                    </Button>
-                  </div>
-                )}
+                      Read the beginner’s guide <ArrowUpRight size={14} />
+                    </Link>
+                  )}
+                  {m.proposal && (
+                    <div className="proposal-card">
+                      <span className="eyebrow">Suggested for your plan</span>
+                      <p>{m.proposal}</p>
+                      <Button
+                        variant="secondary small"
+                        disabled={m.applied}
+                        onClick={() => setProposal(m)}
+                      >
+                        {m.applied
+                          ? "Applied to your plan"
+                          : "Inspect proposed change"}
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
             {busy && (
-              <div className="chat-loading" role="status">
-                <Sparkles size={16} />
-                Preparing a sample response…
+              <div className="chat-message coach typing" role="status">
+                <span className="coach-orb tiny" aria-hidden="true">
+                  <Sparkles size={12} />
+                </span>
+                <div className="chat-bubble">
+                  <span className="typing-dots" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="visually-hidden">
+                    Preparing a sample response…
+                  </span>
+                </div>
               </div>
             )}
             <div ref={end} />
@@ -184,7 +186,7 @@ export default function CoachPage() {
             {photo && (
               <div className="attachment-preview">
                 <img src={photo} alt="Private attachment preview" />
-                <span>Session only · Not analyzed</span>
+                <span>Stays in this tab · not analyzed</span>
                 <button
                   className="icon-button"
                   type="button"
@@ -195,54 +197,69 @@ export default function CoachPage() {
                 </button>
               </div>
             )}
-            <Area
-              label="Ask your demo coach"
-              placeholder="A question, a goal, a little uncertainty…"
-              value={text}
-              maxLength={2000}
-              onChange={(e) => setText(e.target.value)}
-            />
-            <div className="composer-actions">
-              <ImageInput label="Attach a private photo" onImage={setPhoto} />
-              <Button type="submit" disabled={busy || (!text.trim() && !photo)}>
-                <Send size={16} />
-                {busy ? "Thinking…" : "Send"}
-              </Button>
+            <div className="composer-pill">
+              <ImageInput
+                label="Attach a private photo"
+                onImage={setPhoto}
+                iconOnly
+              />
+              <textarea
+                aria-label="Ask your demo coach"
+                placeholder="Message your coach…"
+                rows={1}
+                value={text}
+                maxLength={2000}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    void send();
+                  }
+                }}
+              />
+              <button
+                type="submit"
+                className="send-button"
+                aria-label="Send"
+                disabled={busy || (!text.trim() && !photo)}
+              >
+                <ArrowUp size={19} strokeWidth={2} />
+              </button>
             </div>
-            <small>
-              Photos stay in this tab. Never analyzed or posted to Explore.
-            </small>
           </form>
         </section>
         <aside className="coach-context">
-          <ShieldCheck size={23} />
-          <h3>Your shared context</h3>
-          <span className="eyebrow">YOUR EDITABLE PROFILE</span>
-          <p>
-            <strong>Goal</strong>
-            {state.profile.goals || "Not entered yet"}
-          </p>
-          <p>
-            <strong>Preferences</strong>
-            {state.profile.preferences || "Not entered yet"}
-          </p>
-          <p>
-            <strong>Budget</strong>
-            {state.profile.currency} {state.profile.budget}
-          </p>
-          <p>
-            <strong>In your space</strong>
-            {state.items.length} items · {state.routines.length} routines ·{" "}
-            {state.goals.length} plan goals
-          </p>
+          <h2>What your coach knows</h2>
+          <dl>
+            <div>
+              <dt>Goal</dt>
+              <dd>{state.profile.goals || "Not entered yet"}</dd>
+            </div>
+            <div>
+              <dt>Preferences</dt>
+              <dd>{state.profile.preferences || "Not entered yet"}</dd>
+            </div>
+            <div>
+              <dt>Budget</dt>
+              <dd>
+                {state.profile.currency} {state.profile.budget}
+              </dd>
+            </div>
+            <div>
+              <dt>In your space</dt>
+              <dd>
+                {state.items.length} items · {state.routines.length} routines ·{" "}
+                {state.goals.length} plan goals
+              </dd>
+            </div>
+          </dl>
           <Link to="/profile" className="text-link">
             Edit your information <ArrowUpRight size={14} />
           </Link>
-          <hr />
-          <small>
-            Advice is proposed. Estimates and uncertain observations are
-            labelled. No routine changes silently.
-          </small>
+          <p className="coach-context-note">
+            <ShieldCheck size={15} aria-hidden="true" />
+            Suggestions are never applied without your review.
+          </p>
         </aside>
       </div>
       {proposal && (

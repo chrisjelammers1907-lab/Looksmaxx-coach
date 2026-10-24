@@ -109,9 +109,8 @@ test("feed video plays, photo frames have real supported pixel dimensions, topic
   await expect(
     page.getByRole("heading", { name: "A fictional caption without a topic" }),
   ).toBeVisible();
-  await expect(page.locator(".post-caption > .eyebrow")).toHaveText(
-    "Community",
-  );
+  // An untagged post shows no topic or default style line.
+  await expect(page.locator(".post-card .post-topic")).toHaveCount(0);
 });
 test("private upload is cropped proportionally and cannot be published as public demo media", async ({
   page,

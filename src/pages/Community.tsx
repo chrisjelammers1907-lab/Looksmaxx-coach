@@ -13,7 +13,6 @@ import {
   Pencil,
   Trash2,
   ArrowLeft,
-  SlidersHorizontal,
   Images,
   Film,
 } from "lucide-react";
@@ -28,13 +27,12 @@ import {
   Field,
   Modal,
   Notice,
-  PageHeader,
   Select,
   Tabs,
 } from "../components/ui";
 import { ItemBreakdown } from "../components/Items";
 import { PostCard } from "../components/Social";
-import { MediaPicker, PostMedia } from "../components/FeedMedia";
+import { MediaPicker, PostMedia, mediaLabel } from "../components/FeedMedia";
 import { SoundPicker } from "../components/Sounds";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
@@ -487,7 +485,7 @@ function CommunityContent() {
           <PostMedia post={draft} />
           <h3>{draft.title}</h3>
           <p className="small-text">
-            Posting as {state.profile.name} · local demo profile. Your private
+            Posting as {state.profile.name} · {mediaLabel(draft)}. Your private
             profile photo is excluded.
           </p>
           <p className="preserve-text">{draft.body}</p>
@@ -546,16 +544,13 @@ function CommunityContent() {
   if (id)
     return (
       <div className="community-detail">
-        <Link to="/" className="text-link">
+        <Link to="/" className="text-link back-link">
           <ArrowLeft size={15} />
-          Back to your feed
+          Back to feed
         </Link>
+        <h1 className="visually-hidden">Post details</h1>
         {mayViewPost(current, "you", state.blocked) && current ? (
           <>
-            <PageHeader
-              eyebrow="THE COMMUNITY EDIT"
-              title="A shared point of view."
-            />
             {current.author === "you" && (
               <div className="button-row own-post-actions">
                 <Button
@@ -614,51 +609,60 @@ function CommunityContent() {
         )}
       </div>
     );
+  const chips = [
+    { kind: "style", id: "old-money", label: "Old money" },
+    { kind: "style", id: "dark-casual", label: "Dark casual" },
+    { kind: "style", id: "minimalist", label: "Minimalist" },
+    { kind: "topic", id: "clothing", label: "Outfits" },
+    { kind: "topic", id: "skincare", label: "Skincare" },
+    { kind: "topic", id: "hair", label: "Hair" },
+    { kind: "topic", id: "gym", label: "Training" },
+    { kind: "topic", id: "grooming", label: "Grooming" },
+    { kind: "topic", id: "fragrance", label: "Fragrance" },
+  ];
   return (
     <div className="explore-page">
-      <section className="feed-intro">
-        <div>
-          <span className="eyebrow">STYLE · SELF-CARE · PROGRESS</span>
-          <h1>
-            Your daily <em>edit.</em>
-          </h1>
+      <h1 className="visually-hidden">Your daily edit.</h1>
+      <div className="feed-header">
+        <span className="feed-header-spacer" aria-hidden="true" />
+        <div className="feed-tabs">
+          <Tabs
+            value={feed}
+            onChange={setFeed}
+            tabs={[
+              { id: "for-you", label: "For You" },
+              { id: "following", label: "Following" },
+            ]}
+          />
         </div>
-        <p>
-          Personal style, everyday care and your own progress. Find inspiration,
-          build routines and try the AI Coach demo.
-        </p>
-      </section>
-      <div className="feed-bar">
-        <Tabs
-          value={feed}
-          onChange={setFeed}
-          tabs={[
-            { id: "for-you", label: "For You" },
-            { id: "following", label: "Following" },
-          ]}
-        />
-        <div className="feed-bar-actions">
-          <Button
-            variant="secondary"
+        <div className="feed-header-actions">
+          <button
+            type="button"
+            className={`icon-button ${showFilters ? "active" : ""}`}
             aria-expanded={showFilters}
             aria-label="Search and filter posts"
             onClick={() => setShowFilters(!showFilters)}
           >
-            <SlidersHorizontal size={17} />
-            <span className="desktop-filter-label">Search & filters</span>
-          </Button>
-          <Button
+            <Search size={20} strokeWidth={1.7} />
+          </button>
+          <button
+            type="button"
+            className="icon-button create-button"
+            aria-label="Create a post"
             onClick={() => {
               setDraft(makePost());
               setComposer(true);
               setPreview(false);
             }}
           >
-            <Plus size={17} /> Create a post
-          </Button>
+            <Plus size={20} strokeWidth={1.7} />
+            <span className="create-label" aria-hidden="true">
+              New post
+            </span>
+          </button>
         </div>
       </div>
-      <div className="feed-format-bar">
+      <div className="feed-chips">
         <div
           className="feed-format-tabs"
           role="tablist"
@@ -698,19 +702,44 @@ function CommunityContent() {
                 }
               }}
             >
-              <Icon size={16} /> {label}
+              <Icon size={15} /> {label}
             </button>
           ))}
         </div>
-        <span className="feed-format-note">
-          {format === "photos"
-            ? "Still moments, considered details."
-            : "Motion & photo stories. Play a sound or swipe a slideshow."}
-        </span>
+        <span className="chip-divider" aria-hidden="true" />
+        <div className="chip-scroller" aria-label="Filter by style or topic">
+          <button
+            type="button"
+            className="chip"
+            aria-pressed={topic === "all" && style === "all"}
+            onClick={() => {
+              setTopic("all");
+              setStyle("all");
+            }}
+          >
+            All
+          </button>
+          {chips.map((chip) => {
+            const active =
+              chip.kind === "style" ? style === chip.id : topic === chip.id;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                className="chip"
+                aria-pressed={active}
+                onClick={() =>
+                  chip.kind === "style"
+                    ? setStyle(active ? "all" : chip.id)
+                    : setTopic(active ? "all" : chip.id)
+                }
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
-      <p className="feed-disclosure">
-        Demo feed · Fictional creators, local interactions and sample ordering.
-      </p>
       {showFilters && (
         <section
           className="feed-filter-panel"

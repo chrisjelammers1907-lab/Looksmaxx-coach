@@ -4,12 +4,13 @@ import {
   Heart,
   Bookmark,
   MessageCircle,
-  Share2,
   Flag,
   UserX,
   Copy,
   ArrowUpRight,
   Send,
+  ShoppingBag,
+  ChevronRight,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
 import { creators } from "../lib/data";
@@ -21,16 +22,24 @@ import {
   uid,
   maySharePost,
   mayViewPost,
+  money,
+  dateLabel,
 } from "../lib/domain";
 import { Button, Field, Modal, Notice, Select } from "./ui";
 import { ItemBreakdown } from "./Items";
-import { PostMedia } from "./FeedMedia";
+import { PostMedia, mediaLabel } from "./FeedMedia";
+const tagPositions = [
+  { left: "8%", top: "16%" },
+  { left: "44%", top: "46%" },
+  { left: "12%", top: "70%" },
+  { left: "50%", top: "24%" },
+];
 export function FollowButton({ creator }: { creator: string }) {
   const { state, update } = useDemo();
   if (creator === "you") return null;
   return (
     <Button
-      variant="secondary small"
+      variant={`follow ${state.following.includes(creator) ? "following" : ""}`}
       disabled={state.blocked.includes(creator)}
       aria-pressed={state.following.includes(creator)}
       onClick={() =>
@@ -210,6 +219,7 @@ export function PostCard({
   const [comment, setComment] = useState("");
   const [report, setReport] = useState(false);
   const [reason, setReason] = useState("Misleading or unsafe advice");
+  const [showProducts, setShowProducts] = useState(false);
   const creator = creators.find((c) => c.id === post.author);
   const own = post.author === "you";
   const copy = () => {
@@ -266,6 +276,53 @@ export function PostCard({
       "Editable private copy created. This is not an automatic medical recommendation.",
     );
   };
+  const isReel = post.format === "reel" || post.media?.kind === "video";
+  const handle = own ? state.profile.handle : creator?.handle;
+  const liked = state.likes.includes(post.id);
+  const commentCount = state.comments[post.id]?.length || 0;
+  const long = post.body.length > 125;
+  const shortBody = long ? `${post.body.slice(0, 122).trimEnd()}…` : post.body;
+  const topicLine = [
+    topicName[post.topic],
+    post.style && post.style.replace("-", " "),
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const tags = post.tags
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  const productTags = !isReel && post.items.length > 0 && (
+    <>
+      <button
+        type="button"
+        className="shop-toggle"
+        aria-label={`${showProducts ? "Hide" : "Show"} products in ${post.title}`}
+        aria-pressed={showProducts}
+        onClick={() => setShowProducts(!showProducts)}
+      >
+        <ShoppingBag size={16} strokeWidth={1.8} />
+      </button>
+      {showProducts &&
+        post.items.slice(0, 4).map((item, index) => (
+          <button
+            type="button"
+            key={item.id}
+            className="product-tag"
+            style={tagPositions[index]}
+            onClick={() => setDetail(true)}
+          >
+            <strong>{item.name}</strong>
+            <span>
+              {item.store || item.brand || "Store not provided"} ·{" "}
+              {item.price === null
+                ? "Price unknown"
+                : money(item.price, item.currency)}
+            </span>
+          </button>
+        ))}
+    </>
+  );
   const body = (
     <>
       <div className="post-author">
@@ -277,82 +334,61 @@ export function PostCard({
             {own ? state.profile.name.slice(0, 1) : creator?.initials}
           </span>
           <span>
-            <strong>{own ? state.profile.name : creator?.name}</strong>
-            <small>
-              {own ? "Your session post" : "Fictional creator"} · {post.date}
-            </small>
+            <strong>{handle}</strong>
+            <small>{mediaLabel(post)}</small>
           </span>
         </Link>
         <FollowButton creator={post.author} />
       </div>
       <PostMedia post={post}>
-        <div className="post-caption">
-          <div className="eyebrow">
-            {topicName[post.topic] || "Community"}{" "}
-            {post.style && ` / ${post.style.replace("-", " ")}`}
+        {isReel ? (
+          <div className="post-caption">
+            {topicLine && <div className="post-topic">{topicLine}</div>}
+            <Link to={`/post/${post.id}`}>
+              <h3>{post.title}</h3>
+            </Link>
+            <p>{shortBody}</p>
+            {long && !expanded && (
+              <button
+                type="button"
+                className="caption-more"
+                onClick={() => setDetail(true)}
+              >
+                more
+              </button>
+            )}
           </div>
-          <Link to={`/post/${post.id}`}>
-            <h3>{post.title}</h3>
-          </Link>
-          <p>
-            {post.body.length > 145
-              ? `${post.body.slice(0, 142).trimEnd()}…`
-              : post.body}
-          </p>
-          {post.body.length > 145 && !expanded && (
-            <button
-              type="button"
-              className="caption-more"
-              onClick={() => setDetail(true)}
-            >
-              Read full caption
-            </button>
-          )}
-        </div>
+        ) : (
+          productTags
+        )}
       </PostMedia>
       <div className="post-body">
-        <div className="tag-row">
-          {post.tags
-            .split(",")
-            .filter(Boolean)
-            .map((t) => (
-              <span className="tag" key={t.trim()}>
-                {t.trim()}
-              </span>
-            ))}
-        </div>
-        {post.items.length > 0 && (
-          <p className="post-price">
-            {post.items.length} items · {totalPrice(post.items)}{" "}
-            <small>Example prices</small>
-          </p>
-        )}
         <div className="post-actions">
           <button
             aria-label={`Like ${post.title}`}
-            aria-pressed={state.likes.includes(post.id)}
+            aria-pressed={liked}
+            className={liked ? "liked" : ""}
             onClick={() =>
               update((s) => ({ ...s, likes: toggle(s.likes, post.id) }))
             }
           >
             <Heart
-              size={18}
-              fill={state.likes.includes(post.id) ? "currentColor" : "none"}
+              size={24}
+              strokeWidth={1.6}
+              fill={liked ? "currentColor" : "none"}
             />
-            {state.likes.includes(post.id) ? 25 : 24}
           </button>
           <button
             aria-label={`Comment on ${post.title}`}
             onClick={() => setDetail(true)}
           >
-            <MessageCircle size={18} />
-            {state.comments[post.id]?.length || 0}
+            <MessageCircle size={24} strokeWidth={1.6} />
           </button>
           <button
             aria-label={`Share ${post.title}`}
             onClick={() => setShare(true)}
           >
-            <Share2 size={18} />
+            <Send size={23} strokeWidth={1.6} />
           </button>
           <button
             className="save-action"
@@ -364,20 +400,105 @@ export function PostCard({
             }}
           >
             <Bookmark
-              size={18}
+              size={24}
+              strokeWidth={1.6}
               fill={state.saved.includes(post.id) ? "currentColor" : "none"}
             />
           </button>
         </div>
+        <p className="post-likes">{liked ? 25 : 24} likes</p>
+        {!isReel && (
+          <div className="post-caption">
+            {topicLine && <div className="post-topic">{topicLine}</div>}
+            <Link to={`/post/${post.id}`}>
+              <h3>{post.title}</h3>
+            </Link>
+            <p>
+              <Link
+                className="caption-handle"
+                to={own ? "/profile" : `/profile/${post.author}`}
+              >
+                {handle}
+              </Link>{" "}
+              {expanded ? post.body : shortBody}
+              {long && !expanded && (
+                <>
+                  {" "}
+                  <button
+                    type="button"
+                    className="caption-more"
+                    onClick={() => setDetail(true)}
+                  >
+                    more
+                  </button>
+                </>
+              )}
+            </p>
+            {tags.length > 0 && (
+              <p className="caption-tags">
+                {tags.map((t) => `#${t.replaceAll(" ", "")}`).join(" ")}
+              </p>
+            )}
+          </div>
+        )}
+        {post.items.length > 0 && !expanded && (
+          <button
+            type="button"
+            className="shop-row"
+            onClick={() => setDetail(true)}
+          >
+            <span className="shop-thumbs" aria-hidden="true">
+              {post.items.slice(0, 3).map((item) => (
+                <img
+                  key={item.id}
+                  src={
+                    item.image.startsWith("data:")
+                      ? item.image
+                      : asset(item.image || "shirt")
+                  }
+                  alt=""
+                />
+              ))}
+            </span>
+            <span className="shop-text">
+              <strong>Shop the look</strong>
+              <small>
+                {post.items.length} {post.items.length === 1 ? "item" : "items"}{" "}
+                · {totalPrice(post.items)}
+              </small>
+            </span>
+            <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        )}
+        {!expanded && (
+          <button
+            type="button"
+            className="comment-link"
+            onClick={() => setDetail(true)}
+          >
+            {commentCount
+              ? `View ${commentCount === 1 ? "1 comment" : `all ${commentCount} comments`}`
+              : "Add a comment…"}
+          </button>
+        )}
+        <time className="post-date" dateTime={post.date}>
+          {dateLabel(post.date)}
+        </time>
         {(expanded || detail) && (
           <div className="post-expanded">
-            {post.body.length > 145 && (
-              <p className="preserve-text">{post.body}</p>
-            )}
+            {isReel && long && <p className="preserve-text">{post.body}</p>}
             <div className="post-metadata">
               {post.occasion} · {post.season} · Audience: {post.audience}
             </div>
-            {!!post.items.length && <ItemBreakdown items={post.items} />}{" "}
+            {!!post.items.length && (
+              <>
+                <h4>Shop the look</h4>
+                <ItemBreakdown items={post.items} />
+                <p className="small-text">
+                  {totalPrice(post.items)} · Example prices
+                </p>
+              </>
+            )}
             {!!post.steps.length && (
               <ol className="plain-list">
                 {post.steps.map((s, i) => (
