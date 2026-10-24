@@ -1,7 +1,8 @@
 # CHARETT public demo
 
 This branch serves the self-contained CHARETT website from its root.
-Home is For You/Following; Categories contains eight tools and beginner guides.
+Home is For You/Following with separate Photos and Reels. Photo stories support
+slideshow controls and sounds. Categories contains eight tools and beginner guides.
 AI Coach, My Plan and Messages are available in navigation; About us is public.
 Photo and video posts can attach an original demo instrumental sound.
 
