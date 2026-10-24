@@ -56,6 +56,11 @@ describe("access and purchase boundaries", () => {
       false,
     );
     expect(mayViewPost(seedPosts[0], "you", ["mira"])).toBe(false);
+    // Drafts stay with their author and can never be shared.
+    const draft = { ...seedPosts[0], draft: true };
+    expect(mayViewPost(draft, "mira")).toBe(true);
+    expect(mayViewPost(draft, "noor")).toBe(false);
+    expect(maySharePost(draft)).toBe(false);
   });
 });
 describe("meaningful workout and coach behavior", () => {

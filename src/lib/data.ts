@@ -72,6 +72,8 @@ export const creators: Creator[] = [
     bio: "A fictional demo creator. Slow mornings, considered layers, and a less-is-more wardrobe.",
     initials: "ML",
     followers: 248,
+    following: 112,
+    likes: 1940,
   },
   {
     id: "james",
@@ -80,6 +82,8 @@ export const creators: Creator[] = [
     bio: "A fictional demo creator. Everyday strength and practical style. Sharing small things that stick.",
     initials: "JE",
     followers: 184,
+    following: 96,
+    likes: 1210,
   },
   {
     id: "noor",
@@ -88,6 +92,8 @@ export const creators: Creator[] = [
     bio: "A fictional demo creator. Gentle rituals, good scents and personal style for every season.",
     initials: "NB",
     followers: 312,
+    following: 140,
+    likes: 2675,
   },
 ];
 const item = (
@@ -586,4 +592,7 @@ export const makeInitialState = (): DemoState => ({
   checkIn: today(),
   stories: [],
   seenStories: [],
+  reposts: [],
+  notifications: {},
+  muted: [],
 });

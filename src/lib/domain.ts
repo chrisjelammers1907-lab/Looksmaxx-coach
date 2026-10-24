@@ -38,6 +38,7 @@ export function mayViewPost(
 ) {
   if (!post || blocked.includes(post.author)) return false;
   if (post.author === viewer) return true;
+  if (post.draft) return false;
   if (post.media?.origin === "private-upload" || post.audience === "private")
     return false;
   if (
@@ -54,7 +55,7 @@ export function maySharePost(
   recipient?: string,
   approvedFollowers: string[] = [],
 ) {
-  if (!post || post.audience === "private") return false;
+  if (!post || post.audience === "private" || post.draft) return false;
   if (post.media?.origin === "private-upload") return false;
   return mayViewPost(
     post,

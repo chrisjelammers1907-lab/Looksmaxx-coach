@@ -11,6 +11,7 @@ import {
   Send,
   ShoppingBag,
   ChevronRight,
+  Repeat2,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
 import { creators } from "../lib/data";
@@ -339,7 +340,7 @@ export function PostCard({
           </span>
           <span>
             <strong>{handle}</strong>
-            <small>{mediaLabel(post)}</small>
+            <small>{post.draft ? "Draft · only you" : mediaLabel(post)}</small>
           </span>
         </Link>
         <FollowButton creator={post.author} />
@@ -394,6 +395,22 @@ export function PostCard({
           >
             <Send size={23} strokeWidth={1.6} />
           </button>
+          {!own && !post.draft && (
+            <button
+              aria-label={`Repost ${post.title}`}
+              aria-pressed={state.reposts.includes(post.id)}
+              onClick={() => {
+                update((s) => ({ ...s, reposts: toggle(s.reposts, post.id) }));
+                toast(
+                  state.reposts.includes(post.id)
+                    ? "Removed from your reposts."
+                    : "Reposted to your profile.",
+                );
+              }}
+            >
+              <Repeat2 size={24} strokeWidth={1.6} />
+            </button>
+          )}
           <button
             className="save-action"
             aria-label={`Save ${post.title} privately`}

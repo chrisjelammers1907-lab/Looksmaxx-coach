@@ -220,7 +220,7 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
   page,
 }) => {
   await open(page);
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/");
   await page

@@ -66,9 +66,9 @@ test("Home is For You, navigation is explicit, every category has a usable guide
     .getByRole("link", { name: "Private saves", exact: true })
     .click();
   await expect(
-    page.getByRole("tab", { name: "Private saves", exact: true }),
+    page.getByRole("tab", { name: "Saved", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator(".post-card")).toHaveCount(1);
+  await expect(page.locator(".profile-tile")).toHaveCount(1);
   await page.getByLabel("Open profile and menu").click();
   await page
     .getByRole("navigation", { name: "Profile menu" })
@@ -201,7 +201,7 @@ test("account privacy restricts rich cards and approved followers unlock only th
     page.getByRole("button", { name: "Simulate sharing" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close dialog" }).click();
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await expect(page.getByLabel("Account visibility")).toHaveValue("private");
   await page.getByRole("button", { name: "Accept request" }).click();
   await go(page, postPath);
@@ -220,7 +220,7 @@ test("account privacy restricts rich cards and approved followers unlock only th
   await expect(page.locator(".outgoing .linked-card")).toContainText(
     "An account privacy example",
   );
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/topics/photos");
   await page

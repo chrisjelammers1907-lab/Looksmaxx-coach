@@ -11,7 +11,7 @@ import {
   Share2,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
-import { asset, totalPrice, uid } from "../lib/domain";
+import { asset, money, totalPrice, uid } from "../lib/domain";
 import type { Outfit, ClothingStyle } from "../lib/types";
 import Items, { ItemBreakdown } from "../components/Items";
 import {
@@ -505,6 +505,7 @@ export default function ClothingPage() {
                 >
                   <input
                     type="checkbox"
+                    aria-label={`${i.name}${i.brand ? `, ${i.brand}` : ""}`}
                     checked={editing.itemIds.includes(i.id)}
                     onChange={() =>
                       setEditing({
@@ -519,7 +520,13 @@ export default function ClothingPage() {
                     src={i.image.startsWith("data:") ? i.image : asset(i.image)}
                     alt=""
                   />
-                  <span>{i.name}</span>
+                  <span className="piece-text">
+                    <small>{i.brand || "No brand added"}</small>
+                    <strong>{i.name}</strong>
+                    {i.price !== null && (
+                      <small>{money(i.price, i.currency)}</small>
+                    )}
+                  </span>
                 </label>
               ))}
             </div>

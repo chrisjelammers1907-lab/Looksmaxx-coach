@@ -79,6 +79,8 @@ export interface Post {
   format?: "photo" | "reel";
   /** Editorial asset keys only; private uploads remain in media. */
   slides?: string[];
+  /** Drafts are visible to their author only and never shared. */
+  draft?: boolean;
 }
 export interface PostSound {
   id: string;
@@ -101,6 +103,8 @@ export interface Creator {
   bio: string;
   initials: string;
   followers: number;
+  following: number;
+  likes: number;
 }
 export interface Comment {
   id: string;
@@ -116,6 +120,10 @@ export interface Message {
   author: string;
   text: string;
   card?: CardRef;
+  /** Session-only attachments; never persisted or delivered. */
+  photo?: string;
+  sticker?: string;
+  audio?: { src: string; seconds: number };
   time: string;
 }
 export interface Photo {
@@ -155,6 +163,7 @@ export interface ChatMessage {
   author: "you" | "coach";
   text: string;
   photo?: string;
+  file?: { name: string; size: number; type: string };
   proposal?: string;
   applied?: boolean;
   guide?: TopicId;
@@ -197,4 +206,7 @@ export interface DemoState {
   checkIn: string;
   stories: Story[];
   seenStories: string[];
+  reposts: string[];
+  notifications: Record<string, "all" | "stories" | "off">;
+  muted: string[];
 }

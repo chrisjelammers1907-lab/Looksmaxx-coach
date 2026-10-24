@@ -27,13 +27,18 @@ test("copied workout routines remain editable in the personal plan", async ({
   await expect(
     page.getByRole("heading", { name: "My reviewed strength routine" }),
   ).toBeVisible();
+  await go(page, "/post/p1");
+  await page.getByRole("button", { name: "Follow", exact: true }).click();
   await go(page, "/profile");
-  await page.getByRole("tab", { name: "Following & controls" }).click();
-  await page.getByRole("link", { name: /Mira Laurent/ }).click();
+  await page.getByRole("button", { name: /following/ }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("link", { name: /mira\.edits/ })
+    .click();
   await expect(
-    page.getByRole("tab", { name: "Public demo posts" }),
+    page.getByRole("tab", { name: "Posts", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator(".post-card")).toHaveCount(3);
+  await expect(page.locator(".profile-tile")).toHaveCount(3);
 });
 test("corrupt images are rejected and generated inspiration is excluded from progress", async ({
   page,
@@ -94,7 +99,7 @@ test("a private worn-outfit photo never enters a public post preview", async ({
 test("recipient access is rechecked after a public post becomes private", async ({
   page,
 }) => {
-  await start(page, "/profile");
+  await start(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/explore?compose=new");
   await page

@@ -5,6 +5,7 @@ export interface CoachRequest {
   text: string;
   topic?: TopicId;
   hasPhoto: boolean;
+  fileName?: string;
   state: DemoState;
 }
 export interface CoachResponse {
@@ -57,7 +58,7 @@ export function inferCoachTopic(
   );
 }
 export const demoCoach: CoachingService = {
-  async reply({ text, topic: entryTopic, hasPhoto, state }) {
+  async reply({ text, topic: entryTopic, hasPhoto, fileName, state }) {
     await new Promise((resolve) => setTimeout(resolve, 450));
     const topic = inferCoachTopic(
       text,
@@ -121,7 +122,7 @@ export const demoCoach: CoachingService = {
               : "Spend five minutes reviewing my personal routine";
     const priceQuestion = /budget|buy|shop|cost|price|afford/i.test(text);
     return {
-      text: `${opening}\n\n${medical ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. The uploaded treatment references are unvalidated. Discuss treatment questions with a qualified clinician.\n\n" : ""}${topic ? `ABOUT ${topicName[topic].toUpperCase()}\n` : "YOUR NEXT STEP\n"}${topic ? specific[topic] : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words."}\n\nYour stated goal: ${state.profile.goals || "Not provided"}.\nOwned items in this context: ${owned}.${priceQuestion ? `\nYour saved budget: ${state.profile.currency} ${state.profile.budget}. Demo prices are examples, not live offers.` : ""}\n\n${(topic ? nextQuestion[topic] : undefined) || "What would you like to work on first?"}${hasPhoto ? "\n\nPHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. No feature measurement or diagnosis is inferred." : ""}\n\nSimulated coach · This sample uses message keywords and your session context; it is not a live AI assessment.${guide ? " The linked beginner guide explains the reference material behind this topic." : ""}`,
+      text: `${opening}\n\n${medical ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. The uploaded treatment references are unvalidated. Discuss treatment questions with a qualified clinician.\n\n" : ""}${topic ? `ABOUT ${topicName[topic].toUpperCase()}\n` : "YOUR NEXT STEP\n"}${topic ? specific[topic] : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words."}\n\nYour stated goal: ${state.profile.goals || "Not provided"}.\nOwned items in this context: ${owned}.${priceQuestion ? `\nYour saved budget: ${state.profile.currency} ${state.profile.budget}. Demo prices are examples, not live offers.` : ""}\n\n${(topic ? nextQuestion[topic] : undefined) || "What would you like to work on first?"}${hasPhoto ? "\n\nPHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. No feature measurement or diagnosis is inferred." : ""}${fileName ? `\n\nATTACHED FILE · ${fileName} stays in this session. This demo coach does not read file contents yet, so tell me what you would like to know about it.` : ""}\n\nSimulated coach · This sample uses message keywords and your session context; it is not a live AI assessment.${guide ? " The linked beginner guide explains the reference material behind this topic." : ""}`,
       proposal,
       guide: topic,
     };

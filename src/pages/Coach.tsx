@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowUp,
   ArrowUpRight,
+  FileText,
+  Paperclip,
   Sparkles,
   X,
   ListChecks,
@@ -14,6 +16,21 @@ import { uid } from "../lib/domain";
 import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
 import { Button, ImageInput, Modal, Notice } from "../components/ui";
+function FileChip({ file }: { file: NonNullable<ChatMessage["file"]> }) {
+  const size =
+    file.size > 1024 * 1024
+      ? `${(file.size / 1024 / 1024).toFixed(1)} MB`
+      : `${Math.max(1, Math.round(file.size / 1024))} KB`;
+  return (
+    <span className="file-chip">
+      <FileText size={20} strokeWidth={1.6} aria-hidden="true" />
+      <span>
+        <strong>{file.name}</strong>
+        <small>{size}</small>
+      </span>
+    </span>
+  );
+}
 export default function CoachPage() {
   const { state, update, toast } = useDemo();
   const [params] = useSearchParams();
@@ -23,30 +40,43 @@ export default function CoachPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [proposal, setProposal] = useState<ChatMessage | null>(null);
+  const [file, setFile] = useState<ChatMessage["file"]>();
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (state.chat.length)
       end.current?.scrollIntoView({ behavior: "instant", block: "nearest" });
   }, [state.chat.length]);
   const send = async (value = text) => {
-    if (busy || (!value.trim() && !photo)) return;
+    if (busy || (!value.trim() && !photo && !file)) return;
     setError("");
     setBusy(true);
-    const request = value.trim() || "I have a question about this photo.";
+    const request =
+      value.trim() ||
+      (photo
+        ? "I have a question about this photo."
+        : "I have a question about this file.");
     update((s) => ({
       ...s,
       chat: [
         ...s.chat,
-        { id: uid(), author: "you", text: request, photo: photo || undefined },
+        {
+          id: uid(),
+          author: "you",
+          text: request,
+          photo: photo || undefined,
+          file,
+        },
       ],
     }));
     setText("");
     setPhoto("");
+    setFile(undefined);
     try {
       const response = await demoCoach.reply({
         text: request,
         topic,
         hasPhoto: !!photo,
+        fileName: file?.name,
         state,
       });
       update((s) => ({
@@ -125,6 +155,7 @@ export default function CoachPage() {
                       alt="Your private attached photo — not analyzed"
                     />
                   )}
+                  {m.file && <FileChip file={m.file} />}
                   <p className="preserve-text">{m.text}</p>
                   {m.guide && (
                     <Link
@@ -183,15 +214,19 @@ export default function CoachPage() {
               void send();
             }}
           >
-            {photo && (
+            {(photo || file) && (
               <div className="attachment-preview">
-                <img src={photo} alt="Private attachment preview" />
+                {photo && <img src={photo} alt="Private attachment preview" />}
+                {file && <FileChip file={file} />}
                 <span>Stays in this tab · not analyzed</span>
                 <button
                   className="icon-button"
                   type="button"
                   aria-label="Remove attachment"
-                  onClick={() => setPhoto("")}
+                  onClick={() => {
+                    setPhoto("");
+                    setFile(undefined);
+                  }}
                 >
                   <X size={16} />
                 </button>
@@ -203,6 +238,29 @@ export default function CoachPage() {
                 onImage={setPhoto}
                 iconOnly
               />
+              <label className="file-input" title="Attach a file">
+                <Paperclip size={19} strokeWidth={1.7} aria-hidden="true" />
+                <input
+                  type="file"
+                  className="visually-hidden"
+                  aria-label="Attach a file"
+                  accept=".pdf,.doc,.docx,.txt,.rtf,.csv,.xlsx,.pages,image/*"
+                  onChange={(e) => {
+                    const chosen = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!chosen) return;
+                    if (chosen.size > 20 * 1024 * 1024) {
+                      setError("Choose a file under 20 MB.");
+                      return;
+                    }
+                    setFile({
+                      name: chosen.name,
+                      size: chosen.size,
+                      type: chosen.type,
+                    });
+                  }}
+                />
+              </label>
               <textarea
                 aria-label="Ask your demo coach"
                 placeholder="Message your coach…"
@@ -221,7 +279,7 @@ export default function CoachPage() {
                 type="submit"
                 className="send-button"
                 aria-label="Send"
-                disabled={busy || (!text.trim() && !photo)}
+                disabled={busy || (!text.trim() && !photo && !file)}
               >
                 <ArrowUp size={19} strokeWidth={2} />
               </button>

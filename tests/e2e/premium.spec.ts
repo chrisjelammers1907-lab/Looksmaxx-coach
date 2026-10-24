@@ -7,6 +7,15 @@ const open = async (page: Page, path = "/") => {
   if (await skip.isVisible()) await skip.click();
 };
 
+// Client-side navigation keeps session-only state such as drafts.
+const go = async (page: Page, path: string) => {
+  await page.evaluate((next) => {
+    history.pushState(null, "", next);
+    dispatchEvent(new PopStateEvent("popstate"));
+  }, path);
+  await expect(page.locator("h1")).toBeVisible();
+};
+
 const noAxeViolations = async (page: Page) => {
   const scan = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -230,4 +239,98 @@ test("plan shows one day with routine and task filters", async ({ page }) => {
   await expect(page.locator(".goal-row")).toHaveCount(0);
   await expect(page.locator(".routine-card").first()).toBeVisible();
   await noAxeViolations(page);
+});
+
+test("profiles show stats once, drafts stay private and ⋯ holds controls", async ({
+  page,
+}) => {
+  await open(page, "/profile");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  const stats = page.getByRole("list", { name: "Profile stats" });
+  for (const label of ["posts", "followers", "following", "likes"])
+    await expect(stats).toContainText(label);
+
+  // A post saved as a draft appears only under Drafts.
+  await go(page, "/explore?compose=new");
+  await page.getByLabel("Caption", { exact: true }).fill("A quiet draft idea");
+  await page.getByLabel("Audience", { exact: true }).selectOption("public");
+  await page
+    .getByRole("button", { name: "Preview audience & content" })
+    .click();
+  await page.getByRole("button", { name: "Save as draft" }).click();
+  await expect(page.getByText("Draft · only you")).toBeVisible();
+  await go(page, "/");
+  await expect(
+    page.getByRole("heading", { name: "A quiet draft idea" }),
+  ).toHaveCount(0);
+  await go(page, "/profile");
+  await page.getByRole("tab", { name: "Drafts", exact: true }).click();
+  await expect(page.locator(".profile-tile")).toHaveCount(1);
+  await page.getByRole("tab", { name: "Posts", exact: true }).click();
+  await expect(page.locator(".profile-tile")).toHaveCount(0);
+
+  await go(page, "/profile/noor");
+  await page
+    .getByRole("button", { name: "More options for @noor.notes" })
+    .click();
+  const sheet = page.getByRole("dialog", { name: "@noor.notes" });
+  await sheet.getByRole("radio", { name: "Stories only" }).check();
+  await expect(
+    sheet.getByRole("radio", { name: "Stories only" }),
+  ).toBeChecked();
+  for (const name of ["Share profile", "Mute", "Report", "Block"])
+    await expect(
+      sheet.getByRole("button", { name, exact: true }),
+    ).toBeVisible();
+  await noAxeViolations(page);
+});
+
+test("chats send stickers and photos, the coach accepts files", async ({
+  page,
+}) => {
+  await open(page, "/messages?to=noor");
+  await page.getByRole("button", { name: "Add attachment" }).click();
+  await page.getByRole("menuitem", { name: "Sticker" }).click();
+  await page.getByRole("button", { name: "Send Glow up sticker" }).click();
+  await expect(page.locator(".outgoing .sticker")).toHaveText("Glow up");
+  await page.getByRole("button", { name: "Add attachment" }).click();
+  await page.getByLabel("Send a photo").setInputFiles("public/assets/hair.jpg");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator(".outgoing .message-photo")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Record voice message" }),
+  ).toBeVisible();
+  await noAxeViolations(page);
+
+  await page.goto("/coach");
+  await page.getByLabel("Attach a file").setInputFiles({
+    name: "skin-notes.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4 demo"),
+  });
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(page.locator(".chat-message.you .file-chip")).toContainText(
+    "skin-notes.pdf",
+  );
+  await expect(page.locator(".chat-message.coach").last()).toContainText(
+    "does not read file contents",
+  );
+});
+
+test("each clothing style gives the page its own look", async ({ page }) => {
+  await open(page, "/topics/clothing");
+  const section = page.getByTestId("clothing-section");
+  const backgrounds = new Set<string>();
+  for (const style of [/Old money/, /Dark casual/, /Minimalist/]) {
+    await page.getByRole("button", { name: style }).click();
+    backgrounds.add(
+      await section.evaluate(
+        (n) =>
+          getComputedStyle(n).backgroundImage +
+          getComputedStyle(n).backgroundColor,
+      ),
+    );
+    await noAxeViolations(page);
+  }
+  expect(backgrounds.size).toBe(3);
 });

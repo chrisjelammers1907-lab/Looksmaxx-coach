@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowUp,
   Flag,
+  Image,
   Link2,
+  Mic,
+  Plus,
   Send,
+  Square,
   SquarePen,
+  Sticker as StickerIcon,
   UserX,
   X,
 } from "lucide-react";
+import {
+  Sticker,
+  VoiceNote,
+  stickers,
+  useVoiceRecorder,
+} from "../components/ChatMedia";
 import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
 import { uid, maySharePost } from "../lib/domain";
-import type { CardRef } from "../lib/types";
+import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
 import { Button, Modal, Notice, Select } from "../components/ui";
 export default function MessagesPage() {
@@ -29,6 +40,16 @@ export default function MessagesPage() {
   const [request, setRequest] = useState("pending");
   const [report, setReport] = useState(false);
   const [reason, setReason] = useState("Unwanted contact");
+  const [menu, setMenu] = useState(false);
+  const [stickerPicker, setStickerPicker] = useState(false);
+  const [photo, setPhoto] = useState("");
+  const [voice, setVoice] = useState<{ src: string; seconds: number }>();
+  const recorder = useVoiceRecorder(setVoice, toast);
+  const threadEnd = useRef<HTMLDivElement>(null);
+  const threadLength = (state.messages[selected] || []).length;
+  useEffect(() => {
+    threadEnd.current?.scrollIntoView({ block: "end" });
+  }, [selected, threadLength]);
   const choose = (id: string) => {
     setParams({ to: id });
     setText("");
@@ -45,8 +66,20 @@ export default function MessagesPage() {
       state.approvedFollowers,
     ),
   );
+  const post = (message: Partial<Message>) =>
+    update((s) => ({
+      ...s,
+      messages: {
+        ...s.messages,
+        [selected]: [
+          ...(s.messages[selected] || []),
+          { id: uid(), author: "you", text: "", time: "Just now", ...message },
+        ],
+      },
+    }));
   const send = () => {
-    if ((!text.trim() && !card) || blocked || !creator) return;
+    if ((!text.trim() && !card && !photo && !voice) || blocked || !creator)
+      return;
     if (
       card &&
       !maySharePost(
@@ -60,26 +93,18 @@ export default function MessagesPage() {
       toast("That card is no longer accessible. Nothing was sent.");
       return;
     }
-    update((s) => ({
-      ...s,
-      messages: {
-        ...s.messages,
-        [selected]: [
-          ...(s.messages[selected] || []),
-          {
-            id: uid(),
-            author: "you",
-            text: text.trim(),
-            card,
-            time: "Just now",
-          },
-        ],
-      },
-    }));
+    post({
+      text: text.trim(),
+      card,
+      photo: photo || undefined,
+      audio: voice,
+    });
     setText("");
     setCard(undefined);
-    toast("Simulated delivery. Message stays in this local session.");
+    setPhoto("");
+    setVoice(undefined);
   };
+  const hasContent = !!(text.trim() || card || photo || voice);
   const conversations = creators.filter(
     (c) =>
       !state.blocked.includes(c.id) &&
@@ -165,7 +190,16 @@ export default function MessagesPage() {
                     <small>
                       <span className="conversation-snippet">
                         {last
-                          ? `${last.author === "you" ? "You: " : ""}${last.text || "Shared a post"}`
+                          ? `${last.author === "you" ? "You: " : ""}${
+                              last.text ||
+                              (last.photo
+                                ? "Sent a photo"
+                                : last.sticker
+                                  ? "Sent a sticker"
+                                  : last.audio
+                                    ? "Sent a voice message"
+                                    : "Shared a post")
+                            }`
                           : "Start a conversation"}
                       </span>
                       {last?.time && <span> · {last.time}</span>}
@@ -252,8 +286,22 @@ export default function MessagesPage() {
                         </span>
                       )}
                       <div
-                        className={`message-bubble ${m.author === "you" ? "outgoing" : "incoming"}`}
+                        className={`message-bubble ${m.author === "you" ? "outgoing" : "incoming"} ${m.sticker ? "sticker-bubble" : ""}`}
                       >
+                        {m.sticker && <Sticker id={m.sticker} />}
+                        {m.photo && (
+                          <img
+                            className="message-photo"
+                            src={m.photo}
+                            alt="Photo you sent · stays in this tab"
+                          />
+                        )}
+                        {m.audio && (
+                          <VoiceNote
+                            src={m.audio.src}
+                            seconds={m.audio.seconds}
+                          />
+                        )}
                         {m.text && <p>{m.text}</p>}
                         {m.card && (
                           <LinkedCard
@@ -266,6 +314,7 @@ export default function MessagesPage() {
                     </div>
                   );
                 })}
+                <div ref={threadEnd} />
               </div>
               <form
                 className="message-composer"
@@ -274,51 +323,162 @@ export default function MessagesPage() {
                   send();
                 }}
               >
-                {card && (
+                {(card || photo || voice) && (
                   <div className="attachment-preview">
-                    <LinkedCard card={card} />
+                    {card && <LinkedCard card={card} />}
+                    {photo && (
+                      <img
+                        className="attachment-photo"
+                        src={photo}
+                        alt="Photo ready to send"
+                      />
+                    )}
+                    {voice && <VoiceNote {...voice} />}
                     <button
                       type="button"
                       className="icon-button"
-                      aria-label="Remove linked card"
-                      onClick={() => setCard(undefined)}
+                      aria-label="Remove attachment"
+                      onClick={() => {
+                        setCard(undefined);
+                        setPhoto("");
+                        setVoice(undefined);
+                      }}
                     >
                       <X size={16} />
                     </button>
                   </div>
                 )}
-                <div className="composer-pill">
-                  <button
-                    type="button"
-                    className="icon-button"
-                    aria-label="Attach linked card"
-                    onClick={() => setAttach(true)}
-                  >
-                    <Link2 size={20} strokeWidth={1.7} />
-                  </button>
-                  <textarea
-                    aria-label="Message"
-                    placeholder="Message…"
-                    rows={1}
-                    value={text}
-                    maxLength={2000}
-                    onChange={(e) => setText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        send();
-                      }
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="send-button"
-                    aria-label="Send message"
-                    disabled={!text.trim() && !card}
-                  >
-                    <ArrowUp size={19} strokeWidth={2} />
-                  </button>
-                </div>
+                {menu && (
+                  <div className="composer-menu" role="menu">
+                    <label className="composer-menu-item" role="menuitem">
+                      <Image size={19} aria-hidden="true" />
+                      Photo
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="visually-hidden"
+                        aria-label="Send a photo"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          setMenu(false);
+                          if (!file) return;
+                          if (file.size > 8 * 1024 * 1024) {
+                            toast("Choose a photo under 8 MB.");
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = () => setPhoto(String(reader.result));
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="composer-menu-item"
+                      onClick={() => {
+                        setMenu(false);
+                        setStickerPicker(true);
+                      }}
+                    >
+                      <StickerIcon size={19} aria-hidden="true" />
+                      Sticker
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="composer-menu-item"
+                      onClick={() => {
+                        setMenu(false);
+                        void recorder.start();
+                      }}
+                    >
+                      <Mic size={19} aria-hidden="true" />
+                      Voice message
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="composer-menu-item"
+                      onClick={() => {
+                        setMenu(false);
+                        setAttach(true);
+                      }}
+                    >
+                      <Link2 size={19} aria-hidden="true" />
+                      Share a post
+                    </button>
+                  </div>
+                )}
+                {recorder.recording ? (
+                  <div className="composer-pill recording" role="status">
+                    <button
+                      type="button"
+                      className="icon-button"
+                      aria-label="Cancel recording"
+                      onClick={recorder.cancel}
+                    >
+                      <X size={18} />
+                    </button>
+                    <span className="recording-dot" aria-hidden="true" />
+                    <span className="recording-time">
+                      Recording {recorder.elapsed}
+                    </span>
+                    <button
+                      type="button"
+                      className="send-button"
+                      aria-label="Stop recording"
+                      onClick={recorder.stop}
+                    >
+                      <Square size={14} fill="currentColor" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="composer-pill">
+                    <button
+                      type="button"
+                      className={`icon-button add-button ${menu ? "open" : ""}`}
+                      aria-label="Add attachment"
+                      aria-expanded={menu}
+                      onClick={() => setMenu(!menu)}
+                    >
+                      <Plus size={21} strokeWidth={1.8} />
+                    </button>
+                    <textarea
+                      aria-label="Message"
+                      placeholder="Message…"
+                      rows={1}
+                      value={text}
+                      maxLength={2000}
+                      onChange={(e) => setText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          send();
+                        }
+                      }}
+                    />
+                    {hasContent ? (
+                      <button
+                        type="submit"
+                        className="send-button"
+                        aria-label="Send message"
+                      >
+                        <ArrowUp size={19} strokeWidth={2} />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="icon-button"
+                        aria-label="Record voice message"
+                        onClick={() => void recorder.start()}
+                      >
+                        <Mic size={20} strokeWidth={1.7} />
+                      </button>
+                    )}
+                  </div>
+                )}
               </form>
             </>
           ) : (
@@ -372,6 +532,25 @@ export default function MessagesPage() {
           >
             Open conversation
           </Button>
+        </Modal>
+      )}
+      {stickerPicker && (
+        <Modal title="Stickers" onClose={() => setStickerPicker(false)}>
+          <div className="sticker-grid">
+            {stickers.map((st) => (
+              <button
+                key={st.id}
+                type="button"
+                aria-label={`Send ${st.label} sticker`}
+                onClick={() => {
+                  post({ sticker: st.id });
+                  setStickerPicker(false);
+                }}
+              >
+                <Sticker id={st.id} />
+              </button>
+            ))}
+          </div>
         </Modal>
       )}
       {attach && (

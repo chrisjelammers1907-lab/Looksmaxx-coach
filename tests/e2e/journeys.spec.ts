@@ -36,7 +36,7 @@ test("skippable intake and editable shared profile", async ({ page }) => {
     .fill("Build a capsule wardrobe");
   await page.getByLabel("Shopping budget").fill("95");
   await page.getByRole("button", { name: "Save profile" }).click();
-  await page.getByRole("tab", { name: "Private routines & details" }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await expect(
     page.getByText("Build a capsule wardrobe", { exact: true }),
   ).toBeVisible();
@@ -163,8 +163,8 @@ test("outfit builder saves, edits, duplicates and deletes", async ({
     .getByRole("button", { name: "Build an outfit", exact: true })
     .click();
   await page.getByLabel("Outfit name").fill("Sunday test edit");
-  await page.getByLabel("The linen shirt", { exact: true }).check();
-  await page.getByLabel("Straight-leg denim", { exact: true }).check();
+  await page.getByLabel(/^The linen shirt/).check();
+  await page.getByLabel(/^Straight-leg denim/).check();
   await expect(
     dialog(page).getByText("€148.00", { exact: true }),
   ).toBeVisible();
@@ -189,7 +189,7 @@ test("outfit builder saves, edits, duplicates and deletes", async ({
 test("public outfit journey: preview, social actions, copy, share, edit and removed card", async ({
   page,
 }) => {
-  await open(page, "/profile");
+  await open(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/topics/clothing?tab=outfits");
   await page.getByRole("link", { name: "Preview & share outfit" }).click();
@@ -269,7 +269,7 @@ test("following, saved feed, comments and local moderation", async ({
   await page.getByRole("tab", { name: "Reels", exact: true }).click();
   await expect(page.locator(".post-card")).toHaveCount(1);
   await go(page, "/profile?saved=true");
-  await expect(page.locator(".post-card")).toHaveCount(1);
+  await expect(page.locator(".profile-tile")).toHaveCount(1);
   await go(page, "/post/p1");
   await page.getByRole("button", { name: "Block creator" }).click();
   await expect(
@@ -312,7 +312,8 @@ test("messages compose, rich routine card, request controls and blocking", async
       .getByText(/Thanks for accepting this simulated request/),
   ).toBeVisible();
   await page.getByLabel("Message", { exact: true }).fill("A fictional hello.");
-  await page.getByRole("button", { name: "Attach linked card" }).click();
+  await page.getByRole("button", { name: "Add attachment" }).click();
+  await page.getByRole("menuitem", { name: "Share a post" }).click();
   await dialog(page)
     .getByRole("button", { name: /My slower morning ritual/ })
     .click();
@@ -500,7 +501,7 @@ test("private audience cannot be shared, reset removes session content", async (
     dialog(page).getByRole("button", { name: "Simulate sharing" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close dialog" }).click();
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByRole("button", { name: "Reset demo", exact: true }).click();
   await page.getByRole("button", { name: "Confirm reset" }).click();
   await go(page, "/explore");

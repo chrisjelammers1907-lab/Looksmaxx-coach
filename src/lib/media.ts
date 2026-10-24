@@ -69,11 +69,13 @@ export function normaliseFeedPhoto(
   });
 }
 const privateUrls = new Set<string>();
-export function privateVideoUrl(file: File) {
+export function privateVideoUrl(file: Blob) {
   const url = URL.createObjectURL(file);
   privateUrls.add(url);
   return url;
 }
+/** Session-only object URL for any private blob (voice notes, files). */
+export const privateMediaUrl = privateVideoUrl;
 export function releasePrivateMedia() {
   privateUrls.forEach((url) => URL.revokeObjectURL(url));
   privateUrls.clear();

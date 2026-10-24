@@ -1,17 +1,29 @@
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
-  ArrowUpRight,
+  Bell,
+  Bookmark,
+  Ellipsis,
+  FilePen,
+  Film,
+  Flag,
+  Grid3x3,
+  Heart,
+  Images,
   LockKeyhole,
-  MessageCircle,
   Pencil,
+  Repeat2,
   RotateCcw,
+  Settings,
+  Share,
   UserX,
+  VolumeX,
 } from "lucide-react";
-import { useDemo } from "../lib/store";
+import { useDemo, toggle } from "../lib/store";
 import { creators } from "../lib/data";
-import { topicName, mayViewPost } from "../lib/domain";
-import { FollowButton, PostCard } from "../components/Social";
+import { asset, mayViewPost } from "../lib/domain";
+import { FollowButton } from "../components/Social";
+import type { Post } from "../lib/types";
 import {
   Area,
   Button,
@@ -20,11 +32,70 @@ import {
   ImageInput,
   Modal,
   Notice,
-  PageHeader,
-  SectionTitle,
   Select,
-  Tabs,
 } from "../components/ui";
+
+const compact = (n: number) =>
+  new Intl.NumberFormat("en", { notation: "compact" }).format(n);
+const isReel = (p: Post) => p.format === "reel" || p.media?.kind === "video";
+
+function ProfileGrid({
+  posts,
+  empty,
+}: {
+  posts: Post[];
+  empty: React.ReactNode;
+}) {
+  if (!posts.length) return <div className="profile-empty">{empty}</div>;
+  return (
+    <div className="profile-grid">
+      {posts.map((p) => {
+        const image =
+          p.media?.kind === "image"
+            ? p.media.src
+            : p.media?.poster
+              ? asset(p.media.poster)
+              : p.media?.kind === "video" && p.media.origin === "private-upload"
+                ? ""
+                : asset(p.image);
+        return (
+          <Link
+            to={`/post/${p.id}`}
+            className="profile-tile"
+            key={p.id}
+            aria-label={`${p.title}${p.draft ? " · draft" : ""}`}
+          >
+            {image ? <img src={image} alt="" loading="lazy" /> : <Film />}
+            <span className="profile-tile-badges" aria-hidden="true">
+              {p.draft && <span className="tile-label">Draft</span>}
+              {p.audience === "private" && <LockKeyhole size={15} />}
+              {isReel(p) ? (
+                <Film size={16} />
+              ) : (p.slides?.length || 0) > 1 ? (
+                <Images size={16} />
+              ) : null}
+            </span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+async function shareProfile(handle: string, toast: (text: string) => void) {
+  const url = location.href;
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: `@${handle} on CHARETT`, url });
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    toast("Profile link copied.");
+  } catch {
+    toast(`Share this profile: @${handle}`);
+  }
+}
+
 function ProfileContent() {
   const { id } = useParams();
   const { state, update, toast, reset } = useDemo();
@@ -32,13 +103,15 @@ function ProfileContent() {
   const [draft, setDraft] = useState(state.profile);
   const [params] = useSearchParams();
   const [tab, setTab] = useState(params.has("saved") ? "saved" : "posts");
+  const [settings, setSettings] = useState(params.has("settings"));
+  const [more, setMore] = useState(false);
+  const [people, setPeople] = useState<"followers" | "following" | null>(null);
+  const [reporting, setReporting] = useState(false);
+  const [reason, setReason] = useState("Spam or fake account");
   const [publicPreview, setPublicPreview] = useState(false);
   const [confirm, setConfirm] = useState("");
   const creator = creators.find((c) => c.id === id);
   const own = !id;
-  const posts = state.posts.filter(
-    (p) => p.author === (own ? "you" : id) && (own || p.audience === "public"),
-  );
   if (!own && !creator)
     return (
       <Empty title="Profile unavailable.">
@@ -47,11 +120,9 @@ function ProfileContent() {
     );
   if (creator && state.blocked.includes(creator.id))
     return (
-      <>
-        <PageHeader
-          eyebrow="LOCAL DEMO CONTROL"
-          title="This creator is blocked."
-        />
+      <div className="profile-blocked">
+        <h1>This creator is blocked.</h1>
+        <p>You won’t see their posts, stories or messages.</p>
         <Button
           onClick={() =>
             update((s) => ({
@@ -62,20 +133,55 @@ function ProfileContent() {
         >
           Unblock {creator.name}
         </Button>
-      </>
+      </div>
     );
+  const author = own ? "you" : id!;
+  const mine = state.posts.filter((p) => p.author === author);
+  const published = mine.filter(
+    (p) =>
+      !p.draft && (own ? p.audience !== "private" : p.audience === "public"),
+  );
+  const visible = (list: Post[]) =>
+    list.filter(
+      (p) =>
+        !state.blocked.includes(p.author) &&
+        mayViewPost(p, "you", state.blocked),
+    );
+  const handle = own ? state.profile.handle : creator!.handle;
+  const name = own ? state.profile.name : creator!.name;
+  const stats = own
+    ? {
+        posts: published.length,
+        followers: state.approvedFollowers.length,
+        following: state.following.length,
+        likes: published.filter((p) => state.likes.includes(p.id)).length,
+      }
+    : {
+        posts: published.length,
+        followers:
+          creator!.followers + (state.following.includes(creator!.id) ? 1 : 0),
+        following: creator!.following,
+        likes: creator!.likes,
+      };
+  const tabs = own
+    ? [
+        { id: "posts", label: "Posts", icon: Grid3x3 },
+        { id: "reels", label: "Reels", icon: Film },
+        { id: "drafts", label: "Drafts", icon: FilePen },
+        { id: "private", label: "Private", icon: LockKeyhole },
+        { id: "reposts", label: "Reposts", icon: Repeat2 },
+        { id: "likes", label: "Likes", icon: Heart },
+        { id: "saved", label: "Saved", icon: Bookmark },
+      ]
+    : [
+        { id: "posts", label: "Posts", icon: Grid3x3 },
+        { id: "reels", label: "Reels", icon: Film },
+      ];
+  const notify = creator ? state.notifications[creator.id] || "all" : "all";
+  const muted = creator ? state.muted.includes(creator.id) : false;
   return (
     <div className="profile-page">
-      <PageHeader
-        eyebrow={own ? "YOUR PRIVATE SPACE" : "A FICTIONAL POINT OF VIEW"}
-        title={own ? "A little more you." : creator!.name}
-        description={
-          own
-            ? "One profile. Thoughtful preferences. Always yours to change."
-            : "Fictional creator profile · Editorial images are references, not photographs of this person."
-        }
-      />
-      <div className="profile-hero">
+      <header className="profile-head">
         <div className="profile-avatar">
           {own && state.profile.photo ? (
             <img src={state.profile.photo} alt="Your private session profile" />
@@ -85,88 +191,340 @@ function ProfileContent() {
             creator!.initials
           )}
         </div>
-        <div>
-          <h2>{own ? state.profile.name : creator!.name}</h2>
-          <p>@{own ? state.profile.handle : creator!.handle}</p>
-          <p>{own ? state.profile.bio : creator!.bio}</p>
-          <div className="profile-stats">
-            <span>
-              {posts.filter((p) => p.audience === "public").length} public posts
-            </span>
-            <span>
-              {own
-                ? state.following.length
-                : `${creator!.followers + (state.following.includes(creator!.id) ? 1 : 0)} fictional`}{" "}
-              {own ? "following" : "followers"}
-            </span>
+        <ul className="profile-stats" aria-label="Profile stats">
+          <li>
+            <strong>{compact(stats.posts)}</strong>
+            <span>posts</span>
+          </li>
+          <li>
+            <button type="button" onClick={() => setPeople("followers")}>
+              <strong>{compact(stats.followers)}</strong>
+              <span>followers</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" onClick={() => setPeople("following")}>
+              <strong>{compact(stats.following)}</strong>
+              <span>following</span>
+            </button>
+          </li>
+          <li>
+            <strong>{compact(stats.likes)}</strong>
+            <span>likes</span>
+          </li>
+        </ul>
+        <div className="profile-id">
+          <h1>{name}</h1>
+          <span className="profile-handle">
+            @{handle}
             {own && (
-              <span>
-                <LockKeyhole size={12} />
-                {state.profile.visibility === "private"
-                  ? "Private account"
-                  : "Public account"}{" "}
-                · demo
+              <span className="profile-privacy">
+                <LockKeyhole size={12} aria-hidden="true" />
+                {state.profile.visibility === "private" ? "Private" : "Public"}
               </span>
             )}
-          </div>
+          </span>
+          {(own ? state.profile.bio : creator!.bio) && (
+            <p>{own ? state.profile.bio : creator!.bio}</p>
+          )}
         </div>
-        <div className="profile-actions">
+        <div className="profile-buttons">
           {own ? (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setDraft(state.profile);
-                setEditing(true);
-              }}
-            >
-              <Pencil size={14} />
-              Edit profile
-            </Button>
+            <>
+              <Button
+                variant="secondary small"
+                onClick={() => {
+                  setDraft(state.profile);
+                  setEditing(true);
+                }}
+              >
+                <Pencil size={14} />
+                Edit profile
+              </Button>
+              <Button
+                variant="secondary small"
+                onClick={() => void shareProfile(handle, toast)}
+              >
+                <Share size={14} />
+                Share profile
+              </Button>
+              <button
+                type="button"
+                className="icon-button bordered"
+                aria-label="Settings"
+                onClick={() => setSettings(true)}
+              >
+                <Settings size={18} strokeWidth={1.7} />
+              </button>
+            </>
           ) : (
             <>
               <FollowButton creator={id!} />
-              <Link className="button secondary" to={`/messages?to=${id}`}>
-                <MessageCircle size={15} />
-                Demo message
-              </Link>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  update((s) => ({
-                    ...s,
-                    blocked: [...s.blocked, id!],
-                    following: s.following.filter((v) => v !== id),
-                  }));
-                  toast("Creator blocked locally.");
-                }}
+              <Link
+                className="button secondary small"
+                to={`/messages?to=${id}`}
               >
-                <UserX size={14} />
-                Block
-              </Button>
+                Message
+              </Link>
+              <button
+                type="button"
+                className="icon-button bordered"
+                aria-label={`More options for @${handle}`}
+                onClick={() => setMore(true)}
+              >
+                <Ellipsis size={18} />
+              </button>
             </>
           )}
         </div>
+      </header>
+      <div className="profile-tabs" role="tablist" aria-label="Profile content">
+        {tabs.map(({ id: tabId, label, icon: Icon }) => (
+          <button
+            key={tabId}
+            type="button"
+            role="tab"
+            aria-selected={tab === tabId}
+            className={tab === tabId ? "active" : ""}
+            onClick={() => setTab(tabId)}
+          >
+            <Icon size={18} strokeWidth={1.7} aria-hidden="true" />
+            <span>{label}</span>
+          </button>
+        ))}
       </div>
-      {own && (
-        <Notice icon="private">
-          Profile details, your photo, routines and logs are private and
-          session-only. This demo has no authentication or secure account
-          isolation. Reload clears personal edits; theme and fictional social
-          preferences may persist locally.
-        </Notice>
+      {tab === "posts" && (
+        <ProfileGrid
+          posts={published}
+          empty={
+            own ? (
+              <Empty
+                title="Share your first post."
+                action={
+                  <Link to="/explore?compose=new" className="button">
+                    Create a post
+                  </Link>
+                }
+              >
+                Your personal routines and photos are never posted for you.
+              </Empty>
+            ) : (
+              <Empty title="No posts yet." />
+            )
+          }
+        />
       )}
-      {own && (
-        <section className="privacy-panel" aria-label="Account privacy">
-          <div>
-            <span className="eyebrow">YOUR AUDIENCE, YOUR CHOICE</span>
-            <h2>Account privacy</h2>
-            <p>
-              Account visibility and journal visibility are separate. Your
-              journal, original uploads, routines and intake stay private until
-              a separate, explicit action.
-            </p>
+      {tab === "reels" && (
+        <ProfileGrid
+          posts={published.filter(isReel)}
+          empty={<Empty title="No reels yet." />}
+        />
+      )}
+      {own && tab === "drafts" && (
+        <ProfileGrid
+          posts={mine.filter((p) => p.draft)}
+          empty={
+            <Empty title="No drafts.">
+              Choose “Save as draft” when you create a post. Only you can see
+              drafts.
+            </Empty>
+          }
+        />
+      )}
+      {own && tab === "private" && (
+        <ProfileGrid
+          posts={mine.filter((p) => !p.draft && p.audience === "private")}
+          empty={
+            <Empty title="No private posts.">
+              Posts with the audience “Only me” appear here.
+            </Empty>
+          }
+        />
+      )}
+      {own && tab === "reposts" && (
+        <ProfileGrid
+          posts={visible(
+            state.posts.filter((p) => state.reposts.includes(p.id)),
+          )}
+          empty={
+            <Empty title="No reposts yet.">
+              Use the repost button under a post to add it here.
+            </Empty>
+          }
+        />
+      )}
+      {own && tab === "likes" && (
+        <ProfileGrid
+          posts={visible(state.posts.filter((p) => state.likes.includes(p.id)))}
+          empty={<Empty title="No liked posts yet." />}
+        />
+      )}
+      {own && tab === "saved" && (
+        <ProfileGrid
+          posts={visible(state.posts.filter((p) => state.saved.includes(p.id)))}
+          empty={
+            <Empty title="Nothing saved yet.">
+              Use the bookmark under a post. Saves are private.
+            </Empty>
+          }
+        />
+      )}
+      {people && (
+        <Modal
+          title={people === "followers" ? "Followers" : "Following"}
+          onClose={() => setPeople(null)}
+        >
+          <div className="people-list">
+            {(own
+              ? people === "following"
+                ? creators.filter((c) => state.following.includes(c.id))
+                : creators.filter((c) => state.approvedFollowers.includes(c.id))
+              : creators.filter((c) => c.id !== creator!.id)
+            ).map((c) => (
+              <div className="people-row" key={c.id}>
+                <span className="avatar">{c.initials}</span>
+                <Link to={`/profile/${c.id}`} onClick={() => setPeople(null)}>
+                  <strong>{c.handle}</strong>
+                  <small>{c.name}</small>
+                </Link>
+                <FollowButton creator={c.id} />
+              </div>
+            ))}
+            {own &&
+              (people === "following"
+                ? !state.following.length
+                : !state.approvedFollowers.length) && (
+                <p className="small-text">
+                  {people === "following"
+                    ? "You don’t follow anyone yet."
+                    : "No approved followers yet. Requests appear in Settings."}
+                </p>
+              )}
           </div>
-          <div>
+        </Modal>
+      )}
+      {more && creator && (
+        <Modal title={`@${creator.handle}`} onClose={() => setMore(false)}>
+          <div className="sheet-list">
+            <button
+              type="button"
+              onClick={() => {
+                setMore(false);
+                void shareProfile(creator.handle, toast);
+              }}
+            >
+              <Share size={18} /> Share profile
+            </button>
+            <fieldset className="sheet-group">
+              <legend>
+                <Bell size={18} /> Notifications
+              </legend>
+              {(
+                [
+                  ["all", "All posts and stories"],
+                  ["stories", "Stories only"],
+                  ["off", "Off"],
+                ] as const
+              ).map(([value, label]) => (
+                <label key={value} className="radio-line">
+                  <input
+                    type="radio"
+                    name="notifications"
+                    checked={notify === value}
+                    onChange={() =>
+                      update((s) => ({
+                        ...s,
+                        notifications: {
+                          ...s.notifications,
+                          [creator.id]: value,
+                        },
+                      }))
+                    }
+                  />
+                  {label}
+                </label>
+              ))}
+            </fieldset>
+            <button
+              type="button"
+              aria-pressed={muted}
+              onClick={() => {
+                update((s) => ({ ...s, muted: toggle(s.muted, creator.id) }));
+                toast(muted ? "Unmuted." : "Muted. Their posts stay hidden.");
+              }}
+            >
+              <VolumeX size={18} /> {muted ? "Unmute" : "Mute"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMore(false);
+                setReporting(true);
+              }}
+            >
+              <Flag size={18} /> Report
+            </button>
+            <button
+              type="button"
+              className="danger"
+              onClick={() => {
+                update((s) => ({
+                  ...s,
+                  blocked: [...s.blocked, creator.id],
+                  following: s.following.filter((v) => v !== creator.id),
+                }));
+                setMore(false);
+                toast("Creator blocked locally.");
+              }}
+            >
+              <UserX size={18} /> Block
+            </button>
+          </div>
+          <p className="small-text muted">
+            Demo controls · nothing is sent to a real service.
+          </p>
+        </Modal>
+      )}
+      {reporting && creator && (
+        <Modal
+          title={`Report @${creator.handle}`}
+          onClose={() => setReporting(false)}
+        >
+          <Select
+            label="Reason"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          >
+            {[
+              "Spam or fake account",
+              "Harassment",
+              "Misleading or unsafe advice",
+              "Privacy concern",
+              "Something else",
+            ].map((r) => (
+              <option key={r}>{r}</option>
+            ))}
+          </Select>
+          <Button
+            onClick={() => {
+              setReporting(false);
+              toast(
+                "Report recorded locally. No moderation team is contacted.",
+              );
+            }}
+          >
+            Submit report
+          </Button>
+        </Modal>
+      )}
+      {own && settings && (
+        <Modal
+          title="Settings & privacy"
+          onClose={() => setSettings(false)}
+          wide
+        >
+          <section className="settings-section" aria-label="Account privacy">
+            <h3>Account privacy</h3>
             <Select
               label="Account visibility"
               value={state.profile.visibility}
@@ -181,68 +539,161 @@ function ProfileContent() {
               }
             >
               <option value="private">Private · approved followers</option>
-              <option value="public">
-                Public · explicitly shared demo posts
-              </option>
+              <option value="public">Public · everyone in the demo</option>
             </Select>
-            <Button variant="secondary" onClick={() => setPublicPreview(true)}>
+            <Button
+              variant="secondary small"
+              onClick={() => setPublicPreview(true)}
+            >
               Preview as a visitor
             </Button>
-            <p className="small-text">
-              Local privacy simulation, not secure authentication. No real
-              follow requests or uploads are sent.
-            </p>
-          </div>
-          {state.profile.visibility === "private" && (
-            <div className="follow-request-panel">
-              <h3>Follower requests · demo</h3>
-              {state.incomingRequests.length ? (
-                state.incomingRequests.map((id) => (
-                  <div className="list-row" key={id}>
+            {state.profile.visibility === "private" && (
+              <div className="follow-request-panel">
+                <h4>Follower requests</h4>
+                {state.incomingRequests.length ? (
+                  state.incomingRequests.map((rid) => (
+                    <div className="people-row" key={rid}>
+                      <span className="avatar">
+                        {creators.find((c) => c.id === rid)?.initials}
+                      </span>
+                      <span>
+                        <strong>
+                          {creators.find((c) => c.id === rid)?.handle}
+                        </strong>
+                      </span>
+                      <Button
+                        variant="small"
+                        onClick={() =>
+                          update((s) => ({
+                            ...s,
+                            approvedFollowers: [
+                              ...new Set([...s.approvedFollowers, rid]),
+                            ],
+                            incomingRequests: s.incomingRequests.filter(
+                              (v) => v !== rid,
+                            ),
+                          }))
+                        }
+                      >
+                        Accept request
+                      </Button>
+                      <Button
+                        variant="ghost small"
+                        onClick={() =>
+                          update((s) => ({
+                            ...s,
+                            incomingRequests: s.incomingRequests.filter(
+                              (v) => v !== rid,
+                            ),
+                          }))
+                        }
+                      >
+                        Decline
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="small-text">No pending requests.</p>
+                )}
+              </div>
+            )}
+          </section>
+          <section className="settings-section" aria-label="Messages">
+            <h3>Messages</h3>
+            <label className="checkbox-line">
+              <input
+                type="checkbox"
+                checked={state.profile.messageRequests}
+                onChange={(e) =>
+                  update((s) => ({
+                    ...s,
+                    profile: {
+                      ...s.profile,
+                      messageRequests: e.target.checked,
+                    },
+                  }))
+                }
+              />
+              Allow message requests
+            </label>
+          </section>
+          <section className="settings-section" aria-label="Your details">
+            <h3>Your private details</h3>
+            <dl className="settings-details">
+              <div>
+                <dt>Goals</dt>
+                <dd>{state.profile.goals || "Not provided"}</dd>
+              </div>
+              <div>
+                <dt>Preferences</dt>
+                <dd>{state.profile.preferences || "Not provided"}</dd>
+              </div>
+              <div>
+                <dt>Restrictions</dt>
+                <dd>{state.profile.restrictions || "None entered"}</dd>
+              </div>
+              <div>
+                <dt>Country · budget</dt>
+                <dd>
+                  {state.profile.country || "—"} · {state.profile.currency}{" "}
+                  {state.profile.budget}
+                </dd>
+              </div>
+            </dl>
+            <Button
+              variant="secondary small"
+              onClick={() => {
+                setSettings(false);
+                setDraft(state.profile);
+                setEditing(true);
+              }}
+            >
+              Edit details
+            </Button>
+          </section>
+          {state.blocked.length > 0 && (
+            <section className="settings-section" aria-label="Blocked">
+              <h3>Blocked accounts</h3>
+              {creators
+                .filter((c) => state.blocked.includes(c.id))
+                .map((c) => (
+                  <div className="people-row" key={c.id}>
+                    <span className="avatar">{c.initials}</span>
                     <span>
-                      {creators.find((c) => c.id === id)?.name} · fictional
+                      <strong>{c.handle}</strong>
                     </span>
                     <Button
                       variant="secondary small"
                       onClick={() =>
                         update((s) => ({
                           ...s,
-                          approvedFollowers: [
-                            ...new Set([...s.approvedFollowers, id]),
-                          ],
-                          incomingRequests: s.incomingRequests.filter(
-                            (v) => v !== id,
-                          ),
+                          blocked: s.blocked.filter((v) => v !== c.id),
                         }))
                       }
                     >
-                      Accept request
-                    </Button>
-                    <Button
-                      variant="ghost small"
-                      onClick={() =>
-                        update((s) => ({
-                          ...s,
-                          incomingRequests: s.incomingRequests.filter(
-                            (v) => v !== id,
-                          ),
-                        }))
-                      }
-                    >
-                      Decline
+                      Unblock
                     </Button>
                   </div>
-                ))
-              ) : (
-                <p className="small-text">No pending requests.</p>
-              )}
-              <p className="small-text">
-                {state.approvedFollowers.length} approved fictional follower(s).
-                Only approved recipients can open restricted shared cards.
-              </p>
-            </div>
+                ))}
+            </section>
           )}
-        </section>
+          <section className="settings-section" aria-label="Your data">
+            <h3>Your data</h3>
+            <Notice icon="private">
+              Profile details, photos, routines and logs stay in this browser
+              session. This demo has no real accounts.
+            </Notice>
+            <div className="button-row">
+              <Button variant="ghost" onClick={() => setConfirm("details")}>
+                Remove my details
+              </Button>
+              <Button variant="secondary" onClick={() => setConfirm("reset")}>
+                <RotateCcw size={14} />
+                Reset demo
+              </Button>
+            </div>
+          </section>
+        </Modal>
       )}
       {publicPreview && (
         <Modal
@@ -263,12 +714,7 @@ function ProfileContent() {
             <>
               <h3>{state.profile.name}</h3>
               <p>{state.profile.bio}</p>
-              <p>
-                Only explicitly public fictional posts appear below. Personal
-                goals, intake, routines, saves and original uploads are
-                excluded.
-              </p>
-              {posts
+              {published
                 .filter((p) =>
                   mayViewPost(
                     p,
@@ -287,174 +733,6 @@ function ProfileContent() {
             </>
           )}
         </Modal>
-      )}
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        tabs={
-          own
-            ? [
-                { id: "posts", label: "My demo posts" },
-                { id: "saved", label: "Private saves" },
-                { id: "private", label: "Private routines & details" },
-                { id: "following", label: "Following & controls" },
-              ]
-            : [{ id: "posts", label: "Public demo posts" }]
-        }
-      />
-      {tab === "posts" &&
-        (posts.length ? (
-          <div className="community-grid">
-            {posts.map((p) => (
-              <PostCard key={p.id} post={p} />
-            ))}
-          </div>
-        ) : (
-          <Empty
-            title="Your point of view, when you are ready."
-            action={
-              <Link to="/explore?compose=new" className="button">
-                Create a fictional demo post
-              </Link>
-            }
-          >
-            Your personal routines and photos are never seeded into public
-            content.
-          </Empty>
-        ))}
-      {own &&
-        tab === "saved" &&
-        (state.saved.length ? (
-          <div className="community-grid">
-            {state.posts
-              .filter(
-                (p) =>
-                  state.saved.includes(p.id) &&
-                  !state.blocked.includes(p.author),
-              )
-              .map((p) => (
-                <PostCard post={p} key={p.id} />
-              ))}
-          </div>
-        ) : (
-          <Empty title="A private collection of good ideas.">
-            Use bookmarks in Explore to collect posts.
-          </Empty>
-        ))}
-      {own && tab === "private" && (
-        <>
-          <SectionTitle title="Your editable private preferences" />
-          <div className="profile-details">
-            <div>
-              <small>GOALS</small>
-              <p>{state.profile.goals || "Not provided"}</p>
-            </div>
-            <div>
-              <small>PREFERENCES</small>
-              <p>{state.profile.preferences || "Not provided"}</p>
-            </div>
-            <div>
-              <small>RESTRICTIONS</small>
-              <p>
-                {state.profile.restrictions ||
-                  "Not provided. No restrictions are assumed."}
-              </p>
-            </div>
-            <div>
-              <small>COUNTRY · CURRENCY · BUDGET</small>
-              <p>
-                {state.profile.country} · {state.profile.currency}{" "}
-                {state.profile.budget}
-              </p>
-            </div>
-          </div>
-          <SectionTitle title="Your private rituals" />
-          <div className="list-card">
-            {state.routines.map((r) => (
-              <Link
-                to={`/plan?routine=${r.topic}`}
-                className="list-row"
-                key={r.id}
-              >
-                <div>
-                  <strong>{r.title}</strong>
-                  <small>
-                    {topicName[r.topic]} · {r.time} · {r.schedule}
-                  </small>
-                </div>
-                <span>{r.steps.length} editable steps</span>
-                <ArrowUpRight size={17} />
-              </Link>
-            ))}
-          </div>
-          <Link className="button secondary" to="/topics/photos">
-            Manage private photo journal
-          </Link>
-        </>
-      )}
-      {own && tab === "following" && (
-        <>
-          <SectionTitle title="Your circle" />
-          {creators.map((c) => (
-            <div className="list-row" key={c.id}>
-              <span className="avatar">{c.initials}</span>
-              <Link to={`/profile/${c.id}`}>
-                <strong>{c.name}</strong>
-                <small>@{c.handle} · fictional</small>
-              </Link>
-              {state.blocked.includes(c.id) ? (
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    update((s) => ({
-                      ...s,
-                      blocked: s.blocked.filter((v) => v !== c.id),
-                    }))
-                  }
-                >
-                  Unblock
-                </Button>
-              ) : (
-                <FollowButton creator={c.id} />
-              )}
-            </div>
-          ))}
-          <SectionTitle title="A few useful controls" />
-          <label className="checkbox-line">
-            <input
-              type="checkbox"
-              checked={state.profile.messageRequests}
-              onChange={(e) =>
-                update((s) => ({
-                  ...s,
-                  profile: { ...s.profile, messageRequests: e.target.checked },
-                }))
-              }
-            />
-            Allow simulated message requests
-          </label>
-          <p className="muted">
-            {state.reports.length} local reports recorded. No real moderation
-            team has been contacted.
-          </p>
-        </>
-      )}{" "}
-      {own && (
-        <div className="privacy-controls">
-          <div>
-            <h3>A fresh start is always an option.</h3>
-            <p>Remove private details, or reset the entire fictional demo.</p>
-          </div>
-          <div className="button-row">
-            <Button variant="ghost" onClick={() => setConfirm("details")}>
-              Remove my details
-            </Button>
-            <Button variant="secondary" onClick={() => setConfirm("reset")}>
-              <RotateCcw size={14} />
-              Reset demo
-            </Button>
-          </div>
-        </div>
       )}
       {editing && (
         <Modal

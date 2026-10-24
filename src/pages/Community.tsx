@@ -93,6 +93,24 @@ function CommunityContent() {
       setParams(params);
     }
   };
+  const save = (asDraft: boolean) => {
+    const saved = { ...draft, draft: asDraft || undefined };
+    update((s) => ({
+      ...s,
+      posts: s.posts.some((p) => p.id === saved.id)
+        ? s.posts.map((p) => (p.id === saved.id ? saved : p))
+        : [saved, ...s.posts],
+    }));
+    close();
+    toast(
+      asDraft
+        ? "Draft saved. Only you can see it."
+        : saved.audience === "private"
+          ? "Private session post saved."
+          : "Fictional post published locally. No real network activity.",
+    );
+    navigate(`/post/${saved.id}`);
+  };
   const visible = state.posts
     .filter((p) =>
       format === "reels"
@@ -100,7 +118,11 @@ function CommunityContent() {
         : p.media?.kind !== "video" && p.format !== "reel",
     )
     .filter(
-      (p) => p.audience !== "private" && mayViewPost(p, "you", state.blocked),
+      (p) =>
+        p.audience !== "private" &&
+        !p.draft &&
+        !state.muted.includes(p.author) &&
+        mayViewPost(p, "you", state.blocked),
     )
     .filter(
       (p) =>
@@ -516,23 +538,10 @@ function CommunityContent() {
             <Button variant="secondary" onClick={() => setPreview(false)}>
               Back to edit
             </Button>
-            <Button
-              onClick={() => {
-                update((s) => ({
-                  ...s,
-                  posts: s.posts.some((p) => p.id === draft.id)
-                    ? s.posts.map((p) => (p.id === draft.id ? draft : p))
-                    : [draft, ...s.posts],
-                }));
-                close();
-                toast(
-                  draft.audience === "private"
-                    ? "Private session post saved."
-                    : "Fictional post published locally. No real network activity.",
-                );
-                navigate(`/post/${draft.id}`);
-              }}
-            >
+            <Button variant="ghost" onClick={() => save(true)}>
+              Save as draft
+            </Button>
+            <Button onClick={() => save(false)}>
               {draft.audience === "private"
                 ? "Save private post"
                 : "Publish demo post"}
@@ -554,6 +563,21 @@ function CommunityContent() {
           <>
             {current.author === "you" && (
               <div className="button-row own-post-actions">
+                {current.draft && (
+                  <Button
+                    onClick={() => {
+                      update((s) => ({
+                        ...s,
+                        posts: s.posts.map((p) =>
+                          p.id === current.id ? { ...p, draft: undefined } : p,
+                        ),
+                      }));
+                      toast("Draft published.");
+                    }}
+                  >
+                    Publish draft
+                  </Button>
+                )}
                 <Button
                   variant="secondary"
                   onClick={() => {

@@ -29,6 +29,7 @@ function load(): DemoState {
       "following",
       "blocked",
       "reports",
+      "reposts",
     ] as const)
       if (Array.isArray(saved[key]))
         initial[key] = saved[key].filter(
@@ -52,8 +53,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const toast = useCallback((text: string) => setNotice(text), []);
   useEffect(() => {
     try {
-      const { style, intake, likes, saved, following, blocked, reports } =
-        state;
+      const {
+        style,
+        intake,
+        likes,
+        saved,
+        following,
+        blocked,
+        reports,
+        reposts,
+      } = state;
       const ids = seedPosts.map((p) => p.id);
       localStorage.setItem(
         STORAGE_KEY,
@@ -65,6 +74,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           following,
           blocked,
           reports: reports.filter((i) => ids.includes(i)),
+          reposts: reposts.filter((i) => ids.includes(i)),
         }),
       );
     } catch {
