@@ -1,0 +1,88 @@
+{
+  "outcome": {
+    "result": "success",
+    "runId": "40119164432",
+    "sourceCommit": "6171e93068b854f0df449770c864033abb779d0b",
+    "completedAt": "2026-10-24T18:07:25.209Z"
+  },
+  "configuration": {
+    "runId": 40119164432,
+    "sourceCommit": "6171e93068b854f0df449770c864033abb779d0b",
+    "publicBrowserVerified": false,
+    "repository": {
+      "private": false,
+      "has_pages": true,
+      "visibility": "public"
+    },
+    "pages": {
+      "status": "building",
+      "html_url": "https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/",
+      "build_type": "legacy",
+      "source": {
+        "branch": "gh-pages",
+        "path": "/"
+      },
+      "public": true
+    }
+  },
+  "browser": {
+    "url": "https://chrisjelammers1907-lab.github.io/Looksmaxx-coach/",
+    "authentication": "none; fresh browser contexts",
+    "localFixture": false,
+    "publicBrowserVerified": true,
+    "results": [
+      {
+        "viewport": "desktop",
+        "eightTopics": true,
+        "eightGuides": true,
+        "feedVideo": true,
+        "separatePhotoAndReelFeeds": true,
+        "independentFollowingAndFormat": true,
+        "photoReelSlideshow": true,
+        "boundedLayout": true,
+        "photoSound": true,
+        "videoSound": true,
+        "soundPreviewAndAttachment": true,
+        "aboutPage": true,
+        "optionalCoachTopic": true,
+        "routeReloads": true,
+        "wardrobeEdit": true,
+        "comments": true,
+        "linkedCardMessaging": true,
+        "coachPlan": true,
+        "profileNavigation": true,
+        "errors": []
+      },
+      {
+        "viewport": "mobile",
+        "eightTopics": true,
+        "eightGuides": true,
+        "feedVideo": true,
+        "separatePhotoAndReelFeeds": true,
+        "independentFollowingAndFormat": true,
+        "photoReelSlideshow": true,
+        "boundedLayout": true,
+        "photoSound": true,
+        "videoSound": true,
+        "soundPreviewAndAttachment": true,
+        "aboutPage": true,
+        "optionalCoachTopic": true,
+        "routeReloads": true,
+        "wardrobeEdit": true,
+        "comments": true,
+        "linkedCardMessaging": true,
+        "coachPlan": true,
+        "profileNavigation": true,
+        "errors": []
+      }
+    ],
+    "htmlSha256": "3e66f6ba79ff553e5e3d0e34e0d26b6542e19dd4ae999e40c2b3a80bc2238917"
+  },
+  "deployment": {
+    "sourceCommit": "6171e93068b854f0df449770c864033abb779d0b",
+    "pagesCommit": "61b34ce89eafd57a243e225200587a5c8396fe09",
+    "sha256": "3e66f6ba79ff553e5e3d0e34e0d26b6542e19dd4ae999e40c2b3a80bc2238917",
+    "bytes": 3468535
+  },
+  "evidenceCommit": "d092187adeed4bba9236e24603f763a63561950e"
+}
