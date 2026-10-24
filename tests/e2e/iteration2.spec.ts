@@ -83,6 +83,7 @@ test("feed video plays, photo frames have real supported pixel dimensions, topic
   page,
 }) => {
   await go(page, "/");
+  await page.getByRole("tab", { name: "Reels", exact: true }).click();
   const video = page.locator(".feed-grid video").first();
   await video.scrollIntoViewIfNeeded();
   await video.evaluate((n: HTMLVideoElement) => n.play());
@@ -90,6 +91,7 @@ test("feed video plays, photo frames have real supported pixel dimensions, topic
     .poll(() => video.evaluate((n: HTMLVideoElement) => n.currentTime))
     .toBeGreaterThan(0.15);
   await video.evaluate((n: HTMLVideoElement) => n.pause());
+  await page.getByRole("tab", { name: "Photos", exact: true }).click();
   const picture = page.locator(".feed-grid .post-media img").first();
   await expect(picture).toBeVisible();
   expect(
@@ -107,7 +109,9 @@ test("feed video plays, photo frames have real supported pixel dimensions, topic
   await expect(
     page.getByRole("heading", { name: "A fictional caption without a topic" }),
   ).toBeVisible();
-  await expect(page.locator(".post-body > .eyebrow")).toHaveText("Community");
+  await expect(page.locator(".post-caption > .eyebrow")).toHaveText(
+    "Community",
+  );
 });
 test("private upload is cropped proportionally and cannot be published as public demo media", async ({
   page,

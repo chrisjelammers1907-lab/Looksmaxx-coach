@@ -4,7 +4,7 @@ CHARETT is an English-language, responsive local demonstration for all genders. 
 
 ## Journeys and acceptance boundaries
 
-- Skippable intake → shared editable preferences → clean eight-topic home → contextual coach → review a proposed plan change → apply intentionally → editable daily/weekly plan and check-in.
+- Skippable intake → shared editable preferences → Home feed and eight-topic Categories overview → contextual coach → review a proposed plan change → apply intentionally → editable daily/weekly plan and check-in.
 - Skincare: owned product CRUD/reorder, AM/PM routine editing, weekly schedule, routine builder, uncertain compatibility discussion, alternatives and private dated observations.
 - Clothing: dark casual, old money and minimalist themes across overview, wardrobe, outfits, inspiration and shopping only. Item CRUD with optional image/details; build/edit/duplicate/save outfits; structured prices/store/link/check date; unknown and mixed-currency totals; fit/color preferences and tags.
 - Hair: save/compare inspiration, editable product/step routine, hair/color coach, private progress, labelled visualization flow. No barber-brief generator.
@@ -17,9 +17,9 @@ CHARETT is an English-language, responsive local demonstration for all genders. 
 
 ## Privacy and scope
 
-Only clothing theme, onboarding completion and fictional social interactions may persist in localStorage. Personal profile edits, routines, uploads, wardrobe edits, logs, coach and messages stay in memory until reload. All newly created posts remain memory-only; private photos cannot be attached to demo posts. This is a conservative demo boundary, not account security. No paid APIs, real auth, payments, live shopping, image analysis/generation, or network messaging.
+Only clothing theme, onboarding completion and fictional social interactions may persist in localStorage. Personal profile edits, routines, uploads, wardrobe edits, logs, coach and messages stay in memory until reload. All newly created posts remain memory-only; personal media can be attached only to private session posts and cannot enter public demo posts. This is a conservative demo boundary, not account security. No paid APIs, real auth, payments, live shopping, image analysis/generation, or network messaging.
 
-Production integrations are recorded in PRODUCTION_ROADMAP.md. The attached brief remains the authoritative complete requirement list.
+Production integrations are recorded in PRODUCTION_ROADMAP.md. The attached brief preserves the original complete requirements; the accepted later iterations record the owner’s subsequent changes.
 
 ## Second-version update — 2026-10-20
 
@@ -28,3 +28,7 @@ The accepted changes are recorded in [ITERATION_2.md](ITERATION_2.md). Home is n
 ## Accepted third-iteration requirements
 
 Carry the owner's preceding navigation, feed, privacy and beginner-guide decisions forward. The visual identity should feel considered throughout the product, with stronger original editorial photography and forest/ivory/rose/amber contrast. Retain the approved wordmark/typefaces and all existing tools. Photo/video posts can optionally attach a sound from a clearly scoped demo library, preview it, set added-sound/original-video levels and remove it. Viewing a post never starts audible playback automatically. Existing social/private-save/linked-card flows use the same post and sound metadata.
+
+## Accepted fourth-iteration requirements
+
+Apply all consecutive feedback together. Use a bounded 1280 px canvas with visible desktop/mobile gutters, richer forest-green sections and uniform category cards with a category image row above the feed/overview. Retain the approved typography and existing functions. Home exposes For You/Following independently from Photos/Reels: Photos excludes reels; Reels includes video and explicitly chosen photo stories. Captions appear within images over a readable gradient. Photo stories support buttons, keyboard and swiping. Preserve optional topics, on-demand filters, sound choices, social actions, private saves and rich-card access checks. See ITERATION_4.md for milestones and the verification status.

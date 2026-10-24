@@ -14,12 +14,13 @@ import {
   Trash2,
   ArrowLeft,
   SlidersHorizontal,
-  Sparkles,
+  Images,
+  Film,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { seedItems, seedPosts, topics } from "../lib/data";
 import type { Audience, Post, TopicId } from "../lib/types";
-import { asset, totalPrice, uid, today, mayViewPost } from "../lib/domain";
+import { totalPrice, uid, today, mayViewPost } from "../lib/domain";
 import {
   Area,
   Button,
@@ -71,6 +72,9 @@ function CommunityContent() {
   const [draft, setDraft] = useState<Post>(makePost);
   const [preview, setPreview] = useState(false);
   const [feed, setFeed] = useState(params.get("feed") || "for-you");
+  const [format, setFormat] = useState(
+    params.get("format") === "reels" ? "reels" : "photos",
+  );
   const [showFilters, setShowFilters] = useState(false);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState(params.get("topic") || "all");
@@ -91,6 +95,11 @@ function CommunityContent() {
     }
   };
   const visible = state.posts
+    .filter((p) =>
+      format === "reels"
+        ? p.media?.kind === "video" || p.format === "reel"
+        : p.media?.kind !== "video" && p.format !== "reel",
+    )
     .filter(
       (p) => p.audience !== "private" && mayViewPost(p, "you", state.blocked),
     )
@@ -177,7 +186,9 @@ function CommunityContent() {
             value={
               draft.media?.origin === "private-upload" ? draft.media : undefined
             }
-            onChange={(media) => setDraft({ ...draft, media })}
+            onChange={(media) =>
+              setDraft({ ...draft, media, slides: undefined })
+            }
           />
           <div className="form-grid">
             <Select
@@ -191,6 +202,13 @@ function CommunityContent() {
               onChange={(e) =>
                 setDraft({
                   ...draft,
+                  slides:
+                    draft.format === "reel" && e.target.value !== "motion"
+                      ? [
+                          e.target.value,
+                          e.target.value === "ritual" ? "tailoring" : "ritual",
+                        ]
+                      : undefined,
                   image:
                     e.target.value === "motion" ? "campaign" : e.target.value,
                   media:
@@ -241,6 +259,56 @@ function CommunityContent() {
               <option value="public">Public · fictional demo community</option>
             </Select>
           </div>
+          {draft.media?.kind !== "video" && (
+            <div className="form-grid">
+              <Select
+                label="Post format"
+                value={draft.format || "photo"}
+                onChange={(event) => {
+                  const next = event.target.value as "photo" | "reel";
+                  setDraft({
+                    ...draft,
+                    format: next,
+                    slides:
+                      next === "reel" &&
+                      draft.media?.origin !== "private-upload"
+                        ? [
+                            draft.image,
+                            draft.image === "ritual" ? "tailoring" : "ritual",
+                          ]
+                        : undefined,
+                  });
+                }}
+              >
+                <option value="photo">Photos · still image</option>
+                <option value="reel">Reels · photo story</option>
+              </Select>
+              {draft.format === "reel" &&
+                draft.media?.origin !== "private-upload" && (
+                  <Select
+                    label="Second slideshow photo"
+                    value={draft.slides?.[1] || ""}
+                    onChange={(event) =>
+                      setDraft({
+                        ...draft,
+                        slides: [draft.image, event.target.value],
+                      })
+                    }
+                  >
+                    <option value="">Choose an editorial photo</option>
+                    <option value="ritual">
+                      AI editorial · beauty still life
+                    </option>
+                    <option value="tailoring">
+                      AI editorial · outfit flat lay
+                    </option>
+                    <option value="campaign">
+                      AI editorial · cream & forest
+                    </option>
+                  </Select>
+                )}
+            </div>
+          )}
           {draft.audience !== "private" &&
             state.profile.visibility === "private" && (
               <Notice icon="private">
@@ -548,35 +616,18 @@ function CommunityContent() {
     );
   return (
     <div className="explore-page">
-      <section className="feed-hero">
+      <section className="feed-intro">
         <div>
           <span className="eyebrow">STYLE · SELF-CARE · PROGRESS</span>
           <h1>
             Your daily <em>edit.</em>
           </h1>
-          <p>
-            Discover inspiration, build your routines and track your
-            progress—with a personal AI coach to guide you.
-          </p>
-          <span className="feed-hero-note">
-            <Sparkles size={12} /> A fictional community. Your own direction.
-          </span>
         </div>
-        <img
-          src={asset("campaign")}
-          alt="AI editorial inspiration: two adults in cream and forest tailoring on a sunlit terrace; not real members"
-        />
-        <span className="hero-image-credit">
-          AI editorial · fictional inspiration
-        </span>
-        <span className="feed-monogram">C</span>
+        <p>
+          Personal style, everyday care and your own progress. Find inspiration,
+          build routines and try the AI Coach demo.
+        </p>
       </section>
-      <div className="editorial-ribbon" aria-hidden="true">
-        <span>THE ART OF BECOMING</span>
-        <i />A little inspiration. Entirely you.
-        <i />
-        <span>THE CHARETT EDIT</span>
-      </div>
       <div className="feed-bar">
         <Tabs
           value={feed}
@@ -606,6 +657,56 @@ function CommunityContent() {
             <Plus size={17} /> Create a post
           </Button>
         </div>
+      </div>
+      <div className="feed-format-bar">
+        <div
+          className="feed-format-tabs"
+          role="tablist"
+          aria-label="Post format"
+        >
+          {[
+            { id: "photos", label: "Photos", icon: Images },
+            { id: "reels", label: "Reels", icon: Film },
+          ].map(({ id: formatId, label, icon: Icon }) => (
+            <button
+              key={formatId}
+              type="button"
+              role="tab"
+              aria-selected={format === formatId}
+              tabIndex={format === formatId ? 0 : -1}
+              className={format === formatId ? "active" : ""}
+              onClick={() => setFormat(formatId)}
+              onKeyDown={(event) => {
+                if (
+                  ["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
+                ) {
+                  event.preventDefault();
+                  const next =
+                    event.key === "Home"
+                      ? "photos"
+                      : event.key === "End"
+                        ? "reels"
+                        : format === "photos"
+                          ? "reels"
+                          : "photos";
+                  setFormat(next);
+                  const sibling =
+                    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                      "button",
+                    );
+                  sibling?.[next === "photos" ? 0 : 1].focus();
+                }
+              }}
+            >
+              <Icon size={16} /> {label}
+            </button>
+          ))}
+        </div>
+        <span className="feed-format-note">
+          {format === "photos"
+            ? "Still moments, considered details."
+            : "Motion & photo stories. Play a sound or swipe a slideshow."}
+        </span>
       </div>
       <p className="feed-disclosure">
         Demo feed · Fictional creators, local interactions and sample ordering.
@@ -708,7 +809,10 @@ function CommunityContent() {
         </div>
       )}
       {visible.length ? (
-        <div className="community-grid feed-grid">
+        <div
+          className={`community-grid feed-grid ${format}-feed`}
+          data-format={format}
+        >
           {visible.map((p) => (
             <PostCard key={p.id} post={p} />
           ))}

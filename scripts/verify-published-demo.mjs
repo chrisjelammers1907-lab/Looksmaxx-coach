@@ -81,20 +81,89 @@ try {
     await expect(
       page.locator(".feed-grid .post-media img").first(),
     ).toBeVisible();
-    const clip = page.locator(".feed-grid video").first();
-    await clip.scrollIntoViewIfNeeded();
-    await page.getByRole("button", { name: "Play sound Golden hour", exact: true }).click();
+    await expect(
+      page.getByRole("tab", { name: "Photos", exact: true }),
+    ).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(".feed-grid video")).toHaveCount(0);
+    await page.getByRole("tab", { name: "Following", exact: true }).click();
+    await expect(page.locator(".feed-grid .post-card")).toHaveCount(0);
+    await page.getByRole("tab", { name: "Reels", exact: true }).click();
+    await expect(
+      page.getByRole("tab", { name: "Following", exact: true }),
+    ).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(".feed-grid .post-card")).toHaveCount(0);
+    await page.getByRole("tab", { name: "For You", exact: true }).click();
+    await expect(page.locator(".feed-grid video")).toHaveCount(1);
+    const clipCard = page
+      .locator(".post-card")
+      .filter({
+        has: page.getByRole("heading", {
+          name: "A moment in motion",
+          exact: true,
+        }),
+      });
+    const clip = clipCard.locator("video");
+    await clipCard
+      .getByRole("button", { name: "Play sound Golden hour", exact: true })
+      .click();
     await expect
       .poll(() => clip.evaluate((node) => node.currentTime))
       .toBeGreaterThan(0.15);
-    const videoSound = page.locator(".post-sound audio").first();
-    await expect.poll(() => videoSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
-    await page.getByRole("button", { name: "Pause sound Golden hour", exact: true }).click();
-    await expect.poll(() => videoSound.evaluate((node) => node.paused)).toBe(true);
-    await page.getByRole("button", { name: "Play sound Soft focus", exact: true }).click();
-    const photoSound = page.locator(".post-sound audio").nth(1);
-    await expect.poll(() => photoSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
-    await page.getByRole("button", { name: "Pause sound Soft focus", exact: true }).click();
+    const videoSound = clipCard.locator("audio");
+    await expect
+      .poll(() => videoSound.evaluate((node) => node.currentTime))
+      .toBeGreaterThan(0.15);
+    await clipCard
+      .getByRole("button", { name: "Pause sound Golden hour", exact: true })
+      .click();
+    await expect
+      .poll(() => videoSound.evaluate((node) => node.paused))
+      .toBe(true);
+    const slides = page
+      .locator(".post-card")
+      .filter({
+        has: page.getByRole("heading", {
+          name: "Three details, one mood",
+          exact: true,
+        }),
+      });
+    await slides
+      .getByRole("button", {
+        name: "Next photo in Three details, one mood",
+        exact: true,
+      })
+      .click();
+    await expect(
+      slides.locator(".slide-controls").getByRole("status"),
+    ).toHaveText("2 / 3");
+    await slides.locator(".slideshow-media").focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(
+      slides.locator(".slide-controls").getByRole("status"),
+    ).toHaveText("3 / 3");
+    await page.getByRole("tab", { name: "Photos", exact: true }).click();
+    await expect(page.locator(".feed-grid video")).toHaveCount(0);
+    await page
+      .getByRole("button", { name: "Play sound Soft focus", exact: true })
+      .click();
+    const photoSound = page.locator(".post-sound audio").first();
+    await expect
+      .poll(() => photoSound.evaluate((node) => node.currentTime))
+      .toBeGreaterThan(0.15);
+    await page
+      .getByRole("button", { name: "Pause sound Soft focus", exact: true })
+      .click();
+    const shell = await page.locator(".site-shell").boundingBox();
+    expect(shell.x).toBeGreaterThanOrEqual(10);
+    expect(shell.x + shell.width).toBeLessThanOrEqual(width - 10);
+    expect(shell.width).toBeLessThanOrEqual(1280);
+    expect(
+      await page.evaluate(
+        () =>
+          globalThis.document.documentElement.scrollWidth >
+          globalThis.innerWidth,
+      ),
+    ).toBe(false);
     await page.evaluate(() => globalThis.scrollTo(0, 0));
     await page.screenshot({ path: `${output}/${name}.png`, fullPage: false });
     const nav = page.getByRole("navigation", {
@@ -147,22 +216,49 @@ try {
       page.getByRole("heading", { name: "Fictional publication test item" }),
     ).toBeVisible();
     await nav.getByRole("link", { name: "Home", exact: true }).click();
-    await page.getByRole("button", { name: "Create a post", exact: true }).click();
-    await page.getByLabel("Caption", { exact: true }).fill("A fictional publication sound test");
+    await page
+      .getByRole("button", { name: "Create a post", exact: true })
+      .click();
+    await page
+      .getByLabel("Caption", { exact: true })
+      .fill("A fictional publication sound test");
     await page.getByRole("button", { name: "Add sound", exact: true }).click();
-    await page.getByRole("button", { name: "Preview After hours", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Preview After hours", exact: true })
+      .click();
     const soundPreview = page.locator(".sound-picker audio");
-    await expect.poll(() => soundPreview.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
-    await page.getByRole("button", { name: "Use After hours", exact: true }).click();
+    await expect
+      .poll(() => soundPreview.evaluate((node) => node.currentTime))
+      .toBeGreaterThan(0.15);
+    await page
+      .getByRole("button", { name: "Use After hours", exact: true })
+      .click();
     await page.getByLabel("Added sound volume", { exact: true }).fill("0.35");
-    await page.getByRole("button", { name: "Preview audience & content" }).click();
-    await page.getByRole("button", { name: "Save private post", exact: true }).click();
-    await expect(page.getByRole("heading", { name: "A fictional publication sound test", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Play sound After hours", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Preview audience & content" })
+      .click();
+    await page
+      .getByRole("button", { name: "Save private post", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", {
+        name: "A fictional publication sound test",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Play sound After hours", exact: true })
+      .click();
     const attachedSound = page.locator(".post-sound audio");
-    await expect.poll(() => attachedSound.evaluate((node) => node.currentTime)).toBeGreaterThan(0.15);
-    expect(await attachedSound.evaluate((node) => node.volume)).toBeCloseTo(0.35);
-    await page.getByRole("button", { name: "Pause sound After hours", exact: true }).click();
+    await expect
+      .poll(() => attachedSound.evaluate((node) => node.currentTime))
+      .toBeGreaterThan(0.15);
+    expect(await attachedSound.evaluate((node) => node.volume)).toBeCloseTo(
+      0.35,
+    );
+    await page
+      .getByRole("button", { name: "Pause sound After hours", exact: true })
+      .click();
     await nav.getByRole("link", { name: "Home", exact: true }).click();
     await page
       .getByRole("link", { name: "The art of a simple Sunday", exact: true })
@@ -220,6 +316,10 @@ try {
       eightTopics: true,
       eightGuides: true,
       feedVideo: true,
+      separatePhotoAndReelFeeds: true,
+      independentFollowingAndFormat: true,
+      photoReelSlideshow: true,
+      boundedLayout: true,
       photoSound: true,
       videoSound: true,
       soundPreviewAndAttachment: true,

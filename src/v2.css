@@ -268,12 +268,6 @@
 .post-actions button {
   min-height: 40px;
 }
-.post-card:nth-child(4n + 3) .post-author {
-  background: #e3e8d8;
-}
-.post-card:nth-child(4n + 4) .post-author {
-  background: #ead8d0;
-}
 .composer-details {
   border-block: 1px solid var(--line);
   padding: 17px 0;

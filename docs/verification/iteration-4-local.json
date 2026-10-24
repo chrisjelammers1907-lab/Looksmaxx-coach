@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-24",
+  "browserRegression": {
+    "passed": 72,
+    "failed": 0,
+    "projects": [
+      "Chromium desktop 1440x1000",
+      "Chromium mobile 390x844 with touch emulation"
+    ]
+  },
+  "domainTests": {
+    "passed": 15,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "lint": "passed",
+  "format": "passed",
+  "build": "passed",
+  "layoutWidths": [
+    320,
+    390,
+    768,
+    1440
+  ],
+  "routesCheckedForOverflow": 15,
+  "standalone": "iteration-4-local-export.json",
+  "publicBrowserVerified": false,
+  "limitations": [
+    "No physical-device, Safari or Firefox verification",
+    "No live AI, shopping, account authentication or real social delivery",
+    "Direct file:// export testing unavailable in managed browser"
+  ]
+}

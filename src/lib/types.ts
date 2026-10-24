@@ -76,6 +76,9 @@ export interface Post {
   date: string;
   media?: FeedMedia;
   sound?: PostSound;
+  format?: "photo" | "reel";
+  /** Editorial asset keys only; private uploads remain in media. */
+  slides?: string[];
 }
 export interface PostSound {
   id: string;

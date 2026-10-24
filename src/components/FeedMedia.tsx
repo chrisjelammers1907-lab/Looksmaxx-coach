@@ -1,12 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import { ImagePlus, Film, Music2, Play, Pause, Volume2 } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  ImagePlus,
+  Film,
+  Music2,
+  Play,
+  Pause,
+  Volume2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { asset } from "../lib/domain";
 import { normaliseFeedPhoto, privateVideoUrl } from "../lib/media";
 import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
 const editorialPhotos = new Map<string, Promise<string>>();
-export function PostMedia({ post }: { post: Post }) {
+export function PostMedia({
+  post,
+  children,
+}: {
+  post: Post;
+  children?: ReactNode;
+}) {
   const [photo, setPhoto] = useState("");
   const [failed, setFailed] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
@@ -14,8 +29,22 @@ export function PostMedia({ post }: { post: Post }) {
   const container = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
   const [soundError, setSoundError] = useState("");
+  const [slide, setSlide] = useState(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const media = post.media;
   const isVideo = media?.kind === "video";
+  const isReel = isVideo || post.format === "reel";
+  // Private media is never combined with public editorial slide references.
+  const slides = media
+    ? [post.image]
+    : post.slides?.filter(Boolean) || [post.image];
+  const slideIndex = Math.min(slide, slides.length - 1);
+  const currentImage = slides[slideIndex] || post.image;
+  const hasSlides = !isVideo && slides.length > 1;
+  const moveSlide = (direction: number) =>
+    setSlide(
+      (current) => (current + direction + slides.length) % slides.length,
+    );
   const sound = findSound(post.sound?.id);
   const startSound = async () => {
     if (!sound || !audio.current) return;
@@ -35,18 +64,23 @@ export function PostMedia({ post }: { post: Post }) {
   }, [post.sound]);
   useEffect(() => {
     if (isVideo) return;
+    setFailed(false);
     if (media?.src) {
       setPhoto(media.src);
       return;
     }
+    setPhoto("");
     let active = true;
-    if (!editorialPhotos.has(post.image))
+    const cacheKey = `${currentImage}:${isReel ? 1920 : 1350}`;
+    if (!editorialPhotos.has(cacheKey))
       editorialPhotos.set(
-        post.image,
-        normaliseFeedPhoto(asset(post.image)).then((result) => result.src),
+        cacheKey,
+        normaliseFeedPhoto(asset(currentImage), isReel ? 1920 : 1350).then(
+          (result) => result.src,
+        ),
       );
     editorialPhotos
-      .get(post.image)!
+      .get(cacheKey)!
       .then((src) => {
         if (active) setPhoto(src);
       })
@@ -56,7 +90,7 @@ export function PostMedia({ post }: { post: Post }) {
     return () => {
       active = false;
     };
-  }, [post.image, media, isVideo]);
+  }, [currentImage, media, isVideo, isReel]);
   useEffect(() => {
     const node = container.current;
     const film = video.current;
@@ -85,15 +119,54 @@ export function PostMedia({ post }: { post: Post }) {
   }, [isVideo, sound?.id]);
   const label =
     media?.label ||
-    (["campaign", "ritual", "tailoring"].includes(post.image)
+    (["campaign", "ritual", "tailoring"].includes(currentImage)
       ? "AI editorial inspiration"
-      : "Licensed editorial reference");
+      : [
+            "skin",
+            "gym",
+            "smile",
+            "fragrance",
+            "shirt",
+            "tee",
+            "denim",
+            "food",
+          ].includes(currentImage)
+        ? "Original editorial illustration"
+        : "Licensed editorial reference");
   return (
     <div className="post-media-wrap" ref={container}>
       <div
         data-media-origin={media?.origin || "editorial"}
-        className={`post-image post-media ${isVideo ? "video-media" : ""}`}
-        style={{ aspectRatio: `1080 / ${media?.height || 1350}` }}
+        className={`post-image post-media ${isVideo ? "video-media" : ""} ${isReel ? "reel-media" : ""} ${hasSlides ? "slideshow-media" : ""}`}
+        style={{
+          aspectRatio: `1080 / ${isReel ? 1920 : media?.height || 1350}`,
+        }}
+        tabIndex={hasSlides ? 0 : undefined}
+        role={hasSlides ? "region" : undefined}
+        aria-roledescription={hasSlides ? "carousel" : undefined}
+        aria-label={hasSlides ? `${post.title} photo slideshow` : undefined}
+        onKeyDown={(event) => {
+          if (!hasSlides || event.target !== event.currentTarget) return;
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            event.preventDefault();
+            moveSlide(event.key === "ArrowRight" ? 1 : -1);
+          }
+        }}
+        onTouchStart={(event) => {
+          if (hasSlides)
+            touchStart.current = {
+              x: event.touches[0].clientX,
+              y: event.touches[0].clientY,
+            };
+        }}
+        onTouchEnd={(event) => {
+          if (!hasSlides || !touchStart.current) return;
+          const dx = event.changedTouches[0].clientX - touchStart.current.x;
+          const dy = event.changedTouches[0].clientY - touchStart.current.y;
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy))
+            moveSlide(dx < 0 ? 1 : -1);
+          touchStart.current = null;
+        }}
       >
         {isVideo ? (
           <video
@@ -142,8 +215,8 @@ export function PostMedia({ post }: { post: Post }) {
           <img
             src={photo}
             width={1080}
-            height={media?.height || 1350}
-            alt={`${post.title} — ${label}, not a photo of its fictional creator`}
+            height={media?.height || (isReel ? 1920 : 1350)}
+            alt={`${post.title} — ${label}${media?.origin === "private-upload" ? "" : ", not a photo of its fictional creator"}`}
           />
         ) : (
           <span className="media-loading" role="status">
@@ -154,6 +227,33 @@ export function PostMedia({ post }: { post: Post }) {
           {isVideo ? <Film size={12} /> : null}
           {label} · {post.audience}
         </span>
+        {hasSlides && (
+          <div className="slide-controls">
+            <button
+              type="button"
+              aria-label={`Previous photo in ${post.title}`}
+              onClick={() => moveSlide(-1)}
+            >
+              <ChevronLeft size={19} />
+            </button>
+            <span
+              role="status"
+              aria-label="Slideshow position"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {slideIndex + 1} / {slides.length}
+            </span>
+            <button
+              type="button"
+              aria-label={`Next photo in ${post.title}`}
+              onClick={() => moveSlide(1)}
+            >
+              <ChevronRight size={19} />
+            </button>
+          </div>
+        )}
+        {children}
       </div>
       {sound && (
         <div className={`post-sound ${playing ? "is-playing" : ""}`}>

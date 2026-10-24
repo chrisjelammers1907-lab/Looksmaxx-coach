@@ -352,6 +352,25 @@ seedPosts.push({
   },
   sound: { id: "sound-golden", volume: 0.65, originalVolume: 0 },
 });
+seedPosts.push({
+  id: "p11",
+  author: "james",
+  topic: "",
+  title: "Three details, one mood",
+  body: "Texture, a slower ritual, and a little forest green. Swipe through three fictional AI editorial references with an original CHARETT sound.",
+  image: "tailoring",
+  format: "reel",
+  slides: ["tailoring", "ritual", "campaign"],
+  sound: { id: "sound-after", volume: 0.65, originalVolume: 0 },
+  items: [],
+  steps: [],
+  audience: "public",
+  style: "",
+  occasion: "",
+  season: "",
+  tags: "editorial, slideshow",
+  date: "2026-10-19",
+});
 export const makeInitialState = (): DemoState => ({
   approvedFollowers: [],
   incomingRequests: ["mira"],

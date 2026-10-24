@@ -1,0 +1,53 @@
+{
+  "url": "http://127.0.0.1:43901/Looksmaxx-coach/",
+  "authentication": "none; fresh browser contexts",
+  "localFixture": true,
+  "publicBrowserVerified": false,
+  "results": [
+    {
+      "viewport": "desktop",
+      "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "separatePhotoAndReelFeeds": true,
+      "independentFollowingAndFormat": true,
+      "photoReelSlideshow": true,
+      "boundedLayout": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    },
+    {
+      "viewport": "mobile",
+      "eightTopics": true,
+      "eightGuides": true,
+      "feedVideo": true,
+      "separatePhotoAndReelFeeds": true,
+      "independentFollowingAndFormat": true,
+      "photoReelSlideshow": true,
+      "boundedLayout": true,
+      "photoSound": true,
+      "videoSound": true,
+      "soundPreviewAndAttachment": true,
+      "aboutPage": true,
+      "optionalCoachTopic": true,
+      "routeReloads": true,
+      "wardrobeEdit": true,
+      "comments": true,
+      "linkedCardMessaging": true,
+      "coachPlan": true,
+      "profileNavigation": true,
+      "errors": []
+    }
+  ],
+  "htmlSha256": "3e66f6ba79ff553e5e3d0e34e0d26b6542e19dd4ae999e40c2b3a80bc2238917"
+}

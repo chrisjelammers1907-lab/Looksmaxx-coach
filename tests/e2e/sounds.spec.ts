@@ -139,39 +139,75 @@ test("video sound follows playback and seeking, with volume mixing", async ({
     .toBe(true);
 });
 
-test("only one feed sound plays, scrolling and navigation stop it", async ({
+test("only one reel sound plays; changing format, scrolling and navigation stop it", async ({
   page,
 }) => {
   await page.goto("/");
   const skip = page.getByRole("button", { name: "Skip for now" });
   if (await skip.isVisible()) await skip.click();
-  const first = page.locator(".post-sound audio").first();
-  const second = page.locator(".post-sound audio").nth(1);
-  await page
+  await page.getByRole("tab", { name: "Reels", exact: true }).click();
+  const videoCard = page.locator(".post-card").filter({
+    has: page.getByRole("heading", { name: "A moment in motion", exact: true }),
+  });
+  const slideCard = page.locator(".post-card").filter({
+    has: page.getByRole("heading", {
+      name: "Three details, one mood",
+      exact: true,
+    }),
+  });
+  const videoSound = videoCard.locator("audio");
+  const slideSound = slideCard.locator("audio");
+  await videoCard
     .getByRole("button", { name: "Play sound Golden hour", exact: true })
     .click();
   await expect
-    .poll(() => first.evaluate((a: HTMLAudioElement) => a.currentTime))
+    .poll(() => videoSound.evaluate((a: HTMLAudioElement) => a.currentTime))
     .toBeGreaterThan(0.1);
+  await slideCard
+    .getByRole("button", { name: "Play sound After hours", exact: true })
+    .click();
+  await expect
+    .poll(() => videoSound.evaluate((a: HTMLAudioElement) => a.paused))
+    .toBe(true);
+  await expect
+    .poll(() =>
+      videoCard.locator("video").evaluate((a: HTMLVideoElement) => a.paused),
+    )
+    .toBe(true);
+  await expect
+    .poll(() => slideSound.evaluate((a: HTMLAudioElement) => a.currentTime))
+    .toBeGreaterThan(0.1);
+  await slideSound.evaluate((a: HTMLAudioElement) => {
+    (window as unknown as { soundTestAudio: HTMLAudioElement }).soundTestAudio =
+      a;
+  });
+  await page.getByRole("tab", { name: "Photos", exact: true }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as unknown as { soundTestAudio: HTMLAudioElement })
+            .soundTestAudio.paused,
+      ),
+    )
+    .toBe(true);
+  const photoSound = page.locator(".post-sound audio").first();
   await page
     .getByRole("button", { name: "Play sound Soft focus", exact: true })
     .click();
   await expect
-    .poll(() => first.evaluate((a: HTMLAudioElement) => a.paused))
-    .toBe(true);
-  await expect
-    .poll(() => second.evaluate((a: HTMLAudioElement) => a.currentTime))
+    .poll(() => photoSound.evaluate((a: HTMLAudioElement) => a.currentTime))
     .toBeGreaterThan(0.1);
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect
-    .poll(() => second.evaluate((a: HTMLAudioElement) => a.paused))
+    .poll(() => photoSound.evaluate((a: HTMLAudioElement) => a.paused))
     .toBe(true);
   await page
     .getByRole("button", { name: "Play sound Soft focus", exact: true })
     .click();
-  await page.evaluate(() => {
+  await photoSound.evaluate((a: HTMLAudioElement) => {
     (window as unknown as { soundTestAudio: HTMLAudioElement }).soundTestAudio =
-      document.querySelectorAll<HTMLAudioElement>(".post-sound audio")[1];
+      a;
   });
   const nav = page.getByRole("navigation", {
     name:

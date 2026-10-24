@@ -265,7 +265,9 @@ test("following, saved feed, comments and local moderation", async ({
   await page.getByRole("button", { name: "Submit demo report" }).click();
   await go(page, "/explore");
   await page.getByRole("tab", { name: "Following", exact: true }).click();
-  await expect(page.locator(".post-card")).toHaveCount(3);
+  await expect(page.locator(".post-card")).toHaveCount(2);
+  await page.getByRole("tab", { name: "Reels", exact: true }).click();
+  await expect(page.locator(".post-card")).toHaveCount(1);
   await go(page, "/profile?saved=true");
   await expect(page.locator(".post-card")).toHaveCount(1);
   await go(page, "/post/p1");

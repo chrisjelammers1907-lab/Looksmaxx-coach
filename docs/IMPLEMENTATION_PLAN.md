@@ -24,3 +24,9 @@ The accepted changes are recorded in [ITERATION_2.md](ITERATION_2.md). Home is n
 ## Third iteration
 
 See ITERATION_3.md for the original editorial direction, optional photo/video sounds and the verification/publication gates. Existing journeys and privacy rules remain regression requirements; cosmetic changes do not replace functionality. Commercial song licensing and production media processing belong in the production roadmap.
+
+## Fourth iteration — implementation and local validation complete
+
+See ITERATION_4.md for the combined feedback and selected changes. Milestones: (1) bounded responsive shell, stronger green and uniform top/category treatment; (2) independent feed formats, image captions and accessible photo stories; (3) current browser, layout, accessibility and standalone verification; (4) exact-export publication and actual public browser inspection. Historical passing checks above do not validate this revision. All existing functional and privacy journeys remain regression requirements.
+
+The final 72-case browser regression, 15 domain tests, typecheck, lint, formatting, production build and standalone local export checks passed on 24 October 2026. Main desktop/mobile screens were inspected; public verification is the remaining delivery gate.

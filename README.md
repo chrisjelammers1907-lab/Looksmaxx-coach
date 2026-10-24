@@ -67,6 +67,12 @@ For future static hosting, serve `dist/` and rewrite unknown app routes to `inde
 9. Ask the **simulated coach**, optionally attach a private photo, inspect a proposed goal and apply it intentionally. Sample feedback never claims to analyze the photo. Existing routines never change silently.
 10. Reset the demo in **My profile**, or remove private details separately.
 
+## Feed and layout update
+
+Home has independent **For You / Following** and **Photos / Reels** controls. Photos shows still posts; Reels shows video and explicitly chosen photo stories. Try the slideshow arrows, left/right keyboard keys or a horizontal swipe. **Create a post → Post format** can make a photo story with a second fictional editorial image; personal test uploads remain private. Optional sounds play only after a user action and stop when leaving the post or format.
+
+The site uses a centered frame with side gutters and a consistent image category row. Captions appear over images; full captions, structured items, copying and comments remain in post details. See [the fourth-iteration record](docs/ITERATION_4.md) and [verified publication status](docs/WEB_PUBLICATION.md) for the actual checks and current live version.
+
 ## Privacy and simulation boundaries
 
 | Data                                                                                                                                                  | Lifetime / behavior                                     |

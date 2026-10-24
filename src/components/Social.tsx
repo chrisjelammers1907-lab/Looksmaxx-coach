@@ -285,16 +285,32 @@ export function PostCard({
         </Link>
         <FollowButton creator={post.author} />
       </div>
-      <PostMedia post={post} />
-      <div className="post-body">
-        <div className="eyebrow">
-          {topicName[post.topic] || "Community"}{" "}
-          {post.style && ` / ${post.style.replace("-", " ")}`}
+      <PostMedia post={post}>
+        <div className="post-caption">
+          <div className="eyebrow">
+            {topicName[post.topic] || "Community"}{" "}
+            {post.style && ` / ${post.style.replace("-", " ")}`}
+          </div>
+          <Link to={`/post/${post.id}`}>
+            <h3>{post.title}</h3>
+          </Link>
+          <p>
+            {post.body.length > 145
+              ? `${post.body.slice(0, 142).trimEnd()}…`
+              : post.body}
+          </p>
+          {post.body.length > 145 && !expanded && (
+            <button
+              type="button"
+              className="caption-more"
+              onClick={() => setDetail(true)}
+            >
+              Read full caption
+            </button>
+          )}
         </div>
-        <Link to={`/post/${post.id}`}>
-          <h3>{post.title}</h3>
-        </Link>
-        <p>{post.body}</p>
+      </PostMedia>
+      <div className="post-body">
         <div className="tag-row">
           {post.tags
             .split(",")
@@ -355,6 +371,9 @@ export function PostCard({
         </div>
         {(expanded || detail) && (
           <div className="post-expanded">
+            {post.body.length > 145 && (
+              <p className="preserve-text">{post.body}</p>
+            )}
             <div className="post-metadata">
               {post.occasion} · {post.season} · Audience: {post.audience}
             </div>
@@ -469,7 +488,9 @@ export function PostCard({
   );
   return (
     <>
-      <article className={`post-card ${expanded ? "expanded" : ""}`}>
+      <article
+        className={`post-card ${expanded ? "expanded" : ""} ${post.format === "reel" || post.media?.kind === "video" ? "reel-card" : "photo-card"}`}
+      >
         {body}
       </article>
       {detail && !expanded && (
