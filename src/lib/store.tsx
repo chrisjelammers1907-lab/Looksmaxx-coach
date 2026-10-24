@@ -9,7 +9,45 @@ import {
 import type { DemoState } from "./types";
 import { makeInitialState, seedPosts } from "./data";
 import { releasePrivateMedia } from "./media";
+import { autoLog } from "./training";
+import { today, uid } from "./domain";
 const STORAGE_KEY = "charett-demo-v1";
+/** Training plans and logs persist in this browser, as the owner chose. */
+const TRAINING_KEY = "charett-training-v1";
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
+function loadTraining(state: DemoState) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TRAINING_KEY) || "null");
+    if (!isRecord(saved)) return state;
+    return {
+      ...state,
+      trainingWeek: isRecord(saved.trainingWeek)
+        ? (saved.trainingWeek as DemoState["trainingWeek"])
+        : state.trainingWeek,
+      trainingProgress: isRecord(saved.trainingProgress)
+        ? (saved.trainingProgress as DemoState["trainingProgress"])
+        : {},
+      sessions: Array.isArray(saved.sessions)
+        ? (saved.sessions as DemoState["sessions"])
+        : [],
+      workouts: Array.isArray(saved.workouts)
+        ? (saved.workouts as DemoState["workouts"]).filter(
+            (w) =>
+              isRecord(w) &&
+              typeof w.exercise === "string" &&
+              typeof w.weight === "number",
+          )
+        : state.workouts,
+      trainingSince:
+        typeof saved.trainingSince === "string"
+          ? saved.trainingSince
+          : state.trainingSince,
+    };
+  } catch {
+    return state;
+  }
+}
 export type Patch = (state: DemoState) => DemoState;
 interface Store {
   state: DemoState;
@@ -45,7 +83,8 @@ function load(): DemoState {
   } catch {
     /* Storage is optional: a fresh local demo still works. */
   }
-  return initial;
+  const withTraining = loadTraining(initial);
+  return { ...withTraining, ...autoLog(withTraining, today(), uid) };
 }
 export function DemoProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(load);
@@ -81,6 +120,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       /* No sensitive state is persisted. */
     }
   }, [state]);
+  const { trainingWeek, trainingProgress, sessions, workouts, trainingSince } =
+    state;
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        TRAINING_KEY,
+        JSON.stringify({
+          trainingWeek,
+          trainingProgress,
+          sessions,
+          workouts,
+          trainingSince,
+        }),
+      );
+    } catch {
+      /* The plan still works for this session without storage. */
+    }
+  }, [trainingWeek, trainingProgress, sessions, workouts, trainingSince]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(""), 4500);
@@ -89,7 +146,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   useEffect(() => () => releasePrivateMedia(), []);
   const reset = () => {
     releasePrivateMedia();
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TRAINING_KEY);
+    } catch {
+      /* Nothing stored. */
+    }
     setState(makeInitialState());
     toast("Demo reset. Private session content removed.");
   };

@@ -338,15 +338,13 @@ test("training schedule, logs, history and nutrition targets", async ({
   page,
 }) => {
   await open(page, "/topics/gym");
-  await page.getByRole("button", { name: "Edit schedule" }).click();
-  await page
-    .getByLabel("Monday", { exact: true })
-    .fill("Comfortable strength session");
-  await page.getByRole("button", { name: "Save schedule" }).click();
+  await page.getByRole("button", { name: /^Monday:/ }).click();
+  await page.getByLabel("Session name").fill("Comfortable strength");
+  await page.getByRole("button", { name: "Save day" }).click();
   await expect(
-    page.getByText("Comfortable strength session", { exact: true }),
+    page.getByRole("button", { name: /^Monday: Comfortable strength/ }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Log workout" }).click();
+  await page.getByRole("button", { name: "Log exercise" }).click();
   await page.getByLabel("Exercise", { exact: true }).fill("Supported row");
   await page.getByLabel("Weight (kg)").fill("20");
   await page.getByRole("button", { name: "Save workout" }).click();

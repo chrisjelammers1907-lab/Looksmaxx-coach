@@ -9,10 +9,10 @@ import {
   StretchHorizontal,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
+import TrainingPlanner from "../components/Training";
 import { uid, today, workoutVolume, dateLabel } from "../lib/domain";
 import type { Workout, Food } from "../lib/types";
 import {
-  Area,
   Button,
   Empty,
   Field,
@@ -24,7 +24,6 @@ import {
 export default function Gym() {
   const { state, update, toast } = useDemo();
   const [tab, setTab] = useState("training");
-  const [schedule, setSchedule] = useState<Record<string, string> | null>(null);
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [food, setFood] = useState<Food | null>(null);
   const [targets, setTargets] = useState(false);
@@ -49,30 +48,11 @@ export default function Gym() {
       />
       {tab === "training" && (
         <>
-          <SectionTitle
-            title="Make room for movement"
-            subtitle="An editable example week, not an assumed current training prescription."
-          >
-            <Button
-              variant="secondary"
-              onClick={() => setSchedule({ ...state.schedule })}
-            >
-              <Pencil size={15} />
-              Edit schedule
-            </Button>
-          </SectionTitle>
-          <div className="week-grid">
-            {Object.entries(state.schedule).map(([day, text]) => (
-              <div className="day-card" key={day}>
-                <span className="eyebrow">{day.slice(0, 3)}</span>
-                <p>{text}</p>
-              </div>
-            ))}
-          </div>
+          <TrainingPlanner />
           <div className="section-title">
             <div>
-              <h2>Keep showing up.</h2>
-              <p>Log sets, repetitions and weights in kilograms.</p>
+              <h2>History</h2>
+              <p>Sessions log themselves; add a single exercise any time.</p>
             </div>
             <Button
               onClick={() =>
@@ -87,7 +67,7 @@ export default function Gym() {
               }
             >
               <Plus size={16} />
-              Log workout
+              Log exercise
             </Button>
           </div>
           <Field
@@ -400,30 +380,6 @@ export default function Gym() {
             </p>
           </div>
         </>
-      )}
-      {schedule && (
-        <Modal title="Your training week" onClose={() => setSchedule(null)}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              update((s) => ({ ...s, schedule }));
-              setSchedule(null);
-              toast("Training schedule saved for this session.");
-            }}
-          >
-            {Object.entries(schedule).map(([day, text]) => (
-              <Area
-                key={day}
-                label={day}
-                value={text}
-                onChange={(e) =>
-                  setSchedule({ ...schedule, [day]: e.target.value })
-                }
-              />
-            ))}
-            <Button type="submit">Save schedule</Button>
-          </form>
-        </Modal>
       )}
       {workout && (
         <Modal title="Log your workout" onClose={() => setWorkout(null)}>

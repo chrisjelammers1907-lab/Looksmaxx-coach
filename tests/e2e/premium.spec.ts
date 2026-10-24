@@ -334,3 +334,42 @@ test("each clothing style gives the page its own look", async ({ page }) => {
   }
   expect(backgrounds.size).toBe(3);
 });
+
+test("gym days are planned per set, persist, and a PR can become a story", async ({
+  page,
+}) => {
+  await open(page, "/topics/gym");
+  const weekday = new Date().toLocaleDateString("en", { weekday: "long" });
+  await page.getByRole("button", { name: new RegExp(`^${weekday}:`) }).click();
+  const editor = page.getByRole("dialog", { name: `Plan ${weekday}` });
+  await editor.getByLabel("Session name").fill("Upper");
+  await editor.getByLabel("Exercise 1", { exact: true }).fill("Bench press");
+  await editor.getByLabel("Reps, exercise 1 set 1").fill("6");
+  await editor.getByLabel("Kg, exercise 1 set 1").fill("65");
+  await editor.getByRole("button", { name: "Add set" }).click();
+  await expect(editor.getByLabel("Kg, exercise 1 set 2")).toHaveValue("65");
+  await expect(editor.getByLabel(`Repeat every ${weekday}`)).toBeChecked();
+  await editor.getByRole("button", { name: "Save day" }).click();
+
+  const today = page.getByRole("region", { name: "Today: Upper" });
+  await today.getByRole("button", { name: "Done: Bench press set 1" }).click();
+  await expect(today.getByText("New PR")).toBeVisible();
+  await today.getByRole("button", { name: "Share as story" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Add to your story" }).getByLabel("Text"),
+  ).toHaveValue(/New PR · Bench press .* → 65 kg/);
+  await page.getByRole("button", { name: "Share to story" }).click();
+
+  // The plan and ticked sets survive a reload.
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: new RegExp(`^${weekday}: Upper`) }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Done: Bench press set 1" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Finish and log now" }).click();
+  await expect(page.getByText("Session logged")).toBeVisible();
+  await expect(page.locator(".session-row").first()).toContainText("Done");
+  await noAxeViolations(page);
+});

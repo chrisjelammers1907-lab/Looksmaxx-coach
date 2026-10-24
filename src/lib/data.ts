@@ -544,6 +544,38 @@ export const makeInitialState = (): DemoState => ({
   photos: [],
   workouts: [
     {
+      id: "w3",
+      date: "2026-10-05",
+      exercise: "Bench press",
+      sets: 3,
+      reps: 8,
+      weight: 57.5,
+    },
+    {
+      id: "w4",
+      date: "2026-10-12",
+      exercise: "Bench press",
+      sets: 3,
+      reps: 8,
+      weight: 60,
+    },
+    {
+      id: "w5",
+      date: "2026-10-07",
+      exercise: "Squat",
+      sets: 3,
+      reps: 6,
+      weight: 77.5,
+    },
+    {
+      id: "w6",
+      date: "2026-10-14",
+      exercise: "Squat",
+      sets: 3,
+      reps: 6,
+      weight: 80,
+    },
+    {
       id: "w1",
       date: "2026-10-12",
       exercise: "Goblet squat",
@@ -593,6 +625,88 @@ export const makeInitialState = (): DemoState => ({
   stories: [],
   seenStories: [],
   reposts: [],
+  trainingWeek: {
+    Monday: {
+      name: "Upper",
+      repeat: true,
+      exercises: [
+        {
+          id: "ex-bench",
+          name: "Bench press",
+          sets: [
+            { reps: 8, weight: 60 },
+            { reps: 8, weight: 60 },
+            { reps: 6, weight: 62.5 },
+          ],
+        },
+        {
+          id: "ex-row",
+          name: "Seated row",
+          sets: [
+            { reps: 10, weight: 50 },
+            { reps: 10, weight: 50 },
+            { reps: 10, weight: 50 },
+          ],
+        },
+        {
+          id: "ex-press",
+          name: "Shoulder press",
+          sets: [
+            { reps: 10, weight: 20 },
+            { reps: 10, weight: 20 },
+          ],
+        },
+      ],
+    },
+    Wednesday: {
+      name: "Lower",
+      repeat: true,
+      exercises: [
+        {
+          id: "ex-squat",
+          name: "Squat",
+          sets: [
+            { reps: 6, weight: 80 },
+            { reps: 6, weight: 80 },
+            { reps: 6, weight: 80 },
+          ],
+        },
+        {
+          id: "ex-rdl",
+          name: "Romanian deadlift",
+          sets: [
+            { reps: 8, weight: 70 },
+            { reps: 8, weight: 70 },
+          ],
+        },
+      ],
+    },
+    Friday: {
+      name: "Full body",
+      repeat: true,
+      exercises: [
+        {
+          id: "ex-goblet",
+          name: "Goblet squat",
+          sets: [
+            { reps: 10, weight: 16 },
+            { reps: 10, weight: 16 },
+          ],
+        },
+        {
+          id: "ex-pull",
+          name: "Lat pulldown",
+          sets: [
+            { reps: 10, weight: 45 },
+            { reps: 10, weight: 45 },
+          ],
+        },
+      ],
+    },
+  },
+  trainingProgress: {},
+  sessions: [],
+  trainingSince: today(),
   notifications: {},
   muted: [],
 });

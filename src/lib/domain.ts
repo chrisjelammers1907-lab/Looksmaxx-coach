@@ -1,5 +1,9 @@
 import type { Item, Post } from "./types";
-export const today = () => new Date().toISOString().slice(0, 10);
+/** Today's date in the viewer's own time zone (YYYY-MM-DD). */
+export const today = (now = new Date()) =>
+  new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
 export const uid = () => crypto.randomUUID();
 export function totalPrice(items: Item[]): string {
   if (!items.length) return "No items yet";

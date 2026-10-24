@@ -7,6 +7,14 @@ export type TopicId =
   | "smile"
   | "fragrance"
   | "photos";
+export type Weekday =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
 export type ClothingStyle = "old-money" | "dark-casual" | "minimalist";
 export type Audience = "public" | "followers" | "private";
 export interface Profile {
@@ -144,6 +152,33 @@ export interface Workout {
   reps: number;
   weight: number;
 }
+export interface PlannedSet {
+  reps: number;
+  weight: number;
+}
+export interface PlannedExercise {
+  id: string;
+  name: string;
+  sets: PlannedSet[];
+}
+/** A training day on the weekly schedule, e.g. "Upper" on Monday. */
+export interface TrainingDay {
+  name: string;
+  exercises: PlannedExercise[];
+  /** Repeats every week; otherwise it applies to `date` only. */
+  repeat: boolean;
+  date?: string;
+}
+export interface SetProgress extends PlannedSet {
+  done: boolean;
+}
+export interface TrainingSession {
+  id: string;
+  date: string;
+  name: string;
+  status: "done" | "skipped";
+  exercises: { name: string; sets: SetProgress[] }[];
+}
 export interface Food {
   id: string;
   date: string;
@@ -207,6 +242,12 @@ export interface DemoState {
   stories: Story[];
   seenStories: string[];
   reposts: string[];
+  trainingWeek: Partial<Record<Weekday, TrainingDay>>;
+  /** Ticked sets per date, then per planned exercise id. */
+  trainingProgress: Record<string, Record<string, SetProgress[]>>;
+  sessions: TrainingSession[];
+  /** Days before this date are never auto-logged. */
+  trainingSince: string;
   notifications: Record<string, "all" | "stories" | "off">;
   muted: string[];
 }
