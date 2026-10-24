@@ -11,47 +11,55 @@ export const guides: Record<TopicId, Guide> = {
   skincare: {
     title: "Your first skincare routine",
     intro:
-      "Start with a routine you can repeat comfortably. More products do not automatically mean better care. This guide turns the everyday-care themes in the supplied skincare references into a simple starting point, without importing their medication protocols.",
+      "Clear, calm skin comes from a few steps done every day. These tips summarise the skincare guides you shared and keep to what you can safely start without a prescription.",
     steps: [
       {
-        title: "01 / Understand the three jobs",
-        text: "Cleansing removes makeup and surface buildup; moisturiser helps keep skin comfortable; sunscreen is for UV protection. Choose products for those jobs and your preferences, rather than buying every active ingredient mentioned online. A product’s full formula and your response matter more than a single marketing ingredient.",
+        title: "01 / Know what causes breakouts",
+        text: "Four things work together: excess oil (sebum), dead skin cells that clog pores, bacteria (C. acnes) that trigger inflammation, and hormones such as androgens that raise oil production. Every product in your routine should target one of these, so you know why it is there.",
       },
       {
-        title: "02 / Build your morning",
-        text: "Cleanse gently as needed, moisturise if needed, and apply sunscreen according to its label. Shade and protective clothing also matter. Start from products you already tolerate. The morning cleanser–moisturiser–sunscreen structure appears in the supplied Detailed Skin-Care Guide; its brand recommendations are personal examples, not verified shopping results.",
+        title: "02 / Morning: cleanse, moisturise, protect",
+        text: "Use a gentle, non-comedogenic cleanser, then a lightweight oil-free moisturiser. Optional: a vitamin C serum before moisturiser for a brighter tone. Finish with broad-spectrum SPF 30 or higher every morning; mineral (zinc oxide) formulas suit sensitive skin. Sunscreen is the most important step against early ageing and dark marks.",
       },
       {
-        title: "03 / Keep the evening simple",
-        text: "Remove makeup and sunscreen gently and use a moisturiser you tolerate. Add optional products individually so you can track your response. Follow product instructions. This beginner routine does not require prescription acne treatment, a peel or a complicated layering schedule.",
+        title: "03 / Evening: cleanse after your shower, then treat",
+        text: "Cleanse after showering so shampoo and conditioner residue does not stay on your face. Then add one treatment: an over-the-counter retinoid such as adapalene, a pea-sized amount, two or three nights a week at first. A short ‘purge’ where spots briefly get worse is common. Spot-treat inflamed spots with benzoyl peroxide or salicylic acid and finish with moisturiser; use a richer one on dry nights.",
       },
       {
-        title: "04 / Optional makeup, on your terms",
-        text: "The Makeup reference discusses tinted moisturiser for light coverage and concealer for smaller areas. Those are cosmetic choices, not acne treatments. Check the shade in daylight and blend edges gently. Use sunscreen as directed on its own label; do not assume mixing makeup or moisturiser into it preserves the stated protection. A cosmetic SPF label also does not replace correct application.",
+        title: "04 / Body acne, marks and texture",
+        text: "Use a benzoyl peroxide wash (5–10%) for acne on the chest and back. Niacinamide (10%) or azelaic acid helps fade red and dark marks. A glycolic or lactic acid exfoliant (5–10%) once a week smooths texture; increase slowly. Add hyaluronic acid on days your skin feels tight. Skip harsh scrubs and alcohol-heavy products: they strip your skin barrier.",
       },
       {
-        title: "05 / Observe before changing",
-        text: "Use your journal for dates, products used and your own observations of comfort or irritation. A photo cannot establish a diagnosis. Pause a product that causes a reaction and seek suitable professional help for persistent or significant symptoms. Product compatibility cannot be established from a product name alone.",
+        title: "05 / Give it time and track it",
+        text: "Acne usually needs 4–8 weeks to improve, oil and texture 8–12 weeks, and signs of ageing 3–6 months. Change one product at a time and note it in your journal, so you can see what actually works for you.",
+      },
+      {
+        title: "06 / Optional: even out your tone",
+        text: "For light coverage, mix a little tinted moisturiser with your moisturiser after SPF and blend it into your jawline and neck. Dab concealer on bigger spots and tap gently to blend. Choose non-comedogenic products. Makeup does not replace sunscreen.",
       },
     ],
     remember:
-      "An online routine is somebody else’s experience. Prescription treatments and persistent skin problems need individual professional assessment; there is no guaranteed acne-free timeline.",
+      "Prescription options such as isotretinoin, tretinoin, antibiotics or hormone-based creams, and treatments such as microneedling, lasers or strong peels, need a dermatologist. Doses and sourcing tips from the original guides are left out on purpose.",
     references: [
       {
         name: "Detailed Skin-Care Guide",
-        note: "Used for the AM/PM structure and product roles. Its drug combinations, doses, universal hormone claims and guaranteed outcomes were not adopted.",
+        note: "Acne causes, the morning and evening structure, retinoids, benzoyl peroxide, marks and texture. Medication doses are left out.",
+      },
+      {
+        name: "Topical spironolactone",
+        note: "Barrier care, daily SPF and realistic timelines. Buying prescription creams without a doctor is not recommended.",
+      },
+      {
+        name: "GHK-Cu (Anti Aging)",
+        note: "Vitamin C in the morning and alternating active ingredients. Injected and DIY preparations are left out.",
       },
       {
         name: "Makeup",
-        note: "Used for the distinction between light coverage and targeted concealer. Its product endorsement and universal ‘acne safe’ claim are not established facts.",
+        note: "Tinted moisturiser and concealer technique.",
       },
       {
-        name: "Clavicular’s routine",
-        note: "Reviewed as a third-party personal routine, not your current routine or a template everyone should copy.",
-      },
-      {
-        name: "Topical spironolactone; GHK-Cu (Anti Aging)",
-        note: "Reviewed as treatment-related references. No compounded recipe, treatment recommendation or result promise is included in this beginner guide.",
+        name: "Creator skincare routine",
+        note: "Cleansing after the shower and preparing skin for shaving. Hormone and medication experiments are left out.",
       },
     ],
     reading: [
@@ -119,7 +127,11 @@ export const guides: Record<TopicId, Guide> = {
         text: "Compare shades in consistent lighting and keep edited inspiration separate from real progress. Follow the dye manufacturer’s instructions, including allergy-test instructions. Hair colour is not intended for eyelashes. A qualified stylist can help you understand maintenance and realistic options.",
       },
       {
-        title: "04 / Keep a dated record",
+        title: "04 / Look after your scalp",
+        text: "A calm scalp grows healthier-looking hair. A ketoconazole shampoo, used a couple of times a week and left on for a few minutes, helps with dandruff and an irritated scalp; it is sold without a prescription in many countries. For thinning or receding hair, see a doctor early: the effective treatments are prescription options that need individual advice.",
+      },
+      {
+        title: "05 / Keep a dated record",
         text: "Use similar camera distance, lighting and angle for hair photos. Note any styling, extensions or editing. A visualization can illustrate an idea, but does not show achieved growth or prove that a haircut will suit you.",
       },
     ],
@@ -133,6 +145,10 @@ export const guides: Record<TopicId, Guide> = {
       {
         name: "Eyebrows; Eyelashes",
         note: "Used to distinguish cosmetic styling preferences from hair-growth treatment claims; treatment instructions are not part of this hair guide.",
+      },
+      {
+        name: "GHK-Cu (Anti Aging)",
+        note: "Ketoconazole shampoo for scalp care. Peptide preparations and microneedling at home are left out.",
       },
     ],
     reading: [
@@ -217,8 +233,12 @@ export const guides: Record<TopicId, Guide> = {
         text: "Mascara, shaping and a professional styling service change appearance differently from a prescription treatment. The supplied lash document mixes those categories. It does not establish that oils or a serum will grow your lashes, nor that a prescription is suitable for you.",
       },
       {
-        title: "05 / Keep facial-hair care manageable",
-        text: "Use clean tools and follow their directions. Record your own comfortable shaving or trimming routine. Leave irritated skin time to settle and seek professional advice for persistent problems. A photo cannot diagnose a skin condition.",
+        title: "05 / Shave without bumps",
+        text: "Exfoliate gently first to lift dry skin. A single-blade safety razor causes fewer ingrown hairs than multi-blade razors; on the neck, which is most prone to razor bumps, an electric trimmer is kinder. Rinse the hairs away with water, cleanse gently, then moisturise and apply SPF. Leave irritated skin a few days to settle.",
+      },
+      {
+        title: "06 / Optional: an even glow",
+        text: "A gradual self-tan foam gives the most natural result when you use a small amount consistently instead of a lot at once. Apply it after your moisturiser has settled, keep it off your brows and hairline, and wash your hands afterwards.",
       },
     ],
     remember:
@@ -235,6 +255,10 @@ export const guides: Record<TopicId, Guide> = {
       {
         name: "Makeup",
         note: "Used for optional, targeted cosmetic coverage; the source author’s personal product results are not general promises.",
+      },
+      {
+        name: "Creator skincare routine",
+        note: "Shaving technique (exfoliating first, single blade, trimmer on the neck) and gradual self-tan use.",
       },
       {
         name: "Socialmax / Low Inhib",
@@ -347,7 +371,7 @@ export const guides: Record<TopicId, Guide> = {
       "Account and journal privacy controls are local demonstrations, not production authentication or encrypted cloud storage.",
     references: [
       {
-        name: "Clavicular’s routine; Coloring; Eyelashes",
+        name: "Coloring; Eyelashes",
         note: "Their personal anecdotes and transformation imagery prompted this distinction between references, claims and your own dated observations. Their images and claimed results are not used as CHARETT transformations.",
       },
     ],

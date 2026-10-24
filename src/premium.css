@@ -333,9 +333,7 @@ h4 {
   gap: 12px;
   margin: -8px -8px 0;
   padding: 8px;
-  background: color-mix(in srgb, var(--ivory) 88%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--ivory);
 }
 .feed-tabs .tabs {
   margin: 0;
@@ -3919,4 +3917,50 @@ h4 {
     grid-template-columns: 22px auto auto minmax(0, 1fr);
     gap: 8px;
   }
+}
+
+/* ---------- Beginner guides: readable long-form ---------- */
+.guide-page .guide-hero {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.guide-page .guide-hero p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+.guide-page .guide-meta {
+  font-size: 12.5px;
+}
+.guide-page .guide-contents {
+  border-radius: var(--radius);
+  border-top-width: 0;
+  background: var(--cream);
+}
+.guide-page .guide-contents button,
+.guide-page .guide-contents a {
+  font-size: 13.5px;
+}
+.guide-page .guide-article p,
+.guide-page .guide-article li {
+  font-size: 15.5px;
+  line-height: 1.7;
+  max-width: 66ch;
+}
+.guide-page .guide-article h2 {
+  font-size: clamp(26px, 2.6vw, 32px);
+}
+.guide-page .guide-remember,
+.guide-page .guide-sources {
+  border-radius: var(--radius);
+}
+.topic-page.atmosphere-fragrance .topic-banner {
+  background: var(--forest-deep);
+  color: var(--on-dark);
+}
+.topic-page.atmosphere-fragrance .topic-banner .eyebrow {
+  color: var(--champagne);
+}
+.topic-page.atmosphere-fragrance .topic-banner .topic-purpose {
+  color: var(--on-dark-muted);
 }

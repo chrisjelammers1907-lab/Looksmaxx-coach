@@ -51,3 +51,33 @@ Feed: a sticky header with a centred For You / Following tab switch (2 px underl
 Mobile navigation: a floating, rounded (26 px), blurred deep-forest bar inside the safe area (`viewport-fit=cover`, `env(safe-area-inset-bottom)`), five equal columns with 22 px icons and an animated champagne pill behind the active icon.
 
 Messages and AI coach share one chat language: a conversation list with 56 px avatars, a profile intro at the top of each thread, grouped 22 px-radius bubbles (cream incoming, forest outgoing), and a pill composer with an attachment icon and a round send button (Enter sends, Shift+Enter starts a new line). Decorative filler (brand note, rail captions, feed hero and disclosures, page headers on Messages/Coach/post detail) was removed; the required demo disclosures remain as short single lines.
+
+## Second premium round — 24 October 2026
+
+- **Masthead:** the tagline "The art of becoming" sits directly under the wordmark in italic serif (16 px desktop, 13.5 px mobile), so it reads as part of the logo.
+- **Home:** there is no category row. From the top, Home shows:
+  - stories: champagne and forest ring when unseen, a stone ring once seen, and a 9:16 viewer with progress bars
+  - For You / Following
+  - Photos / Reels
+  - filter chips
+- **Captions:** photo captions show about two lines and expand in place with "… more".
+- **Categories:** an icon list (forest circles, serif titles, guide links), closed by the line "Become someone your future self thanks."
+- **Topic banners:**
+  - desktop: two halves, with the image filling its half
+  - phones: the photo sits above the copy, with 20 px padding
+  - cards, tabs, notes and buttons share the 16/24 px radii and 13–15 px text
+- **Profile:**
+  - stats for posts, followers, following and likes
+  - name and bio shown once
+  - icon tabs: posts, reels, drafts, private, reposts, likes, saved
+  - a 3-column 4:5 grid
+  - a ⋯ sheet (share, notifications, mute, report, block) and a Settings & privacy sheet
+- **Chats:**
+  - a + menu for photo, sticker, voice message and post
+  - the original CHARETT sticker set uses palette tokens and the italic serif
+  - voice notes play as waveform bubbles
+- **Clothing moods:**
+  - Old money: parchment pinstripe, double champagne rules and italic serif
+  - Minimalist: gallery white, hairlines, square edges and light sans
+  - Dark casual: espresso
+- **Gym:** day tiles (forest for training days, champagne ring for today) and a Today card with set rows, check buttons, a champagne "New PR" badge and a forest PR banner.

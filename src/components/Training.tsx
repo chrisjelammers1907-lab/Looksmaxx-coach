@@ -444,7 +444,7 @@ export default function TrainingPlanner() {
               type="button"
               key={day}
               className={`day-tile ${dayDate === date ? "today" : ""} ${active ? "training" : "rest"}`}
-              aria-label={`${day}: ${active ? `${plan!.name}, ${plan!.exercises.length} exercises` : "rest day"}`}
+              aria-label={`${day}: ${active ? `${plan!.name}, ${plan!.exercises.length} ${plan!.exercises.length === 1 ? "exercise" : "exercises"}` : "rest day"}`}
               onClick={() => setEditing(day)}
             >
               <span className="day-tile-day">{day.slice(0, 3)}</span>
@@ -453,7 +453,8 @@ export default function TrainingPlanner() {
               <small>
                 {active ? (
                   <>
-                    {plan!.exercises.length} exercises
+                    {plan!.exercises.length}{" "}
+                    {plan!.exercises.length === 1 ? "exercise" : "exercises"}
                     {plan!.repeat && (
                       <Repeat size={12} aria-label="repeats weekly" />
                     )}

@@ -13,7 +13,7 @@ All 15 PDFs were actually downloaded outside the repository to `/workspace/attac
 | Attachment               | Pages | Inspection and handling                                            |
 | ------------------------ | ----: | ------------------------------------------------------------------ |
 | Testosterone             |     1 | Unvalidated drug-related reference; excluded from demo advice      |
-| Clavicular's routine     |     4 | Third-party routine, not the owner's current routine; not imported |
+| Creator skincare routine |     4 | Third-party routine, not the owner's current routine; not imported |
 | Topical spironolactone   |     3 | Unvalidated medication claims; no treatment integration            |
 | GHK-Cu (Anti Aging)      |     5 | Unvalidated peptide claims; no treatment integration               |
 | Makeup                   |     4 | Third-party cosmetic reference; no owner facts inferred            |

@@ -95,3 +95,40 @@ On 24 October 2026, the final full regression passed all 72 browser cases; 15 do
 The owner asked for a more premium look with the same structure. Implemented: central design tokens (`src/tokens.css`) with forest, ivory, champagne and ink, plus removal of all light green and pink; centred Instagram/TikTok feed tabs with chip filters; captions below photo posts with like/comment/save actions; product tags and a "Shop the look" row in place of the old price block; reels unchanged with overlay captions; a floating rounded mobile bottom bar with safe-area insets; Instagram-DM-style Messages and AI Coach; less filler text. Vector illustrations in the feed now render instead of appearing as empty blocks. Details are in DESIGN_SYSTEM.md.
 
 Validation: typecheck, ESLint, Prettier, 15 domain tests and the production build passed. The full Chromium run passed 79 cases at 1440×1000 and 390×844. That covers the 72 existing cases, with four assertions updated where the UI changed on purpose (photo caption below the image, no topic line on untagged posts, the composer's "Message"/"Send message" labels), plus a new `premium.spec.ts` for centred tabs, chip filtering, product tags, the mobile bar and chat composers. Axe scans of 21 routes at both widths and all clothing themes found no violations. The standalone HashRouter export was built and opened locally without errors; `demo/CHARETT-demo.html` and `gh-pages` were not updated in this change. Before and after screenshots are in `docs/screenshots/premium/`.
+
+
+## Second premium round — 24 October 2026
+
+The owner's feedback on the first preview was agreed point by point before any building started, and was then delivered in four phases. Each phase was published to the private preview.
+
+1. **Home and layout**
+   - Masthead tagline spacing is fixed and the Explore row is removed.
+   - Stories sit at the top of Home.
+   - Home order is For You/Following, then Photos/Reels, then filters.
+   - Captions expand in place.
+   - Categories is an icon list with a closing quote.
+   - My Plan shows one day with Routines/Tasks filters, and the check-in is removed.
+   - Topic banners and cards are aligned.
+2. **Profiles, chats, coach and clothing**
+   - Instagram-style profiles: stats, drafts, private posts, reposts, likes, the ⋯ menu and settings.
+   - Chat photos, stickers and voice messages.
+   - Coach file attachments.
+   - Brand and price in the outfit builder.
+   - Old money and Minimalist page moods.
+3. **Gym planner**
+   - Named days with per-set reps and kg, repeated weekly or applied once.
+   - Today tick-off, then automatic logging after midnight (untouched sessions are recorded as skipped).
+   - PR detection that can be shared as a story.
+   - Training data persists in `localStorage` (`charett-training-v1`), as the owner approved; reset clears it.
+4. **Beginner guides**
+   - The skincare, grooming and hair guides now contain practical tips from the five supplied Looksmax PDFs.
+   - Medication doses, injections, self-sourcing of prescription products and DMSO use are deliberately left out.
+   - The creator name is removed everywhere.
+
+**Validation**
+- Typecheck, ESLint and Prettier pass.
+- 19 unit tests pass, including the new training tests.
+- 93 Chromium cases pass, with 1 mobile-only case skipped on desktop.
+- Axe finds no violations on 21 routes at both widths or in the three clothing themes.
+
+Updated screenshots are `docs/screenshots/premium/v2-*.jpg`.
