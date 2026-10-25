@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
 import { creators, parseStyle } from "../lib/data";
+import ShareCardButton from "./ShareCard";
 import type { CardRef, Post } from "../lib/types";
 import {
   asset,
@@ -84,6 +85,19 @@ export function ShareDialog({
             <strong>{post?.title}</strong>
             <span>They can open this post</span>
           </div>
+          {post && (
+            <div className="share-out">
+              <ShareCardButton
+                card={{
+                  title: post.title,
+                  subtitle: post.body,
+                  image: post.image ? asset(post.image) : undefined,
+                  kind: post.topic === "clothing" ? "outfit" : "post",
+                }}
+              />
+              <small>A story-sized card with the photo and title.</small>
+            </div>
+          )}
           <form
             onSubmit={(e) => {
               e.preventDefault();

@@ -236,3 +236,19 @@ test("intake asks for 18+", async ({ page }) => {
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.locator("h1").first()).toBeAttached();
 });
+
+test("a post becomes a share card for Instagram and TikTok", async ({
+  page,
+}) => {
+  await open(page, "/");
+  await page
+    .getByRole("button", { name: "Share The art of a simple Sunday" })
+    .first()
+    .click();
+  const download = page.waitForEvent("download");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Share to Instagram / TikTok" })
+    .click();
+  expect((await download).suggestedFilename()).toMatch(/\.png$/);
+});

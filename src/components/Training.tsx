@@ -19,6 +19,7 @@ import {
 } from "../lib/training";
 import type { SetProgress, TrainingDay, Weekday } from "../lib/types";
 import { trainingStreak } from "../lib/streaks";
+import ShareCardButton from "./ShareCard";
 import { Button, Field, Modal, SectionTitle } from "./ui";
 import { StoryComposer } from "./Stories";
 import StreakFlame from "./StreakFlame";
@@ -405,6 +406,15 @@ function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
                 >
                   Share as story
                 </Button>
+                <ShareCardButton
+                  variant="small"
+                  label="Share card"
+                  card={{
+                    title: `${exercise.name}: ${weightLabel(top, unit)}`,
+                    subtitle: `Up from ${fromKg(previous, unit)}. Logged with CHARETT.`,
+                    kind: "pr",
+                  }}
+                />
               </div>
             )}
           </div>
