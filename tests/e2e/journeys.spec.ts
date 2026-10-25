@@ -198,7 +198,9 @@ test("public outfit journey: preview, social actions, copy, share, edit and remo
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();
-  await expect(dialog(page).getByText(/Everyone can see the title/)).toBeVisible();
+  await expect(
+    dialog(page).getByText(/Everyone can see the title/),
+  ).toBeVisible();
   await expect(
     dialog(page).getByText("€148.00", { exact: true }),
   ).toBeVisible();
