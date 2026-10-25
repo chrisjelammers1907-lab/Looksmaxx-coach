@@ -4,7 +4,7 @@
 }
 .topbar-about {
   font-size: 11px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .profile-menu {
   position: relative;
@@ -54,7 +54,7 @@
 }
 .sidebar .primary-nav > a.active {
   background: var(--forest);
-  color: var(--ivory);
+  color: var(--on-dark);
 }
 .sidebar .primary-nav > a.active:before {
   background: var(--champagne);
@@ -98,7 +98,7 @@
   min-height: 240px;
   overflow: hidden;
   background: var(--forest);
-  color: var(--ivory);
+  color: var(--on-dark);
   margin-bottom: 28px;
 }
 .feed-hero > div {
@@ -107,7 +107,7 @@
   z-index: 1;
 }
 .feed-hero .eyebrow {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   font-size: 9px;
 }
 .feed-hero h1 {
@@ -119,7 +119,7 @@
   max-width: 440px;
   font-size: 13px;
   line-height: 1.8;
-  color: var(--line);
+  color: var(--on-dark-muted);
   margin-bottom: 16px;
 }
 .feed-hero > img {
@@ -137,7 +137,7 @@
   align-items: center;
   gap: 7px;
   font-size: 9px;
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .feed-monogram {
   font: 340px/0.8 var(--serif);
@@ -236,7 +236,7 @@
   max-width: calc(100% - 20px);
   white-space: normal;
   background: color-mix(in srgb, var(--ivory) 93%, transparent);
-  color: var(--forest);
+  color: var(--forest-text);
   font-size: 8px;
   bottom: auto;
   top: 12px;
@@ -318,11 +318,11 @@
 .category-intro {
   padding: 35px 40px 45px;
   background: var(--forest);
-  color: var(--ivory);
+  color: var(--on-dark);
   margin-bottom: 30px;
 }
 .category-intro .eyebrow {
-  color: var(--sand);
+  color: var(--on-dark-muted);
   font-size: 9px;
 }
 .category-intro h1 {
@@ -330,7 +330,7 @@
   margin: 20px 0;
 }
 .category-intro p {
-  color: var(--line);
+  color: var(--on-dark-muted);
   max-width: 600px;
   font-size: 14px;
   margin: 0;
@@ -367,7 +367,7 @@
   font-size: 11px;
   background: color-mix(in srgb, var(--cream) 92%, transparent);
   padding: 5px 10px;
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .category-tile-image > svg {
   position: absolute;
@@ -378,7 +378,7 @@
   width: 35px;
   height: 35px;
   padding: 7px;
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .category-tile-copy {
   padding: 25px 28px;
@@ -407,7 +407,7 @@
 }
 .category-tile:nth-child(4n + 3) {
   background: var(--forest);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .category-tile:nth-child(4n + 4) {
   background: var(--line-strong);
@@ -432,7 +432,7 @@
   padding: 12px 18px;
   background: var(--line);
   font-size: 12px;
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .topic-purpose {
   font-size: 13px;
@@ -441,11 +441,11 @@
 }
 .atmosphere-gym .topic-banner {
   background: var(--forest);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .atmosphere-gym .topic-banner .eyebrow,
 .atmosphere-gym .topic-purpose {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .atmosphere-hair .topic-banner,
 .atmosphere-grooming .topic-banner {
@@ -460,7 +460,7 @@
 }
 .guide-hero {
   background: var(--forest);
-  color: var(--ivory);
+  color: var(--on-dark);
   display: grid;
   grid-template-columns: 1.4fr 0.6fr;
 }
@@ -468,7 +468,7 @@
   padding: 35px;
 }
 .guide-hero .eyebrow {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   font-size: 9px;
   display: flex;
   gap: 8px;
@@ -479,7 +479,7 @@
   margin: 23px 0;
 }
 .guide-hero p {
-  color: var(--line);
+  color: var(--on-dark-muted);
   font-size: 13px;
   line-height: 1.9;
 }
@@ -490,7 +490,7 @@
 }
 .guide-meta {
   font-size: 10px;
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .guide-layout {
   display: grid;
@@ -581,7 +581,7 @@
 }
 .about-hero {
   background: var(--forest);
-  color: var(--ivory);
+  color: var(--on-dark);
   min-height: 450px;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -593,7 +593,7 @@
   overflow: hidden;
 }
 .about-hero .eyebrow {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   font-size: 10px;
 }
 .about-hero h1 {
@@ -605,7 +605,7 @@
 .about-hero p {
   max-width: 360px;
   font-size: 14px;
-  color: var(--line);
+  color: var(--on-dark-muted);
   line-height: 1.9;
   position: relative;
   z-index: 1;

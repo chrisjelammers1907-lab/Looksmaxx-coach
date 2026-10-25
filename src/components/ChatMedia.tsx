@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  Camera,
   Check,
+  Flame,
+  Heart,
   Crown,
   Droplets,
   Dumbbell,
@@ -11,6 +14,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import { privateMediaUrl } from "../lib/media";
+import { useDemo } from "../lib/store";
+import { uid } from "../lib/domain";
+import type { CustomSticker } from "../lib/types";
+import { Button, Field, Modal } from "./ui";
 
 /** Original CHARETT sticker set, drawn with type and palette tokens. */
 export const stickers = [
@@ -24,8 +31,27 @@ export const stickers = [
   { id: "rest-day", label: "Rest day", icon: Moon },
 ] as const;
 
+/** Unlocked with a 3-day chat streak. */
+export const streakStickers = [
+  { id: "streak-on-fire", label: "On fire", icon: Flame },
+  { id: "streak-no-days-off", label: "No days off", icon: Dumbbell },
+  { id: "streak-ride-or-die", label: "Ride or die", icon: Heart },
+] as const;
+
 export function Sticker({ id }: { id: string }) {
-  const sticker = stickers.find((s) => s.id === id);
+  const { state } = useDemo();
+  const custom = state.customStickers.find((s) => s.id === id);
+  if (custom)
+    return custom.kind === "photo" ? (
+      <span className="sticker sticker-photo">
+        <img src={custom.image} alt="Custom photo sticker" />
+      </span>
+    ) : (
+      <span className={`sticker sticker-text-${custom.style || "forest"}`}>
+        {custom.text}
+      </span>
+    );
+  const sticker = [...stickers, ...streakStickers].find((s) => s.id === id);
   if (!sticker) return null;
   const Icon = sticker.icon;
   return (
@@ -139,4 +165,220 @@ export function useVoiceRecorder(
     if (recorder.current.state === "recording") recorder.current.stop();
   };
   return { recording, elapsed: time(elapsed), start, stop, cancel };
+}
+
+const textStyles: NonNullable<CustomSticker["style"]>[] = [
+  "forest",
+  "champagne",
+  "ivory",
+  "outline",
+];
+
+/** Makes a sticker from your own words or a photo, cut to a rounded tile. */
+export function StickerMaker({
+  onDone,
+  onClose,
+}: {
+  onDone: (id: string) => void;
+  onClose: () => void;
+}) {
+  const { update } = useDemo();
+  const [mode, setMode] = useState<"text" | "photo">("text");
+  const [text, setText] = useState("");
+  const [style, setStyle] = useState<CustomSticker["style"]>("forest");
+  const [image, setImage] = useState("");
+  const cut = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 320;
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        const side = Math.min(img.width, img.height);
+        ctx.beginPath();
+        ctx.roundRect(8, 8, size - 16, size - 16, 64);
+        ctx.clip();
+        ctx.drawImage(
+          img,
+          (img.width - side) / 2,
+          (img.height - side) / 2,
+          side,
+          side,
+          8,
+          8,
+          size - 16,
+          size - 16,
+        );
+        setImage(canvas.toDataURL("image/webp", 0.85));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  const preview: CustomSticker =
+    mode === "text"
+      ? { id: "preview", kind: "text", text: text || "Your words", style }
+      : { id: "preview", kind: "photo", image };
+  return (
+    <Modal title="Create a sticker" onClose={onClose}>
+      <div className="segmented" role="tablist" aria-label="Sticker type">
+        {(["text", "photo"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            role="tab"
+            aria-selected={mode === m}
+            className={mode === m ? "active" : ""}
+            onClick={() => setMode(m)}
+          >
+            {m === "text" ? "Text" : "Photo"}
+          </button>
+        ))}
+      </div>
+      <div className="sticker-preview">
+        {preview.kind === "photo" && !image ? (
+          <span className="muted small-text">Choose a photo to cut out.</span>
+        ) : preview.kind === "photo" ? (
+          <span className="sticker sticker-photo">
+            <img src={image} alt="Sticker preview" />
+          </span>
+        ) : (
+          <span className={`sticker sticker-text-${style}`}>
+            {preview.text}
+          </span>
+        )}
+      </div>
+      {mode === "text" ? (
+        <>
+          <Field
+            label="Sticker text"
+            maxLength={24}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <div className="chip-row" aria-label="Sticker style">
+            {textStyles.map((st) => (
+              <button
+                key={st}
+                type="button"
+                className="chip"
+                aria-pressed={style === st}
+                onClick={() => setStyle(st)}
+              >
+                {st[0].toUpperCase() + st.slice(1)}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <label className="upload">
+          <Camera size={20} aria-hidden="true" />
+          <span>Choose a photo</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-label="Sticker photo"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) cut(file);
+            }}
+          />
+        </label>
+      )}
+      <div className="modal-actions">
+        <Button type="button" variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          disabled={mode === "text" ? !text.trim() : !image}
+          onClick={() => {
+            const sticker: CustomSticker = {
+              ...preview,
+              id: uid(),
+              text: mode === "text" ? text.trim() : undefined,
+            };
+            update((s) => ({
+              ...s,
+              customStickers: [...s.customStickers, sticker],
+            }));
+            onDone(sticker.id);
+          }}
+        >
+          Save and send
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+/** A live camera on desktop; phones use their own camera app instead. */
+export function CameraCapture({
+  onPhoto,
+  onClose,
+  onError,
+}: {
+  onPhoto: (dataUrl: string) => void;
+  onClose: () => void;
+  onError: (message: string) => void;
+}) {
+  const video = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
+  const callbacks = useRef({ onClose, onError });
+  useEffect(() => {
+    callbacks.current = { onClose, onError };
+  });
+  useEffect(() => {
+    let stream: MediaStream | undefined;
+    let cancelled = false;
+    navigator.mediaDevices
+      ?.getUserMedia({ video: { facingMode: "user" } })
+      .then((s) => {
+        if (cancelled) return s.getTracks().forEach((t) => t.stop());
+        stream = s;
+        if (video.current) {
+          video.current.srcObject = s;
+          void video.current.play();
+          setReady(true);
+        }
+      })
+      .catch(() => {
+        callbacks.current.onError(
+          "The camera is not available here. Allow camera access in your browser and try again.",
+        );
+        callbacks.current.onClose();
+      });
+    return () => {
+      cancelled = true;
+      stream?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+  return (
+    <Modal title="Camera" onClose={onClose}>
+      <div className="camera-frame">
+        <video ref={video} playsInline muted aria-label="Camera preview" />
+      </div>
+      <div className="modal-actions">
+        <Button type="button" variant="ghost" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          disabled={!ready}
+          onClick={() => {
+            const v = video.current;
+            if (!v) return;
+            const canvas = document.createElement("canvas");
+            canvas.width = v.videoWidth;
+            canvas.height = v.videoHeight;
+            canvas.getContext("2d")!.drawImage(v, 0, 0);
+            onPhoto(canvas.toDataURL("image/jpeg", 0.88));
+            onClose();
+          }}
+        >
+          <Camera size={16} /> Take photo
+        </Button>
+      </div>
+    </Modal>
+  );
 }

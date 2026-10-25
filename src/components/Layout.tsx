@@ -8,6 +8,7 @@ import {
   Sparkles,
   ArrowUpRight,
   BookOpen,
+  Settings,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useDemo } from "../lib/store";
@@ -64,6 +65,9 @@ export default function Layout() {
                   </Link>
                   <Link to="/profile?saved=true">
                     <BookOpen size={16} /> Private saves
+                  </Link>
+                  <Link to="/settings">
+                    <Settings size={16} /> Settings
                   </Link>
                   <Link to="/about">
                     About us <ArrowUpRight size={15} />

@@ -30,8 +30,11 @@
   --champagne: #c5a46d;
   --champagne-soft: #ece0c6;
   --gold-deep: #684b1e;
+  --gold-light: #e9d29b;
+  --gold-dark: #9f7b3c;
 
   /* Text */
+  --forest-text: #123d32;
   --ink: #15201b;
   --muted: #524e46;
   --on-dark: #f6f0e4;
@@ -59,4 +62,32 @@
 
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "DM Sans", system-ui, sans-serif;
+}
+
+/*
+ * Dark theme: surfaces and text invert, forest surfaces brighten slightly so
+ * buttons stay visible, and accents keep their champagne warmth.
+ * Contrast (WCAG 2.1): --ink on --ivory 15.6:1 · --muted on --ivory 8.1:1 ·
+ * --forest-text on --cream 8.4:1 · --on-dark on --forest 7.4:1.
+ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --forest: #1f5a48;
+  --forest-soft: #2a6a56;
+  --forest-text: #9fcbb4;
+  --ivory: #0e1613;
+  --porcelain: #141e1a;
+  --cream: #1b2722;
+  --linen: #22302a;
+  --line: #26342e;
+  --line-strong: #364740;
+  --sand: #4b5a52;
+  --stone: #7f8b83;
+  --ink: #efe9dd;
+  --muted: #b4ab9b;
+  --gold-deep: #d4b47a;
+  --danger: #e3907f;
+  --canvas: #070d0b;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%), 0 2px 8px rgb(0 0 0 / 25%);
+  --shadow: 0 2px 6px rgb(0 0 0 / 30%), 0 18px 48px rgb(0 0 0 / 40%);
 }

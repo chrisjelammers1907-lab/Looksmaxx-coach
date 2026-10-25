@@ -6,7 +6,8 @@ import { useDemo } from "../lib/store";
 import type { Goal, TopicId } from "../lib/types";
 import { topics } from "../lib/data";
 import Routines from "../components/Routines";
-import { uid } from "../lib/domain";
+import { today, uid } from "../lib/domain";
+import { alive } from "../lib/streaks";
 import {
   Button,
   Empty,
@@ -70,7 +71,11 @@ export default function PlanPage() {
           <strong>
             {completed} of {total} tasks done
           </strong>
-          <span>{state.routines.length} routines for today</span>
+          <span>
+            {state.routines.length} routines for today
+            {alive(state.routineStreak, today()) > 0 &&
+              ` · 🔥 ${alive(state.routineStreak, today())}-day routine streak`}
+          </span>
         </div>
       </div>
       <HScroll className="plan-filters chip-scroller" aria-label="Show in plan">

@@ -80,7 +80,7 @@ body {
   margin: 20px 0;
 }
 .feed-hero h1 em {
-  color: var(--sand);
+  color: var(--on-dark-muted);
 }
 .feed-hero p {
   font-size: 12px;
@@ -98,7 +98,7 @@ body {
   right: 12px;
   z-index: 2;
   background: color-mix(in srgb, var(--cream) 94%, transparent);
-  color: var(--forest);
+  color: var(--forest-text);
   font-size: 8px;
   letter-spacing: 0.3px;
   padding: 5px 8px;
@@ -206,7 +206,7 @@ body {
   max-width: 650px;
 }
 .category-intro h1 em {
-  color: var(--sand);
+  color: var(--on-dark-muted);
 }
 .category-intro p {
   font-size: 12px;
@@ -217,7 +217,7 @@ body {
   align-items: center;
   gap: 12px;
   font-size: 9px;
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   margin-top: 24px;
 }
 .category-intro-count i {
@@ -243,7 +243,7 @@ body {
   left: 12px;
   font-size: 8px;
   background: color-mix(in srgb, var(--cream) 94%, transparent);
-  color: var(--forest);
+  color: var(--forest-text);
   padding: 4px 8px;
 }
 .category-grid {
@@ -312,11 +312,11 @@ body {
 }
 .atmosphere-fragrance .topic-banner {
   background: var(--forest);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .atmosphere-fragrance .topic-banner .eyebrow,
 .atmosphere-fragrance .topic-purpose {
-  color: var(--sand);
+  color: var(--on-dark-muted);
 }
 .topic-links a {
   background: transparent;
@@ -353,7 +353,7 @@ body {
 }
 .clothing-hero-label {
   background: color-mix(in srgb, var(--cream) 93%, transparent);
-  color: var(--forest);
+  color: var(--forest-text);
   font-size: 8px;
   padding: 5px 8px;
 }
@@ -451,7 +451,7 @@ body {
 }
 .plan-overview > div:first-child {
   background: var(--forest);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .plan-overview > div:first-child .eyebrow,
 .plan-overview > div:first-child h2,
@@ -466,7 +466,7 @@ body {
 }
 .footer {
   background: var(--forest);
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   border-color: var(--forest);
   padding: 26px 38px;
 }
@@ -543,7 +543,7 @@ body {
   align-items: center;
   justify-content: center;
   background: var(--sound-color, var(--forest));
-  color: var(--forest);
+  color: var(--forest-text);
   border: 0;
   border-radius: 50%;
 }
@@ -573,7 +573,7 @@ body {
   padding: 5px;
 }
 .sound-select[aria-pressed="true"] {
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .sound-mix {
   display: flex;
@@ -592,7 +592,7 @@ body {
 }
 .post-sound {
   background: var(--sand);
-  color: var(--forest);
+  color: var(--forest-text);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -601,7 +601,7 @@ body {
   border-bottom: 1px solid var(--sand);
 }
 .post-sound-play {
-  color: var(--cream);
+  color: var(--on-dark);
   min-width: 38px;
   min-height: 38px;
 }

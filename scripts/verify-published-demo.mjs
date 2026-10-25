@@ -298,9 +298,8 @@ try {
       .getByRole("navigation", { name: "Profile menu" })
       .getByRole("link", { name: "My profile", exact: true })
       .click();
-    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page.getByLabel("Account visibility")).toHaveValue("private");
-    await page.getByRole("button", { name: "Close dialog" }).click();
     await page.getByLabel("Open profile and menu").click();
     await page
       .getByRole("navigation", { name: "Profile menu" })

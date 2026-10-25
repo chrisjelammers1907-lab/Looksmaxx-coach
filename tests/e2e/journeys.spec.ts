@@ -36,7 +36,7 @@ test("skippable intake and editable shared profile", async ({ page }) => {
     .fill("Build a capsule wardrobe");
   await page.getByLabel("Shopping budget").fill("95");
   await page.getByRole("button", { name: "Save profile" }).click();
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
   await expect(
     page.getByText("Build a capsule wardrobe", { exact: true }),
   ).toBeVisible();

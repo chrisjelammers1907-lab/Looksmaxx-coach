@@ -133,6 +133,7 @@ export interface Message {
   sticker?: string;
   audio?: { src: string; seconds: number };
   time: string;
+  date?: string;
 }
 export interface Photo {
   audience?: Audience;
@@ -212,6 +213,37 @@ export interface Story {
   text?: string;
   time: string;
 }
+export interface CustomSticker {
+  id: string;
+  kind: "text" | "photo";
+  text?: string;
+  style?: "forest" | "champagne" | "ivory" | "outline";
+  /** Session-only data URL for photo stickers. */
+  image?: string;
+}
+export interface Streak {
+  count: number;
+  /** Last day (YYYY-MM-DD) that kept the streak alive. */
+  last: string;
+}
+export type ThemeChoice = "system" | "light" | "dark";
+export interface AppSettings {
+  theme: ThemeChoice;
+  textSize: "default" | "large";
+  weightUnit: "kg" | "lb";
+  heightUnit: "cm" | "ft";
+  notifications: {
+    likes: boolean;
+    comments: boolean;
+    messages: boolean;
+    stories: boolean;
+    streaks: boolean;
+    training: boolean;
+    quietHours: boolean;
+  };
+  whoCanMessage: "everyone" | "followers" | "nobody";
+  hiddenWords: string;
+}
 export interface DemoState {
   approvedFollowers: string[];
   incomingRequests: string[];
@@ -242,6 +274,13 @@ export interface DemoState {
   stories: Story[];
   seenStories: string[];
   reposts: string[];
+  customStickers: CustomSticker[];
+  chatStreaks: Record<string, Streak>;
+  routineStreak: Streak;
+  /** Routine ids completed per day, for the routine streak. */
+  routineLog: Record<string, string[]>;
+  chatThemes: Record<string, string>;
+  settings: AppSettings;
   trainingWeek: Partial<Record<Weekday, TrainingDay>>;
   /** Ticked sets per date, then per planned exercise id. */
   trainingProgress: Record<string, Record<string, SetProgress[]>>;

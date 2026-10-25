@@ -80,6 +80,32 @@ function load(): DemoState {
     if (["old-money", "dark-casual", "minimalist"].includes(saved.style))
       initial.style = saved.style;
     initial.intake = saved.intake === true;
+    // Preferences and streak counters only; never message contents.
+    if (isRecord(saved.settings))
+      initial.settings = {
+        ...initial.settings,
+        ...(saved.settings as Partial<DemoState["settings"]>),
+        notifications: {
+          ...initial.settings.notifications,
+          ...(isRecord(saved.settings.notifications)
+            ? (saved.settings.notifications as Partial<
+                DemoState["settings"]["notifications"]
+              >)
+            : {}),
+        },
+      };
+    if (isRecord(saved.chatStreaks))
+      initial.chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
+    if (isRecord(saved.routineStreak))
+      initial.routineStreak = saved.routineStreak as DemoState["routineStreak"];
+    if (isRecord(saved.routineLog))
+      initial.routineLog = saved.routineLog as DemoState["routineLog"];
+    if (isRecord(saved.chatThemes))
+      initial.chatThemes = saved.chatThemes as DemoState["chatThemes"];
+    if (Array.isArray(saved.customStickers))
+      initial.customStickers = (
+        saved.customStickers as DemoState["customStickers"]
+      ).filter((st) => isRecord(st) && st.kind === "text");
   } catch {
     /* Storage is optional: a fresh local demo still works. */
   }
@@ -101,6 +127,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         blocked,
         reports,
         reposts,
+        settings,
+        chatStreaks,
+        routineStreak,
+        routineLog,
+        chatThemes,
+        customStickers,
       } = state;
       const ids = seedPosts.map((p) => p.id);
       localStorage.setItem(
@@ -114,6 +146,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           blocked,
           reports: reports.filter((i) => ids.includes(i)),
           reposts: reposts.filter((i) => ids.includes(i)),
+          settings,
+          chatStreaks,
+          routineStreak,
+          routineLog,
+          chatThemes,
+          // Photo stickers stay in this tab like other private uploads.
+          customStickers: customStickers.filter((st) => st.kind === "text"),
         }),
       );
     } catch {
@@ -122,6 +161,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, [state]);
   const { trainingWeek, trainingProgress, sessions, workouts, trainingSince } =
     state;
+  const { theme, textSize } = state.settings;
+  // Light, dark or follow the device; the choice is applied to <html>.
+  useEffect(() => {
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const dark = theme === "dark" || (theme === "system" && media.matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute("content", dark ? "#0b2a22" : "#123D32");
+    };
+    apply();
+    media.addEventListener("change", apply);
+    return () => media.removeEventListener("change", apply);
+  }, [theme]);
+  useEffect(() => {
+    document.documentElement.dataset.textSize = textSize;
+  }, [textSize]);
   useEffect(() => {
     try {
       localStorage.setItem(

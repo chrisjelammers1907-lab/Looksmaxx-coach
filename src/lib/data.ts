@@ -1,5 +1,6 @@
 import type { Creator, DemoState, Item, Post, Story, TopicId } from "./types";
 import { today } from "./domain";
+import { addDays } from "./training";
 export const topics: {
   id: TopicId;
   title: string;
@@ -810,6 +811,31 @@ export const makeInitialState = (): DemoState => ({
   stories: [],
   seenStories: [],
   reposts: [],
+  customStickers: [],
+  chatStreaks: {
+    mira: { count: 6, last: addDays(today(), -1) },
+    noor: { count: 2, last: addDays(today(), -1) },
+  },
+  routineStreak: { count: 4, last: addDays(today(), -1) },
+  routineLog: {},
+  chatThemes: {},
+  settings: {
+    theme: "system",
+    textSize: "default",
+    weightUnit: "kg",
+    heightUnit: "cm",
+    notifications: {
+      likes: true,
+      comments: true,
+      messages: true,
+      stories: true,
+      streaks: true,
+      training: true,
+      quietHours: false,
+    },
+    whoCanMessage: "everyone",
+    hiddenWords: "",
+  },
   trainingWeek: {
     Monday: {
       name: "Upper",

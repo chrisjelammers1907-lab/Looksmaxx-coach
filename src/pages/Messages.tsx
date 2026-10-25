@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowUp,
+  Camera,
   Flag,
   Image,
   Link2,
   Mic,
+  Palette,
   Plus,
   Send,
   Square,
@@ -16,14 +18,18 @@ import {
   X,
 } from "lucide-react";
 import {
+  CameraCapture,
   Sticker,
+  StickerMaker,
   VoiceNote,
   stickers,
+  streakStickers,
   useVoiceRecorder,
 } from "../components/ChatMedia";
 import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
-import { uid, maySharePost } from "../lib/domain";
+import { uid, maySharePost, today } from "../lib/domain";
+import { alive, bump, hasReward, unlocked } from "../lib/streaks";
 import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
 import { Button, Modal, Notice, Select } from "../components/ui";
@@ -44,6 +50,10 @@ export default function MessagesPage() {
   const [stickerPicker, setStickerPicker] = useState(false);
   const [photo, setPhoto] = useState("");
   const [voice, setVoice] = useState<{ src: string; seconds: number }>();
+  const [camera, setCamera] = useState(false);
+  const [maker, setMaker] = useState(false);
+  const [themePicker, setThemePicker] = useState(false);
+  const closeCamera = useCallback(() => setCamera(false), []);
   const recorder = useVoiceRecorder(setVoice, toast);
   const threadEnd = useRef<HTMLDivElement>(null);
   const threadLength = (state.messages[selected] || []).length;
@@ -66,17 +76,34 @@ export default function MessagesPage() {
       state.approvedFollowers,
     ),
   );
-  const post = (message: Partial<Message>) =>
+  const date = today();
+  const streakOf = (id: string) => alive(state.chatStreaks[id], date);
+  const best = Math.max(0, ...creators.map((c) => streakOf(c.id)));
+  const post = (message: Partial<Message>) => {
+    const before = streakOf(selected);
+    const next = bump(state.chatStreaks[selected], date);
     update((s) => ({
       ...s,
+      chatStreaks: { ...s.chatStreaks, [selected]: next },
       messages: {
         ...s.messages,
         [selected]: [
           ...(s.messages[selected] || []),
-          { id: uid(), author: "you", text: "", time: "Just now", ...message },
+          {
+            id: uid(),
+            author: "you",
+            text: "",
+            time: "Just now",
+            date,
+            ...message,
+          },
         ],
       },
     }));
+    const reward = unlocked(before, next.count);
+    if (reward)
+      toast(`🔥 ${reward.days}-day streak! Unlocked: ${reward.label}.`);
+  };
   const send = () => {
     if ((!text.trim() && !card && !photo && !voice) || blocked || !creator)
       return;
@@ -203,6 +230,12 @@ export default function MessagesPage() {
                           : "Start a conversation"}
                       </span>
                       {last?.time && <span> · {last.time}</span>}
+                      {streakOf(c.id) > 0 && (
+                        <span className="streak-inline">
+                          {" "}
+                          · 🔥 {streakOf(c.id)}
+                        </span>
+                      )}
                     </small>
                   </span>
                 </button>
@@ -234,6 +267,23 @@ export default function MessagesPage() {
                     <small>{creator.handle}</small>
                   </span>
                 </Link>
+                {streakOf(creator.id) > 0 && (
+                  <span
+                    className="streak-chip"
+                    title={`${streakOf(creator.id)}-day streak`}
+                  >
+                    🔥 {streakOf(creator.id)}
+                  </span>
+                )}
+                {hasReward(best, "themes") && (
+                  <button
+                    className="icon-button"
+                    aria-label="Chat theme"
+                    onClick={() => setThemePicker(true)}
+                  >
+                    <Palette size={18} strokeWidth={1.7} />
+                  </button>
+                )}
                 <button
                   className="icon-button"
                   aria-label="Report conversation"
@@ -258,7 +308,10 @@ export default function MessagesPage() {
                   <UserX size={19} strokeWidth={1.7} />
                 </button>
               </header>
-              <div className="thread" aria-live="polite">
+              <div
+                className={`thread chat-theme-${state.chatThemes[selected] || "classic"}`}
+                aria-live="polite"
+              >
                 <div className="thread-intro">
                   <span className="avatar large">{creator.initials}</span>
                   <strong>{creator.name}</strong>
@@ -385,18 +438,42 @@ export default function MessagesPage() {
                       <StickerIcon size={19} aria-hidden="true" />
                       Sticker
                     </button>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      className="composer-menu-item"
-                      onClick={() => {
-                        setMenu(false);
-                        void recorder.start();
-                      }}
-                    >
-                      <Mic size={19} aria-hidden="true" />
-                      Voice message
-                    </button>
+                    {matchMedia("(pointer: coarse)").matches ? (
+                      <label className="composer-menu-item" role="menuitem">
+                        <Camera size={19} aria-hidden="true" />
+                        Camera
+                        <input
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="visually-hidden"
+                          aria-label="Take a photo"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = "";
+                            setMenu(false);
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = () =>
+                              setPhoto(String(reader.result));
+                            reader.readAsDataURL(file);
+                          }}
+                        />
+                      </label>
+                    ) : (
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className="composer-menu-item"
+                        onClick={() => {
+                          setMenu(false);
+                          setCamera(true);
+                        }}
+                      >
+                        <Camera size={19} aria-hidden="true" />
+                        Camera
+                      </button>
+                    )}
                     <button
                       type="button"
                       role="menuitem"
@@ -536,6 +613,36 @@ export default function MessagesPage() {
       )}
       {stickerPicker && (
         <Modal title="Stickers" onClose={() => setStickerPicker(false)}>
+          <Button
+            variant="secondary small"
+            onClick={() => {
+              setStickerPicker(false);
+              setMaker(true);
+            }}
+          >
+            <Plus size={15} /> Create a sticker
+          </Button>
+          {state.customStickers.length > 0 && (
+            <>
+              <h3 className="sticker-group">Yours</h3>
+              <div className="sticker-grid">
+                {state.customStickers.map((st) => (
+                  <button
+                    key={st.id}
+                    type="button"
+                    aria-label={`Send ${st.text || "photo"} sticker`}
+                    onClick={() => {
+                      post({ sticker: st.id });
+                      setStickerPicker(false);
+                    }}
+                  >
+                    <Sticker id={st.id} />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          <h3 className="sticker-group">CHARETT</h3>
           <div className="sticker-grid">
             {stickers.map((st) => (
               <button
@@ -551,6 +658,82 @@ export default function MessagesPage() {
               </button>
             ))}
           </div>
+          <h3 className="sticker-group">
+            Streak pack{" "}
+            {!hasReward(best, "stickers") && (
+              <small className="muted">· unlocks at a 3-day streak</small>
+            )}
+          </h3>
+          <div className="sticker-grid">
+            {streakStickers.map((st) => (
+              <button
+                key={st.id}
+                type="button"
+                disabled={!hasReward(best, "stickers")}
+                aria-label={`Send ${st.label} sticker`}
+                onClick={() => {
+                  post({ sticker: st.id });
+                  setStickerPicker(false);
+                }}
+              >
+                <Sticker id={st.id} />
+              </button>
+            ))}
+          </div>
+        </Modal>
+      )}
+      {maker && (
+        <StickerMaker
+          onClose={() => setMaker(false)}
+          onDone={(id) => {
+            post({ sticker: id });
+            setMaker(false);
+          }}
+        />
+      )}
+      {camera && (
+        <CameraCapture
+          onPhoto={setPhoto}
+          onClose={closeCamera}
+          onError={toast}
+        />
+      )}
+      {themePicker && (
+        <Modal title="Chat theme" onClose={() => setThemePicker(false)}>
+          <div className="theme-grid">
+            {[
+              ["classic", "Classic"],
+              ["champagne", "Champagne"],
+              ["midnight", "Midnight"],
+              ["ivory", "Ivory"],
+              ...(hasReward(best, "gold") ? [["gold", "Gold leaf"]] : []),
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                className={`theme-swatch chat-theme-${id}`}
+                aria-pressed={(state.chatThemes[selected] || "classic") === id}
+                onClick={() => {
+                  update((s) => ({
+                    ...s,
+                    chatThemes: { ...s.chatThemes, [selected]: id },
+                  }));
+                  setThemePicker(false);
+                }}
+              >
+                <span className="swatch-bubbles" aria-hidden="true">
+                  <i />
+                  <i />
+                </span>
+                {label}
+              </button>
+            ))}
+          </div>
+          {!hasReward(best, "gold") && (
+            <p className="small-text muted">
+              Gold leaf unlocks at a 100-day streak.
+            </p>
+          )}
         </Modal>
       )}
       {attach && (

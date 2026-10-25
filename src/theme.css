@@ -1,6 +1,6 @@
 .clothing-page {
   --style-bg: var(--linen);
-  --style-ink: var(--forest);
+  --style-ink: var(--forest-text);
   --style-accent: var(--champagne);
   --style-card: var(--ivory);
   --style-border: var(--line-strong);
@@ -370,7 +370,7 @@
 .clothing-dark-casual .notice {
   background: #39382b;
   border-color: #625c42;
-  color: var(--sand);
+  color: var(--on-dark-muted);
 }
 .clothing-dark-casual .breakdown-row > div small,
 .clothing-dark-casual .breakdown-row > div .muted {
@@ -404,10 +404,10 @@
 .clothing-dark-casual .modal .button.ghost,
 .clothing-dark-casual .modal .button.secondary {
   background: transparent;
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .clothing-dark-casual .modal .outfit-total {
-  color: var(--forest);
+  color: var(--forest-text);
 }
 @media (max-width: 1100px) {
   .style-switcher {
@@ -667,7 +667,7 @@
 }
 .clothing-minimalist .editorial-note {
   background: var(--line);
-  color: var(--forest);
+  color: var(--forest-text);
 }
 .clothing-minimalist .product-content .eyebrow {
   color: var(--muted);
@@ -683,5 +683,5 @@
 }
 .clothing-dark-casual .pill {
   background: #4d4536;
-  color: var(--linen);
+  color: var(--on-dark);
 }

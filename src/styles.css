@@ -184,7 +184,7 @@ textarea::placeholder {
 }
 .button.secondary {
   background: transparent;
-  color: var(--green);
+  color: var(--forest-text);
   border-color: var(--sand);
 }
 .button.secondary:hover {
@@ -193,11 +193,11 @@ textarea::placeholder {
 .button.ghost {
   background: transparent;
   border-color: transparent;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .button.light {
   background: var(--cream);
-  color: var(--forest);
+  color: var(--forest-text);
   border-color: var(--cream);
 }
 .button.small {
@@ -224,7 +224,7 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--green);
+  color: var(--forest-text);
   border: 0;
   background: none;
   padding: 5px 0;
@@ -274,7 +274,7 @@ textarea::placeholder {
   gap: 5px;
   padding: 5px 11px;
   background: var(--cream);
-  color: var(--green);
+  color: var(--forest-text);
   border-radius: 30px;
   font-size: 10px;
 }
@@ -295,7 +295,7 @@ textarea::placeholder {
   width: 39px;
   border-radius: 50%;
   background: var(--linen);
-  color: var(--green);
+  color: var(--forest-text);
   font-family: var(--serif);
   font-size: 21px;
   display: inline-flex;
@@ -340,7 +340,7 @@ textarea::placeholder {
   text-align: center;
   display: block;
   margin-bottom: 45px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .wordmark > span {
   display: block;
@@ -371,7 +371,7 @@ textarea::placeholder {
 }
 .primary-nav > a.active {
   background: var(--line);
-  color: var(--green);
+  color: var(--forest-text);
   font-weight: 500;
 }
 .primary-nav > a.active:before {
@@ -408,7 +408,7 @@ textarea::placeholder {
 }
 .topic-nav > a.active {
   font-weight: 600;
-  color: var(--green);
+  color: var(--forest-text);
   background: var(--cream);
   border-radius: 4px;
 }
@@ -421,7 +421,7 @@ textarea::placeholder {
   background: var(--line);
   border: 1px solid var(--line);
   border-radius: 5px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .sidebar-coach > svg {
   margin-bottom: 10px;
@@ -556,7 +556,7 @@ main {
   isolation: isolate;
   min-height: 365px;
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-dark);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -566,7 +566,7 @@ main {
   z-index: 2;
 }
 .hero-copy .eyebrow {
-  color: var(--sand);
+  color: var(--on-dark-muted);
   font-size: 8px;
   letter-spacing: 1.8px;
 }
@@ -577,12 +577,12 @@ main {
   font-weight: 400;
 }
 .hero-copy h2 em {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .hero-copy p {
   font-size: 11px;
   line-height: 1.9;
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   margin-bottom: 23px;
 }
 .hero-copy .button {
@@ -595,7 +595,7 @@ main {
   align-items: center;
   gap: 6px;
   font-size: 7px;
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
   margin-top: 17px;
 }
 .hero-image {
@@ -707,7 +707,7 @@ main {
   right: 10px;
   bottom: 10px;
   background: color-mix(in srgb, var(--ivory) 87%, transparent);
-  color: var(--green);
+  color: var(--forest-text);
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -894,7 +894,7 @@ main {
 }
 .tabs > button.active {
   border-bottom-color: var(--green);
-  color: var(--green);
+  color: var(--forest-text);
   font-weight: 600;
 }
 .topic-banner {
@@ -931,11 +931,11 @@ main {
 }
 .atmosphere-gym .topic-banner {
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .atmosphere-gym .topic-banner .eyebrow,
 .atmosphere-gym .topic-banner .text-link {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .atmosphere-fragrance .topic-banner {
   background: var(--sand);
@@ -955,7 +955,7 @@ main {
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .product-grid,
 .wardrobe-grid {
@@ -1075,7 +1075,7 @@ main {
   border-radius: 5px;
   padding: 28px;
   margin: 28px 0;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .editorial-note > svg {
   margin-top: 5px;
@@ -1451,7 +1451,7 @@ progress {
 .filter-details summary {
   cursor: pointer;
   min-height: 24px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .details > p {
   margin-top: 18px;
@@ -1649,7 +1649,7 @@ progress {
   color: var(--muted);
 }
 .post-actions > button[aria-pressed="true"] {
-  color: var(--green);
+  color: var(--forest-text);
 }
 .post-actions > .save-action {
   margin-left: auto;
@@ -1700,7 +1700,7 @@ progress {
 }
 .breakdown-row > span {
   font-size: 11px;
-  color: var(--green);
+  color: var(--forest-text);
   text-align: right;
   max-width: 95px;
 }
@@ -1709,7 +1709,7 @@ progress {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--green);
+  color: var(--forest-text);
   text-decoration: underline;
   margin-top: 6px;
 }
@@ -1803,7 +1803,7 @@ progress {
   justify-content: center;
   font-family: var(--serif);
   font-size: 50px;
-  color: var(--green);
+  color: var(--forest-text);
   overflow: hidden;
 }
 .profile-avatar img {
@@ -1894,7 +1894,7 @@ progress {
 }
 .plan-overview > div:first-child {
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 .plan-overview h2 {
   font-size: 83px;
@@ -1902,7 +1902,7 @@ progress {
 }
 .plan-overview h2 em {
   font-size: 45px;
-  color: var(--sand);
+  color: var(--on-dark-muted);
 }
 .plan-overview p {
   font-size: 11px;
@@ -1996,7 +1996,7 @@ progress {
   display: inline-grid;
   place-items: center;
   margin-bottom: 20px;
-  color: var(--green);
+  color: var(--forest-text);
 }
 .coach-welcome > .eyebrow {
   justify-content: center;
@@ -2059,7 +2059,7 @@ progress {
 }
 .coach-context p strong {
   display: block;
-  color: var(--forest-soft);
+  color: var(--forest-text);
   font-weight: 500;
   font-size: 10px;
   margin-bottom: 4px;
@@ -2486,7 +2486,7 @@ progress {
   opacity: 0;
   pointer-events: none;
   background: var(--forest);
-  color: var(--cream);
+  color: var(--on-dark);
   border: 1px solid var(--stone);
   padding: 13px 23px;
   border-radius: 5px;
@@ -2850,7 +2850,7 @@ progress {
     font-family: var(--serif);
     font-size: 27px;
     letter-spacing: 2px;
-    color: var(--green);
+    color: var(--forest-text);
   }
   .topbar-right {
     gap: 13px;
@@ -2896,7 +2896,7 @@ progress {
     font-size: 9px;
   }
   .mobile-nav > a.active {
-    color: var(--green);
+    color: var(--forest-text);
   }
   .mobile-nav > a.active:before {
     content: "";
@@ -3853,7 +3853,7 @@ progress {
   color: var(--muted);
 }
 .atmosphere-gym .topic-banner .eyebrow {
-  color: var(--line-strong);
+  color: var(--on-dark-muted);
 }
 .clothing-page {
   --style-muted: var(--muted);

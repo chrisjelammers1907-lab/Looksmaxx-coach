@@ -15,6 +15,7 @@ import {
   weekdays,
 } from "../lib/training";
 import type { SetProgress, TrainingDay, Weekday } from "../lib/types";
+import { trainingStreak } from "../lib/streaks";
 import { Button, Field, Modal, SectionTitle } from "./ui";
 import { StoryComposer } from "./Stories";
 
@@ -433,7 +434,11 @@ export default function TrainingPlanner() {
     <>
       <SectionTitle
         title="Your week"
-        subtitle="Tap a day to plan or change it."
+        subtitle={
+          trainingStreak(state.sessions) > 0
+            ? `🔥 ${trainingStreak(state.sessions)} sessions in a row · Tap a day to plan it.`
+            : "Tap a day to plan or change it."
+        }
       />
       <HScroll className="week-strip">
         {weekdays.map((day, index) => {

@@ -26,6 +26,7 @@ import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Coach from "./pages/Coach";
 import Plan from "./pages/Plan";
+import Settings from "./pages/Settings";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="messages" element={<Messages />} />
             <Route path="coach" element={<Coach />} />
             <Route path="plan" element={<Plan />} />
+            <Route path="settings" element={<Settings />} />
             <Route
               path="*"
               element={

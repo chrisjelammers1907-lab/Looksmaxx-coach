@@ -1,6 +1,6 @@
 import HScroll from "../components/HScroll";
 import { useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import {
   Bell,
   Bookmark,
@@ -14,7 +14,6 @@ import {
   LockKeyhole,
   Pencil,
   Repeat2,
-  RotateCcw,
   Settings,
   Share,
   UserX,
@@ -99,20 +98,18 @@ async function shareProfile(handle: string, toast: (text: string) => void) {
 
 function ProfileContent() {
   const { id } = useParams();
-  const { state, update, toast, reset } = useDemo();
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(state.profile);
+  const { state, update, toast } = useDemo();
   const [params] = useSearchParams();
+  const [editing, setEditing] = useState(params.has("edit"));
+  const [draft, setDraft] = useState(state.profile);
   const [tab, setTab] = useState(params.has("saved") ? "saved" : "posts");
-  const [settings, setSettings] = useState(params.has("settings"));
   const [more, setMore] = useState(false);
   const [people, setPeople] = useState<"followers" | "following" | null>(null);
   const [reporting, setReporting] = useState(false);
   const [reason, setReason] = useState("Spam or fake account");
-  const [publicPreview, setPublicPreview] = useState(false);
-  const [confirm, setConfirm] = useState("");
   const creator = creators.find((c) => c.id === id);
   const own = !id;
+  if (own && params.has("settings")) return <Navigate to="/settings" replace />;
   if (!own && !creator)
     return (
       <Empty title="Profile unavailable.">
@@ -249,14 +246,13 @@ function ProfileContent() {
                 <Share size={14} />
                 Share profile
               </Button>
-              <button
-                type="button"
+              <Link
+                to="/settings"
                 className="icon-button bordered"
                 aria-label="Settings"
-                onClick={() => setSettings(true)}
               >
                 <Settings size={18} strokeWidth={1.7} />
-              </button>
+              </Link>
             </>
           ) : (
             <>
@@ -522,223 +518,6 @@ function ProfileContent() {
           </Button>
         </Modal>
       )}
-      {own && settings && (
-        <Modal
-          title="Settings & privacy"
-          onClose={() => setSettings(false)}
-          wide
-        >
-          <section className="settings-section" aria-label="Account privacy">
-            <h3>Account privacy</h3>
-            <Select
-              label="Account visibility"
-              value={state.profile.visibility}
-              onChange={(e) =>
-                update((s) => ({
-                  ...s,
-                  profile: {
-                    ...s.profile,
-                    visibility: e.target.value as "public" | "private",
-                  },
-                }))
-              }
-            >
-              <option value="private">Private · approved followers</option>
-              <option value="public">Public · everyone in the demo</option>
-            </Select>
-            <Button
-              variant="secondary small"
-              onClick={() => setPublicPreview(true)}
-            >
-              Preview as a visitor
-            </Button>
-            {state.profile.visibility === "private" && (
-              <div className="follow-request-panel">
-                <h4>Follower requests</h4>
-                {state.incomingRequests.length ? (
-                  state.incomingRequests.map((rid) => (
-                    <div className="people-row" key={rid}>
-                      <span className="avatar">
-                        {creators.find((c) => c.id === rid)?.initials}
-                      </span>
-                      <span>
-                        <strong>
-                          {creators.find((c) => c.id === rid)?.handle}
-                        </strong>
-                      </span>
-                      <Button
-                        variant="small"
-                        onClick={() =>
-                          update((s) => ({
-                            ...s,
-                            approvedFollowers: [
-                              ...new Set([...s.approvedFollowers, rid]),
-                            ],
-                            incomingRequests: s.incomingRequests.filter(
-                              (v) => v !== rid,
-                            ),
-                          }))
-                        }
-                      >
-                        Accept request
-                      </Button>
-                      <Button
-                        variant="ghost small"
-                        onClick={() =>
-                          update((s) => ({
-                            ...s,
-                            incomingRequests: s.incomingRequests.filter(
-                              (v) => v !== rid,
-                            ),
-                          }))
-                        }
-                      >
-                        Decline
-                      </Button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="small-text">No pending requests.</p>
-                )}
-              </div>
-            )}
-          </section>
-          <section className="settings-section" aria-label="Messages">
-            <h3>Messages</h3>
-            <label className="checkbox-line">
-              <input
-                type="checkbox"
-                checked={state.profile.messageRequests}
-                onChange={(e) =>
-                  update((s) => ({
-                    ...s,
-                    profile: {
-                      ...s.profile,
-                      messageRequests: e.target.checked,
-                    },
-                  }))
-                }
-              />
-              Allow message requests
-            </label>
-          </section>
-          <section className="settings-section" aria-label="Your details">
-            <h3>Your private details</h3>
-            <dl className="settings-details">
-              <div>
-                <dt>Goals</dt>
-                <dd>{state.profile.goals || "Not provided"}</dd>
-              </div>
-              <div>
-                <dt>Preferences</dt>
-                <dd>{state.profile.preferences || "Not provided"}</dd>
-              </div>
-              <div>
-                <dt>Restrictions</dt>
-                <dd>{state.profile.restrictions || "None entered"}</dd>
-              </div>
-              <div>
-                <dt>Country · budget</dt>
-                <dd>
-                  {state.profile.country || "—"} · {state.profile.currency}{" "}
-                  {state.profile.budget}
-                </dd>
-              </div>
-            </dl>
-            <Button
-              variant="secondary small"
-              onClick={() => {
-                setSettings(false);
-                setDraft(state.profile);
-                setEditing(true);
-              }}
-            >
-              Edit details
-            </Button>
-          </section>
-          {state.blocked.length > 0 && (
-            <section className="settings-section" aria-label="Blocked">
-              <h3>Blocked accounts</h3>
-              {creators
-                .filter((c) => state.blocked.includes(c.id))
-                .map((c) => (
-                  <div className="people-row" key={c.id}>
-                    <span className="avatar">{c.initials}</span>
-                    <span>
-                      <strong>{c.handle}</strong>
-                    </span>
-                    <Button
-                      variant="secondary small"
-                      onClick={() =>
-                        update((s) => ({
-                          ...s,
-                          blocked: s.blocked.filter((v) => v !== c.id),
-                        }))
-                      }
-                    >
-                      Unblock
-                    </Button>
-                  </div>
-                ))}
-            </section>
-          )}
-          <section className="settings-section" aria-label="Your data">
-            <h3>Your data</h3>
-            <Notice icon="private">
-              Profile details, photos, routines and logs stay in this browser
-              session. This demo has no real accounts.
-            </Notice>
-            <div className="button-row">
-              <Button variant="ghost" onClick={() => setConfirm("details")}>
-                Remove my details
-              </Button>
-              <Button variant="secondary" onClick={() => setConfirm("reset")}>
-                <RotateCcw size={14} />
-                Reset demo
-              </Button>
-            </div>
-          </section>
-        </Modal>
-      )}
-      {publicPreview && (
-        <Modal
-          title="Visitor preview · simulated"
-          onClose={() => setPublicPreview(false)}
-        >
-          <p className="eyebrow">@{state.profile.handle}</p>
-          {state.profile.visibility === "private" ? (
-            <div className="empty">
-              <LockKeyhole />
-              <h3>This account is private.</h3>
-              <p>
-                Unapproved visitors cannot see posts. Personal uploads and
-                journal originals remain private.
-              </p>
-            </div>
-          ) : (
-            <>
-              <h3>{state.profile.name}</h3>
-              <p>{state.profile.bio}</p>
-              {published
-                .filter((p) =>
-                  mayViewPost(
-                    p,
-                    "visitor",
-                    state.blocked,
-                    state.profile.visibility,
-                    state.approvedFollowers,
-                  ),
-                )
-                .map((p) => (
-                  <div className="visitor-post" key={p.id}>
-                    <strong>{p.title}</strong>
-                    <p>{p.body}</p>
-                  </div>
-                ))}
-            </>
-          )}
-        </Modal>
-      )}
       {editing && (
         <Modal
           title="Make your profile yours"
@@ -870,62 +649,6 @@ function ProfileContent() {
               <Button type="submit">Save profile</Button>
             </div>
           </form>
-        </Modal>
-      )}
-      {confirm && (
-        <Modal
-          title={
-            confirm === "reset"
-              ? "Reset this demo?"
-              : "Remove private information?"
-          }
-          onClose={() => setConfirm("")}
-        >
-          <p>
-            {confirm === "reset"
-              ? "This removes your session content and resets locally saved fictional interactions and clothing themes."
-              : "This removes profile details, routines, private photos, your posts, collection edits, notes, logs, coach conversations and messages from this session. Fictional public content remains."}
-          </p>
-          <Button
-            variant="danger"
-            onClick={() => {
-              if (confirm === "reset") reset();
-              else {
-                update((s) => ({
-                  ...s,
-                  profile: {
-                    ...s.profile,
-                    name: "Private guest",
-                    handle: "private.guest",
-                    bio: "",
-                    goals: "",
-                    preferences: "",
-                    restrictions: "",
-                    photo: undefined,
-                    country: "",
-                    budget: 0,
-                  },
-                  photos: [],
-                  routines: [],
-                  items: [],
-                  outfits: [],
-                  workouts: [],
-                  trainingWeek: {},
-                  trainingProgress: {},
-                  sessions: [],
-                  food: [],
-                  notes: {},
-                  chat: [],
-                  messages: {},
-                  goals: [],
-                }));
-                toast("Private session information removed.");
-              }
-              setConfirm("");
-            }}
-          >
-            Confirm {confirm === "reset" ? "reset" : "removal"}
-          </Button>
         </Modal>
       )}
     </div>

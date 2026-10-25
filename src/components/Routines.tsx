@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
 import { useDemo } from "../lib/store";
 import type { Routine, TopicId } from "../lib/types";
-import { topicName, uid } from "../lib/domain";
+import { today, topicName, uid } from "../lib/domain";
+import { alive, bump, unlocked } from "../lib/streaks";
 import { topics } from "../lib/data";
 import {
   Area,
@@ -20,6 +21,27 @@ export default function Routines({ topic }: { topic?: TopicId }) {
   const [builder, setBuilder] = useState(false);
   const [done, setDone] = useState<string[]>([]);
   const routines = state.routines.filter((r) => !topic || r.topic === topic);
+  // Finishing every step of a routine keeps the daily routine streak alive.
+  const completeRoutine = (id: string) => {
+    const date = today();
+    if (state.routineLog[date]?.includes(id)) return;
+    const before = alive(state.routineStreak, date);
+    const next = bump(state.routineStreak, date);
+    update((s) => ({
+      ...s,
+      routineLog: {
+        ...s.routineLog,
+        [date]: [...(s.routineLog[date] || []), id],
+      },
+      routineStreak: next,
+    }));
+    const reward = unlocked(before, next.count);
+    toast(
+      reward
+        ? `🔥 ${next.count}-day routine streak! Unlocked: ${reward.label}.`
+        : `Routine done · 🔥 ${next.count}-day streak`,
+    );
+  };
   const blank = (): Routine => ({
     id: uid(),
     topic: topic || "skincare",
@@ -62,13 +84,17 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                     aria-label={`Complete ${step}`}
                     aria-pressed={done.includes(`${r.id}-${index}`)}
                     className={`step-number ${done.includes(`${r.id}-${index}`) ? "checked" : ""}`}
-                    onClick={() =>
-                      setDone((d) =>
-                        d.includes(`${r.id}-${index}`)
-                          ? d.filter((x) => x !== `${r.id}-${index}`)
-                          : [...d, `${r.id}-${index}`],
+                    onClick={() => {
+                      const key = `${r.id}-${index}`;
+                      const next = done.includes(key)
+                        ? done.filter((x) => x !== key)
+                        : [...done, key];
+                      setDone(next);
+                      if (
+                        r.steps.every((_, i) => next.includes(`${r.id}-${i}`))
                       )
-                    }
+                        completeRoutine(r.id);
+                    }}
                   >
                     {done.includes(`${r.id}-${index}`) ? (
                       <Check size={13} />

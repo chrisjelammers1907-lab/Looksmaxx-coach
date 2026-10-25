@@ -434,3 +434,57 @@ test("story and filter rows scroll with a mouse wheel and arrows", async ({
     .poll(() => chips.evaluate((n) => n.scrollLeft))
     .toBeGreaterThan(before);
 });
+
+test("settings switch the app to dark mode and keep the choice", async ({
+  page,
+}) => {
+  await open(page, "/settings");
+  await page.getByRole("radio", { name: "Dark" }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const bg = await page
+    .locator(".site-shell")
+    .evaluate((n) => getComputedStyle(n).backgroundColor);
+  expect(bg).toBe("rgb(14, 22, 19)");
+  await noAxeViolations(page);
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("radio", { name: "Light" }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await page.getByRole("switch", { name: /Quiet hours/ }).check();
+  await expect(page.getByRole("switch", { name: /Quiet hours/ })).toBeChecked();
+});
+
+test("chat streaks unlock rewards and custom stickers can be made", async ({
+  page,
+}) => {
+  await open(page, "/messages?to=mira");
+  // Mira's seeded 6-day streak becomes 7 today and unlocks chat themes.
+  await expect(page.locator(".conversation-header .streak-chip")).toHaveText(
+    "🔥 6",
+  );
+  await page.getByLabel("Message", { exact: true }).fill("Day seven!");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.locator(".conversation-header .streak-chip")).toHaveText(
+    "🔥 7",
+  );
+  await expect(page.getByRole("status").last()).toContainText("Chat themes");
+  await page.getByRole("button", { name: "Chat theme" }).click();
+  await page.getByRole("button", { name: "Midnight" }).click();
+  await expect(page.locator(".thread")).toHaveClass(/chat-theme-midnight/);
+
+  await page.getByRole("button", { name: "Add attachment" }).click();
+  const menu = page.getByRole("menu");
+  await expect(menu.getByRole("menuitem", { name: "Camera" })).toBeVisible();
+  await expect(menu.getByRole("menuitem", { name: /Voice/ })).toHaveCount(0);
+  await menu.getByRole("menuitem", { name: "Sticker" }).click();
+  await page.getByRole("button", { name: "Create a sticker" }).click();
+  await page.getByLabel("Sticker text").fill("Main event");
+  await page.getByRole("button", { name: "Champagne" }).click();
+  await page.getByRole("button", { name: "Save and send" }).click();
+  await expect(page.locator(".outgoing .sticker").last()).toHaveText(
+    "Main event",
+  );
+  await expect(
+    page.getByRole("button", { name: "Record voice message" }),
+  ).toHaveCount(1);
+});
