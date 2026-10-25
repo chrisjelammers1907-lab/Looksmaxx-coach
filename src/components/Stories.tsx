@@ -1,3 +1,4 @@
+import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { useDemo } from "../lib/store";
@@ -190,7 +191,7 @@ export function StoryComposer({
             placeholder="Say something…"
             onChange={(e) => setText(e.target.value)}
           />
-          <div className="chip-row" aria-label="Background">
+          <HScroll className="chip-row" aria-label="Background">
             {backgrounds.map((b) => (
               <button
                 key={b.id}
@@ -202,7 +203,7 @@ export function StoryComposer({
                 {b.label}
               </button>
             ))}
-          </div>
+          </HScroll>
           <div className="modal-actions">
             <Button type="button" variant="ghost" onClick={onClose}>
               Cancel
@@ -236,55 +237,57 @@ export default function StoriesRow() {
   const unseen = (stories: Story[]) =>
     stories.some((s) => !state.seenStories.includes(s.id));
   return (
-    <section className="stories-row" aria-label="Stories">
-      <div className="story-bubble own">
-        <button
-          type="button"
-          className={`story-ring ${state.stories.length ? (unseen(state.stories) ? "unseen" : "seen") : "no-story"}`}
-          aria-label={
-            state.stories.length ? "View your story" : "Add to your story"
-          }
-          onClick={() =>
-            state.stories.length ? setViewing(0) : setComposing(true)
-          }
-        >
-          <span className="avatar">{state.profile.name.slice(0, 1)}</span>
-        </button>
-        {state.stories.length ? (
+    <section className="stories" aria-label="Stories">
+      <HScroll className="stories-row">
+        <div className="story-bubble own">
           <button
             type="button"
-            className="story-add"
-            aria-label="Add to your story"
-            onClick={() => setComposing(true)}
+            className={`story-ring ${state.stories.length ? (unseen(state.stories) ? "unseen" : "seen") : "no-story"}`}
+            aria-label={
+              state.stories.length ? "View your story" : "Add to your story"
+            }
+            onClick={() =>
+              state.stories.length ? setViewing(0) : setComposing(true)
+            }
           >
-            <Plus size={14} strokeWidth={2.4} />
+            <span className="avatar">{state.profile.name.slice(0, 1)}</span>
           </button>
-        ) : (
-          <span className="story-add" aria-hidden="true">
-            <Plus size={14} strokeWidth={2.4} />
-          </span>
-        )}
-        <span className="story-name">Your story</span>
-      </div>
-      {groups
-        .map((g, index) => ({ ...g, index }))
-        .filter((g) => g.author !== "you")
-        .map((g) => {
-          const creator = creators.find((c) => c.id === g.author)!;
-          return (
-            <div className="story-bubble" key={g.author}>
-              <button
-                type="button"
-                className={`story-ring ${unseen(g.stories) ? "unseen" : "seen"}`}
-                aria-label={`View story from ${creator.handle}`}
-                onClick={() => setViewing(g.index)}
-              >
-                <span className="avatar">{creator.initials}</span>
-              </button>
-              <span className="story-name">{creator.handle}</span>
-            </div>
-          );
-        })}
+          {state.stories.length ? (
+            <button
+              type="button"
+              className="story-add"
+              aria-label="Add to your story"
+              onClick={() => setComposing(true)}
+            >
+              <Plus size={14} strokeWidth={2.4} />
+            </button>
+          ) : (
+            <span className="story-add" aria-hidden="true">
+              <Plus size={14} strokeWidth={2.4} />
+            </span>
+          )}
+          <span className="story-name">Your story</span>
+        </div>
+        {groups
+          .map((g, index) => ({ ...g, index }))
+          .filter((g) => g.author !== "you")
+          .map((g) => {
+            const creator = creators.find((c) => c.id === g.author)!;
+            return (
+              <div className="story-bubble" key={g.author}>
+                <button
+                  type="button"
+                  className={`story-ring ${unseen(g.stories) ? "unseen" : "seen"}`}
+                  aria-label={`View story from ${creator.handle}`}
+                  onClick={() => setViewing(g.index)}
+                >
+                  <span className="avatar">{creator.initials}</span>
+                </button>
+                <span className="story-name">{creator.handle}</span>
+              </div>
+            );
+          })}
+      </HScroll>
       {viewing !== null && (
         <StoryViewer
           groups={groups}

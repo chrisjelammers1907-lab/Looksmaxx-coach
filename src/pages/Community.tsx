@@ -1,3 +1,4 @@
+import HScroll from "../components/HScroll";
 import { useState } from "react";
 import {
   Link,
@@ -646,7 +647,9 @@ function CommunityContent() {
     { kind: "topic", id: "fragrance", label: "Fragrance" },
   ];
   return (
-    <div className="explore-page">
+    <div
+      className={`explore-page ${format === "reels" && visible.length ? "reels-mode" : ""}`}
+    >
       <h1 className="visually-hidden">Your daily edit.</h1>
       <StoriesRow />
       <div className="feed-header">
@@ -734,7 +737,10 @@ function CommunityContent() {
         </div>
       </div>
       <div className="feed-chips">
-        <div className="chip-scroller" aria-label="Filter by style or topic">
+        <HScroll
+          className="chip-scroller"
+          aria-label="Filter by style or topic"
+        >
           <button
             type="button"
             className="chip"
@@ -765,7 +771,7 @@ function CommunityContent() {
               </button>
             );
           })}
-        </div>
+        </HScroll>
       </div>
       {showFilters && (
         <section

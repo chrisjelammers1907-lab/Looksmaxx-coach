@@ -22,7 +22,7 @@ export default function Intake() {
           title={step === 1 ? "Welcome to CHARETT" : "Make it your own."}
           onClose={() => finish(false)}
         >
-          <div className="eyebrow">WELCOME TO CHARETT · {step} OF 2</div>
+          <div className="eyebrow">Step {step} of 2</div>
           <p>
             Discover style and self-care inspiration, organise your routines and
             track progress with a personal AI coach. This short profile is

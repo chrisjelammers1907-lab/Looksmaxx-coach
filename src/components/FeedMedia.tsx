@@ -36,9 +36,12 @@ export function mediaLabel(post: Post, image = post.image) {
 export function PostMedia({
   post,
   children,
+  onOpen,
 }: {
   post: Post;
   children?: ReactNode;
+  /** Tapping the media itself (not its controls) opens the post sheet. */
+  onOpen?: () => void;
 }) {
   const [photo, setPhoto] = useState("");
   const [failed, setFailed] = useState(false);
@@ -46,6 +49,7 @@ export function PostMedia({
   const audio = useRef<HTMLAudioElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [soundError, setSoundError] = useState("");
   const [slide, setSlide] = useState(0);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -150,6 +154,12 @@ export function PostMedia({
         style={{
           aspectRatio: `1080 / ${isReel ? 1920 : media?.height || 1350}`,
         }}
+        onClick={(event) => {
+          if (!onOpen) return;
+          const target = event.target as HTMLElement;
+          if (target.closest("button, a, input, label")) return;
+          onOpen();
+        }}
         tabIndex={hasSlides ? 0 : undefined}
         role={hasSlides ? "region" : undefined}
         aria-roledescription={hasSlides ? "carousel" : undefined}
@@ -182,16 +192,20 @@ export function PostMedia({
             ref={video}
             src={media.origin === "editorial" ? asset(media.src) : media.src}
             poster={media.poster ? asset(media.poster) : undefined}
-            controls
             playsInline
+            loop
             muted={!post.sound || post.sound.originalVolume === 0}
             preload="none"
             aria-label={`${post.title} — ${label}`}
             onPlay={() => {
+              setVideoPlaying(true);
               claimPlayback(video.current, audio.current);
               void startSound();
             }}
-            onPause={() => audio.current?.pause()}
+            onPause={() => {
+              setVideoPlaying(false);
+              audio.current?.pause();
+            }}
             onEnded={() => audio.current?.pause()}
             onSeeked={() => {
               if (audio.current && sound && video.current)
@@ -232,6 +246,21 @@ export function PostMedia({
             {failed ? "This image could not load." : "Preparing photo…"}
           </span>
         )}
+        {isVideo && (
+          <button
+            type="button"
+            className={`video-toggle ${videoPlaying ? "is-playing" : ""}`}
+            aria-label={`${videoPlaying ? "Pause" : "Play"} video ${post.title}`}
+            onClick={() => {
+              const film = video.current;
+              if (!film) return;
+              if (film.paused) void film.play().catch(() => undefined);
+              else film.pause();
+            }}
+          >
+            {videoPlaying ? <Pause size={30} /> : <Play size={34} />}
+          </button>
+        )}
         {hasSlides && (
           <div className="slide-controls">
             <button
@@ -258,77 +287,65 @@ export function PostMedia({
             </button>
           </div>
         )}
+        {sound && (
+          <div className={`post-sound ${playing ? "is-playing" : ""}`}>
+            {playing && (
+              <label className="post-sound-volume">
+                <Volume2 size={14} aria-hidden="true" />
+                <input
+                  aria-label={`Sound volume for ${post.title}`}
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  defaultValue={post.sound?.volume ?? 0.65}
+                  onChange={(e) => {
+                    if (audio.current)
+                      audio.current.volume = Number(e.target.value);
+                  }}
+                />
+              </label>
+            )}
+            <button
+              type="button"
+              className="post-sound-play"
+              aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
+              aria-pressed={playing}
+              title={`${sound.title} · CHARETT original`}
+              onClick={async () => {
+                if (playing) {
+                  audio.current?.pause();
+                  video.current?.pause();
+                } else if (video.current) {
+                  try {
+                    await video.current.play();
+                    await startSound();
+                  } catch {
+                    setSoundError("Video could not start. Try again.");
+                  }
+                } else await startSound();
+              }}
+            >
+              {playing ? <Volume2 size={17} /> : <Music2 size={17} />}
+            </button>
+            <audio
+              ref={audio}
+              src={asset(sound.id)}
+              preload="none"
+              loop
+              onPlay={() => {
+                claimPlayback(video.current, audio.current);
+                setPlaying(true);
+              }}
+              onPause={() => setPlaying(false)}
+              onError={() =>
+                setSoundError("This sound could not load. Try again.")
+              }
+            />
+          </div>
+        )}
         {children}
       </div>
-      {sound && (
-        <div className={`post-sound ${playing ? "is-playing" : ""}`}>
-          <button
-            type="button"
-            className="post-sound-play"
-            aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
-            aria-pressed={playing}
-            onClick={async () => {
-              if (playing) {
-                audio.current?.pause();
-                video.current?.pause();
-              } else if (video.current) {
-                try {
-                  if (video.current.ended) video.current.currentTime = 0;
-                  await video.current.play();
-                  await startSound();
-                } catch {
-                  setSoundError("Video could not start. Try its play control.");
-                }
-              } else await startSound();
-            }}
-          >
-            {playing ? <Pause size={17} /> : <Play size={17} />}
-          </button>
-          <Music2 size={15} />
-          <div className="post-sound-info">
-            <strong>{sound.title}</strong>
-            <span>
-              CHARETT original · {isVideo ? "video sound" : "photo sound"}
-            </span>
-          </div>
-          <span className="sound-wave" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          <label className="post-sound-volume">
-            <Volume2 size={15} />
-            <input
-              aria-label={`Sound volume for ${post.title}`}
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              defaultValue={post.sound?.volume ?? 0.65}
-              onChange={(e) => {
-                if (audio.current)
-                  audio.current.volume = Number(e.target.value);
-              }}
-            />
-          </label>
-          <audio
-            ref={audio}
-            src={asset(sound.id)}
-            preload="none"
-            loop
-            onPlay={() => {
-              claimPlayback(video.current, audio.current);
-              setPlaying(true);
-            }}
-            onPause={() => setPlaying(false)}
-            onError={() =>
-              setSoundError("This sound could not load. Try again.")
-            }
-          />
-        </div>
-      )}
       {soundError && (
         <p className="error sound-error" role="alert">
           {soundError}

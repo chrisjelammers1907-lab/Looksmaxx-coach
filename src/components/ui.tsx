@@ -1,3 +1,4 @@
+import HScroll from "./HScroll";
 import {
   useEffect,
   useRef,
@@ -161,6 +162,7 @@ export function Modal({
   onClose,
   wide = false,
   bare = false,
+  sheet = false,
 }: {
   title: string;
   children: ReactNode;
@@ -168,6 +170,8 @@ export function Modal({
   wide?: boolean;
   /** Renders without the standard heading, for full-bleed viewers. */
   bare?: boolean;
+  /** Slides up from the bottom on phones, like a social app sheet. */
+  sheet?: boolean;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
@@ -226,7 +230,7 @@ export function Modal({
     >
       <div
         ref={panel}
-        className={`modal ${wide ? "wide" : ""} ${bare ? "bare" : ""}`}
+        className={`modal ${wide ? "wide" : ""} ${bare ? "bare" : ""} ${sheet ? "sheet" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -259,7 +263,7 @@ export function Tabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div
+    <HScroll
       className="tabs"
       role="tablist"
       onKeyDown={(event) => {
@@ -295,7 +299,7 @@ export function Tabs({
           {t.label}
         </button>
       ))}
-    </div>
+    </HScroll>
   );
 }
 export function ImageInput({

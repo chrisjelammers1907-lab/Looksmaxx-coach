@@ -1,3 +1,4 @@
+import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { Check, Dumbbell, Plus, Repeat, Trash2, Trophy, X } from "lucide-react";
 import { useDemo } from "../lib/store";
@@ -434,7 +435,7 @@ export default function TrainingPlanner() {
         title="Your week"
         subtitle="Tap a day to plan or change it."
       />
-      <div className="week-strip">
+      <HScroll className="week-strip">
         {weekdays.map((day, index) => {
           const dayDate = addDays(monday, index);
           const plan = state.trainingWeek[day];
@@ -466,7 +467,7 @@ export default function TrainingPlanner() {
             </button>
           );
         })}
-      </div>
+      </HScroll>
       <TodayCard onPlan={setEditing} />
       {recent.length > 0 && (
         <div className="session-list">

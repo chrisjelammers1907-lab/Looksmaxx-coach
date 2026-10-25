@@ -39,7 +39,7 @@ const themes = [
   {
     id: "dark-casual",
     label: "Dark casual",
-    desc: "Damon-inspired, after hours.",
+    desc: "Dark tones, after hours.",
     hero: "A darker kind of effortless.",
     sub: "Espresso, denim and a little edge.",
   },

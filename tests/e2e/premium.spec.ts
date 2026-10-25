@@ -71,7 +71,8 @@ test("photo posts show a caption below and tappable shop-the-look tags", async (
     }),
   });
   const caption = post.locator(".post-body .post-caption");
-  await expect(caption).toContainText("mira.edits");
+  // The account is already named above the photo, so the caption skips it.
+  await expect(caption).not.toContainText("mira.edits");
   await expect(caption).toContainText("#linen");
   await expect(post.locator(".shop-row")).toContainText("3 items · €177.00");
 
@@ -94,9 +95,9 @@ test("photo posts show a caption below and tappable shop-the-look tags", async (
   }
   await tags.first().click();
   const dialog = page.getByRole("dialog");
-  await expect(
-    dialog.getByRole("heading", { name: "Shop the look", exact: true }),
-  ).toBeVisible();
+  await expect(dialog.locator(".shop-details summary")).toContainText(
+    "Shop the look",
+  );
   await expect(dialog.locator(".breakdown-row")).toHaveCount(3);
   await page.keyboard.press("Escape");
 
@@ -105,7 +106,7 @@ test("photo posts show a caption below and tappable shop-the-look tags", async (
   const reel = page.locator(".post-card").filter({
     has: page.getByRole("heading", { name: "A moment in motion", exact: true }),
   });
-  await expect(reel.locator(".post-media .post-caption")).toHaveCount(1);
+  await expect(reel.locator(".post-media .reel-overlay")).toHaveCount(1);
 });
 
 test("mobile bottom bar floats inside the safe area with consistent icons", async ({
@@ -372,4 +373,64 @@ test("gym days are planned per set, persist, and a PR can become a story", async
   await expect(page.getByText("Session logged")).toBeVisible();
   await expect(page.locator(".session-row").first()).toContainText("Done");
   await noAxeViolations(page);
+});
+
+test("reels fill the phone screen with in-reel actions and a details sheet", async ({
+  page,
+}, info) => {
+  await open(page);
+  await page.getByRole("tab", { name: "Reels", exact: true }).click();
+  const reel = page.locator(".post-card").filter({
+    has: page.getByRole("heading", { name: "A moment in motion", exact: true }),
+  });
+  const media = (await reel.locator(".post-media").boundingBox())!;
+  const actions = (await reel.locator(".reel-actions").boundingBox())!;
+  // Likes, comments and the caption sit inside the reel.
+  expect(actions.x).toBeGreaterThan(media.x);
+  expect(actions.x + actions.width).toBeLessThanOrEqual(media.x + media.width);
+  if (info.project.name === "mobile") {
+    const viewport = page.viewportSize()!;
+    expect(media.height).toBeGreaterThanOrEqual(viewport.height - 2);
+    expect(media.width).toBeGreaterThanOrEqual(viewport.width - 2);
+  }
+  await expect(reel.locator("video")).not.toHaveAttribute("controls");
+  await reel
+    .getByRole("button", { name: "Play video A moment in motion" })
+    .click();
+  await expect(
+    reel.getByRole("button", { name: "Pause video A moment in motion" }),
+  ).toBeVisible();
+  await reel
+    .getByRole("button", { name: "Read more of A moment in motion" })
+    .click();
+  const sheet = page.getByRole("dialog", { name: "Post by mira.edits" });
+  await expect(sheet).toContainText("#editorial");
+  await sheet.getByLabel("Your comment").fill("Love the light here.");
+  await sheet.getByRole("button", { name: "Post demo comment" }).click();
+  await expect(sheet.getByText("Love the light here.")).toBeVisible();
+  await noAxeViolations(page);
+});
+
+test("story and filter rows scroll with a mouse wheel and arrows", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === "mobile", "Pointer-specific behaviour");
+  await page.setViewportSize({ width: 700, height: 900 });
+  await open(page);
+  const row = page.locator(".stories-row");
+  await expect(row.locator(".story-bubble")).toHaveCount(14);
+  await row.hover();
+  await page.mouse.wheel(0, 400);
+  await expect
+    .poll(() => row.evaluate((n) => n.scrollLeft))
+    .toBeGreaterThan(100);
+  const chips = page.locator(".feed-chips .hscroll-row");
+  const before = await chips.evaluate((n) => n.scrollLeft);
+  await page
+    .locator(".feed-chips")
+    .getByRole("button", { name: "Scroll right" })
+    .click();
+  await expect
+    .poll(() => chips.evaluate((n) => n.scrollLeft))
+    .toBeGreaterThan(before);
 });

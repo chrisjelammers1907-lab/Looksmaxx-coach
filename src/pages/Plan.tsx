@@ -1,3 +1,4 @@
+import HScroll from "../components/HScroll";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Check, Plus, Pencil, Trash2 } from "lucide-react";
@@ -72,7 +73,7 @@ export default function PlanPage() {
           <span>{state.routines.length} routines for today</span>
         </div>
       </div>
-      <div className="plan-filters chip-scroller" aria-label="Show in plan">
+      <HScroll className="plan-filters chip-scroller" aria-label="Show in plan">
         {(
           [
             ["all", "All"],
@@ -90,7 +91,7 @@ export default function PlanPage() {
             {label}
           </button>
         ))}
-      </div>
+      </HScroll>
       {filter !== "routines" && (
         <section className="plan-section">
           <SectionTitle title="Tasks" />
@@ -145,7 +146,7 @@ export default function PlanPage() {
       {filter !== "tasks" && (
         <section className="plan-section">
           {routineTopics.length > 1 && (
-            <div
+            <HScroll
               className="plan-topic-chips chip-scroller"
               aria-label="Routine category"
             >
@@ -168,7 +169,7 @@ export default function PlanPage() {
                   {t.title}
                 </button>
               ))}
-            </div>
+            </HScroll>
           )}
           <Routines
             key={routineTopic}

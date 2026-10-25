@@ -1,3 +1,4 @@
+import HScroll from "../components/HScroll";
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import {
@@ -278,7 +279,11 @@ function ProfileContent() {
           )}
         </div>
       </header>
-      <div className="profile-tabs" role="tablist" aria-label="Profile content">
+      <HScroll
+        className="profile-tabs"
+        role="tablist"
+        aria-label="Profile content"
+      >
         {tabs.map(({ id: tabId, label, icon: Icon }) => (
           <button
             key={tabId}
@@ -292,7 +297,7 @@ function ProfileContent() {
             <span>{label}</span>
           </button>
         ))}
-      </div>
+      </HScroll>
       {tab === "posts" && (
         <ProfileGrid
           posts={published}

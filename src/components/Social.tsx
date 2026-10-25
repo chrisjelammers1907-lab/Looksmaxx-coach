@@ -207,22 +207,9 @@ export function LinkedCard({
     </Link>
   );
 }
-export function PostCard({
-  post,
-  expanded = false,
-}: {
-  post: Post;
-  expanded?: boolean;
-}) {
+function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
   const { state, update, toast } = useDemo();
-  const [detail, setDetail] = useState(false);
-  const [share, setShare] = useState(false);
   const [comment, setComment] = useState("");
-  const [report, setReport] = useState(false);
-  const [reason, setReason] = useState("Misleading or unsafe advice");
-  const [showProducts, setShowProducts] = useState(false);
-  const [captionOpen, setCaptionOpen] = useState(false);
-  const creator = creators.find((c) => c.id === post.author);
   const own = post.author === "you";
   const copy = () => {
     const copiedTopic = post.topic;
@@ -278,13 +265,191 @@ export function PostCard({
       "Editable private copy created. This is not an automatic medical recommendation.",
     );
   };
+  return (
+    <div className="post-expanded">
+      {!!post.items.length && (
+        <details className="shop-details" open>
+          <summary className="shop-row">
+            <span className="shop-thumbs" aria-hidden="true">
+              {post.items.slice(0, 3).map((item) => (
+                <img
+                  key={item.id}
+                  src={
+                    item.image.startsWith("data:")
+                      ? item.image
+                      : asset(item.image || "shirt")
+                  }
+                  alt=""
+                />
+              ))}
+            </span>
+            <span className="shop-text">
+              <strong>Shop the look</strong>
+              <small>
+                {post.items.length} {post.items.length === 1 ? "item" : "items"}{" "}
+                · {totalPrice(post.items)}
+              </small>
+            </span>
+            <ChevronRight size={18} aria-hidden="true" />
+          </summary>
+          <ItemBreakdown items={post.items} />
+          <p className="small-text">Example prices</p>
+        </details>
+      )}
+      {!!post.steps.length && (
+        <ol className="plain-list">
+          {post.steps.map((s, i) => (
+            <li key={i}>{s}</li>
+          ))}
+        </ol>
+      )}
+      {post.topic && (post.items.length > 0 || post.steps.length > 0) && (
+        <Button variant="secondary small" onClick={copy}>
+          <Copy size={15} />
+          {post.topic === "clothing"
+            ? "Copy outfit to my wardrobe"
+            : "Copy routine / collection"}
+        </Button>
+      )}
+      {!own && (
+        <div className="moderation-actions">
+          <button className="text-button" onClick={onReport}>
+            <Flag size={13} />
+            Report
+          </button>
+          <button
+            className="text-button danger"
+            onClick={() => {
+              update((s) => ({
+                ...s,
+                blocked: [...s.blocked, post.author],
+                following: s.following.filter((id) => id !== post.author),
+              }));
+              toast(
+                "Creator blocked locally. Their posts and messages are hidden.",
+              );
+            }}
+          >
+            <UserX size={13} />
+            Block creator
+          </button>
+        </div>
+      )}
+      <h4>
+        Comments{" "}
+        <span className="muted">{state.comments[post.id]?.length || 0}</span>
+      </h4>
+      <div className="comment-list">
+        {(state.comments[post.id] || []).map((c) => {
+          const person = creators.find((u) => u.id === c.author);
+          return (
+            <div className="comment" key={c.id}>
+              <span className="avatar">
+                {c.author === "you"
+                  ? state.profile.name.slice(0, 1)
+                  : person?.initials}
+              </span>
+              <div>
+                <strong>
+                  {c.author === "you" ? state.profile.handle : person?.handle}
+                </strong>
+                <p>{c.text}</p>
+                {c.author === "you" && (
+                  <button
+                    className="text-button"
+                    onClick={() =>
+                      update((s) => ({
+                        ...s,
+                        comments: {
+                          ...s.comments,
+                          [post.id]: s.comments[post.id].filter(
+                            (x) => x.id !== c.id,
+                          ),
+                        },
+                      }))
+                    }
+                  >
+                    Delete comment
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {!state.comments[post.id]?.length && (
+          <p className="small-text muted">
+            No comments yet. Start the conversation.
+          </p>
+        )}
+      </div>
+      <form
+        className="comment-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!comment.trim()) return;
+          update((s) => ({
+            ...s,
+            comments: {
+              ...s.comments,
+              [post.id]: [
+                ...(s.comments[post.id] || []),
+                { id: uid(), author: "you", text: comment.trim() },
+              ],
+            },
+          }));
+          setComment("");
+        }}
+      >
+        <span className="avatar" aria-hidden="true">
+          {state.profile.name.slice(0, 1)}
+        </span>
+        <label className="comment-input">
+          <span className="visually-hidden">Your comment</span>
+          <input
+            aria-label="Your comment"
+            value={comment}
+            maxLength={500}
+            required
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="What do you think?"
+          />
+        </label>
+        <button
+          type="submit"
+          className="send-button"
+          aria-label="Post demo comment"
+          disabled={!comment.trim()}
+        >
+          <Send size={16} />
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function PostCard({
+  post,
+  expanded = false,
+}: {
+  post: Post;
+  expanded?: boolean;
+}) {
+  const { state, update, toast } = useDemo();
+  const [sheet, setSheet] = useState(false);
+  const [share, setShare] = useState(false);
+  const [report, setReport] = useState(false);
+  const [reason, setReason] = useState("Misleading or unsafe advice");
+  const [showProducts, setShowProducts] = useState(false);
+  const [captionOpen, setCaptionOpen] = useState(false);
+  const creator = creators.find((c) => c.id === post.author);
+  const own = post.author === "you";
   const isReel = post.format === "reel" || post.media?.kind === "video";
   const handle = own ? state.profile.handle : creator?.handle;
   const liked = state.likes.includes(post.id);
+  const saved = state.saved.includes(post.id);
   const commentCount = state.comments[post.id]?.length || 0;
-  const long = post.body.length > 125;
-  const shortBody = long ? `${post.body.slice(0, 122).trimEnd()}…` : post.body;
-  // Photo captions show two lines first, then expand in place.
+  const likeCount = liked ? 25 : 24;
+  // Captions show two lines first, then expand in place.
   const captionLong = post.body.length > 80;
   const captionShort = post.body.slice(0, 80).replace(/\s+\S*$/, "");
   const topicLine = [
@@ -297,6 +462,26 @@ export function PostCard({
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
+  const hashtags = tags.map((t) => `#${t.replaceAll(" ", "")}`).join(" ");
+  const profileLink = own ? "/profile" : `/profile/${post.author}`;
+  const avatar = (
+    <span className="avatar">
+      {own ? state.profile.name.slice(0, 1) : creator?.initials}
+    </span>
+  );
+  const like = () => update((s) => ({ ...s, likes: toggle(s.likes, post.id) }));
+  const save = () => {
+    update((s) => ({ ...s, saved: toggle(s.saved, post.id) }));
+    toast("Private saved collection updated.");
+  };
+  const repost = () => {
+    update((s) => ({ ...s, reposts: toggle(s.reposts, post.id) }));
+    toast(
+      state.reposts.includes(post.id)
+        ? "Removed from your reposts."
+        : "Reposted to your profile.",
+    );
+  };
   const productTags = !isReel && post.items.length > 0 && (
     <>
       <button
@@ -315,7 +500,7 @@ export function PostCard({
             key={item.id}
             className="product-tag"
             style={tagPositions[index]}
-            onClick={() => setDetail(true)}
+            onClick={() => setSheet(true)}
           >
             <strong>{item.name}</strong>
             <span>
@@ -328,16 +513,85 @@ export function PostCard({
         ))}
     </>
   );
-  const body = (
+  const reelOverlay = (
+    <div className="reel-overlay">
+      <div className="reel-meta">
+        <div className="reel-author">
+          <Link to={profileLink} className="author-link">
+            {avatar}
+            <strong>{handle}</strong>
+          </Link>
+          <FollowButton creator={post.author} />
+        </div>
+        {topicLine && <div className="post-topic">{topicLine}</div>}
+        <Link to={`/post/${post.id}`}>
+          <h3>{post.title}</h3>
+        </Link>
+        <p className="reel-caption">{post.body}</p>
+        <button
+          type="button"
+          className="caption-more"
+          aria-label={`Read more of ${post.title}`}
+          onClick={() => setSheet(true)}
+        >
+          more
+        </button>
+      </div>
+      <div className="reel-actions">
+        <button
+          aria-label={`Like ${post.title}`}
+          aria-pressed={liked}
+          className={liked ? "liked" : ""}
+          onClick={like}
+        >
+          <Heart
+            size={28}
+            strokeWidth={1.7}
+            fill={liked ? "currentColor" : "none"}
+          />
+          <span>{likeCount}</span>
+        </button>
+        <button
+          aria-label={`Comment on ${post.title}`}
+          onClick={() => setSheet(true)}
+        >
+          <MessageCircle size={28} strokeWidth={1.7} />
+          <span>{commentCount}</span>
+        </button>
+        {!own && !post.draft && (
+          <button
+            aria-label={`Repost ${post.title}`}
+            aria-pressed={state.reposts.includes(post.id)}
+            onClick={repost}
+          >
+            <Repeat2 size={28} strokeWidth={1.7} />
+          </button>
+        )}
+        <button
+          aria-label={`Save ${post.title} privately`}
+          aria-pressed={saved}
+          onClick={save}
+        >
+          <Bookmark
+            size={27}
+            strokeWidth={1.7}
+            fill={saved ? "currentColor" : "none"}
+          />
+        </button>
+        <button
+          aria-label={`Share ${post.title}`}
+          onClick={() => setShare(true)}
+        >
+          <Send size={26} strokeWidth={1.7} />
+        </button>
+      </div>
+    </div>
+  );
+  const photoBody = (
     <>
       <div className="post-author">
-        <Link
-          to={own ? "/profile" : `/profile/${post.author}`}
-          className="author-link"
-        >
-          <span className="avatar">
-            {own ? state.profile.name.slice(0, 1) : creator?.initials}
-          </span>
+        <Link to={profileLink} className="author-link">
+          {avatar}
           <span>
             <strong>{handle}</strong>
             <small>{post.draft ? "Draft · only you" : mediaLabel(post)}</small>
@@ -345,37 +599,14 @@ export function PostCard({
         </Link>
         <FollowButton creator={post.author} />
       </div>
-      <PostMedia post={post}>
-        {isReel ? (
-          <div className="post-caption">
-            {topicLine && <div className="post-topic">{topicLine}</div>}
-            <Link to={`/post/${post.id}`}>
-              <h3>{post.title}</h3>
-            </Link>
-            <p>{shortBody}</p>
-            {long && !expanded && (
-              <button
-                type="button"
-                className="caption-more"
-                onClick={() => setDetail(true)}
-              >
-                more
-              </button>
-            )}
-          </div>
-        ) : (
-          productTags
-        )}
-      </PostMedia>
+      <PostMedia post={post}>{productTags}</PostMedia>
       <div className="post-body">
         <div className="post-actions">
           <button
             aria-label={`Like ${post.title}`}
             aria-pressed={liked}
             className={liked ? "liked" : ""}
-            onClick={() =>
-              update((s) => ({ ...s, likes: toggle(s.likes, post.id) }))
-            }
+            onClick={like}
           >
             <Heart
               size={24}
@@ -385,7 +616,7 @@ export function PostCard({
           </button>
           <button
             aria-label={`Comment on ${post.title}`}
-            onClick={() => setDetail(true)}
+            onClick={() => setSheet(true)}
           >
             <MessageCircle size={24} strokeWidth={1.6} />
           </button>
@@ -399,14 +630,7 @@ export function PostCard({
             <button
               aria-label={`Repost ${post.title}`}
               aria-pressed={state.reposts.includes(post.id)}
-              onClick={() => {
-                update((s) => ({ ...s, reposts: toggle(s.reposts, post.id) }));
-                toast(
-                  state.reposts.includes(post.id)
-                    ? "Removed from your reposts."
-                    : "Reposted to your profile.",
-                );
-              }}
+              onClick={repost}
             >
               <Repeat2 size={24} strokeWidth={1.6} />
             </button>
@@ -414,60 +638,43 @@ export function PostCard({
           <button
             className="save-action"
             aria-label={`Save ${post.title} privately`}
-            aria-pressed={state.saved.includes(post.id)}
-            onClick={() => {
-              update((s) => ({ ...s, saved: toggle(s.saved, post.id) }));
-              toast("Private saved collection updated.");
-            }}
+            aria-pressed={saved}
+            onClick={save}
           >
             <Bookmark
               size={24}
               strokeWidth={1.6}
-              fill={state.saved.includes(post.id) ? "currentColor" : "none"}
+              fill={saved ? "currentColor" : "none"}
             />
           </button>
         </div>
-        <p className="post-likes">{liked ? 25 : 24} likes</p>
-        {!isReel && (
-          <div className="post-caption">
-            {topicLine && <div className="post-topic">{topicLine}</div>}
-            <Link to={`/post/${post.id}`}>
-              <h3>{post.title}</h3>
-            </Link>
-            <p>
-              <Link
-                className="caption-handle"
-                to={own ? "/profile" : `/profile/${post.author}`}
+        <p className="post-likes">{likeCount} likes</p>
+        <div className="post-caption">
+          {topicLine && <div className="post-topic">{topicLine}</div>}
+          <Link to={`/post/${post.id}`}>
+            <h3>{post.title}</h3>
+          </Link>
+          <p>
+            {expanded || captionOpen || !captionLong ? post.body : captionShort}
+            {captionLong && !expanded && !captionOpen && (
+              <button
+                type="button"
+                className="caption-more"
+                aria-expanded={false}
+                aria-label={`Read more of ${post.title}`}
+                onClick={() => setCaptionOpen(true)}
               >
-                {handle}
-              </Link>{" "}
-              {expanded || captionOpen || !captionLong
-                ? post.body
-                : captionShort}
-              {captionLong && !expanded && !captionOpen && (
-                <button
-                  type="button"
-                  className="caption-more"
-                  aria-expanded={false}
-                  aria-label={`Read more of ${post.title}`}
-                  onClick={() => setCaptionOpen(true)}
-                >
-                  … more
-                </button>
-              )}
-            </p>
-            {tags.length > 0 && (
-              <p className="caption-tags">
-                {tags.map((t) => `#${t.replaceAll(" ", "")}`).join(" ")}
-              </p>
+                … more
+              </button>
             )}
-          </div>
-        )}
+          </p>
+          {hashtags && <p className="caption-tags">{hashtags}</p>}
+        </div>
         {post.items.length > 0 && !expanded && (
           <button
             type="button"
             className="shop-row"
-            onClick={() => setDetail(true)}
+            onClick={() => setSheet(true)}
           >
             <span className="shop-thumbs" aria-hidden="true">
               {post.items.slice(0, 3).map((item) => (
@@ -496,7 +703,7 @@ export function PostCard({
           <button
             type="button"
             className="comment-link"
-            onClick={() => setDetail(true)}
+            onClick={() => setSheet(true)}
           >
             {commentCount
               ? `View ${commentCount === 1 ? "1 comment" : `all ${commentCount} comments`}`
@@ -506,143 +713,58 @@ export function PostCard({
         <time className="post-date" dateTime={post.date}>
           {dateLabel(post.date)}
         </time>
-        {(expanded || detail) && (
-          <div className="post-expanded">
-            {isReel && long && <p className="preserve-text">{post.body}</p>}
-            <div className="post-metadata">
-              {post.occasion} · {post.season} · Audience: {post.audience}
-            </div>
-            {!!post.items.length && (
-              <>
-                <h4>Shop the look</h4>
-                <ItemBreakdown items={post.items} />
-                <p className="small-text">
-                  {totalPrice(post.items)} · Example prices
-                </p>
-              </>
-            )}
-            {!!post.steps.length && (
-              <ol className="plain-list">
-                {post.steps.map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ol>
-            )}
-            <Notice>
-              Fictional community content. Make your own editable copy and
-              review suitability. No treatment recommendation is implied.
-            </Notice>
-            {post.topic && (post.items.length > 0 || post.steps.length > 0) && (
-              <Button variant="secondary" onClick={copy}>
-                <Copy size={15} />
-                {post.topic === "clothing"
-                  ? "Copy outfit to my wardrobe"
-                  : "Copy routine / collection"}
-              </Button>
-            )}
-            <h4>Conversation</h4>
-            {(state.comments[post.id] || []).map((c) => (
-              <div className="comment" key={c.id}>
-                <strong>
-                  {c.author === "you"
-                    ? state.profile.name
-                    : creators.find((u) => u.id === c.author)?.name}
-                </strong>
-                <p>{c.text}</p>
-                {c.author === "you" && (
-                  <button
-                    className="text-button"
-                    onClick={() =>
-                      update((s) => ({
-                        ...s,
-                        comments: {
-                          ...s.comments,
-                          [post.id]: s.comments[post.id].filter(
-                            (x) => x.id !== c.id,
-                          ),
-                        },
-                      }))
-                    }
-                  >
-                    Delete comment
-                  </button>
-                )}
-              </div>
-            ))}
-            <form
-              className="comment-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!comment.trim()) return;
-                update((s) => ({
-                  ...s,
-                  comments: {
-                    ...s.comments,
-                    [post.id]: [
-                      ...(s.comments[post.id] || []),
-                      { id: uid(), author: "you", text: comment.trim() },
-                    ],
-                  },
-                }));
-                setComment("");
-                toast("Demo comment added locally.");
-              }}
-            >
-              <Field
-                label="Your comment"
-                value={comment}
-                maxLength={500}
-                required
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Add a thoughtful note…"
-              />
-              <Button type="submit" aria-label="Post demo comment">
-                <Send size={16} />
-              </Button>
-            </form>
-            {!own && (
-              <div className="moderation-actions">
-                <button className="text-button" onClick={() => setReport(true)}>
-                  <Flag size={13} />
-                  Report
-                </button>
-                <button
-                  className="text-button danger"
-                  onClick={() => {
-                    update((s) => ({
-                      ...s,
-                      blocked: [...s.blocked, post.author],
-                      following: s.following.filter((id) => id !== post.author),
-                    }));
-                    toast(
-                      "Creator blocked locally. Their posts and messages are hidden.",
-                    );
-                  }}
-                >
-                  <UserX size={13} />
-                  Block creator
-                </button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </>
   );
   return (
     <>
       <article
-        className={`post-card ${expanded ? "expanded" : ""} ${post.format === "reel" || post.media?.kind === "video" ? "reel-card" : "photo-card"}`}
+        className={`post-card ${expanded ? "expanded" : ""} ${isReel ? "reel-card" : "photo-card"}`}
       >
-        {body}
+        {isReel ? (
+          <PostMedia post={post} onOpen={() => setSheet(true)}>
+            {reelOverlay}
+          </PostMedia>
+        ) : (
+          photoBody
+        )}
+        {expanded && (
+          <>
+            {isReel && (
+              <div className="post-body">
+                <p className="preserve-text">{post.body}</p>
+                {hashtags && <p className="caption-tags">{hashtags}</p>}
+              </div>
+            )}
+            <PostDetails post={post} onReport={() => setReport(true)} />
+          </>
+        )}
       </article>
-      {detail && !expanded && (
+      {sheet && !expanded && (
         <Modal
-          title="Post details & comments"
-          onClose={() => setDetail(false)}
-          wide
+          title={`Post by ${handle}`}
+          onClose={() => setSheet(false)}
+          sheet
         >
-          <PostCard post={post} expanded />
+          <div className="sheet-author">
+            <Link to={profileLink} className="author-link">
+              {avatar}
+              <strong>{handle}</strong>
+            </Link>
+            <FollowButton creator={post.author} />
+          </div>
+          <div className="sheet-caption">
+            <h3>{post.title}</h3>
+            <p className="preserve-text">{post.body}</p>
+            {hashtags && <p className="caption-tags">{hashtags}</p>}
+            <time dateTime={post.date}>{dateLabel(post.date)}</time>
+            <div className="sheet-chips">
+              {topicLine && <span className="pill">{topicLine}</span>}
+              {post.occasion && <span className="pill">{post.occasion}</span>}
+              {post.season && <span className="pill">{post.season}</span>}
+            </div>
+          </div>
+          <PostDetails post={post} onReport={() => setReport(true)} />
         </Modal>
       )}
       {share && (

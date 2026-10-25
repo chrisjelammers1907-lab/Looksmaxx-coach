@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { DemoState } from "./types";
-import { makeInitialState, seedPosts } from "./data";
+import { creators, makeInitialState, seedPosts } from "./data";
 import { releasePrivateMedia } from "./media";
 import { autoLog } from "./training";
 import { today, uid } from "./domain";
@@ -74,7 +74,7 @@ function load(): DemoState {
           (v: unknown) =>
             typeof v === "string" &&
             (key === "following" || key === "blocked"
-              ? ["mira", "james", "noor"].includes(v)
+              ? creators.some((c) => c.id === v)
               : ids.includes(v)),
         );
     if (["old-money", "dark-casual", "minimalist"].includes(saved.style))

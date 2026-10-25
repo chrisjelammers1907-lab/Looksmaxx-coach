@@ -3964,3 +3964,774 @@ h4 {
 .topic-page.atmosphere-fragrance .topic-banner .topic-purpose {
   color: var(--on-dark-muted);
 }
+
+/* ---------- Round 3: scroll rows ---------- */
+.hscroll {
+  position: relative;
+  min-width: 0;
+}
+.hscroll-row {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.hscroll-row::-webkit-scrollbar {
+  display: none;
+}
+.hscroll::before,
+.hscroll::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 36px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+.hscroll::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--ivory), transparent);
+}
+.hscroll::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--ivory), transparent);
+}
+.hscroll.has-start::before,
+.hscroll.has-end::after {
+  opacity: 1;
+}
+.hscroll-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--porcelain);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.hscroll-arrow.prev {
+  left: 2px;
+}
+.hscroll-arrow.next {
+  right: 2px;
+}
+@media (hover: hover) {
+  .hscroll.has-start .hscroll-arrow.prev,
+  .hscroll.has-end .hscroll-arrow.next {
+    display: grid;
+  }
+}
+.chip-scroller {
+  mask-image: none;
+}
+/* Tabs in a row keep their underline inside the scroll box. */
+.hscroll > .tabs {
+  margin: 0;
+}
+
+/* ---------- Round 3: calmer home ---------- */
+.stories {
+  margin: -4px -4px 18px;
+  padding: 4px 4px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.stories .stories-row {
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 6px 4px 4px;
+  border: 0;
+}
+.story-bubble {
+  width: 88px;
+}
+.story-ring {
+  width: 84px;
+  height: 84px;
+}
+.story-ring .avatar {
+  font-size: 30px;
+}
+.story-add {
+  top: 62px;
+  right: 6px;
+}
+.story-name {
+  font-size: 12.5px;
+}
+.feed-format-row {
+  margin-top: 14px;
+}
+.feed-chips {
+  margin-top: 16px;
+}
+.feed-grid {
+  margin-top: 40px;
+  gap: 56px 44px;
+}
+@media (max-width: 700px) {
+  .stories {
+    margin: -6px -14px 14px;
+    padding: 4px 0 14px;
+  }
+  .stories .stories-row {
+    gap: 14px;
+    padding: 4px 14px;
+  }
+  .story-bubble {
+    width: 78px;
+  }
+  .story-ring {
+    width: 76px;
+    height: 76px;
+  }
+  .story-add {
+    top: 55px;
+    right: 3px;
+  }
+  .feed-grid,
+  .feed-grid.photos-feed {
+    margin-top: 28px;
+    gap: 44px;
+  }
+  .hscroll::before,
+  .hscroll::after {
+    width: 24px;
+  }
+}
+
+/* ---------- Round 3: sound icon on photos, own video controls ---------- */
+.post-card .post-media .post-sound {
+  position: absolute;
+  z-index: 4;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+}
+.post-card .post-media .post-sound-play {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--forest-ink) 72%, transparent);
+  color: var(--on-dark);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
+}
+.post-card .post-media .post-sound.is-playing .post-sound-play {
+  background: var(--porcelain);
+  color: var(--forest-ink);
+}
+.post-card .post-media .post-sound-volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--forest-ink) 72%, transparent);
+  color: var(--on-dark);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.post-card .post-media .post-sound-volume input {
+  width: 80px;
+  accent-color: var(--champagne);
+}
+.video-toggle {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--forest-ink) 45%, transparent);
+  color: var(--on-dark);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.25s var(--ease);
+}
+.video-toggle.is-playing {
+  opacity: 0;
+}
+.video-toggle.is-playing:focus-visible,
+.post-media:hover .video-toggle.is-playing {
+  opacity: 0.85;
+}
+
+/* ---------- Round 3: reels (TikTok style) ---------- */
+.feed-grid.reels-feed {
+  max-width: 420px;
+  grid-template-columns: minmax(0, 420px);
+  gap: 28px;
+}
+.reel-card .post-media {
+  cursor: pointer;
+  aspect-ratio: 9 / 16 !important;
+  max-height: 82vh;
+  border-radius: 20px;
+}
+.reel-card .post-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--forest-ink) 88%, transparent) 0%,
+      color-mix(in srgb, var(--forest-ink) 62%, transparent) 16%,
+      color-mix(in srgb, var(--forest-ink) 28%, transparent) 34%,
+      transparent 52%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--forest-ink) 30%, transparent) 0%,
+      transparent 18%
+    );
+}
+.reel-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  color: var(--on-dark);
+}
+.reel-overlay a,
+.reel-overlay button {
+  pointer-events: auto;
+}
+.reel-meta {
+  position: absolute;
+  left: 16px;
+  right: 76px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.reel-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.reel-author .author-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--on-dark);
+}
+.reel-author .avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
+  background: var(--forest);
+  color: var(--on-dark);
+  box-shadow: 0 0 0 1.5px var(--champagne);
+}
+.reel-author strong {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.reel-author .button.follow {
+  min-height: 28px;
+  padding: 3px 12px;
+  border: 1px solid color-mix(in srgb, var(--on-dark) 70%, transparent);
+  background: transparent;
+  color: var(--on-dark);
+  font-size: 12.5px;
+}
+.reel-author .button.follow.following {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--on-dark) 18%, transparent);
+}
+.reel-meta .post-topic {
+  margin: 4px 0 0;
+  color: var(--champagne);
+}
+.reel-meta h3 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.1;
+  color: var(--on-dark);
+}
+.reel-caption {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.reel-meta .caption-more {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--on-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+.reel-actions {
+  position: absolute;
+  right: 10px;
+  bottom: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.reel-actions > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--on-dark);
+  filter: drop-shadow(0 1px 4px rgb(0 0 0 / 35%));
+  transition: transform 0.15s var(--ease);
+}
+.reel-actions > button:active {
+  transform: scale(0.88);
+}
+.reel-actions > button span {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.reel-actions > button.liked {
+  color: var(--champagne-soft);
+}
+.reel-actions > button[aria-pressed="true"]:not(.liked) {
+  color: var(--champagne);
+}
+.reel-card .post-media .post-sound {
+  right: 16px;
+  bottom: 22px;
+}
+.reel-card .slide-controls {
+  top: 40%;
+  bottom: auto;
+  left: 10px;
+  right: 10px;
+  z-index: 3;
+}
+.reel-card .post-caption {
+  display: none;
+}
+@media (max-width: 700px) {
+  /* Phones: one reel fills the screen; swipe up for the next. */
+  .reels-mode .feed-grid.reels-feed {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: block;
+    max-width: none;
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    background: var(--forest-ink);
+  }
+  .reels-mode .feed-grid .reel-card {
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  .reels-mode .reel-card .post-media-wrap,
+  .reels-mode .reel-card .post-media {
+    height: 100%;
+  }
+  .reels-mode .reel-card .post-media {
+    max-height: none;
+    border-radius: 0;
+  }
+  .reels-mode .reel-meta {
+    bottom: calc(100px + env(safe-area-inset-bottom));
+  }
+  .reels-mode .reel-actions {
+    bottom: calc(160px + env(safe-area-inset-bottom));
+  }
+  .reels-mode .reel-card .post-media .post-sound {
+    bottom: calc(104px + env(safe-area-inset-bottom));
+  }
+  .reels-mode .feed-header {
+    position: fixed;
+    top: env(safe-area-inset-top, 0px);
+    left: 0;
+    right: 0;
+    z-index: 45;
+    margin: 0;
+    padding: 8px 10px;
+    background: transparent;
+  }
+  .reels-mode .feed-tabs .tabs > button {
+    color: color-mix(in srgb, var(--on-dark) 72%, transparent);
+    text-shadow: 0 1px 6px rgb(0 0 0 / 40%);
+  }
+  .reels-mode .feed-tabs .tabs > button.active {
+    color: var(--on-dark);
+  }
+  .reels-mode .feed-tabs .tabs > button::after {
+    background: var(--on-dark);
+  }
+  .reels-mode .feed-header-actions .icon-button,
+  .reels-mode .feed-header-actions .create-button {
+    color: var(--on-dark);
+    border-color: var(--on-dark);
+  }
+  .reels-mode .feed-format-row {
+    position: fixed;
+    top: calc(58px + env(safe-area-inset-top, 0px));
+    left: 0;
+    right: 0;
+    z-index: 45;
+    margin: 0;
+    pointer-events: none;
+  }
+  .reels-mode .feed-format-row .feed-format-tabs {
+    pointer-events: auto;
+    background: color-mix(in srgb, var(--forest-ink) 45%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .reels-mode .feed-format-row .feed-format-tabs > button {
+    min-width: 92px;
+    min-height: 32px;
+    color: var(--on-dark-muted);
+  }
+  .reels-mode .feed-format-row .feed-format-tabs > button.active {
+    background: var(--on-dark);
+    color: var(--forest-ink);
+  }
+  .reels-mode .stories,
+  .reels-mode .feed-chips {
+    display: none;
+  }
+  .reels-mode .reel-card .slide-controls {
+    top: 30%;
+  }
+}
+
+/* ---------- Round 3: post bottom sheet ---------- */
+.modal.sheet {
+  width: 560px;
+  padding: 22px 24px 18px;
+}
+.modal.sheet .modal-heading {
+  margin-bottom: 6px;
+}
+.modal.sheet .modal-heading h2 {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.sheet-author {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-author .author-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+.sheet-author .avatar,
+.comment .avatar,
+.comment-form .avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 17px;
+  background: var(--forest);
+  color: var(--on-dark);
+  box-shadow:
+    0 0 0 2px var(--porcelain),
+    0 0 0 3.5px var(--champagne);
+}
+.sheet-author strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.sheet-caption {
+  padding: 14px 0 6px;
+}
+.sheet-caption h3 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+.sheet-caption p {
+  margin: 0 0 6px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.sheet-caption .caption-tags {
+  color: var(--forest-soft);
+}
+.sheet-caption time {
+  display: block;
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.sheet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sheet-chips .pill {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 13px;
+  text-transform: capitalize;
+}
+.post-expanded .shop-details {
+  margin: 6px 0 12px;
+}
+.post-expanded .shop-details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.post-expanded .shop-details > summary::-webkit-details-marker {
+  display: none;
+}
+.post-expanded .shop-details[open] > summary > svg {
+  transform: rotate(90deg);
+}
+.post-expanded h4 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 18px 0 8px;
+  font-size: 20px;
+}
+.post-expanded h4 .muted {
+  font-family: var(--sans);
+  font-size: 14px;
+}
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.comment {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.comment .avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+}
+.comment strong {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.comment p {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+}
+.comment-form {
+  position: sticky;
+  bottom: -18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px -24px -18px;
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--porcelain);
+}
+.comment-form .avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+  box-shadow: none;
+}
+.comment-input {
+  flex: 1;
+  min-width: 0;
+}
+.comment-input input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--ivory);
+  color: var(--ink);
+  font-size: 15px;
+}
+.community-detail .comment-form {
+  position: static;
+  margin: 16px 0 0;
+  padding: 12px 0 0;
+}
+@media (max-width: 700px) {
+  .modal-backdrop:has(.modal.sheet) {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal.sheet {
+    width: 100%;
+    max-height: 86dvh;
+    padding: 10px 18px 14px;
+    border-radius: 24px 24px 0 0;
+    animation: sheet-up 0.3s var(--ease);
+  }
+  .modal.sheet::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0 auto 8px;
+    border-radius: 2px;
+    background: var(--line-strong);
+  }
+  .comment-form {
+    margin: 16px -18px -14px;
+    padding: 10px 18px calc(12px + env(safe-area-inset-bottom));
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0.4;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal.sheet {
+    animation: none;
+  }
+}
+.reel-author .author-link strong {
+  color: var(--on-dark);
+}
+.post-expanded .moderation-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0 0;
+}
+
+/* ---------- Round 3 design pass ---------- */
+.about-pillars {
+  gap: 14px;
+}
+.about-pillars > * {
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--cream);
+  padding: 26px 26px 24px;
+}
+.about-transparency {
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--forest);
+  color: var(--on-dark);
+  padding: 32px;
+}
+.about-transparency .eyebrow {
+  color: var(--champagne);
+}
+.about-transparency p {
+  color: var(--on-dark-muted);
+}
+.about-transparency h2,
+.about-transparency h2 em {
+  color: var(--on-dark);
+}
+.about-hero {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+@media (max-width: 700px) {
+  .modal-heading h2 {
+    font-size: 26px;
+  }
+  .about-transparency {
+    padding: 24px 20px;
+  }
+  /* Clothing style switcher: compact pills on phones. */
+  .clothing-page .style-switcher {
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .clothing-page .style-switcher > button {
+    min-height: 48px;
+    padding: 8px 10px;
+    gap: 8px;
+    justify-content: center;
+  }
+  .clothing-page .style-switcher small,
+  .clothing-page .style-switcher > button > svg {
+    display: none;
+  }
+  .clothing-page .style-switcher strong {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .clothing-page .theme-dot {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+}
+.about-page .about-pillars > *:nth-child(n) {
+  background: var(--cream);
+  color: var(--ink);
+}
+@media (max-width: 700px) {
+  .clothing-page .style-switcher {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .clothing-page .style-switcher > button {
+    min-width: 0;
+    padding: 8px 6px;
+    gap: 6px;
+  }
+  .clothing-page .style-switcher strong {
+    overflow: hidden;
+    font-size: 12.5px;
+    text-overflow: ellipsis;
+  }
+}
