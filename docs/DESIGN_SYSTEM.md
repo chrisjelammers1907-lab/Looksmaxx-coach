@@ -99,3 +99,18 @@ Messages and AI coach share one chat language: a conversation list with 56 px av
   - Plan cards: Free on porcelain; Plus outlined in forest with a "Most popular" flag; Signature on `--forest-deep` with champagne accents.
   - Upgrade prompts (`.upgrade-card`) and the `Plus` tag use cream and champagne, never red.
   - Sponsored posts reuse the photo card with a forest CTA bar and the word "Sponsored" under the brand.
+
+## Fifth round — launch edit — 25 October 2026
+
+- **Photography.** Real photos with models only. Banners and heroes use `height: 0; min-height: 100%` on the image, so the copy, not the photo, sets the height.
+- **Monogram.** `Monogram.tsx` (a serif C in a hairline circle) replaces decorative sparkles and the coach orb.
+- **Radii and shadows.** `--radius-sm` 8, `--radius` 10, `--radius-lg` 14; cards carry no drop shadow.
+- **Streaks.** `StreakFlame` is a green flame (`--forest-text`) with the count, next to the name; champagne on the dark plan card.
+- **Categories.** `.category-group` sections with a small gold uppercase heading and 56 px round photo thumbs.
+- **Clothing moods.** The five newer styles set a full palette (`--style-bg`, `--style-soft`, `--style-card`, `--style-ink`, `--style-muted`, `--style-accent`, `--style-border`, `--style-button`, `--style-on-button`) and map the global tokens onto it, so they look the same in light and dark mode:
+  - streetwear: black #111, off-white, orange #e8743d, square corners, heavy condensed caps;
+  - smart casual: #f7f8fa, navy #14213d, semibold sans, 6 px radius;
+  - athleisure: graphite #2b2d2f, fog #ecebe7, light sans, 20 px radius;
+  - preppy: cream #f6f1e6, navy #1d2b4f, burgundy #7a2433, a regimental stripe on the hero;
+  - bohemian: warm paper #f3e7d6, terracotta #96482a, italic serif, 18–24 px radius.
+- **Share card.** 1080×1920: photo on top, forest band, gold kind label, Cormorant title, CHARETT wordmark; text stays above the bottom 150 px for the Stories controls.

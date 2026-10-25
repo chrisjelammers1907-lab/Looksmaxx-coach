@@ -213,3 +213,32 @@ Screenshots are `docs/screenshots/premium/v3-*.jpg`.
 - The demo-only labels are rewritten in plain language: "SIMULATED …", "fictional" after names and "Demo inbox".
 - The About text matches what persists now and no longer mentions source files.
 - Desktop filter chips are centred over the feed. Today's tile in the week strip uses an inner ring, so the row never clips it.
+
+## Fifth round — launch edit — 25 October 2026
+
+Spec: `docs/superpowers/specs/2026-10-25-charett-launch-design.md`. Plan: `docs/superpowers/plans/2026-10-25-charett-launch.md`.
+
+**Photography instead of generated art**
+- 41 licensed Pexels photos with models (`scripts/photos.json`, credited in `ASSET_CREDITS.md`), graded warm and kept under 90 KB each.
+- No "AI inspiration" labels, sparkles or orb remain; the coach and empty states use the CHARETT monogram.
+
+**Categories**
+- 16 categories in five groups: Face (skincare, makeup, face structure, colouring, brows & lashes, teeth & smile), Hair (hair, beard & shaving), Body (gym & physique, nutrition, body care & nails, sleep & recovery, posture & presence), Style (clothing & style, fragrance) and Progress (photos & progress).
+- Face structure covers the eye area, maxilla and midface, cheekbones, and jaw and chin honestly: what you can do yourself, what doesn't work, and what only a qualified specialist does. No face ratings, no hormone or medication advice.
+- Every new category has its own routine, products, tip and beginner's guide. Nutrition and posture moved out of the gym page into their own categories.
+- Category rows show a round photo; the home feed chips cover every style and category.
+
+**Clothing**
+- Eight styles: old money, dark casual, minimalist, streetwear, smart casual, athleisure, preppy and bohemian, each with its own page mood, hero photo, feed filter and seed post.
+- The style switcher is one scrolling pill row that keeps the chosen style in view.
+
+**Launch details**
+- Green streak flame next to names in chats, on the plan card and in training.
+- Profile stats on phones have no frame.
+- Intake asks for confirmation of 18 or older before continuing; skipping stays possible.
+- Share card: posts and new PRs become a 1080×1920 story card, shared through the device sheet or downloaded as PNG for Instagram and TikTok.
+
+**Fixes found by the audit**
+- Portrait photos no longer stretch topic banners, guide heroes or the clothing hero on desktop.
+- Dark-mode contrast for the dark casual and minimalist buttons and the minimalist note.
+- Audit: 43 routes × 390/1440 px × light/dark, 0 axe violations and no horizontal overflow.
