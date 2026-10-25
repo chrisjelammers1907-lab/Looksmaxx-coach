@@ -110,3 +110,10 @@ describe("clothing styles", () => {
       expect(seedPosts.some((p) => p.style === id)).toBe(true);
   });
 });
+
+describe("seed posts", () => {
+  it("every seed post id is unique", () => {
+    const ids = seedPosts.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});

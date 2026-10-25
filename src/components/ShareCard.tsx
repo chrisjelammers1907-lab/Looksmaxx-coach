@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImageDown } from "lucide-react";
 import { useDemo } from "../lib/store";
 import {
@@ -20,24 +20,37 @@ export default function ShareCardButton({
   variant?: string;
 }) {
   const { toast } = useDemo();
-  const [busy, setBusy] = useState(false);
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [failed, setFailed] = useState(false);
+  const { title, subtitle, image, kind } = card;
+  // Render ahead of the tap: Safari only opens the share sheet when share()
+  // is called straight from the click, not after the card has been drawn.
+  useEffect(() => {
+    let live = true;
+    setBlob(null);
+    setFailed(false);
+    renderShareCard({ title, subtitle, image, kind })
+      .then((next) => live && setBlob(next))
+      .catch(() => live && setFailed(true));
+    return () => {
+      live = false;
+    };
+  }, [title, subtitle, image, kind]);
   return (
     <Button
       type="button"
       variant={variant}
-      disabled={busy}
-      onClick={async () => {
-        setBusy(true);
-        try {
-          const blob = await renderShareCard(card);
-          const result = await shareOrDownload(blob, shareFileName(card.title));
+      disabled={!blob && !failed}
+      aria-busy={!blob && !failed}
+      onClick={() => {
+        if (!blob) {
+          toast("The card could not be made. Try again.");
+          return;
+        }
+        void shareOrDownload(blob, shareFileName(title)).then((result) => {
           if (result === "downloaded")
             toast("Story card saved. Post it to Instagram or TikTok.");
-        } catch {
-          toast("The card could not be made. Try again.");
-        } finally {
-          setBusy(false);
-        }
+        });
       }}
     >
       <ImageDown size={15} />

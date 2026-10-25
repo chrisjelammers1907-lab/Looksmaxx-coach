@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { shareFileName, shareOrDownload } from "../src/lib/shareCard";
+import {
+  prShareCard,
+  shareFileName,
+  shareOrDownload,
+} from "../src/lib/shareCard";
 
 const fakeDocument = (clicked: string[]) => ({
   createElement: () => ({
@@ -56,5 +60,16 @@ describe("share cards", () => {
       "charett-the-art-of-a-simple-sunday.png",
     );
     expect(shareFileName("  ")).toBe("charett.png");
+  });
+});
+
+describe("PR share card", () => {
+  it("states both weights with their unit", () => {
+    expect(prShareCard("Bench press", 100, 105, "kg")).toEqual({
+      title: "Bench press: 105 kg",
+      subtitle: "Up from 100 kg. Logged with CHARETT.",
+      kind: "pr",
+    });
+    expect(prShareCard("Squat", 100, 105, "lb").subtitle).toMatch(/ lb\./);
   });
 });

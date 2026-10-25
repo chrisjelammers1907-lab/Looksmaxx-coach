@@ -264,3 +264,43 @@ test("portrait photos never stretch banners on desktop", async ({
   const hero = await page.locator(".guide-hero").boundingBox();
   expect(hero!.height).toBeLessThanOrEqual(560);
 });
+
+test("the share sheet opens inside the tap, so Safari allows it", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { inTap: boolean; sharedInTap?: boolean };
+    w.inTap = false;
+    addEventListener(
+      "click",
+      () => {
+        w.inTap = true;
+        setTimeout(() => (w.inTap = false));
+      },
+      true,
+    );
+    Object.assign(navigator, {
+      canShare: () => true,
+      share: async () => {
+        w.sharedInTap = w.inTap;
+      },
+    });
+  });
+  await open(page, "/");
+  await page
+    .getByRole("button", { name: "Share The art of a simple Sunday" })
+    .first()
+    .click();
+  const button = page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Share to Instagram / TikTok" });
+  await expect(button).toBeEnabled();
+  await button.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as unknown as { sharedInTap?: boolean }).sharedInTap,
+      ),
+    )
+    .toBe(true);
+});

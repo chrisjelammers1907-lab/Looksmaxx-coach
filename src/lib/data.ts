@@ -790,7 +790,7 @@ export const seedPosts: Post[] = [
 ];
 seedPosts.push(
   {
-    id: "p11",
+    id: "p16",
     author: "daan",
     topic: "clothing",
     title: "One loud detail",
@@ -806,7 +806,7 @@ seedPosts.push(
     date: "2026-10-10",
   },
   {
-    id: "p12",
+    id: "p17",
     author: "james",
     topic: "clothing",
     title: "The jacket that works with jeans",
@@ -822,7 +822,7 @@ seedPosts.push(
     date: "2026-10-09",
   },
   {
-    id: "p13",
+    id: "p18",
     author: "sofia",
     topic: "clothing",
     title: "From the gym to coffee",
@@ -838,7 +838,7 @@ seedPosts.push(
     date: "2026-10-08",
   },
   {
-    id: "p14",
+    id: "p19",
     author: "noor",
     topic: "clothing",
     title: "Oxford cloth and a stripe",
@@ -854,7 +854,7 @@ seedPosts.push(
     date: "2026-10-07",
   },
   {
-    id: "p15",
+    id: "p20",
     author: "sofia",
     topic: "clothing",
     title: "Linen, suede, terracotta",

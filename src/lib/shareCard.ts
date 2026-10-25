@@ -1,4 +1,8 @@
 /** Story-sized share cards (1080×1920) for Instagram and TikTok. */
+import { weightLabel } from "./units";
+import type { AppSettings } from "./types";
+
+type WeightUnit = AppSettings["weightUnit"];
 export interface ShareCardOptions {
   title: string;
   subtitle: string;
@@ -121,6 +125,18 @@ export async function renderShareCard(opts: ShareCardOptions): Promise<Blob> {
     ),
   );
 }
+
+/** The card for a new personal record; both weights carry their unit. */
+export const prShareCard = (
+  exercise: string,
+  previousKg: number,
+  topKg: number,
+  unit: WeightUnit,
+): ShareCardOptions => ({
+  title: `${exercise}: ${weightLabel(topKg, unit)}`,
+  subtitle: `Up from ${weightLabel(previousKg, unit)}. Logged with CHARETT.`,
+  kind: "pr",
+});
 
 export const shareFileName = (title: string) => {
   const slug = title

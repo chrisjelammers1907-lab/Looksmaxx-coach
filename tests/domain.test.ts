@@ -140,3 +140,23 @@ describe("second-version privacy and format invariants", () => {
     expect(inferCoachTopic("Does mewing change my jaw?")).toBe("face");
   });
 });
+
+describe("coach topic routing", () => {
+  it.each([
+    ["What shoes go with chinos?", "clothing"],
+    ["Which handbag goes with this outfit?", "clothing"],
+    ["How do I look more handsome?", undefined],
+    ["I want a tank top outfit", "clothing"],
+    ["Tips for my tan suit", "clothing"],
+    ["Best foundation pieces for a capsule wardrobe", "clothing"],
+    ["How do I look confident in my outfit?", "clothing"],
+    ["How do I lose weight?", "nutrition"],
+    ["Hair colouring ideas", "hair"],
+    ["Is mewing real?", "face"],
+    ["Which foundation suits me?", "makeup"],
+    ["My chin looks weak", "face"],
+    ["Self-tan streaks on my legs", "colouring"],
+    ["My hands are dry", "body"],
+    ["How do I build confidence when I speak?", "presence"],
+  ])("%s → %s", (text, topic) => expect(inferCoachTopic(text)).toBe(topic));
+});

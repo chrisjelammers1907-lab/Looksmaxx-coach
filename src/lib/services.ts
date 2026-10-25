@@ -29,39 +29,49 @@ export function inferCoachTopic(
   text: string,
   fallback?: TopicId,
 ): TopicId | undefined {
+  // Whole words only, so "chinos" is not "chin" and "handbag" is not "hands".
   const rules: [TopicId, RegExp][] = [
+    // A named garment means the question is about clothing first.
+    [
+      "clothing",
+      /\b(outfits?|wardrobe|capsule|shoes|sneakers|trainers|chinos|trousers|jeans|denim|shirts?|t-shirts?|tank tops?|suit|blazers?|jackets?|dress(es)?|handbags?)\b/i,
+    ],
     [
       "makeup",
-      /\b(makeup|make-up|concealer|foundation|mascara|contour|blush)/i,
+      /\b(makeup|make-up|concealer|foundation|mascara|contour|blush)\b/i,
     ],
-    ["brows", /\b(brows?|eyebrows?|lashes|eyelash)/i],
-    ["grooming", /\b(groom|shav|beard|razor|stubble)/i],
+    ["brows", /\b(brows?|eyebrows?|lashes|eyelash(es)?)\b/i],
+    ["grooming", /\b(groom\w*|shav\w*|beards?|razors?|stubble)\b/i],
     [
       "face",
-      /\b(jaw|chin|cheekbone|zygo|maxilla|midface|mandible|eye area|under-eye|face shape)/i,
+      /\b(jaw\w*|chin|cheekbones?|zygos?|zygomatic|maxilla|midface|mandible|mewing|eye area|under-eyes?|face shape)\b/i,
     ],
-    ["colouring", /\b(undertone|colouring|coloring|tan|contrast|palette)/i],
-    ["sleep", /\b(sleep|insomnia|tired|recovery|rest day)/i],
-    ["presence", /\b(posture|presence|confiden|eye contact|voice)/i],
-    ["body", /\b(body lotion|nails?|cuticle|deodorant|body care|hands?)/i],
+    [
+      "colouring",
+      /(?<!hair )\b(undertones?|colouring|coloring|tan|self-tan|contrast|palette)\b/i,
+    ],
+    ["sleep", /\b(sleep\w*|insomnia|tired|recovery|rest day)\b/i],
+    ["presence", /\b(posture|presence|confiden\w*|eye contact|voice)\b/i],
+    ["body", /\b(body lotion|nails?|cuticles?|deodorant|body care|hands?)\b/i],
     [
       "nutrition",
-      /\b(calori|protein|nutrition|food|meal|diet|macro|weight loss)/i,
+      /\b(calori\w*|protein|nutrition|food|meals?|diet\w*|macros?|weight loss|lose weight|losing weight|gain weight|fat loss)\b/i,
     ],
     [
       "skincare",
-      /\b(skin|acne|cleanser|moisturi|sunscreen|spf|irritat|retinol|serum|tretinoin|spironolactone)/i,
+      /\b(skin\w*|acne|cleanser|moisturi\w*|sunscreen|spf|irritat\w*|retinol|serum|tretinoin|spironolactone)\b/i,
     ],
-    ["hair", /\b(hair|barber|shampoo|conditioner|fringe|scalp)/i],
+    ["hair", /\b(hair\w*|barbers?|shampoo|conditioner|fringe|scalp)\b/i],
+    ["clothing", /\b(cloth\w*|wear\w*|style|fit|colour|color)\b/i],
     [
-      "clothing",
-      /\b(outfit|wardrobe|cloth|wear|shirt|denim|dress|style|fit|colour|color|shoes|jacket)/i,
+      "gym",
+      /\b(gym|workouts?|train\w*|exercis\w*|mobility|weights?|muscles?)\b/i,
     ],
-    ["gym", /\b(gym|workout|train|exercise|mobility|weight|muscle)/i],
-    ["smile", /\b(teeth|tooth|dental|smile|floss|gum|whiten)/i],
-    ["fragrance", /\b(fragrance|perfume|scent|cologne)/i],
-    ["photos", /\b(journal|progress|before|after|comparison)/i],
+    ["smile", /\b(teeth|tooth|dental|smile|floss\w*|gums?|whiten\w*)\b/i],
+    ["fragrance", /\b(fragrances?|perfumes?|scents?|cologne)\b/i],
+    ["photos", /\b(journal|progress|before|after|comparison)\b/i],
   ];
+
   return (
     rules.find(([, pattern]) => pattern.test(text))?.[0] ||
     fallback ||
