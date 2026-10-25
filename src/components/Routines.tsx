@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
+import { streakGrace } from "../lib/plans";
 import { useDemo } from "../lib/store";
 import type { Routine, TopicId } from "../lib/types";
 import { asset, today, topicName, uid } from "../lib/domain";
@@ -25,8 +26,9 @@ export default function Routines({ topic }: { topic?: TopicId }) {
   const completeRoutine = (id: string) => {
     const date = today();
     if (state.routineLog[date]?.includes(id)) return;
-    const before = alive(state.routineStreak, date);
-    const next = bump(state.routineStreak, date);
+    const grace = streakGrace(state);
+    const before = alive(state.routineStreak, date, grace);
+    const next = bump(state.routineStreak, date, grace);
     update((s) => ({
       ...s,
       routineLog: {

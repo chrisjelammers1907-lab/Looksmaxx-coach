@@ -1,20 +1,45 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, ArrowUpRight } from "lucide-react";
-import { guides } from "../lib/guides";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  Check,
+  Sparkles,
+  X,
+} from "lucide-react";
+import { extraGuides, guides } from "../lib/guides";
 import { topics } from "../lib/data";
 import { asset } from "../lib/domain";
 import { Empty } from "../components/ui";
 import { isAIEditorial, topicEditorial } from "../lib/editorial";
 export default function GuidePage() {
-  const { topic } = useParams();
+  const { topic, slug } = useParams();
   const entry = topics.find((t) => t.id === topic);
-  if (!entry)
+  const extra = slug ? extraGuides[slug] : undefined;
+  if (!entry || (slug && extra?.topic !== entry.id))
     return (
       <Empty title="Guide not found">
         <Link to="/categories">Browse categories</Link>
       </Empty>
     );
-  const guide = guides[entry.id];
+  const guide = extra || guides[entry.id];
+  const related = [
+    ...(slug
+      ? [{ to: `/topics/${entry.id}/guide`, label: guides[entry.id].title }]
+      : []),
+    ...Object.entries(extraGuides)
+      .filter(([key, g]) => g.topic === entry.id && key !== slug)
+      .map(([key, g]) => ({
+        to: `/topics/${entry.id}/guide/${key}`,
+        label: g.title,
+      })),
+  ];
+  const chapters = [
+    { id: "guide-products", label: guide.productsTitle },
+    { id: "guide-routine", label: "Put it together" },
+    { id: "guide-works", label: "What works and what doesn’t" },
+    { id: "guide-coach", label: "Make it yours" },
+  ];
   return (
     <article className="guide-page">
       <Link className="text-link" to={`/topics/${entry.id}`}>
@@ -23,12 +48,13 @@ export default function GuidePage() {
       <header className="guide-hero">
         <div>
           <span className="eyebrow">
-            <BookOpen size={14} /> THE BEGINNER’S GUIDE / {entry.number}
+            <BookOpen size={14} />{" "}
+            {extra ? "THE GUIDE" : "THE BEGINNER’S GUIDE"} / {entry.number}
           </span>
           <h1>{guide.title}</h1>
           <p>{guide.intro}</p>
           <span className="guide-meta">
-            CHARETT editorial · {guide.steps.length} practical chapters
+            {guide.products.length} essentials · {guide.routine.length} steps
           </span>
         </div>
         <img
@@ -42,77 +68,99 @@ export default function GuidePage() {
       <div className="guide-layout">
         <nav aria-label="Guide chapters" className="guide-contents">
           <span className="eyebrow">IN THIS GUIDE</span>
-          {guide.steps.map((step, i) => (
+          {chapters.map((c) => (
             <button
               type="button"
-              key={step.title}
+              key={c.id}
               onClick={() =>
                 document
-                  .getElementById(`chapter-${i}`)
+                  .getElementById(c.id)
                   ?.scrollIntoView({ behavior: "smooth", block: "start" })
               }
             >
-              {step.title}
+              {c.label}
             </button>
           ))}
-          <button
-            type="button"
-            onClick={() =>
-              document
-                .getElementById("guide-sources")
-                ?.scrollIntoView({ behavior: "smooth", block: "start" })
-            }
-          >
-            References & further reading
-          </button>
         </nav>
         <div className="guide-article">
-          {guide.steps.map((step, i) => (
-            <section id={`chapter-${i}`} key={step.title}>
-              <h2>{step.title}</h2>
-              <p>{step.text}</p>
-            </section>
-          ))}
-          <aside className="guide-remember">
-            <BookOpen size={22} />
-            <p>{guide.remember}</p>
-          </aside>
-          <section id="guide-sources" className="guide-sources">
-            <span className="eyebrow">READ WITH CONTEXT</span>
-            <h2>Where this guide comes from</h2>
-            <p>
-              Original editorial summaries informed by the supplied references.
-              Those documents contain personal opinions and unverified claims;
-              they are not clinical evidence or instructions to follow.
-            </p>
-            {guide.references.map((ref) => (
-              <details key={ref.name}>
-                <summary>{ref.name}</summary>
-                <p>{ref.note}</p>
-              </details>
-            ))}
-            {guide.reading.length > 0 && (
-              <>
-                <h3>Official resources for further reading</h3>
-                <p className="small-text">
-                  Use these official resources for further reading. This guide
-                  is general education, not an individual treatment assessment.
-                </p>
-                {guide.reading.map((link) => (
-                  <a
-                    className="reading-link"
-                    key={link.url}
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {link.label}
-                    <ArrowUpRight size={15} />
-                  </a>
-                ))}
-              </>
-            )}
+          <section id="guide-products">
+            <h2>{guide.productsTitle}</h2>
+            <dl className="guide-products">
+              {guide.products.map((p) => (
+                <div key={p.name}>
+                  <dt>{p.name}</dt>
+                  <dd>{p.does}</dd>
+                </div>
+              ))}
+            </dl>
           </section>
+          <section id="guide-routine">
+            <h2>Put it together</h2>
+            <ol className="guide-steps">
+              {guide.routine.map((step) => (
+                <li key={step.title}>
+                  <strong>{step.title}</strong>
+                  <p>{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+          <section id="guide-works" className="guide-verdict">
+            <h2>What works and what doesn’t</h2>
+            <div>
+              <div className="verdict works">
+                <h3>Works</h3>
+                <ul>
+                  {guide.works.map((w) => (
+                    <li key={w}>
+                      <Check size={16} aria-hidden="true" />
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="verdict skip">
+                <h3>Doesn’t</h3>
+                <ul>
+                  {guide.skip.map((w) => (
+                    <li key={w}>
+                      <X size={16} aria-hidden="true" />
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+          {guide.remember && (
+            <aside className="guide-remember">
+              <BookOpen size={22} />
+              <p>{guide.remember}</p>
+            </aside>
+          )}
+          <section id="guide-coach" className="guide-coach">
+            <Sparkles size={22} aria-hidden="true" />
+            <div>
+              <h2>Make it yours</h2>
+              <p>
+                Tell the coach what you use now and what you want to change. It
+                turns this guide into a plan for you.
+              </p>
+            </div>
+            <Link className="button" to={`/coach?topic=${entry.id}`}>
+              Ask your coach <ArrowRight size={16} />
+            </Link>
+          </section>
+          {related.length > 0 && (
+            <nav aria-label="More guides" className="guide-related">
+              {related.map((r) => (
+                <Link key={r.to} to={r.to}>
+                  <BookOpen size={16} /> {r.label}
+                  <ArrowRight size={16} />
+                </Link>
+              ))}
+            </nav>
+          )}
         </div>
       </div>
     </article>

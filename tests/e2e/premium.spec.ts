@@ -7,6 +7,22 @@ const open = async (page: Page, path = "/") => {
   if (await skip.isVisible()) await skip.click();
 };
 
+// Starts the session on a paid plan (only when nothing is stored yet).
+const asMember = async (page: Page, plan = "plus", extra = {}) =>
+  page.addInitScript(
+    ([plan, extra]) => {
+      if (!localStorage.getItem("charett-demo-v1"))
+        localStorage.setItem(
+          "charett-demo-v1",
+          JSON.stringify({
+            subscription: { plan, billing: "monthly" },
+            ...(extra as object),
+          }),
+        );
+    },
+    [plan, extra] as const,
+  );
+
 // Client-side navigation keeps session-only state such as drafts.
 const go = async (page: Page, path: string) => {
   await page.evaluate((next) => {
@@ -339,6 +355,7 @@ test("each clothing style gives the page its own look", async ({ page }) => {
 test("gym days are planned per set, persist, and a PR can become a story", async ({
   page,
 }) => {
+  await asMember(page);
   await open(page, "/topics/gym");
   const weekday = new Date().toLocaleDateString("en", { weekday: "long" });
   await page.getByRole("button", { name: new RegExp(`^${weekday}:`) }).click();
@@ -457,6 +474,7 @@ test("settings switch the app to dark mode and keep the choice", async ({
 test("chat streaks unlock rewards and custom stickers can be made", async ({
   page,
 }) => {
+  await asMember(page);
   await open(page, "/messages?to=mira");
   // Mira's seeded 6-day streak becomes 7 today and unlocks chat themes.
   await expect(page.locator(".conversation-header .streak-chip")).toHaveText(
@@ -527,6 +545,7 @@ test("tasks are grouped by date and routines show the products they use", async 
 test("nutrition: own targets, barcode scan, extra nutrients and weight", async ({
   page,
 }) => {
+  await asMember(page);
   await page.route("https://world.openfoodfacts.org/**", (route) =>
     route.fulfill({
       json: {
@@ -607,4 +626,92 @@ test("weights follow the unit chosen in settings", async ({ page }) => {
   await expect(page.locator(".weight-stats")).toContainText("176.4 lb");
   await page.getByRole("tab", { name: "Training & history" }).click();
   await expect(page.locator(".stat-card").first()).toContainText("lb");
+});
+
+test("free members get limits, ads and an upgrade path", async ({ page }) => {
+  const date = new Date();
+  const today = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  await asMember(page, "free", {
+    coachUsage: { date: today, messages: 9, files: 0 },
+  });
+  await open(page, "/");
+  await expect(page.locator(".sponsored-card").first()).toContainText(
+    "Sponsored",
+  );
+
+  await go(page, "/coach");
+  await expect(
+    page.getByText(/1 of 10 free messages left today/),
+  ).toBeVisible();
+  await page.getByLabel("Ask your demo coach").fill("Hi coach");
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(
+    page.getByText("You’ve used today’s 10 free messages"),
+  ).toBeVisible();
+  await expect(page.getByLabel("Ask your demo coach")).toHaveCount(0);
+
+  await go(page, "/topics/gym");
+  await page.getByRole("button", { name: /^Tuesday:/ }).click();
+  await expect(
+    page.getByText("Free includes 3 training days a week"),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await expect(
+    page.getByRole("link", { name: /Scan a barcode/ }),
+  ).toHaveAttribute("href", "/plans");
+
+  // Upgrading removes the ads and lifts the limits.
+  await go(page, "/plans");
+  await page.getByRole("radio", { name: /Yearly/ }).click();
+  await page.getByRole("button", { name: "Choose Plus" }).click();
+  const checkout = page.getByRole("dialog", { name: "Checkout" });
+  await expect(checkout).toContainText("€99.99");
+  await checkout.getByRole("button", { name: "Start Plus" }).click();
+  await expect(
+    page.getByRole("button", { name: "Current plan" }),
+  ).toBeVisible();
+  await go(page, "/");
+  await expect(page.locator(".sponsored-card")).toHaveCount(0);
+  await go(page, "/coach");
+  await expect(page.getByLabel("Ask your demo coach")).toBeVisible();
+  await noAxeViolations(page);
+});
+
+test("signature shows a badge and unlocks every chat theme", async ({
+  page,
+}) => {
+  await asMember(page, "signature");
+  await open(page, "/profile");
+  await expect(page.locator(".signature-badge")).toHaveText(/Signature/);
+  await go(page, "/plans");
+  await expect(page.locator(".plan-signature")).toContainText("Current plan");
+  await noAxeViolations(page);
+});
+
+test("guides explain products, combinations and what works", async ({
+  page,
+}) => {
+  await open(page, "/topics/gym");
+  await page
+    .locator(".topic-links")
+    .getByRole("link", { name: /Weight guide/ })
+    .click();
+  await expect(page.locator("h1")).toHaveText("Lose, maintain or gain weight");
+  await expect(
+    page.getByRole("heading", { name: "What each lever does" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Hormones or medication only through a doctor.", {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await page
+    .getByRole("link", { name: /Begin with a repeatable training week/ })
+    .click();
+  await expect(page.locator(".guide-verdict")).toContainText("Doesn’t");
+  await expect(page.locator("main")).not.toContainText(
+    /testosterone|anavar|mk.?677|dnp/i,
+  );
+  await noAxeViolations(page);
 });

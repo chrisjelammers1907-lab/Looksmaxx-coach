@@ -16,6 +16,7 @@ import {
 } from "../lib/tasks";
 import { weekdayOf } from "../lib/training";
 import { alive } from "../lib/streaks";
+import { streakGrace } from "../lib/plans";
 import { Button, Field, Modal, PageHeader, Select } from "../components/ui";
 type PlanFilter = "all" | "routines" | "tasks";
 export default function PlanPage() {
@@ -33,6 +34,7 @@ export default function PlanPage() {
     requested || "all",
   );
   const date = today();
+  const streak = alive(state.routineStreak, date, streakGrace(state));
   const todayTasks = state.goals.filter((g) => groupOf(g, date) === "today");
   const completed = todayTasks.filter((g) => isDone(g, date)).length;
   const total = todayTasks.length;
@@ -83,8 +85,7 @@ export default function PlanPage() {
           </strong>
           <span>
             {state.routines.length} routines for today
-            {alive(state.routineStreak, today()) > 0 &&
-              ` · 🔥 ${alive(state.routineStreak, today())}-day routine streak`}
+            {streak > 0 && ` · 🔥 ${streak}-day routine streak`}
           </span>
         </div>
       </div>

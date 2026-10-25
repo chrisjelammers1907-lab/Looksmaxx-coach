@@ -13,9 +13,10 @@ import {
   ShieldCheck,
   UserRound,
 } from "lucide-react";
+import { planOf } from "../lib/plans";
 import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
-import { mayViewPost } from "../lib/domain";
+import { dateLabel, mayViewPost } from "../lib/domain";
 import type { AppSettings } from "../lib/types";
 import { Button, Field, Modal, Notice, Select } from "../components/ui";
 
@@ -423,11 +424,17 @@ export default function SettingsPage() {
           <Section id="subscription" title="Subscription">
             <div className="settings-plan">
               <span>
-                <strong>Free plan</strong>
-                <small>Feed, reels, stories and chats are always free.</small>
+                <strong>{planOf(state).name} plan</strong>
+                <small>
+                  {state.subscription.plan === "free"
+                    ? "Feed, reels, stories and chats are always free."
+                    : `${state.subscription.billing === "yearly" ? "Billed yearly" : "Billed monthly"}${state.subscription.since ? ` · since ${dateLabel(state.subscription.since)}` : ""} · simulated`}
+                </small>
               </span>
               <Link className="button small" to="/plans">
-                See plans
+                {state.subscription.plan === "free"
+                  ? "See plans"
+                  : "Manage plan"}
               </Link>
             </div>
           </Section>

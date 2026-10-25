@@ -1,13 +1,38 @@
 import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useDemo } from "../lib/store";
+import { ads, STORY_AD_EVERY, type Ad } from "../lib/ads";
+import { isPaid } from "../lib/plans";
 import { creators, seedStories } from "../lib/data";
 import { asset, uid } from "../lib/domain";
 import type { Story } from "../lib/types";
 import { Area, Button, Modal } from "./ui";
 
 const STORY_MS = 5000;
+
+interface StoryGroup {
+  author: string;
+  stories: Story[];
+  ad?: Ad;
+}
+
+const adGroup = (n: number): StoryGroup => {
+  const ad = ads[n % ads.length];
+  return {
+    author: `ad:${ad.id}:${n}`,
+    ad,
+    stories: [
+      {
+        id: `${ad.id}-${n}`,
+        author: ad.id,
+        time: "",
+        image: ad.image,
+      },
+    ],
+  };
+};
 
 export function StoryCard({ story }: { story: Story }) {
   return (
@@ -25,7 +50,7 @@ function StoryViewer({
   start,
   onClose,
 }: {
-  groups: { author: string; stories: Story[] }[];
+  groups: StoryGroup[];
   start: number;
   onClose: () => void;
 }) {
@@ -37,6 +62,7 @@ function StoryViewer({
   const story = current?.stories[index];
   const creator = creators.find((c) => c.id === current?.author);
   const own = current?.author === "you";
+  const ad = current?.ad;
 
   const next = () => {
     if (index < current.stories.length - 1) setIndex(index + 1);
@@ -99,10 +125,16 @@ function StoryViewer({
         </div>
         <header className="story-header">
           <span className="avatar">
-            {own ? state.profile.name.slice(0, 1) : creator?.initials}
+            {ad
+              ? ad.initials
+              : own
+                ? state.profile.name.slice(0, 1)
+                : creator?.initials}
           </span>
-          <strong>{own ? "Your story" : creator?.handle}</strong>
-          <small>{story.time}</small>
+          <strong>
+            {ad ? ad.brand : own ? "Your story" : creator?.handle}
+          </strong>
+          <small>{ad ? "Sponsored" : story.time}</small>
           <button
             type="button"
             className="icon-button"
@@ -113,6 +145,14 @@ function StoryViewer({
           </button>
         </header>
         <StoryCard story={story} />
+        {ad && (
+          <div className="story-ad">
+            <p>{ad.headline}</p>
+            <Link to="/plans" onClick={onClose}>
+              Remove ads with Plus
+            </Link>
+          </div>
+        )}
         <span className="visually-hidden" role="status">
           Story {index + 1} of {current.stories.length}
           {story.text ? `: ${story.text}` : ""}
@@ -222,7 +262,7 @@ export default function StoriesRow() {
   const { state } = useDemo();
   const [viewing, setViewing] = useState<number | null>(null);
   const [composing, setComposing] = useState(false);
-  const groups = [
+  const groups: StoryGroup[] = [
     ...(state.stories.length
       ? [{ author: "you", stories: state.stories }]
       : []),
@@ -233,7 +273,15 @@ export default function StoriesRow() {
         stories: seedStories.filter((s) => s.author === c.id),
       }))
       .filter((g) => g.stories.length),
-  ];
+  ].flatMap((g, i, all) =>
+    // Free members see a sponsored story after every few people.
+    !isPaid(state) &&
+    i > 0 &&
+    i < all.length - 1 &&
+    (i + 1) % STORY_AD_EVERY === 0
+      ? [g, adGroup((i + 1) / STORY_AD_EVERY - 1)]
+      : [g],
+  );
   const unseen = (stories: Story[]) =>
     stories.some((s) => !state.seenStories.includes(s.id));
   return (
@@ -270,7 +318,7 @@ export default function StoriesRow() {
         </div>
         {groups
           .map((g, index) => ({ ...g, index }))
-          .filter((g) => g.author !== "you")
+          .filter((g) => g.author !== "you" && !g.ad)
           .map((g) => {
             const creator = creators.find((c) => c.id === g.author)!;
             return (

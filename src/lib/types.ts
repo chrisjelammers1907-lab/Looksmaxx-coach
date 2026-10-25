@@ -255,6 +255,13 @@ export interface Streak {
   /** Last day (YYYY-MM-DD) that kept the streak alive. */
   last: string;
 }
+export type PlanId = "free" | "plus" | "signature";
+export interface Subscription {
+  plan: PlanId;
+  billing: "monthly" | "yearly";
+  /** Date the current paid plan started (simulated). */
+  since?: string;
+}
 export type ThemeChoice = "system" | "light" | "dark";
 export interface AppSettings {
   theme: ThemeChoice;
@@ -313,6 +320,9 @@ export interface DemoState {
   routineLog: Record<string, string[]>;
   chatThemes: Record<string, string>;
   settings: AppSettings;
+  subscription: Subscription;
+  /** Free plan coach use for one day. */
+  coachUsage: { date: string; messages: number; files: number };
   trainingWeek: Partial<Record<Weekday, TrainingDay>>;
   /** Ticked sets per date, then per planned exercise id. */
   trainingProgress: Record<string, Record<string, SetProgress[]>>;

@@ -36,6 +36,9 @@ import {
   weightLabel,
 } from "../lib/units";
 import type { ExtraNutrients, Food, NutritionTargets } from "../lib/types";
+import { Link } from "react-router-dom";
+import { isPaid } from "../lib/plans";
+import { PlusTag } from "./Upgrade";
 import BarcodeScanner from "./BarcodeScanner";
 import { Button, Empty, Field, Modal, Notice, Select } from "./ui";
 
@@ -325,15 +328,23 @@ export default function Nutrition() {
           </div>
         )}
         <div className="nutrition-actions">
-          <Button
-            onClick={() => {
-              setScanError("");
-              setScanning(true);
-            }}
-          >
-            <ScanBarcode size={16} />
-            Scan a barcode
-          </Button>
+          {isPaid(state) ? (
+            <Button
+              onClick={() => {
+                setScanError("");
+                setScanning(true);
+              }}
+            >
+              <ScanBarcode size={16} />
+              Scan a barcode
+            </Button>
+          ) : (
+            <Link className="button" to="/plans">
+              <ScanBarcode size={16} />
+              Scan a barcode
+              <PlusTag />
+            </Link>
+          )}
           <Button variant="secondary" onClick={() => setFood(emptyFood())}>
             <Plus size={16} />
             Add food
@@ -813,7 +824,8 @@ export default function Nutrition() {
             )}
             <p className="small-text muted">
               An estimate (Mifflin-St Jeor). Watch your 7-day average weight for
-              two to three weeks and adjust by about 100–200 kcal.
+              two to three weeks and adjust by about 100–200 kcal.{" "}
+              <Link to="/topics/gym/guide/weight">Read the weight guide</Link>
             </p>
             <Button
               onClick={() => {

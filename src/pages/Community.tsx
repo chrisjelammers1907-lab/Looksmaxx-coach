@@ -1,5 +1,5 @@
 import HScroll from "../components/HScroll";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Link,
   useNavigate,
@@ -36,6 +36,9 @@ import { PostCard } from "../components/Social";
 import { MediaPicker, PostMedia, mediaLabel } from "../components/FeedMedia";
 import { SoundPicker } from "../components/Sounds";
 import StoriesRow from "../components/Stories";
+import { SponsoredPost } from "../components/Ads";
+import { AD_EVERY, ads } from "../lib/ads";
+import { isPaid } from "../lib/plans";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -112,6 +115,7 @@ function CommunityContent() {
     );
     navigate(`/post/${saved.id}`);
   };
+  const showAds = !isPaid(state);
   const visible = state.posts
     .filter((p) =>
       format === "reels"
@@ -875,8 +879,15 @@ function CommunityContent() {
           className={`community-grid feed-grid ${format}-feed`}
           data-format={format}
         >
-          {visible.map((p) => (
-            <PostCard key={p.id} post={p} />
+          {visible.map((p, i) => (
+            <Fragment key={p.id}>
+              <PostCard post={p} />
+              {showAds && format === "photos" && (i + 1) % AD_EVERY === 0 && (
+                <SponsoredPost
+                  ad={ads[((i + 1) / AD_EVERY - 1) % ads.length]}
+                />
+              )}
+            </Fragment>
           ))}
         </div>
       ) : (

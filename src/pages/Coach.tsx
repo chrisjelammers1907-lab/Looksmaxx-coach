@@ -12,7 +12,9 @@ import {
 } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { topics } from "../lib/data";
-import { uid } from "../lib/domain";
+import { today, uid } from "../lib/domain";
+import { coachLeft, coachUsage, freeLimits, isPaid } from "../lib/plans";
+import { UpgradeCard } from "../components/Upgrade";
 import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
 import { Button, ImageInput, Modal, Notice } from "../components/ui";
@@ -46,8 +48,11 @@ export default function CoachPage() {
     if (state.chat.length)
       end.current?.scrollIntoView({ behavior: "instant", block: "nearest" });
   }, [state.chat.length]);
+  const left = coachLeft(state, today());
+  const free = !isPaid(state);
   const send = async (value = text) => {
     if (busy || (!value.trim() && !photo && !file)) return;
+    if (left.messages <= 0) return;
     setError("");
     setBusy(true);
     const request =
@@ -55,19 +60,27 @@ export default function CoachPage() {
       (photo
         ? "I have a question about this photo."
         : "I have a question about this file.");
-    update((s) => ({
-      ...s,
-      chat: [
-        ...s.chat,
-        {
-          id: uid(),
-          author: "you",
-          text: request,
-          photo: photo || undefined,
-          file,
+    update((s) => {
+      const used = coachUsage(s, today());
+      return {
+        ...s,
+        coachUsage: {
+          ...used,
+          messages: used.messages + 1,
+          files: used.files + (file ? 1 : 0),
         },
-      ],
-    }));
+        chat: [
+          ...s.chat,
+          {
+            id: uid(),
+            author: "you",
+            text: request,
+            photo: photo || undefined,
+            file,
+          },
+        ],
+      };
+    });
     setText("");
     setPhoto("");
     setFile(undefined);
@@ -207,84 +220,105 @@ export default function CoachPage() {
               {error}
             </p>
           )}
-          <form
-            className="coach-composer"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void send();
-            }}
-          >
-            {(photo || file) && (
-              <div className="attachment-preview">
-                {photo && <img src={photo} alt="Private attachment preview" />}
-                {file && <FileChip file={file} />}
-                <span>Stays in this tab · not analyzed</span>
-                <button
-                  className="icon-button"
-                  type="button"
-                  aria-label="Remove attachment"
-                  onClick={() => {
-                    setPhoto("");
-                    setFile(undefined);
-                  }}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-            <div className="composer-pill">
-              <ImageInput
-                label="Attach a private photo"
-                onImage={setPhoto}
-                iconOnly
-              />
-              <label className="file-input" title="Attach a file">
-                <Paperclip size={19} strokeWidth={1.7} aria-hidden="true" />
-                <input
-                  type="file"
-                  className="visually-hidden"
-                  aria-label="Attach a file"
-                  accept=".pdf,.doc,.docx,.txt,.rtf,.csv,.xlsx,.pages,image/*"
-                  onChange={(e) => {
-                    const chosen = e.target.files?.[0];
-                    e.target.value = "";
-                    if (!chosen) return;
-                    if (chosen.size > 20 * 1024 * 1024) {
-                      setError("Choose a file under 20 MB.");
-                      return;
+          {left.messages <= 0 ? (
+            <UpgradeCard title="You’ve used today’s 10 free messages">
+              Plus gives you unlimited coach messages and files — or come back
+              tomorrow.
+            </UpgradeCard>
+          ) : (
+            <form
+              className="coach-composer"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void send();
+              }}
+            >
+              {(photo || file) && (
+                <div className="attachment-preview">
+                  {photo && (
+                    <img src={photo} alt="Private attachment preview" />
+                  )}
+                  {file && <FileChip file={file} />}
+                  <span>Stays in this tab · not analyzed</span>
+                  <button
+                    className="icon-button"
+                    type="button"
+                    aria-label="Remove attachment"
+                    onClick={() => {
+                      setPhoto("");
+                      setFile(undefined);
+                    }}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+              <div className="composer-pill">
+                <ImageInput
+                  label="Attach a private photo"
+                  onImage={setPhoto}
+                  iconOnly
+                />
+                <label className="file-input" title="Attach a file">
+                  <Paperclip size={19} strokeWidth={1.7} aria-hidden="true" />
+                  <input
+                    type="file"
+                    className="visually-hidden"
+                    aria-label="Attach a file"
+                    accept=".pdf,.doc,.docx,.txt,.rtf,.csv,.xlsx,.pages,image/*"
+                    onChange={(e) => {
+                      const chosen = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!chosen) return;
+                      if (left.files <= 0) {
+                        setError(
+                          "Free includes one file a day. Plus and Signature have no limit.",
+                        );
+                        return;
+                      }
+                      if (chosen.size > 20 * 1024 * 1024) {
+                        setError("Choose a file under 20 MB.");
+                        return;
+                      }
+                      setFile({
+                        name: chosen.name,
+                        size: chosen.size,
+                        type: chosen.type,
+                      });
+                    }}
+                  />
+                </label>
+                <textarea
+                  aria-label="Ask your demo coach"
+                  placeholder="Message your coach…"
+                  rows={1}
+                  value={text}
+                  maxLength={2000}
+                  onChange={(e) => setText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      void send();
                     }
-                    setFile({
-                      name: chosen.name,
-                      size: chosen.size,
-                      type: chosen.type,
-                    });
                   }}
                 />
-              </label>
-              <textarea
-                aria-label="Ask your demo coach"
-                placeholder="Message your coach…"
-                rows={1}
-                value={text}
-                maxLength={2000}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    void send();
-                  }
-                }}
-              />
-              <button
-                type="submit"
-                className="send-button"
-                aria-label="Send"
-                disabled={busy || (!text.trim() && !photo && !file)}
-              >
-                <ArrowUp size={19} strokeWidth={2} />
-              </button>
-            </div>
-          </form>
+                <button
+                  type="submit"
+                  className="send-button"
+                  aria-label="Send"
+                  disabled={busy || (!text.trim() && !photo && !file)}
+                >
+                  <ArrowUp size={19} strokeWidth={2} />
+                </button>
+              </div>
+              {free && left.messages <= 5 && (
+                <p className="coach-limit" role="status">
+                  {left.messages} of {freeLimits.coachMessages} free messages
+                  left today · <Link to="/plans">Go unlimited</Link>
+                </p>
+              )}
+            </form>
+          )}
         </section>
         <aside className="coach-context">
           <h2>What your coach knows</h2>

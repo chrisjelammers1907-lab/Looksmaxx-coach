@@ -6,6 +6,7 @@ import {
   Bookmark,
   Ellipsis,
   FilePen,
+  Crown,
   Film,
   Flag,
   Grid3x3,
@@ -20,6 +21,7 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
+import { isSignature } from "../lib/plans";
 import { creators } from "../lib/data";
 import { asset, mayViewPost } from "../lib/domain";
 import { FollowButton } from "../components/Social";
@@ -212,7 +214,14 @@ function ProfileContent() {
           </li>
         </ul>
         <div className="profile-id">
-          <h1>{name}</h1>
+          <h1>
+            {name}
+            {own && isSignature(state) && (
+              <span className="signature-badge">
+                <Crown size={12} aria-hidden="true" /> Signature
+              </span>
+            )}
+          </h1>
           <span className="profile-handle">
             @{handle}
             {own && (

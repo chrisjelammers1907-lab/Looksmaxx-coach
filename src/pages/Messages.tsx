@@ -30,6 +30,8 @@ import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
 import { uid, maySharePost, today } from "../lib/domain";
 import { alive, bump, hasReward, unlocked } from "../lib/streaks";
+import { isPaid, isSignature, streakGrace } from "../lib/plans";
+import { UpgradeCard } from "../components/Upgrade";
 import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
 import { Button, Modal, Notice, Select } from "../components/ui";
@@ -77,11 +79,15 @@ export default function MessagesPage() {
     ),
   );
   const date = today();
-  const streakOf = (id: string) => alive(state.chatStreaks[id], date);
+  const grace = streakGrace(state);
+  const streakOf = (id: string) => alive(state.chatStreaks[id], date, grace);
   const best = Math.max(0, ...creators.map((c) => streakOf(c.id)));
+  // Signature members own every streak reward from day one.
+  const owns = (id: Parameters<typeof hasReward>[1]) =>
+    isSignature(state) || hasReward(best, id);
   const post = (message: Partial<Message>) => {
     const before = streakOf(selected);
-    const next = bump(state.chatStreaks[selected], date);
+    const next = bump(state.chatStreaks[selected], date, grace);
     update((s) => ({
       ...s,
       chatStreaks: { ...s.chatStreaks, [selected]: next },
@@ -275,7 +281,7 @@ export default function MessagesPage() {
                     🔥 {streakOf(creator.id)}
                   </span>
                 )}
-                {hasReward(best, "themes") && (
+                {owns("themes") && (
                   <button
                     className="icon-button"
                     aria-label="Chat theme"
@@ -613,15 +619,19 @@ export default function MessagesPage() {
       )}
       {stickerPicker && (
         <Modal title="Stickers" onClose={() => setStickerPicker(false)}>
-          <Button
-            variant="secondary small"
-            onClick={() => {
-              setStickerPicker(false);
-              setMaker(true);
-            }}
-          >
-            <Plus size={15} /> Create a sticker
-          </Button>
+          {isPaid(state) ? (
+            <Button
+              variant="secondary small"
+              onClick={() => {
+                setStickerPicker(false);
+                setMaker(true);
+              }}
+            >
+              <Plus size={15} /> Create a sticker
+            </Button>
+          ) : (
+            <UpgradeCard title="Make your own stickers with Plus" />
+          )}
           {state.customStickers.length > 0 && (
             <>
               <h3 className="sticker-group">Yours</h3>
@@ -660,7 +670,7 @@ export default function MessagesPage() {
           </div>
           <h3 className="sticker-group">
             Streak pack{" "}
-            {!hasReward(best, "stickers") && (
+            {!owns("stickers") && (
               <small className="muted">· unlocks at a 3-day streak</small>
             )}
           </h3>
@@ -669,7 +679,7 @@ export default function MessagesPage() {
               <button
                 key={st.id}
                 type="button"
-                disabled={!hasReward(best, "stickers")}
+                disabled={!owns("stickers")}
                 aria-label={`Send ${st.label} sticker`}
                 onClick={() => {
                   post({ sticker: st.id });
@@ -706,7 +716,7 @@ export default function MessagesPage() {
               ["champagne", "Champagne"],
               ["midnight", "Midnight"],
               ["ivory", "Ivory"],
-              ...(hasReward(best, "gold") ? [["gold", "Gold leaf"]] : []),
+              ...(owns("gold") ? [["gold", "Gold leaf"]] : []),
             ].map(([id, label]) => (
               <button
                 key={id}
@@ -729,7 +739,7 @@ export default function MessagesPage() {
               </button>
             ))}
           </div>
-          {!hasReward(best, "gold") && (
+          {!owns("gold") && (
             <p className="small-text muted">
               Gold leaf unlocks at a 100-day streak.
             </p>

@@ -1,6 +1,8 @@
 import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { Check, Dumbbell, Plus, Repeat, Trash2, Trophy, X } from "lucide-react";
+import { freeLimits, isPaid } from "../lib/plans";
+import { UpgradeCard } from "./Upgrade";
 import { fromKg, toKg, weightLabel } from "../lib/units";
 import { useDemo } from "../lib/store";
 import { dateLabel, today, uid } from "../lib/domain";
@@ -34,11 +36,23 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
           exercises: [{ id: uid(), name: "", sets: [{ reps: 8, weight: 20 }] }],
         },
   );
+  const overLimit =
+    !existing &&
+    !isPaid(state) &&
+    Object.keys(state.trainingWeek).length >= freeLimits.trainingDays;
   const setExercise = (index: number, next: TrainingDay["exercises"][0]) =>
     setDraft({
       ...draft,
       exercises: draft.exercises.map((e, i) => (i === index ? next : e)),
     });
+  if (overLimit)
+    return (
+      <Modal title={`Plan ${day}`} onClose={onClose}>
+        <UpgradeCard title="Free includes 3 training days a week">
+          Make another day a rest day, or go unlimited with Plus.
+        </UpgradeCard>
+      </Modal>
+    );
   return (
     <Modal title={`Plan ${day}`} onClose={onClose} wide>
       <form

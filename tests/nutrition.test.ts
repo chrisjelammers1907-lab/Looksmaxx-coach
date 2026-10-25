@@ -150,3 +150,14 @@ describe("tasks", () => {
     expect(isDone(daily, "2026-10-26")).toBe(false);
   });
 });
+
+describe("streak protection", () => {
+  it("forgives one missed day only with a grace of two", async () => {
+    const { alive, bump } = await import("../src/lib/streaks");
+    const streak = { count: 5, last: "2026-10-23" };
+    expect(alive(streak, "2026-10-25")).toBe(0);
+    expect(alive(streak, "2026-10-25", 2)).toBe(5);
+    expect(bump(streak, "2026-10-25").count).toBe(1);
+    expect(bump(streak, "2026-10-25", 2).count).toBe(6);
+  });
+});

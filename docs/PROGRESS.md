@@ -132,3 +132,44 @@ The owner's feedback on the first preview was agreed point by point before any b
 - Axe finds no violations on 21 routes at both widths or in the three clothing themes.
 
 Updated screenshots are `docs/screenshots/premium/v2-*.jpg`.
+
+## Third premium round — 25 October 2026
+
+1. **Home, reels and scrolling**
+   - Stories run continuously for every creator and scroll with touch, wheel, drag or arrows.
+   - All chip rows scroll the same way.
+   - On a phone a reel fills the screen, with likes, caption and "more" inside the reel. Tapping it opens an Instagram-style sheet with Shop the look.
+   - Photo sound is a small icon on the image.
+   - Captions no longer repeat the handle.
+2. **Chats, settings and dark mode**
+   - The microphone sits only at the bottom right; camera and stickers are in the + menu.
+   - Custom stickers can be made from text or a photo.
+   - Streaks for chats, routines and the gym unlock rewards at 3, 7, 30 and 100 days.
+   - A full Settings page (account, notifications, appearance with light/dark/device, privacy, units, subscription, data). The app is English only for now.
+3. **Plan, gym and nutrition**
+   - Tasks have an optional date and repeat, grouped Overdue / Today / This week / Later.
+   - Routines link owned products, per routine and per step.
+   - The separate exercise log is gone; history stays editable and weights follow the kg/lb setting.
+   - Nutrition targets are set by the person: kcal, carbs, protein and fat are required; fibre, sugars, salt, potassium, minerals and vitamins are optional.
+   - Food is entered by hand or scanned (BarcodeDetector, or ZXing on Safari and Firefox, plus typing the number). Values come from Open Food Facts and scale to the grams eaten.
+   - A weight log shows a chart and the 7-day average.
+   - A calorie calculator (Mifflin-St Jeor) gives maintenance only under 18 and never suggests less than 1200/1500 kcal.
+   - Food, weights and targets persist in `charett-training-v1`.
+4. **Guides and membership**
+   - Every guide now explains what each product does, how to put it together, and what works and what doesn't.
+   - The guides list no sources, and the extreme drug content is removed.
+   - Wherever hormones or medication come up, the guides say "Hormones or medication only through a doctor."
+   - A new weight guide (lose, maintain, gain) is linked from Gym and the calculator.
+   - Each guide ends with a coach call to action.
+   - `/plans` offers Free, Plus (€9.99 a month or €99.99 a year) and Signature (€19.99 a month or €199.99 a year), with a simulated checkout that asks for no payment details.
+   - Free includes 10 coach messages and 1 file a day, 3 training days and food logging by hand. It shows sponsored posts every sixth post and between stories; the sponsors are fictional.
+   - Plus lifts the limits, adds the barcode scan and custom stickers, and removes ads.
+   - Signature adds all chat themes and sticker packs, streak protection and a profile badge.
+
+**Validation**
+- Typecheck, ESLint and Prettier (source) pass.
+- 27 unit tests pass.
+- All Chromium e2e cases pass at desktop and mobile width; the mobile-only and pointer-only cases are skipped where they don't apply.
+- Axe finds no violations in light and dark mode on the new routes.
+
+Screenshots are `docs/screenshots/premium/v3-*.jpg`.

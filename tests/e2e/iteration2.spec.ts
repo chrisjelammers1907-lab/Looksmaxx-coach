@@ -42,12 +42,15 @@ test("Home is For You, navigation is explicit, every category has a usable guide
       .click();
     await expect(page).toHaveURL(new RegExp(`/topics/${topic}/guide$`));
     await expect(
-      page.getByRole("heading", { name: "Where this guide comes from" }),
+      page.getByRole("heading", { name: "Put it together" }),
     ).toBeVisible();
     await page
       .getByRole("navigation", { name: "Guide chapters" })
-      .getByRole("button", { name: "References & further reading" })
+      .getByRole("button", { name: "Make it yours" })
       .click();
+    await expect(
+      page.getByRole("link", { name: /Ask your coach/ }),
+    ).toHaveAttribute("href", `/coach?topic=${topic}`);
     await expect(page).toHaveURL(new RegExp(`/topics/${topic}/guide$`));
     expect(
       await page.evaluate(

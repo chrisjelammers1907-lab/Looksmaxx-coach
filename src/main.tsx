@@ -27,6 +27,7 @@ import Messages from "./pages/Messages";
 import Coach from "./pages/Coach";
 import Plan from "./pages/Plan";
 import Settings from "./pages/Settings";
+import Plans from "./pages/Plans";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="categories" element={<Categories />} />
             <Route path="about" element={<About />} />
             <Route path="topics/:topic/guide" element={<Guide />} />
+            <Route path="topics/:topic/guide/:slug" element={<Guide />} />
             <Route path="topics/clothing" element={<Clothing />} />
             <Route path="topics/:topic" element={<Topic />} />
             <Route path="explore" element={<Community />} />
@@ -47,6 +49,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="coach" element={<Coach />} />
             <Route path="plan" element={<Plan />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="plans" element={<Plans />} />
             <Route
               path="*"
               element={

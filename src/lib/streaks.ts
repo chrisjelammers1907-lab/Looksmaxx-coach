@@ -8,20 +8,29 @@ export const rewards = [
   { days: 100, id: "gold", label: "Gold leaf chat theme" },
 ] as const;
 
-/** Counts today once; a missed day restarts the streak at 1. */
-export function bump(streak: Streak | undefined, date: string): Streak {
+/** Whether `last` is within `grace` days before `date` (1 = yesterday). */
+const kept = (last: string, date: string, grace: number) =>
+  last >= addDays(date, -grace) && last <= date;
+
+/**
+ * Counts today once; a missed day restarts the streak at 1. With a grace of
+ * 2 (Signature), one missed day is forgiven.
+ */
+export function bump(
+  streak: Streak | undefined,
+  date: string,
+  grace = 1,
+): Streak {
   if (!streak) return { count: 1, last: date };
   if (streak.last === date) return streak;
-  if (streak.last === addDays(date, -1))
+  if (kept(streak.last, date, grace))
     return { count: streak.count + 1, last: date };
   return { count: 1, last: date };
 }
 
-/** A streak shown today is still alive if it was kept today or yesterday. */
-export const alive = (streak: Streak | undefined, date: string) =>
-  streak && (streak.last === date || streak.last === addDays(date, -1))
-    ? streak.count
-    : 0;
+/** A streak shown today is still alive if it was kept within the grace. */
+export const alive = (streak: Streak | undefined, date: string, grace = 1) =>
+  streak && kept(streak.last, date, grace) ? streak.count : 0;
 
 /** The reward newly reached when a streak moves from `before` to `after`. */
 export const unlocked = (before: number, after: number) =>

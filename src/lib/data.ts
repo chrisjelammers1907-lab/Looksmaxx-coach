@@ -837,6 +837,8 @@ export const makeInitialState = (): DemoState => ({
   routineStreak: { count: 4, last: addDays(today(), -1) },
   routineLog: {},
   chatThemes: {},
+  subscription: { plan: "free", billing: "monthly" },
+  coachUsage: { date: "", messages: 0, files: 0 },
   settings: {
     theme: "system",
     textSize: "default",

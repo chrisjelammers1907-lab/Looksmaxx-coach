@@ -116,6 +116,28 @@ function load(): DemoState {
             : {}),
         },
       };
+    if (
+      isRecord(saved.subscription) &&
+      ["free", "plus", "signature"].includes(saved.subscription.plan as string)
+    )
+      initial.subscription = {
+        plan: saved.subscription.plan as DemoState["subscription"]["plan"],
+        billing: saved.subscription.billing === "yearly" ? "yearly" : "monthly",
+        since:
+          typeof saved.subscription.since === "string"
+            ? saved.subscription.since
+            : undefined,
+      };
+    if (
+      isRecord(saved.coachUsage) &&
+      typeof saved.coachUsage.date === "string" &&
+      typeof saved.coachUsage.messages === "number"
+    )
+      initial.coachUsage = {
+        date: saved.coachUsage.date,
+        messages: saved.coachUsage.messages,
+        files: Number(saved.coachUsage.files) || 0,
+      };
     if (isRecord(saved.chatStreaks))
       initial.chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
     if (isRecord(saved.routineStreak))
@@ -155,6 +177,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         routineLog,
         chatThemes,
         customStickers,
+        subscription,
+        coachUsage,
       } = state;
       const ids = seedPosts.map((p) => p.id);
       localStorage.setItem(
@@ -173,6 +197,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           routineStreak,
           routineLog,
           chatThemes,
+          subscription,
+          coachUsage,
           // Photo stickers stay in this tab like other private uploads.
           customStickers: customStickers.filter((st) => st.kind === "text"),
         }),

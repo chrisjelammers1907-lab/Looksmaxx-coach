@@ -1,4 +1,5 @@
 import HScroll from "./HScroll";
+import { extraGuides } from "../lib/guides";
 import {
   useEffect,
   useRef,
@@ -153,6 +154,13 @@ export function TopicLinks({ topic }: { topic: string }) {
       <Link to={`/topics/${topic}/guide`}>
         <BookOpen size={16} /> Beginner’s guide <ArrowUpRight size={16} />
       </Link>
+      {Object.entries(extraGuides)
+        .filter(([, g]) => g.topic === topic)
+        .map(([key, g]) => (
+          <Link key={key} to={`/topics/${topic}/guide/${key}`}>
+            <BookOpen size={16} /> {g.label} <ArrowUpRight size={16} />
+          </Link>
+        ))}
     </div>
   );
 }

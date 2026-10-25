@@ -194,7 +194,7 @@ try {
         .getByRole("link", { name: /Beginner’s guide/ })
         .click();
       await expect(
-        page.getByRole("heading", { name: "Where this guide comes from" }),
+        page.getByRole("heading", { name: "Put it together" }),
       ).toBeVisible();
       expect((await page.reload()).status()).toBe(200);
       await nav.getByRole("link", { name: "Home", exact: true }).click();

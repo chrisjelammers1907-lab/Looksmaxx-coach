@@ -81,3 +81,21 @@ Messages and AI coach share one chat language: a conversation list with 56 px av
   - Minimalist: gallery white, hairlines, square edges and light sans
   - Dark casual: espresso
 - **Gym:** day tiles (forest for training days, champagne ring for today) and a Today card with set rows, check buttons, a champagne "New PR" badge and a forest PR banner.
+
+## Third premium round — 25 October 2026
+
+- **Dark mode.** `:root[data-theme="dark"]` in `tokens.css` redefines the surfaces.
+  - Text uses its own tokens (`--forest-text`, `--on-dark`, `--on-dark-muted`), so legacy layers stay readable in both themes.
+  - Settings choose Light, Dark or Match my device.
+- **Scroll rows.** `HScroll` wraps every horizontal row (stories, chips, tabs, week strip) with edge fades and arrow buttons.
+- **Guides.** Every guide uses the same layout:
+  - a glossary (`dl.guide-products`);
+  - numbered steps (`ol.guide-steps`);
+  - a two-column Works / Doesn't verdict;
+  - an optional reminder;
+  - a forest-green coach call to action.
+- **Nutrition.** One calorie ring plus four macro bars: forest for calories, champagne for macros, danger when a target is passed. The weight chart draws the raw line in `--line-strong`, the 7-day average in `--forest`, and champagne dots.
+- **Membership.**
+  - Plan cards: Free on porcelain; Plus outlined in forest with a "Most popular" flag; Signature on `--forest-deep` with champagne accents.
+  - Upgrade prompts (`.upgrade-card`) and the `Plus` tag use cream and champagne, never red.
+  - Sponsored posts reuse the photo card with a forest CTA bar and the word "Sponsored" under the brand.
