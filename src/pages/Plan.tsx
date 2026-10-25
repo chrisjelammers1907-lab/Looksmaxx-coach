@@ -34,6 +34,10 @@ export default function PlanPage() {
     requested || "all",
   );
   const date = today();
+  const weekday = new Date().toLocaleDateString("en", { weekday: "short" });
+  const routinesToday = state.routines.filter(
+    (r) => r.schedule === "Daily" || r.schedule.includes(weekday),
+  ).length;
   const streak = alive(state.routineStreak, date, streakGrace(state));
   const todayTasks = state.goals.filter((g) => groupOf(g, date) === "today");
   const completed = todayTasks.filter((g) => isDone(g, date)).length;
@@ -84,7 +88,8 @@ export default function PlanPage() {
             {completed} of {total} done today
           </strong>
           <span>
-            {state.routines.length} routines for today
+            {routinesToday} {routinesToday === 1 ? "routine" : "routines"} for
+            today
             {streak > 0 && ` · 🔥 ${streak}-day routine streak`}
           </span>
         </div>

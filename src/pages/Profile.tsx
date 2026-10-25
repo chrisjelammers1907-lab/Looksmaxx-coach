@@ -14,7 +14,7 @@ import {
   Images,
   LockKeyhole,
   Pencil,
-  Repeat2,
+  Repeat,
   Settings,
   Share,
   UserX,
@@ -23,7 +23,7 @@ import {
 import { useDemo, toggle } from "../lib/store";
 import { isSignature } from "../lib/plans";
 import { creators } from "../lib/data";
-import { asset, mayViewPost } from "../lib/domain";
+import { asset, compactCount, mayViewPost } from "../lib/domain";
 import { FollowButton } from "../components/Social";
 import type { Post } from "../lib/types";
 import {
@@ -37,8 +37,7 @@ import {
   Select,
 } from "../components/ui";
 
-const compact = (n: number) =>
-  new Intl.NumberFormat("en", { notation: "compact" }).format(n);
+const compact = compactCount;
 const isReel = (p: Post) => p.format === "reel" || p.media?.kind === "video";
 
 function ProfileGrid({
@@ -169,7 +168,7 @@ function ProfileContent() {
         { id: "reels", label: "Reels", icon: Film },
         { id: "drafts", label: "Drafts", icon: FilePen },
         { id: "private", label: "Private", icon: LockKeyhole },
-        { id: "reposts", label: "Reposts", icon: Repeat2 },
+        { id: "reposts", label: "Reposts", icon: Repeat },
         { id: "likes", label: "Likes", icon: Heart },
         { id: "saved", label: "Saved", icon: Bookmark },
       ]

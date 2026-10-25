@@ -79,7 +79,7 @@ test("Home is For You, navigation is explicit, every category has a usable guide
     .click();
   await expect(page.locator("h1")).toContainText("A little intention.");
   await expect(
-    page.getByText(/This version is an interactive demonstration/),
+    page.getByText(/This is an interactive preview/),
   ).toBeVisible();
 });
 test("feed video plays, photo frames have real supported pixel dimensions, topic is optional", async ({
@@ -143,7 +143,7 @@ test("private upload is cropped proportionally and cannot be published as public
     page.getByRole("button", { name: "Preview audience & content" }),
   ).toBeDisabled();
   await expect(page.getByRole("alert")).toContainText(
-    "Personal test uploads stay private",
+    "Personal uploads stay private",
   );
   await page.getByLabel("Audience", { exact: true }).selectOption("private");
   await page

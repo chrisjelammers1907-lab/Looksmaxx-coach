@@ -197,6 +197,15 @@ export const creators: Creator[] = [
     likes: 980,
   },
 ];
+/** Fictional house brands per category. */
+const brands: Partial<Record<TopicId, string>> = {
+  clothing: "Atelier Calme",
+  skincare: "Lune Skin",
+  hair: "Studio Tresse",
+  grooming: "Fine Line",
+  smile: "Daily Bright",
+  fragrance: "Maison Solène",
+};
 const item = (
   id: string,
   topic: TopicId,
@@ -204,6 +213,7 @@ const item = (
   price: number | null,
   image: string,
   notes = "",
+  size = "",
 ): Item => ({
   id,
   topic,
@@ -211,12 +221,12 @@ const item = (
   price,
   image,
   notes,
-  brand: "Atelier Example",
-  store: "Demo boutique",
+  brand: brands[topic] || "CHARETT Edit",
+  store: "CHARETT Shop",
   currency: "EUR",
   checkedAt: "2026-10-19",
   url: "",
-  size: "M · example",
+  size,
   tags: "everyday, classic",
 });
 export const seedItems: Item[] = [
@@ -226,37 +236,76 @@ export const seedItems: Item[] = [
     "The linen shirt",
     59,
     "shirt",
-    "Relaxed fit, warm ivory. Fictional item.",
+    "Relaxed fit, warm ivory",
+    "M",
   ),
-  item("tee", "clothing", "Essential cotton tee", 29, "tee"),
-  item("denim", "clothing", "Straight-leg denim", 89, "denim"),
+  item(
+    "tee",
+    "clothing",
+    "Essential cotton tee",
+    29,
+    "tee",
+    "Heavyweight cotton",
+    "M",
+  ),
+  item(
+    "denim",
+    "clothing",
+    "Straight-leg denim",
+    89,
+    "denim",
+    "Rigid indigo, one break",
+    "32/32",
+  ),
   item(
     "skin1",
     "skincare",
     "Gentle cream cleanser",
     16,
     "skin",
-    "Sample non-medicated product; fragrance-free preference.",
+    "Fragrance-free, non-foaming",
   ),
-  item("skin2", "skincare", "Daily moisturizer", 22, "skin"),
+  item("skin2", "skincare", "Daily moisturizer", 22, "skin", "Light gel-cream"),
   item(
     "skin3",
     "skincare",
     "Broad-spectrum SPF 30+",
     null,
     "skin",
-    "Example category. Follow the label and local guidance.",
+    "Reapply every two hours outdoors",
   ),
-  item("hair1", "hair", "Lightweight styling cream", 18, "hair"),
-  item("groom1", "grooming", "Soft brow brush", 8, "grooming"),
-  item("smile1", "smile", "Soft-bristle toothbrush", 6, "smile"),
+  item(
+    "hair1",
+    "hair",
+    "Lightweight styling cream",
+    18,
+    "hair",
+    "Soft hold, natural finish",
+  ),
+  item(
+    "groom1",
+    "grooming",
+    "Soft brow brush",
+    8,
+    "grooming",
+    "Spoolie and comb",
+  ),
+  item(
+    "smile1",
+    "smile",
+    "Soft-bristle toothbrush",
+    6,
+    "smile",
+    "Replace every three months",
+  ),
   item(
     "scent1",
     "fragrance",
     "Cedar & Quiet",
     65,
     "fragrance",
-    "Fictional fragrance. Woody, citrus, soft musk. Autumn / evenings.",
+    "Woody, citrus, soft musk · autumn evenings",
+    "50 ml",
   ),
 ];
 export const seedPosts: Post[] = [
@@ -282,14 +331,10 @@ export const seedPosts: Post[] = [
     author: "noor",
     topic: "skincare",
     title: "My slower morning ritual",
-    body: "Keeping my routine simple made it easier to stay consistent. This is a fictional example, not treatment advice.",
+    body: "Keeping my routine simple made it easier to stay consistent. Three steps, every morning, nothing more.",
     image: "ritual",
     items: seedItems.filter((i) => i.topic === "skincare"),
-    steps: [
-      "Gentle cleanse if needed",
-      "Moisturize",
-      "Broad-spectrum sunscreen, following its label",
-    ],
+    steps: ["Gentle cleanse", "Moisturise", "Sunscreen, SPF 30 or higher"],
     audience: "public",
     style: "",
     occasion: "Everyday",
@@ -621,11 +666,7 @@ export const makeInitialState = (): DemoState => ({
       title: "A fresh start",
       time: "AM",
       schedule: "Daily",
-      steps: [
-        "Gentle cleanse if needed",
-        "Moisturize",
-        "Apply sunscreen according to its label",
-      ],
+      steps: ["Gentle cleanse", "Moisturise", "Sunscreen, SPF 30 or higher"],
       productIds: ["skin1", "skin2", "skin3"],
       stepProducts: { 0: "skin1", 1: "skin2", 2: "skin3" },
     },
@@ -635,7 +676,9 @@ export const makeInitialState = (): DemoState => ({
       title: "The evening reset",
       time: "PM",
       schedule: "Daily",
-      steps: ["Gently cleanse", "Moisturize"],
+      steps: ["Cleanse after your shower", "Moisturise"],
+      productIds: ["skin1", "skin2"],
+      stepProducts: { 0: "skin1", 1: "skin2" },
     },
     {
       id: "hair-r",
@@ -644,9 +687,9 @@ export const makeInitialState = (): DemoState => ({
       time: "AM",
       schedule: "Mon, Wed, Fri",
       steps: [
-        "Wash as needed for comfort",
-        "Condition lengths",
-        "Style gently with low heat",
+        "Shampoo roots, condition lengths",
+        "Towel-dry, then sea-salt spray",
+        "Blow-dry and finish with a little clay",
       ],
     },
     {
@@ -655,7 +698,11 @@ export const makeInitialState = (): DemoState => ({
       title: "The finer details",
       time: "AM",
       schedule: "Mon, Thu",
-      steps: ["Clean tools", "Brush brows gently", "Trim only if comfortable"],
+      steps: [
+        "Brush brows up with a spoolie",
+        "Trim what sticks out above the line",
+        "Tidy the beard neckline",
+      ],
     },
     {
       id: "smile-r",
@@ -664,8 +711,8 @@ export const makeInitialState = (): DemoState => ({
       time: "AM & PM",
       schedule: "Daily",
       steps: [
-        "Brush with fluoride toothpaste as directed",
-        "Clean between teeth with a suitable tool",
+        "Brush two minutes with fluoride toothpaste",
+        "Floss or use interdental brushes",
       ],
     },
     {
@@ -675,9 +722,9 @@ export const makeInitialState = (): DemoState => ({
       time: "AM",
       schedule: "As wanted",
       steps: [
-        "Choose for the occasion",
-        "Apply lightly if tolerated",
-        "Record how it develops",
+        "Fresh for daytime, warm for evenings",
+        "Two to four sprays on neck and chest",
+        "Note how it smells a few hours later",
       ],
     },
   ],
@@ -705,6 +752,69 @@ export const makeInitialState = (): DemoState => ({
         author: "james",
         text: "Such a good reminder to keep it simple.",
       },
+      { id: "c1b", author: "sofia", text: "That linen shirt is everything." },
+    ],
+    p2: [
+      { id: "c2a", author: "amara", text: "Saving this for my Sunday reset." },
+      {
+        id: "c2b",
+        author: "yuki",
+        text: "The order of steps finally makes sense to me.",
+      },
+    ],
+    p3: [
+      {
+        id: "c3a",
+        author: "daan",
+        text: "Three sessions a week changed everything for me.",
+      },
+      {
+        id: "c3b",
+        author: "omar",
+        text: "Consistency over intensity, always.",
+      },
+    ],
+    p4: [
+      { id: "c4a", author: "lina", text: "The texture in this is so calm." },
+      { id: "c4b", author: "noah", text: "Where is the knit from?" },
+    ],
+    p5: [
+      { id: "c5a", author: "mei", text: "Five minutes I can actually keep." },
+    ],
+    p6: [
+      {
+        id: "c6a",
+        author: "elif",
+        text: "Day 12 of this habit and still going.",
+      },
+      { id: "c6b", author: "mira", text: "Love how simple you made it." },
+    ],
+    p7: [
+      {
+        id: "c7a",
+        author: "luca",
+        text: "Autumn evenings deserve this scent.",
+      },
+      { id: "c7b", author: "sofia", text: "Adding it to my shortlist." },
+    ],
+    p8: [
+      { id: "c8a", author: "noor", text: "Small changes add up — so true." },
+    ],
+    p9: [
+      { id: "c9a", author: "amara", text: "Dark casual done right." },
+      { id: "c9b", author: "daan", text: "The boots make the whole look." },
+    ],
+    p10: [
+      {
+        id: "c10a",
+        author: "yuki",
+        text: "Cream and forest is such a good pairing.",
+      },
+      { id: "c10b", author: "omar", text: "The sound fits perfectly." },
+    ],
+    p11: [
+      { id: "c11a", author: "lina", text: "Swiped through all three twice." },
+      { id: "c11b", author: "noah", text: "That belt and loafers combo." },
     ],
   },
   messages: {
@@ -712,7 +822,7 @@ export const makeInitialState = (): DemoState => ({
       {
         id: "m1",
         author: "mira",
-        text: "A little weekend inspiration for you. Everything here is a fictional demo.",
+        text: "A little weekend inspiration for you ✨",
         time: "09:41",
         card: { kind: "post", id: "p1" },
       },

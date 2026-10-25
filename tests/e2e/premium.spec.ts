@@ -236,7 +236,7 @@ test("long captions expand in place and push Shop the look down", async ({
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(post.locator(".post-body .post-caption")).toContainText(
-    "not treatment advice",
+    "nothing more",
   );
   // On wide columns the full text can still fit in two lines.
   if (info.project.name === "mobile")
@@ -625,7 +625,7 @@ test("weights follow the unit chosen in settings", async ({ page }) => {
   await page.getByRole("button", { name: "Log weight" }).click();
   await expect(page.locator(".weight-stats")).toContainText("176.4 lb");
   await page.getByRole("tab", { name: "Training & history" }).click();
-  await expect(page.locator(".stat-card").first()).toContainText("lb");
+  await expect(page.locator(".lift-card").first()).toContainText("lb");
 });
 
 test("free members get limits, ads and an upgrade path", async ({ page }) => {
@@ -640,13 +640,11 @@ test("free members get limits, ads and an upgrade path", async ({ page }) => {
   );
 
   await go(page, "/coach");
-  await expect(
-    page.getByText(/1 of 10 free messages left today/),
-  ).toBeVisible();
+  await expect(page.getByText(/1 of 10 messages left today/)).toBeVisible();
   await page.getByLabel("Ask your demo coach").fill("Hi coach");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(
-    page.getByText("You’ve used today’s 10 free messages"),
+    page.getByText("You’ve used today’s 10 coach messages"),
   ).toBeVisible();
   await expect(page.getByLabel("Ask your demo coach")).toHaveCount(0);
 
@@ -714,4 +712,27 @@ test("guides explain products, combinations and what works", async ({
     /testosterone|anavar|mk.?677|dnp/i,
   );
   await noAxeViolations(page);
+});
+
+test("plus has 50 coach messages a day; signature has no limit", async ({
+  page,
+}) => {
+  const date = new Date();
+  const today = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  await asMember(page, "plus", {
+    coachUsage: { date: today, messages: 49, files: 0 },
+  });
+  await open(page, "/coach");
+  await expect(page.getByText(/1 of 50 messages left today/)).toBeVisible();
+  await go(page, "/plans");
+  await expect(page.locator(".plan-plus")).toContainText(
+    "50 coach messages and 5 files a day",
+  );
+  await expect(page.locator(".plan-signature")).toContainText(
+    "Unlimited coach messages and files",
+  );
+  await page.getByRole("button", { name: "Choose Signature" }).click();
+  await page.getByRole("button", { name: "Start Signature" }).click();
+  await go(page, "/coach");
+  await expect(page.getByText(/messages left today/)).toHaveCount(0);
 });

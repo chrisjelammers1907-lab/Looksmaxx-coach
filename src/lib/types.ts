@@ -321,8 +321,8 @@ export interface DemoState {
   chatThemes: Record<string, string>;
   settings: AppSettings;
   subscription: Subscription;
-  /** Free plan coach use for one day. */
-  coachUsage: { date: string; messages: number; files: number };
+  /** Coach messages, files and barcode scans used on one day. */
+  coachUsage: { date: string; messages: number; files: number; scans?: number };
   trainingWeek: Partial<Record<Weekday, TrainingDay>>;
   /** Ticked sets per date, then per planned exercise id. */
   trainingProgress: Record<string, Record<string, SetProgress[]>>;

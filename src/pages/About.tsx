@@ -35,9 +35,7 @@ export default function AboutPage() {
       <section className="about-story">
         <span className="eyebrow">WHY WE’RE HERE</span>
         <h2>
-          Good guidance should
-          <br />
-          make room for <em>you.</em>
+          Good guidance should make room for <em>you.</em>
         </h2>
         <p>
           Looking after yourself can bring together a lot of little decisions:
@@ -87,23 +85,20 @@ export default function AboutPage() {
             <em>Honest about the demo.</em>
           </h2>
           <p>
-            This version is an interactive demonstration. Creators and social
-            activity are fictional. The coach gives sample replies; AI analysis,
-            image generation, shopping, accounts and message delivery are
-            simulated.
+            This is an interactive preview. Creators, brands, ads and social
+            activity are fictional. The coach gives sample replies, and
+            payments, shopping and accounts are simulated.
           </p>
           <p>
-            Your uploaded photos, profile edits, journal and personal routines
-            stay in the current browser tab. Reload clears personal session
-            content. Only limited fictional social preferences and your clothing
-            theme may persist locally. Account-privacy controls demonstrate a
-            future workflow; they are not secure authentication.
+            Photos, profile edits, your journal and messages stay in this
+            browser tab and clear on reload. Your settings, streaks, plan,
+            training, food and weight logs are saved in this browser only —
+            never on a server.
           </p>
           <p>
-            The reference files are critically reviewed material, not verified
-            medical authority. We separate personal preference from treatment
-            claims. Editorial images do not depict the fictional creators or
-            achieved transformations.
+            The guides are general education, not medical advice. Hormones or
+            medication only through a doctor. Editorial images are AI
+            inspiration, not real transformations.
           </p>
           <Link className="text-link" to="/categories">
             Find your starting point <ArrowUpRight size={16} />

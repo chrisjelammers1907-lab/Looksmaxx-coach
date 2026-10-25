@@ -30,7 +30,7 @@ import { useDemo } from "../lib/store";
 import { creators } from "../lib/data";
 import { uid, maySharePost, today } from "../lib/domain";
 import { alive, bump, hasReward, unlocked } from "../lib/streaks";
-import { isPaid, isSignature, streakGrace } from "../lib/plans";
+import { isPaid, isSignature, limitsOf, streakGrace } from "../lib/plans";
 import { UpgradeCard } from "../components/Upgrade";
 import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
@@ -161,9 +161,6 @@ export default function MessagesPage() {
               <SquarePen size={21} strokeWidth={1.7} />
             </button>
           </header>
-          <p className="inbox-note">
-            Demo inbox · fictional people, nothing is sent
-          </p>
           {state.profile.messageRequests && request === "pending" && (
             <div className="message-request">
               <span className="avatar">JE</span>
@@ -619,7 +616,7 @@ export default function MessagesPage() {
       )}
       {stickerPicker && (
         <Modal title="Stickers" onClose={() => setStickerPicker(false)}>
-          {isPaid(state) ? (
+          {state.customStickers.length < limitsOf(state).customStickers ? (
             <Button
               variant="secondary small"
               onClick={() => {
@@ -630,7 +627,15 @@ export default function MessagesPage() {
               <Plus size={15} /> Create a sticker
             </Button>
           ) : (
-            <UpgradeCard title="Make your own stickers with Plus" />
+            <UpgradeCard
+              title={
+                isPaid(state)
+                  ? `You’ve made ${limitsOf(state).customStickers} stickers`
+                  : "Make your own stickers with Plus"
+              }
+            >
+              {isPaid(state) && "Signature has no limit."}
+            </UpgradeCard>
           )}
           {state.customStickers.length > 0 && (
             <>
@@ -752,10 +757,8 @@ export default function MessagesPage() {
           onClose={() => setAttach(false)}
         >
           <Notice>
-            Only demo content accessible to this recipient is listed. Private
-            originals, products, photos, routines and restricted posts remain
-            private. Create a fictional public post with an audience preview to
-            share a copy.
+            Only posts this person can see are listed. Private posts, photos and
+            routines are never shared.
           </Notice>
           <div className="attach-list">
             {attachable.map((p) => (

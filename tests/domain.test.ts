@@ -21,7 +21,7 @@ describe("outfit price accounting", () => {
   });
   it("keeps a partial subtotal explicit", () =>
     expect(totalPrice([seedItems[0], { ...seedItems[1], price: null }])).toBe(
-      "€59.00 + unpriced items",
+      "From €59.00",
     ));
   it("never adds mixed currencies", () =>
     expect(

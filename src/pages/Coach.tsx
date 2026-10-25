@@ -13,7 +13,13 @@ import {
 import { useDemo } from "../lib/store";
 import { topics } from "../lib/data";
 import { today, uid } from "../lib/domain";
-import { coachLeft, coachUsage, freeLimits, isPaid } from "../lib/plans";
+import {
+  coachLeft,
+  coachUsage,
+  limitsOf,
+  nextPlan,
+  planOf,
+} from "../lib/plans";
 import { UpgradeCard } from "../components/Upgrade";
 import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
@@ -49,7 +55,7 @@ export default function CoachPage() {
       end.current?.scrollIntoView({ behavior: "instant", block: "nearest" });
   }, [state.chat.length]);
   const left = coachLeft(state, today());
-  const free = !isPaid(state);
+  const limit = limitsOf(state);
   const send = async (value = text) => {
     if (busy || (!value.trim() && !photo && !file)) return;
     if (left.messages <= 0) return;
@@ -68,6 +74,7 @@ export default function CoachPage() {
           ...used,
           messages: used.messages + 1,
           files: used.files + (file ? 1 : 0),
+          scans: used.scans,
         },
         chat: [
           ...s.chat,
@@ -221,9 +228,14 @@ export default function CoachPage() {
             </p>
           )}
           {left.messages <= 0 ? (
-            <UpgradeCard title="You’ve used today’s 10 free messages">
-              Plus gives you unlimited coach messages and files — or come back
-              tomorrow.
+            <UpgradeCard
+              title={`You’ve used today’s ${limit.coachMessages} coach messages`}
+            >
+              {nextPlan(state)} gives you{" "}
+              {state.subscription.plan === "free"
+                ? "50 a day"
+                : "unlimited messages"}{" "}
+              — or come back tomorrow.
             </UpgradeCard>
           ) : (
             <form
@@ -272,7 +284,7 @@ export default function CoachPage() {
                       if (!chosen) return;
                       if (left.files <= 0) {
                         setError(
-                          "Free includes one file a day. Plus and Signature have no limit.",
+                          `${planOf(state).name} includes ${limit.coachFiles} ${limit.coachFiles === 1 ? "file" : "files"} a day. ${nextPlan(state)} gives you more.`,
                         );
                         return;
                       }
@@ -311,10 +323,10 @@ export default function CoachPage() {
                   <ArrowUp size={19} strokeWidth={2} />
                 </button>
               </div>
-              {free && left.messages <= 5 && (
+              {Number.isFinite(limit.coachMessages) && left.messages <= 5 && (
                 <p className="coach-limit" role="status">
-                  {left.messages} of {freeLimits.coachMessages} free messages
-                  left today · <Link to="/plans">Go unlimited</Link>
+                  {left.messages} of {limit.coachMessages} messages left today ·{" "}
+                  <Link to="/plans">See plans</Link>
                 </p>
               )}
             </form>

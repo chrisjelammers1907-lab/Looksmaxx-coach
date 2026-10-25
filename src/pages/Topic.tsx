@@ -68,41 +68,17 @@ function TopicContent() {
     <div className={`topic-page atmosphere-${topic.id}`} key={topic.id}>
       <PageHeader
         eyebrow={`THE EDIT / ${topic.number}`}
-        title={
-          topic.id === "grooming"
-            ? "Brows, Facial Hair & Grooming"
-            : topic.title
-        }
+        title={topic.title}
         description={intro[topic.id]}
       />
       {topic.id !== "photos" && (
         <div className="topic-banner">
           <div>
-            <span className="eyebrow">YOUR OWN KIND OF REMARKABLE</span>
+            <span className="eyebrow">{banner[topic.id]?.eyebrow}</span>
             <h2>
-              {topic.id === "skincare" ? (
-                <>
-                  Care, made <em>personal.</em>
-                </>
-              ) : topic.id === "hair" ? (
-                <>
-                  A little change.
-                  <br />
-                  <em>A familiar you.</em>
-                </>
-              ) : topic.id === "gym" ? (
-                <>
-                  Feel good.
-                  <br />
-                  <em>Build from there.</em>
-                </>
-              ) : (
-                <>
-                  The beauty is
-                  <br />
-                  in the <em>details.</em>
-                </>
-              )}
+              {banner[topic.id]?.line}
+              <br />
+              <em>{banner[topic.id]?.accent}</em>
             </h2>
             <p className="topic-purpose">{topic.subtitle}</p>
           </div>
@@ -177,16 +153,11 @@ function TopicContent() {
                 <Sparkles size={22} />
                 <div>
                   <h3>
-                    {topic.id === "skincare"
-                      ? "Keep it simple, keep it kind."
-                      : "Make the details your own."}
+                    {note[topic.id]?.title || "Make the details your own."}
                   </h3>
                   <p>
-                    {topic.id === "skincare"
-                      ? "Product compatibility depends on the full formulation and your own response. This demo cannot establish ingredient safety or diagnose irritation."
-                      : topic.id === "smile"
-                        ? "This is a personal care space, not a clinical assessment. We do not diagnose dental conditions or predict whitening results."
-                        : "Start from your preferences. There is no single look, shape or scent that works for everyone."}
+                    {note[topic.id]?.text ||
+                      "Start from what you like. There is no single look that works for everyone."}
                   </p>
                 </div>
               </div>
@@ -369,11 +340,10 @@ function TopicContent() {
         </>
       )}
       {visual && (
-        <Modal title="Hair visualization demo" onClose={() => setVisual(false)}>
+        <Modal title="Try a colour direction" onClose={() => setVisual(false)}>
           <Notice>
-            SIMULATED IMAGE GENERATION · A stock image and color swatch
-            illustrate this interface. This is not a try-on or a predicted
-            outcome.
+            A preview of the colour direction on a reference photo — your own
+            result will look different.
           </Notice>
           <Select
             label="Hair color direction"
@@ -469,6 +439,64 @@ function TopicContent() {
   );
 }
 
+/** One practical tip per category, under the routines. */
+const note: Partial<Record<TopicId, { title: string; text: string }>> = {
+  skincare: {
+    title: "One new product at a time.",
+    text: "Patch-test it on your jaw for a few days and give it two weeks before you judge. Stop if it stings, burns or turns red.",
+  },
+  hair: {
+    title: "Bring two photos to your barber.",
+    text: "A front and a side view say more than any description. Ask how much styling the cut needs each morning.",
+  },
+  grooming: {
+    title: "Less is more with brows.",
+    text: "Trim and tweeze a little, then step back from the mirror. Over-plucked brows take months to grow back.",
+  },
+  smile: {
+    title: "When to see a dentist.",
+    text: "Pain, bleeding gums, swelling or a tooth that changes colour needs a check-up — your routine can’t fix that on its own.",
+  },
+  fragrance: {
+    title: "Test on skin, not paper.",
+    text: "Wear a sample for a full day before you buy. The first minutes smell different from the rest of the day.",
+  },
+};
+/** Banner copy per category: a short eyebrow and a two-line headline. */
+const banner: Partial<
+  Record<TopicId, { eyebrow: string; line: string; accent: string }>
+> = {
+  skincare: {
+    eyebrow: "Your daily ritual",
+    line: "Care,",
+    accent: "made personal.",
+  },
+  hair: {
+    eyebrow: "Cut · care · style",
+    line: "A little change.",
+    accent: "A familiar you.",
+  },
+  gym: {
+    eyebrow: "Train · eat · move",
+    line: "Feel good.",
+    accent: "Build from there.",
+  },
+  grooming: {
+    eyebrow: "Brows · beard · shave",
+    line: "Sharp lines,",
+    accent: "soft on the skin.",
+  },
+  smile: {
+    eyebrow: "Everyday care",
+    line: "Two minutes,",
+    accent: "twice a day.",
+  },
+  fragrance: {
+    eyebrow: "Your scent wardrobe",
+    line: "A signature,",
+    accent: "not a statement.",
+  },
+};
 export default function TopicPage() {
   const { topic } = useParams();
   return <TopicContent key={topic} />;

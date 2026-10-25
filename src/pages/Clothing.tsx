@@ -141,9 +141,6 @@ export default function ClothingPage() {
                 Build your everyday edit
                 <ArrowUpRight size={18} />
               </Button>
-              <span className="small-text">
-                Inclusive styles · Choose what feels like you
-              </span>
             </div>
             <img
               src={asset(state.style === "dark-casual" ? "style" : "campaign")}
@@ -377,10 +374,8 @@ export default function ClothingPage() {
       {tab === "shopping" && (
         <>
           <Notice>
-            SIMULATED SHOPPING · Fictional brands, example prices dated
-            2026-10-19. No live search, stock, checkout or affiliate links. Your
-            currency is {state.profile.currency} and country is{" "}
-            {state.profile.country}.
+            Prices shown in {state.profile.currency} for {state.profile.country}
+            . Example prices — live shops come later.
           </Notice>
           <SectionTitle
             title={`Considered finds · ${theme.label}`}
@@ -606,9 +601,8 @@ export default function ClothingPage() {
           onClose={() => setIllustration(false)}
         >
           <Notice>
-            SIMULATED AI TRY-ON · No image is generated or analyzed. This
-            illustration is a diagram, not a real photograph, fit prediction or
-            achieved result.
+            A sketch of the outfit, not a try-on. Fit and colour can look
+            different on you.
           </Notice>
           {illustrationDone ? (
             <div className="outfit-illustration">

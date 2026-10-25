@@ -37,8 +37,8 @@ import {
 } from "../lib/units";
 import type { ExtraNutrients, Food, NutritionTargets } from "../lib/types";
 import { Link } from "react-router-dom";
-import { isPaid } from "../lib/plans";
-import { PlusTag } from "./Upgrade";
+import { coachLeft, coachUsage, limitsOf } from "../lib/plans";
+import { PlusTag, UpgradeCard } from "./Upgrade";
 import BarcodeScanner from "./BarcodeScanner";
 import { Button, Empty, Field, Modal, Notice, Select } from "./ui";
 
@@ -217,11 +217,17 @@ export default function Nutrition() {
       ...scaled,
     });
   };
+  const scansLeft = coachLeft(state, today()).scans;
   const lookUp = async (code: string) => {
+    if (scansLeft <= 0) return;
     setLooking(true);
     setScanError("");
     try {
       const product = await lookUpBarcode(code);
+      update((s) => {
+        const used = coachUsage(s, today());
+        return { ...s, coachUsage: { ...used, scans: used.scans + 1 } };
+      });
       setScanning(false);
       if (product) setFood(fromScan(product));
       else {
@@ -328,7 +334,7 @@ export default function Nutrition() {
           </div>
         )}
         <div className="nutrition-actions">
-          {isPaid(state) ? (
+          {limitsOf(state).scans > 0 ? (
             <Button
               onClick={() => {
                 setScanError("");
@@ -534,7 +540,22 @@ export default function Nutrition() {
 
       {scanning && (
         <Modal title="Scan a barcode" onClose={() => setScanning(false)}>
-          <BarcodeScanner onCode={lookUp} busy={looking} />
+          {scansLeft > 0 ? (
+            <>
+              <BarcodeScanner onCode={lookUp} busy={looking} />
+              {Number.isFinite(scansLeft) && (
+                <p className="small-text muted">
+                  {scansLeft} of {limitsOf(state).scans} scans left today
+                </p>
+              )}
+            </>
+          ) : (
+            <UpgradeCard
+              title={`You’ve used today’s ${limitsOf(state).scans} scans`}
+            >
+              Signature has unlimited scans — or add the food yourself.
+            </UpgradeCard>
+          )}
           {scanError && (
             <p className="form-error" role="alert">
               {scanError}

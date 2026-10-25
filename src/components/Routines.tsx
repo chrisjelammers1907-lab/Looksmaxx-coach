@@ -329,9 +329,9 @@ export default function Routines({ topic }: { topic?: TopicId }) {
           title="A simple starting point"
           onClose={() => setBuilder(false)}
         >
-          <div className="eyebrow">SIMULATED ROUTINE BUILDER</div>
+          <div className="eyebrow">ROUTINE BUILDER</div>
           <p>
-            Using your current demo profile preferences:{" "}
+            Based on your preferences:{" "}
             {state.profile.preferences || "none entered yet"}. Budget:{" "}
             {state.profile.currency} {state.profile.budget}. Owned products:{" "}
             {state.items
@@ -340,19 +340,13 @@ export default function Routines({ topic }: { topic?: TopicId }) {
               .join(", ") || "none yet"}
             .
           </p>
-          <Notice>
-            This example favors simplicity. It does not establish suitability or
-            ingredient compatibility. Stop a product that irritates and seek
-            professional advice for persistent concerns.
-          </Notice>
           <ol className="plain-list">
-            <li>Gentle cleanse if needed.</li>
-            <li>Use a moisturizer you tolerate.</li>
-            <li>Apply broad-spectrum sunscreen following its label.</li>
+            <li>Gentle cleanse.</li>
+            <li>A moisturiser that suits your skin.</li>
+            <li>Sunscreen, SPF 30 or higher.</li>
           </ol>
           <p className="small-text">
-            No medication or treatment changes are suggested. Review the
-            editable copy before saving.
+            You can change every step before you save it.
           </p>
           <Button
             onClick={() => {
@@ -361,9 +355,9 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                 ...blank(),
                 title: "My simple morning",
                 steps: [
-                  "Gentle cleanse if needed",
-                  "Moisturize",
-                  "Apply sunscreen according to its label",
+                  "Gentle cleanse",
+                  "Moisturise",
+                  "Sunscreen, SPF 30 or higher",
                 ],
               });
             }}

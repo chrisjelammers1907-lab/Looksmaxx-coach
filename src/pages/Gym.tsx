@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TrendingUp, StretchHorizontal } from "lucide-react";
 import { useDemo } from "../lib/store";
 import TrainingPlanner from "../components/Training";
-import { uid, today, workoutVolume, dateLabel } from "../lib/domain";
+import { uid, today, dateLabel } from "../lib/domain";
 import type { Workout } from "../lib/types";
 import Nutrition from "../components/Nutrition";
 import { fromKg, toKg, weightLabel } from "../lib/units";
@@ -31,48 +31,63 @@ export default function Gym() {
             title="Your training story"
             subtitle="Every finished session lands here by itself."
           />
-          <div className="stats-grid">
+          <div className="lift-grid">
             {exercises.map((ex) => {
               const ws = state.workouts
                 .filter((w) => w.exercise === ex)
                 .sort((a, b) => a.date.localeCompare(b.date));
               const first = ws[0],
                 last = ws[ws.length - 1];
+              const change = fromKg(last.weight - first.weight, unit);
+              const top = Math.max(...ws.map((w) => w.weight));
+              const low = Math.min(...ws.map((w) => w.weight));
+              const x = (i: number) =>
+                ws.length > 1 ? (i / (ws.length - 1)) * 100 : 50;
+              const y = (kg: number) =>
+                top === low ? 20 : 36 - ((kg - low) / (top - low)) * 32;
               return (
-                <article className="stat-card" key={ex}>
-                  <TrendingUp size={18} />
-                  <span>{ex}</span>
+                <article className="lift-card" key={ex}>
+                  <header>
+                    <span>{ex}</span>
+                    <TrendingUp size={16} aria-hidden="true" />
+                  </header>
                   <strong>
-                    {fromKg(first.weight, unit)} → {fromKg(last.weight, unit)}{" "}
-                    <small>{unit}</small>
+                    {fromKg(last.weight, unit)}
+                    <small> {unit}</small>
                   </strong>
-                  <p>
-                    {first.date} to {last.date} · {ws.length} logged entries
+                  <p className={change >= 0 ? "up" : "down"}>
+                    {change >= 0 ? "+" : "−"}
+                    {Math.abs(change)} {unit} since{" "}
+                    {new Date(`${first.date}T12:00:00`).toLocaleDateString(
+                      "en",
+                      { day: "numeric", month: "short" },
+                    )}
                   </p>
-                  <p>
-                    Volume:{" "}
-                    {fromKg(
-                      workoutVolume(first.sets, first.reps, first.weight),
-                      unit,
-                    )}{" "}
-                    →{" "}
-                    {fromKg(
-                      workoutVolume(last.sets, last.reps, last.weight),
-                      unit,
-                    )}{" "}
-                    {unit}
-                  </p>
-                  <div className="mini-chart">
-                    {ws.map((w) => (
-                      <div
+                  <svg
+                    className="lift-line"
+                    viewBox="0 0 100 40"
+                    preserveAspectRatio="none"
+                    role="img"
+                    aria-label={`${ex}: ${ws.map((w) => weightLabel(w.weight, unit)).join(", ")}`}
+                  >
+                    <polyline
+                      points={ws
+                        .map((w, i) => `${x(i)},${y(w.weight)}`)
+                        .join(" ")}
+                    />
+                    {ws.map((w, i) => (
+                      <line
                         key={w.id}
-                        style={{
-                          height: `${Math.max(10, (w.weight / Math.max(...ws.map((x) => x.weight), 1)) * 70)}px`,
-                        }}
-                        title={`${w.date}: ${weightLabel(w.weight, unit)}`}
+                        x1={x(i)}
+                        y1={y(w.weight)}
+                        x2={x(i)}
+                        y2={y(w.weight)}
                       />
                     ))}
-                  </div>
+                  </svg>
+                  <small className="lift-meta">
+                    {ws.length} sessions · best {weightLabel(top, unit)}
+                  </small>
                 </article>
               );
             })}

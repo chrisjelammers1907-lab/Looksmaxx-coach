@@ -11,7 +11,7 @@ import {
   Send,
   ShoppingBag,
   ChevronRight,
-  Repeat2,
+  Repeat,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
 import { creators } from "../lib/data";
@@ -25,6 +25,8 @@ import {
   mayViewPost,
   money,
   dateLabel,
+  compactCount,
+  engagement,
 } from "../lib/domain";
 import { Button, Field, Modal, Notice, Select } from "./ui";
 import { ItemBreakdown } from "./Items";
@@ -73,15 +75,14 @@ export function ShareDialog({
   return (
     <Modal title="Share a little inspiration" onClose={onClose}>
       <Notice>
-        SIMULATED PRIVATE MESSAGING · No real recipient, delivery or secure
-        communication. Recipient access is checked again when a linked card is
-        opened. Personal uploaded originals stay private.
+        Only people who can see this post can open it. Your private uploads are
+        never shared.
       </Notice>
       {accessible ? (
         <>
           <div className="share-card-preview">
             <strong>{post?.title}</strong>
-            <span>Visible to this fictional recipient · Local demo only</span>
+            <span>They can open this post</span>
           </div>
           <form
             onSubmit={(e) => {
@@ -111,7 +112,7 @@ export function ShareDialog({
                 .filter((c) => !state.blocked.includes(c.id))
                 .map((c) => (
                   <option value={c.id} key={c.id}>
-                    {c.name} · fictional
+                    {c.name}
                   </option>
                 ))}
             </Select>
@@ -138,7 +139,7 @@ export function ShareDialog({
               .filter((c) => !state.blocked.includes(c.id))
               .map((c) => (
                 <option value={c.id} key={c.id}>
-                  {c.name} · fictional
+                  {c.name}
                 </option>
               ))}
           </Select>
@@ -194,13 +195,14 @@ export function LinkedCard({
     <Link className="linked-card" to={`/post/${post.id}`}>
       <img src={asset(post.image)} alt="" />
       <div>
-        <span>
-          {topicName[post.topic] || "Community"} · {post.audience}
-        </span>
+        <span>{topicName[post.topic] || "Community"}</span>
         <strong>{post.title}</strong>
         <small>
-          {post.items.length ? "Outfit / product details" : "Routine / post"} ·
-          Open linked card
+          {post.items.length
+            ? `${post.items.length} ${post.items.length === 1 ? "item" : "items"} · ${totalPrice(post.items)}`
+            : post.steps.length
+              ? `${post.steps.length} steps`
+              : "View post"}
         </small>
       </div>
       <ArrowUpRight size={17} />
@@ -239,8 +241,7 @@ function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
                         : "old-money",
                   occasion: post.occasion,
                   season: post.season,
-                  notes:
-                    "Editable copy from fictional community content. Review before using.",
+                  notes: "Copied from the community — make it yours.",
                 },
               ],
             }
@@ -293,7 +294,9 @@ function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
             <ChevronRight size={18} aria-hidden="true" />
           </summary>
           <ItemBreakdown items={post.items} />
-          <p className="small-text">Example prices</p>
+          <p className="breakdown-note">
+            Example prices · shopping links come later
+          </p>
         </details>
       )}
       {!!post.steps.length && (
@@ -448,7 +451,14 @@ export function PostCard({
   const liked = state.likes.includes(post.id);
   const saved = state.saved.includes(post.id);
   const commentCount = state.comments[post.id]?.length || 0;
-  const likeCount = liked ? 25 : 24;
+  const base = engagement(post.id, own);
+  const reposted = state.reposts.includes(post.id);
+  const likeCount = base.likes + (liked ? 1 : 0);
+  const counts = {
+    reposts: base.reposts + (reposted ? 1 : 0),
+    saves: base.saves + (saved ? 1 : 0),
+    shares: base.shares,
+  };
   // Captions show two lines first, then expand in place.
   const captionLong = post.body.length > 80;
   const captionShort = post.body.slice(0, 80).replace(/\s+\S*$/, "");
@@ -545,26 +555,27 @@ export function PostCard({
           onClick={like}
         >
           <Heart
-            size={28}
-            strokeWidth={1.7}
+            size={30}
+            strokeWidth={1.6}
             fill={liked ? "currentColor" : "none"}
           />
-          <span>{likeCount}</span>
+          <span>{compactCount(likeCount)}</span>
         </button>
         <button
           aria-label={`Comment on ${post.title}`}
           onClick={() => setSheet(true)}
         >
-          <MessageCircle size={28} strokeWidth={1.7} />
-          <span>{commentCount}</span>
+          <MessageCircle size={30} strokeWidth={1.6} />
+          <span>{compactCount(commentCount)}</span>
         </button>
         {!own && !post.draft && (
           <button
             aria-label={`Repost ${post.title}`}
-            aria-pressed={state.reposts.includes(post.id)}
+            aria-pressed={reposted}
             onClick={repost}
           >
-            <Repeat2 size={28} strokeWidth={1.7} />
+            <Repeat size={30} strokeWidth={1.6} />
+            <span>{compactCount(counts.reposts)}</span>
           </button>
         )}
         <button
@@ -573,16 +584,18 @@ export function PostCard({
           onClick={save}
         >
           <Bookmark
-            size={27}
-            strokeWidth={1.7}
+            size={30}
+            strokeWidth={1.6}
             fill={saved ? "currentColor" : "none"}
           />
+          <span>{compactCount(counts.saves)}</span>
         </button>
         <button
           aria-label={`Share ${post.title}`}
           onClick={() => setShare(true)}
         >
-          <Send size={26} strokeWidth={1.7} />
+          <Send size={30} strokeWidth={1.6} />
+          <span>{compactCount(counts.shares)}</span>
         </button>
       </div>
     </div>
@@ -613,28 +626,34 @@ export function PostCard({
               strokeWidth={1.6}
               fill={liked ? "currentColor" : "none"}
             />
+            <span className="action-count">{compactCount(likeCount)}</span>
           </button>
           <button
             aria-label={`Comment on ${post.title}`}
             onClick={() => setSheet(true)}
           >
             <MessageCircle size={24} strokeWidth={1.6} />
+            <span className="action-count">{compactCount(commentCount)}</span>
           </button>
+          {!own && !post.draft && (
+            <button
+              aria-label={`Repost ${post.title}`}
+              aria-pressed={reposted}
+              onClick={repost}
+            >
+              <Repeat size={24} strokeWidth={1.6} />
+              <span className="action-count">
+                {compactCount(counts.reposts)}
+              </span>
+            </button>
+          )}
           <button
             aria-label={`Share ${post.title}`}
             onClick={() => setShare(true)}
           >
             <Send size={23} strokeWidth={1.6} />
+            <span className="action-count">{compactCount(counts.shares)}</span>
           </button>
-          {!own && !post.draft && (
-            <button
-              aria-label={`Repost ${post.title}`}
-              aria-pressed={state.reposts.includes(post.id)}
-              onClick={repost}
-            >
-              <Repeat2 size={24} strokeWidth={1.6} />
-            </button>
-          )}
           <button
             className="save-action"
             aria-label={`Save ${post.title} privately`}
@@ -648,7 +667,6 @@ export function PostCard({
             />
           </button>
         </div>
-        <p className="post-likes">{likeCount} likes</p>
         <div className="post-caption">
           {topicLine && <div className="post-topic">{topicLine}</div>}
           <Link to={`/post/${post.id}`}>

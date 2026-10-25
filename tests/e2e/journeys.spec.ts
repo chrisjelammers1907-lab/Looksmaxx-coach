@@ -145,11 +145,9 @@ test("owned product CRUD, ordering and routine builder", async ({ page }) => {
   const r = page.locator(".routine-card").filter({
     has: page.getByRole("heading", { name: "My reviewed morning" }),
   });
-  await r
-    .getByRole("button", { name: "Complete Gentle cleanse if needed" })
-    .click();
+  await r.getByRole("button", { name: "Complete Gentle cleanse" }).click();
   await expect(
-    r.getByRole("button", { name: "Complete Gentle cleanse if needed" }),
+    r.getByRole("button", { name: "Complete Gentle cleanse" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page
     .getByRole("button", { name: "Delete My reviewed morning" })
@@ -200,7 +198,7 @@ test("public outfit journey: preview, social actions, copy, share, edit and remo
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();
-  await expect(dialog(page).getByText(/Public: title/)).toBeVisible();
+  await expect(dialog(page).getByText(/Everyone can see the title/)).toBeVisible();
   await expect(
     dialog(page).getByText("€148.00", { exact: true }),
   ).toBeVisible();

@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDemo } from "../lib/store";
 import { ads, STORY_AD_EVERY, type Ad } from "../lib/ads";
-import { isPaid } from "../lib/plans";
+import { limitsOf } from "../lib/plans";
 import { creators, seedStories } from "../lib/data";
 import { asset, uid } from "../lib/domain";
 import type { Story } from "../lib/types";
@@ -275,7 +275,7 @@ export default function StoriesRow() {
       .filter((g) => g.stories.length),
   ].flatMap((g, i, all) =>
     // Free members see a sponsored story after every few people.
-    !isPaid(state) &&
+    limitsOf(state).ads &&
     i > 0 &&
     i < all.length - 1 &&
     (i + 1) % STORY_AD_EVERY === 0

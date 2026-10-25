@@ -38,7 +38,7 @@ import { SoundPicker } from "../components/Sounds";
 import StoriesRow from "../components/Stories";
 import { SponsoredPost } from "../components/Ads";
 import { AD_EVERY, ads } from "../lib/ads";
-import { isPaid } from "../lib/plans";
+import { limitsOf } from "../lib/plans";
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -115,7 +115,7 @@ function CommunityContent() {
     );
     navigate(`/post/${saved.id}`);
   };
-  const showAds = !isPaid(state);
+  const showAds = limitsOf(state).ads;
   const visible = state.posts
     .filter((p) =>
       format === "reels"
@@ -189,11 +189,9 @@ function CommunityContent() {
             setPreview(true);
           }}
         >
-          <Notice>
-            LOCAL SOCIAL DEMO · Only fictional example content belongs here.
-            Your real photos, personal routines, intake, logs and private notes
-            stay private. Only fictional examples can be shared publicly in this
-            demo.
+          <Notice icon="private">
+            Your private photos, routines, logs and notes are never posted. Only
+            what you add here is shared.
           </Notice>
           <Field
             label="Post title (optional)"
@@ -279,10 +277,8 @@ function CommunityContent() {
               }
             >
               <option value="private">Only me · private</option>
-              <option value="followers">
-                Followers · simulated restricted audience
-              </option>
-              <option value="public">Public · fictional demo community</option>
+              <option value="followers">Followers only</option>
+              <option value="public">Public · everyone</option>
             </Select>
           </div>
           {draft.media?.kind !== "video" && (
@@ -346,8 +342,8 @@ function CommunityContent() {
           {draft.media?.origin === "private-upload" &&
             draft.audience !== "private" && (
               <p className="error" role="alert">
-                Personal test uploads stay private. Choose Only me or remove the
-                upload to share a fictional editorial example.
+                Personal uploads stay private. Choose Only me, or pick an
+                editorial image to post publicly.
               </p>
             )}
           <SoundPicker
@@ -395,7 +391,7 @@ function CommunityContent() {
                     });
                 }}
               >
-                <option value="">Choose a fictional example</option>
+                <option value="">Choose an editorial image</option>
                 {seedPosts.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.title}
@@ -503,12 +499,11 @@ function CommunityContent() {
         <>
           <Notice icon={draft.audience === "private" ? "private" : "info"}>
             {draft.audience === "public"
-              ? "Public: title, caption, selected editorial media, tags, structured item details and routine steps below will be visible in the local demo."
+              ? "Everyone can see the title, caption, media, tags, items and steps below."
               : draft.audience === "followers"
-                ? "Followers: simulated restricted audience. Rich-card sending is disabled because recipient access is not established."
-                : "Only you: this post remains private and cannot be delivered through a shared card."}{" "}
-            Your intake and original private routines are excluded. Private test
-            media can only be saved to Only me.
+                ? "Only your followers can see this post. It can’t be sent in chats."
+                : "Only you can see this post."}{" "}
+            Your intake and private routines are never included.
           </Notice>
           <PostMedia post={draft} />
           <h3>{draft.title}</h3>
@@ -917,7 +912,7 @@ function CommunityContent() {
         >
           {feed === "saved"
             ? "Save posts with the bookmark to see them here."
-            : "Try another topic or follow a fictional creator."}
+            : "Try another topic or follow someone new."}
         </Empty>
       )}
       {composerModal}

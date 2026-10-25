@@ -173,3 +173,43 @@ Updated screenshots are `docs/screenshots/premium/v2-*.jpg`.
 - Axe finds no violations in light and dark mode on the new routes.
 
 Screenshots are `docs/screenshots/premium/v3-*.jpg`.
+
+## Fourth premium round — 25 October 2026
+
+**Alignment fixes from the owner's screenshots**
+- Reels:
+  - the action column uses 30 px icons with more space between them;
+  - every action shows a count (likes, comments, reposts, saves, shares);
+  - the repost icon is the taller loop instead of the flattened one;
+  - the author row and Follow have breathing room;
+  - slideshow arrows and the counter form one centred group, clear of the action column.
+- Profile:
+  - on phones, name and handle sit beside the avatar;
+  - the bio and a four-column stats row with dividers span the full width;
+  - the tab icons share the full width.
+- Mobile pages use an 18 px side gutter (`--gutter`).
+
+**Membership tiers**
+- Plus (€9.99): 50 coach messages and 5 files a day, 5 training days, 10 barcode scans a day, 10 custom stickers, no ads.
+- Signature (€19.99): unlimited coach messages and files, training days, scans and stickers, plus all chat themes and sticker packs, streak protection and the badge.
+- Limits live in `limits` in `src/lib/plans.ts`; scan use is counted per day.
+
+**Design and copy audit**
+- Photo posts:
+  - action order is like, comment, repost, share, save;
+  - each action shows an inline count; counts stay exact below 10,000.
+- Topic banners: each category has its own eyebrow and headline, replacing "Your own kind of remarkable".
+- Each category has its own practical tip under its routines.
+- Routine steps and seed products are concrete:
+  - products are listed under fictional house brands;
+  - real sizes and short notes replace "M · example";
+  - the evening skincare routine links its products.
+- Gym "Your training story" uses lift cards with a line chart and "+2.5 kg since 5 Oct", replacing the block bars.
+- Settings:
+  - the theme and text-size cards show a check mark;
+  - follower requests show Accept and Decline side by side;
+  - unit names are short enough not to truncate;
+  - the data buttons match.
+- The demo-only labels are rewritten in plain language: "SIMULATED …", "fictional" after names and "Demo inbox".
+- The About text matches what persists now and no longer mentions source files.
+- Desktop filter chips are centred over the feed. Today's tile in the week strip uses an inner ring, so the row never clips it.

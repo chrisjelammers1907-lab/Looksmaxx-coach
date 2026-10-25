@@ -154,8 +154,8 @@ export default function PlansPage() {
             <>
               <p>
                 You’ll keep everything you made. Coach messages go back to 10 a
-                day, ads return and the barcode scan, extra training days and
-                your own stickers pause.
+                day and ads return. The barcode scan, extra training days and
+                making stickers pause.
               </p>
               <div className="modal-actions">
                 <Button variant="ghost" onClick={() => setCheckout(null)}>

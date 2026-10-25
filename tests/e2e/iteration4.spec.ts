@@ -130,12 +130,13 @@ test("category list navigates and Photos/Reels keep Following independent", asyn
   // Photo captions sit below the image, Instagram-style; reels keep overlays.
   expect(caption!.y).toBeGreaterThanOrEqual(picture!.y + picture!.height);
   await expect(photo.locator(".post-media .post-caption")).toHaveCount(0);
-  await expect(photo.locator(".post-likes")).toHaveText("24 likes");
   const like = photo.getByRole("button", {
     name: "Like The art of a simple Sunday",
     exact: true,
   });
+  const before = await like.locator(".action-count").textContent();
   await like.click();
+  await expect(like.locator(".action-count")).not.toHaveText(before!);
   await expect(like).toHaveAttribute("aria-pressed", "true");
   const save = photo.getByRole("button", {
     name: "Save The art of a simple Sunday privately",

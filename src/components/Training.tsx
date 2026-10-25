@@ -1,7 +1,7 @@
 import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { Check, Dumbbell, Plus, Repeat, Trash2, Trophy, X } from "lucide-react";
-import { freeLimits, isPaid } from "../lib/plans";
+import { limitsOf, nextPlan, planOf } from "../lib/plans";
 import { UpgradeCard } from "./Upgrade";
 import { fromKg, toKg, weightLabel } from "../lib/units";
 import { useDemo } from "../lib/store";
@@ -36,10 +36,9 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
           exercises: [{ id: uid(), name: "", sets: [{ reps: 8, weight: 20 }] }],
         },
   );
+  const dayLimit = limitsOf(state).trainingDays;
   const overLimit =
-    !existing &&
-    !isPaid(state) &&
-    Object.keys(state.trainingWeek).length >= freeLimits.trainingDays;
+    !existing && Object.keys(state.trainingWeek).length >= dayLimit;
   const setExercise = (index: number, next: TrainingDay["exercises"][0]) =>
     setDraft({
       ...draft,
@@ -48,8 +47,10 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
   if (overLimit)
     return (
       <Modal title={`Plan ${day}`} onClose={onClose}>
-        <UpgradeCard title="Free includes 3 training days a week">
-          Make another day a rest day, or go unlimited with Plus.
+        <UpgradeCard
+          title={`${planOf(state).name} includes ${dayLimit} training days a week`}
+        >
+          Make another day a rest day, or get more days with {nextPlan(state)}.
         </UpgradeCard>
       </Modal>
     );

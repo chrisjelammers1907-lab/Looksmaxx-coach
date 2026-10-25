@@ -160,6 +160,7 @@ export default function SettingsPage() {
                           <strong>{person?.handle}</strong>
                         </span>
                         <Button
+                          aria-label={`Accept request from ${person?.handle}`}
                           variant="small"
                           onClick={() =>
                             update((s) => ({
@@ -173,9 +174,10 @@ export default function SettingsPage() {
                             }))
                           }
                         >
-                          Accept request
+                          Accept
                         </Button>
                         <Button
+                          aria-label={`Decline request from ${person?.handle}`}
                           variant="ghost small"
                           onClick={() =>
                             update((s) => ({
@@ -259,8 +261,7 @@ export default function SettingsPage() {
               onChange={(v) => notify("quietHours", v)}
             />
             <p className="small-text muted">
-              The demo stores these choices; it does not send real
-              notifications.
+              Saved on this device. Notifications start once the app is live.
             </p>
           </Section>
 
@@ -294,13 +295,16 @@ export default function SettingsPage() {
                   ["large", "Large"],
                 ] as const
               ).map(([value, label]) => (
-                <label key={value} className="choice">
+                <label key={value} className={`choice size-${value}`}>
                   <input
                     type="radio"
                     name="text-size"
                     checked={settings.textSize === value}
                     onChange={() => set({ textSize: value })}
                   />
+                  <span className="choice-preview" aria-hidden="true">
+                    Aa
+                  </span>
                   {label}
                 </label>
               ))}
@@ -403,8 +407,8 @@ export default function SettingsPage() {
                   })
                 }
               >
-                <option value="kg">Kilograms (kg)</option>
-                <option value="lb">Pounds (lb)</option>
+                <option value="kg">Kilograms</option>
+                <option value="lb">Pounds</option>
               </Select>
               <Select
                 label="Height"
@@ -415,8 +419,8 @@ export default function SettingsPage() {
                   })
                 }
               >
-                <option value="cm">Centimetres (cm)</option>
-                <option value="ft">Feet and inches</option>
+                <option value="cm">Centimetres</option>
+                <option value="ft">Feet & inches</option>
               </Select>
             </div>
           </Section>
@@ -446,7 +450,7 @@ export default function SettingsPage() {
               saved in this browser. This demo has no real accounts.
             </Notice>
             <div className="button-row">
-              <Button variant="ghost" onClick={() => setConfirm("details")}>
+              <Button variant="secondary" onClick={() => setConfirm("details")}>
                 Remove my details
               </Button>
               <Button variant="secondary" onClick={() => setConfirm("reset")}>

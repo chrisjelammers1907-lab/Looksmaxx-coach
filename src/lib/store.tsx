@@ -137,6 +137,7 @@ function load(): DemoState {
         date: saved.coachUsage.date,
         messages: saved.coachUsage.messages,
         files: Number(saved.coachUsage.files) || 0,
+        scans: Number(saved.coachUsage.scans) || 0,
       };
     if (isRecord(saved.chatStreaks))
       initial.chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
