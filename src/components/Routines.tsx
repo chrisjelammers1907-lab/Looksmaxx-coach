@@ -40,8 +40,8 @@ export default function Routines({ topic }: { topic?: TopicId }) {
     const reward = unlocked(before, next.count);
     toast(
       reward
-        ? `🔥 ${next.count}-day routine streak! Unlocked: ${reward.label}.`
-        : `Routine done · 🔥 ${next.count}-day streak`,
+        ? `${next.count}-day routine streak · Unlocked: ${reward.label}.`
+        : `Routine done · ${next.count}-day streak`,
     );
   };
   const blank = (): Routine => ({

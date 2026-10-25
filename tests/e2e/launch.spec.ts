@@ -45,3 +45,33 @@ test("no AI tells on key routes", async ({ page }) => {
     await expect(page.locator("main svg.lucide-sparkles")).toHaveCount(0);
   }
 });
+
+test("streaks show a green flame, never an emoji", async ({ page }) => {
+  await open(page, "/messages");
+  const row = page
+    .locator(".conversation-preview", { hasText: "Mira" })
+    .first();
+  await expect(row.locator(".streak svg")).toBeVisible();
+  await expect(page.getByText("🔥")).toHaveCount(0);
+  const [fill, token] = await row
+    .locator(".streak svg path")
+    .first()
+    .evaluate((el) => [
+      getComputedStyle(el).fill,
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--forest-text")
+        .trim(),
+    ]);
+  const toRgb = await page.evaluate((c) => {
+    const el = document.createElement("i");
+    el.style.color = c;
+    document.body.append(el);
+    const v = getComputedStyle(el).color;
+    el.remove();
+    return v;
+  }, token);
+  expect(fill).toBe(toRgb);
+  await go(page, "/plan");
+  await expect(page.locator(".plan-progress .streak svg")).toBeVisible();
+  await expect(page.getByText("🔥")).toHaveCount(0);
+});

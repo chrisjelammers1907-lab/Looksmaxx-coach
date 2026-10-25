@@ -18,6 +18,7 @@ import { weekdayOf } from "../lib/training";
 import { alive } from "../lib/streaks";
 import { streakGrace } from "../lib/plans";
 import { Button, Field, Modal, PageHeader, Select } from "../components/ui";
+import StreakFlame from "../components/StreakFlame";
 type PlanFilter = "all" | "routines" | "tasks";
 export default function PlanPage() {
   const { state, update, toast } = useDemo();
@@ -90,7 +91,12 @@ export default function PlanPage() {
           <span>
             {routinesToday} {routinesToday === 1 ? "routine" : "routines"} for
             today
-            {streak > 0 && ` · 🔥 ${streak}-day routine streak`}
+            {streak > 0 && (
+              <>
+                {" "}
+                · <StreakFlame count={streak} /> routine streak
+              </>
+            )}
           </span>
         </div>
       </div>

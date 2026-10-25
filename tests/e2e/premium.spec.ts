@@ -479,14 +479,10 @@ test("chat streaks unlock rewards and custom stickers can be made", async ({
   await asMember(page);
   await open(page, "/messages?to=mira");
   // Mira's seeded 6-day streak becomes 7 today and unlocks chat themes.
-  await expect(page.locator(".conversation-header .streak-chip")).toHaveText(
-    "🔥 6",
-  );
+  await expect(page.locator(".conversation-header .streak")).toHaveText("6");
   await page.getByLabel("Message", { exact: true }).fill("Day seven!");
   await page.getByRole("button", { name: "Send message" }).click();
-  await expect(page.locator(".conversation-header .streak-chip")).toHaveText(
-    "🔥 7",
-  );
+  await expect(page.locator(".conversation-header .streak")).toHaveText("7");
   await expect(page.getByRole("status").last()).toContainText("Chat themes");
   await page.getByRole("button", { name: "Chat theme" }).click();
   await page.getByRole("button", { name: "Midnight" }).click();

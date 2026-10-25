@@ -21,6 +21,7 @@ import type { SetProgress, TrainingDay, Weekday } from "../lib/types";
 import { trainingStreak } from "../lib/streaks";
 import { Button, Field, Modal, SectionTitle } from "./ui";
 import { StoryComposer } from "./Stories";
+import StreakFlame from "./StreakFlame";
 
 function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
   const { state, update, toast } = useDemo();
@@ -461,9 +462,17 @@ export default function TrainingPlanner() {
       <SectionTitle
         title="Your week"
         subtitle={
-          trainingStreak(state.sessions) > 0
-            ? `🔥 ${trainingStreak(state.sessions)} sessions in a row · Tap a day to plan it.`
-            : "Tap a day to plan or change it."
+          trainingStreak(state.sessions) > 0 ? (
+            <>
+              <StreakFlame
+                count={trainingStreak(state.sessions)}
+                label={`${trainingStreak(state.sessions)} sessions in a row`}
+              />{" "}
+              sessions in a row · Tap a day to plan it.
+            </>
+          ) : (
+            "Tap a day to plan or change it."
+          )
         }
       />
       <HScroll className="week-strip">

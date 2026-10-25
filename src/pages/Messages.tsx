@@ -35,6 +35,7 @@ import { UpgradeCard } from "../components/Upgrade";
 import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
 import { Button, Modal, Notice, Select } from "../components/ui";
+import StreakFlame from "../components/StreakFlame";
 export default function MessagesPage() {
   const { state, update, toast } = useDemo();
   const [params, setParams] = useSearchParams();
@@ -107,8 +108,7 @@ export default function MessagesPage() {
       },
     }));
     const reward = unlocked(before, next.count);
-    if (reward)
-      toast(`🔥 ${reward.days}-day streak! Unlocked: ${reward.label}.`);
+    if (reward) toast(`${reward.days}-day streak · Unlocked: ${reward.label}.`);
   };
   const send = () => {
     if ((!text.trim() && !card && !photo && !voice) || blocked || !creator)
@@ -216,7 +216,12 @@ export default function MessagesPage() {
                 >
                   <span className="avatar">{c.initials}</span>
                   <span className="conversation-text">
-                    <strong>{c.name}</strong>
+                    <strong>
+                      {c.name}
+                      {streakOf(c.id) > 0 && (
+                        <StreakFlame count={streakOf(c.id)} />
+                      )}
+                    </strong>
                     <small>
                       <span className="conversation-snippet">
                         {last
@@ -233,12 +238,6 @@ export default function MessagesPage() {
                           : "Start a conversation"}
                       </span>
                       {last?.time && <span> · {last.time}</span>}
-                      {streakOf(c.id) > 0 && (
-                        <span className="streak-inline">
-                          {" "}
-                          · 🔥 {streakOf(c.id)}
-                        </span>
-                      )}
                     </small>
                   </span>
                 </button>
@@ -266,18 +265,15 @@ export default function MessagesPage() {
                 >
                   <span className="avatar">{creator.initials}</span>
                   <span>
-                    <strong>{creator.name}</strong>
+                    <strong>
+                      {creator.name}
+                      {streakOf(creator.id) > 0 && (
+                        <StreakFlame count={streakOf(creator.id)} />
+                      )}
+                    </strong>
                     <small>{creator.handle}</small>
                   </span>
                 </Link>
-                {streakOf(creator.id) > 0 && (
-                  <span
-                    className="streak-chip"
-                    title={`${streakOf(creator.id)}-day streak`}
-                  >
-                    🔥 {streakOf(creator.id)}
-                  </span>
-                )}
                 {owns("themes") && (
                   <button
                     className="icon-button"
