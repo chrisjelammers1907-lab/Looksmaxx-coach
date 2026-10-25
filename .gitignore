@@ -9,3 +9,6 @@ test-results/
 private/
 uploads/
 .DS_Store
+
+# Local plugin notes (Decision Council memory)
+.claude/agent-memory/
