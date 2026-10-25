@@ -12,7 +12,7 @@ import { releasePrivateMedia } from "./media";
 import { autoLog } from "./training";
 import { today, uid } from "./domain";
 const STORAGE_KEY = "charett-demo-v1";
-/** Training plans and logs persist in this browser, as the owner chose. */
+/** Training, nutrition and weight logs persist in this browser, as the owner chose. */
 const TRAINING_KEY = "charett-training-v1";
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === "object" && !Array.isArray(v);
@@ -43,6 +43,28 @@ function loadTraining(state: DemoState) {
         typeof saved.trainingSince === "string"
           ? saved.trainingSince
           : state.trainingSince,
+      food: Array.isArray(saved.food)
+        ? (saved.food as DemoState["food"]).filter(
+            (f) =>
+              isRecord(f) &&
+              typeof f.name === "string" &&
+              typeof f.calories === "number" &&
+              typeof f.carbs === "number",
+          )
+        : state.food,
+      weights: Array.isArray(saved.weights)
+        ? (saved.weights as DemoState["weights"]).filter(
+            (w) =>
+              isRecord(w) &&
+              typeof w.date === "string" &&
+              typeof w.kg === "number",
+          )
+        : state.weights,
+      nutritionTargets:
+        isRecord(saved.nutritionTargets) &&
+        typeof saved.nutritionTargets.calories === "number"
+          ? (saved.nutritionTargets as unknown as DemoState["nutritionTargets"])
+          : state.nutritionTargets,
     };
   } catch {
     return state;
@@ -159,8 +181,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       /* No sensitive state is persisted. */
     }
   }, [state]);
-  const { trainingWeek, trainingProgress, sessions, workouts, trainingSince } =
-    state;
+  const {
+    trainingWeek,
+    trainingProgress,
+    sessions,
+    workouts,
+    trainingSince,
+    food,
+    weights,
+    nutritionTargets,
+  } = state;
   const { theme, textSize } = state.settings;
   // Light, dark or follow the device; the choice is applied to <html>.
   useEffect(() => {
@@ -189,12 +219,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           sessions,
           workouts,
           trainingSince,
+          food,
+          weights,
+          nutritionTargets,
         }),
       );
     } catch {
       /* The plan still works for this session without storage. */
     }
-  }, [trainingWeek, trainingProgress, sessions, workouts, trainingSince]);
+  }, [
+    trainingWeek,
+    trainingProgress,
+    sessions,
+    workouts,
+    trainingSince,
+    food,
+    weights,
+    nutritionTargets,
+  ]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(""), 4500);

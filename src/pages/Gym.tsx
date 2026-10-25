@@ -1,39 +1,17 @@
 import { useState } from "react";
-import {
-  Activity,
-  Plus,
-  Trash2,
-  Pencil,
-  TrendingUp,
-  Utensils,
-  StretchHorizontal,
-} from "lucide-react";
+import { TrendingUp, StretchHorizontal } from "lucide-react";
 import { useDemo } from "../lib/store";
 import TrainingPlanner from "../components/Training";
 import { uid, today, workoutVolume, dateLabel } from "../lib/domain";
-import type { Workout, Food } from "../lib/types";
-import {
-  Button,
-  Empty,
-  Field,
-  Modal,
-  Notice,
-  SectionTitle,
-  Tabs,
-} from "../components/ui";
+import type { Workout } from "../lib/types";
+import Nutrition from "../components/Nutrition";
+import { fromKg, toKg, weightLabel } from "../lib/units";
+import { Button, Field, Modal, SectionTitle, Tabs } from "../components/ui";
 export default function Gym() {
   const { state, update, toast } = useDemo();
   const [tab, setTab] = useState("training");
   const [workout, setWorkout] = useState<Workout | null>(null);
-  const [food, setFood] = useState<Food | null>(null);
-  const [targets, setTargets] = useState(false);
-  const [cal, setCal] = useState(state.profile.calories),
-    [protein, setProtein] = useState(state.profile.protein);
-  const [date, setDate] = useState(today());
-  const logs = state.workouts.filter((w) => w.date === date);
-  const meals = state.food.filter((f) => f.date === date);
-  const foodCal = meals.reduce((a, f) => a + f.calories, 0),
-    foodProtein = meals.reduce((a, f) => a + f.protein, 0);
+  const unit = state.settings.weightUnit;
   const exercises = [...new Set(state.workouts.map((w) => w.exercise))];
   return (
     <>
@@ -49,89 +27,9 @@ export default function Gym() {
       {tab === "training" && (
         <>
           <TrainingPlanner />
-          <div className="section-title">
-            <div>
-              <h2>History</h2>
-              <p>Sessions log themselves; add a single exercise any time.</p>
-            </div>
-            <Button
-              onClick={() =>
-                setWorkout({
-                  id: uid(),
-                  date,
-                  exercise: "",
-                  sets: 3,
-                  reps: 8,
-                  weight: 0,
-                })
-              }
-            >
-              <Plus size={16} />
-              Log exercise
-            </Button>
-          </div>
-          <Field
-            label="Workout date"
-            type="date"
-            max={today()}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          {logs.length ? (
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Exercise</th>
-                    <th>Sets × reps</th>
-                    <th>Load</th>
-                    <th>Volume</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {logs.map((w) => (
-                    <tr key={w.id}>
-                      <td>{w.exercise}</td>
-                      <td>
-                        {w.sets} × {w.reps}
-                      </td>
-                      <td>{w.weight} kg</td>
-                      <td>{workoutVolume(w.sets, w.reps, w.weight)} kg</td>
-                      <td>
-                        <button
-                          className="icon-button"
-                          aria-label={`Edit ${w.exercise}`}
-                          onClick={() => setWorkout(w)}
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          className="icon-button"
-                          aria-label={`Delete ${w.exercise}`}
-                          onClick={() =>
-                            update((s) => ({
-                              ...s,
-                              workouts: s.workouts.filter((x) => x.id !== w.id),
-                            }))
-                          }
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <Empty title="A fresh page in your training log.">
-              Add your session when you are ready.
-            </Empty>
-          )}
           <SectionTitle
             title="Your training story"
-            subtitle="Fictional starter history · Entries you add are private session data."
+            subtitle="Every finished session lands here by itself."
           />
           <div className="stats-grid">
             {exercises.map((ex) => {
@@ -145,15 +43,24 @@ export default function Gym() {
                   <TrendingUp size={18} />
                   <span>{ex}</span>
                   <strong>
-                    {first.weight} → {last.weight} <small>kg</small>
+                    {fromKg(first.weight, unit)} → {fromKg(last.weight, unit)}{" "}
+                    <small>{unit}</small>
                   </strong>
                   <p>
                     {first.date} to {last.date} · {ws.length} logged entries
                   </p>
                   <p>
                     Volume:{" "}
-                    {workoutVolume(first.sets, first.reps, first.weight)} →{" "}
-                    {workoutVolume(last.sets, last.reps, last.weight)} kg
+                    {fromKg(
+                      workoutVolume(first.sets, first.reps, first.weight),
+                      unit,
+                    )}{" "}
+                    →{" "}
+                    {fromKg(
+                      workoutVolume(last.sets, last.reps, last.weight),
+                      unit,
+                    )}{" "}
+                    {unit}
                   </p>
                   <div className="mini-chart">
                     {ws.map((w) => (
@@ -162,7 +69,7 @@ export default function Gym() {
                         style={{
                           height: `${Math.max(10, (w.weight / Math.max(...ws.map((x) => x.weight), 1)) * 70)}px`,
                         }}
-                        title={`${w.date}: ${w.weight} kg`}
+                        title={`${w.date}: ${weightLabel(w.weight, unit)}`}
                       />
                     ))}
                   </div>
@@ -182,9 +89,13 @@ export default function Gym() {
                     {dateLabel(w.date)} · {w.exercise}
                   </span>
                   <span>
-                    {w.sets} × {w.reps} · {w.weight} kg
+                    {w.sets} × {w.reps} · {weightLabel(w.weight, unit)}
                   </span>
-                  <button className="text-button" onClick={() => setWorkout(w)}>
+                  <button
+                    className="text-button"
+                    aria-label={`Edit ${w.exercise}, ${dateLabel(w.date)}`}
+                    onClick={() => setWorkout(w)}
+                  >
                     Edit
                   </button>
                 </div>
@@ -213,133 +124,7 @@ export default function Gym() {
           </details>
         </>
       )}
-      {tab === "nutrition" && (
-        <>
-          <SectionTitle
-            title="Nourish your everyday"
-            subtitle="User-entered estimates. Not a personalized dietary prescription."
-          >
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setCal(state.profile.calories);
-                setProtein(state.profile.protein);
-                setTargets(true);
-              }}
-            >
-              Edit targets
-            </Button>
-          </SectionTitle>
-          <Field
-            label="Food log date"
-            type="date"
-            max={today()}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <div className="stats-grid">
-            <div className="stat-card">
-              <Utensils size={20} />
-              <span>Calories</span>
-              <strong>
-                {foodCal}
-                <small> / {state.profile.calories} kcal</small>
-              </strong>
-              <progress
-                value={foodCal}
-                max={Math.max(state.profile.calories, foodCal, 1)}
-              />
-            </div>
-            <div className="stat-card">
-              <Activity size={20} />
-              <span>Protein</span>
-              <strong>
-                {foodProtein}
-                <small> / {state.profile.protein} g</small>
-              </strong>
-              <progress
-                value={foodProtein}
-                max={Math.max(state.profile.protein, foodProtein, 1)}
-              />
-            </div>
-          </div>
-          <Notice>
-            Targets begin as fictional examples. Nutrition values come from your
-            manual entries and stated source, not a live food database.
-          </Notice>
-          <SectionTitle title="On the menu">
-            <Button
-              onClick={() =>
-                setFood({
-                  id: uid(),
-                  date,
-                  name: "",
-                  calories: 0,
-                  protein: 0,
-                  source: "User-entered estimate",
-                })
-              }
-            >
-              <Plus size={16} />
-              Log food
-            </Button>
-          </SectionTitle>
-          {meals.length ? (
-            <div className="list-card">
-              {meals.map((f) => (
-                <div className="list-row" key={f.id}>
-                  <div>
-                    <strong>{f.name}</strong>
-                    <small>{f.source} · Estimate</small>
-                  </div>
-                  <span>
-                    {f.calories} kcal · {f.protein} g protein
-                  </span>
-                  <button
-                    className="icon-button"
-                    aria-label={`Edit ${f.name}`}
-                    onClick={() => setFood(f)}
-                  >
-                    <Pencil size={15} />
-                  </button>
-                  <button
-                    className="icon-button"
-                    aria-label={`Delete ${f.name}`}
-                    onClick={() =>
-                      update((s) => ({
-                        ...s,
-                        food: s.food.filter((x) => x.id !== f.id),
-                      }))
-                    }
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Empty title="What nourished you today?">
-              Log a meal and its estimated nutrition.
-            </Empty>
-          )}
-          <details className="details">
-            <summary>Food history ({state.food.length} entries)</summary>
-            {state.food.map((f) => (
-              <div key={f.id} className="history-row">
-                <span>
-                  {f.date} · {f.name}
-                </span>
-                <span>
-                  {f.calories} kcal · {f.protein} g
-                </span>
-                <button className="text-button" onClick={() => setFood(f)}>
-                  Edit
-                </button>
-              </div>
-            ))}
-          </details>
-        </>
-      )}
+      {tab === "nutrition" && <Nutrition />}
       {tab === "mobility" && (
         <>
           <div className="mobility-card">
@@ -382,7 +167,7 @@ export default function Gym() {
         </>
       )}
       {workout && (
-        <Modal title="Log your workout" onClose={() => setWorkout(null)}>
+        <Modal title="Edit history entry" onClose={() => setWorkout(null)}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -393,7 +178,7 @@ export default function Gym() {
                   : [...s.workouts, workout],
               }));
               setWorkout(null);
-              toast("Workout saved.");
+              toast("History updated.");
             }}
           >
             <Field
@@ -436,122 +221,37 @@ export default function Gym() {
                 }
               />
               <Field
-                label="Weight (kg)"
+                label={`Weight (${unit})`}
                 type="number"
                 min="0"
-                max="1000"
+                max="2000"
                 step="0.5"
                 required
-                value={workout.weight}
+                value={fromKg(workout.weight, unit)}
                 onChange={(e) =>
-                  setWorkout({ ...workout, weight: Number(e.target.value) })
+                  setWorkout({
+                    ...workout,
+                    weight: toKg(Number(e.target.value), unit),
+                  })
                 }
               />
             </div>
-            <Button type="submit">Save workout</Button>
-          </form>
-        </Modal>
-      )}
-      {food && (
-        <Modal title="Log your food" onClose={() => setFood(null)}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              update((s) => ({
-                ...s,
-                food: s.food.some((f) => f.id === food.id)
-                  ? s.food.map((f) => (f.id === food.id ? food : f))
-                  : [...s.food, food],
-              }));
-              setFood(null);
-              toast("Food estimate saved.");
-            }}
-          >
-            <Field
-              label="Food / meal name"
-              required
-              value={food.name}
-              onChange={(e) => setFood({ ...food, name: e.target.value })}
-            />
-            <Field
-              label="Food date"
-              type="date"
-              required
-              max={today()}
-              value={food.date}
-              onChange={(e) => setFood({ ...food, date: e.target.value })}
-            />
-            <div className="form-grid">
-              <Field
-                label="Estimated calories (kcal)"
-                required
-                type="number"
-                min="0"
-                max="20000"
-                value={food.calories}
-                onChange={(e) =>
-                  setFood({ ...food, calories: Number(e.target.value) })
-                }
-              />
-              <Field
-                label="Estimated protein (g)"
-                required
-                type="number"
-                min="0"
-                max="1000"
-                step="0.1"
-                value={food.protein}
-                onChange={(e) =>
-                  setFood({ ...food, protein: Number(e.target.value) })
-                }
-              />
+            <div className="modal-actions">
+              <Button type="submit">Save changes</Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  update((s) => ({
+                    ...s,
+                    workouts: s.workouts.filter((w) => w.id !== workout.id),
+                  }));
+                  setWorkout(null);
+                }}
+              >
+                Delete entry
+              </Button>
             </div>
-            <Field
-              label="Nutrition data source"
-              required
-              value={food.source}
-              onChange={(e) => setFood({ ...food, source: e.target.value })}
-              hint="For example: package label, recipe estimate, user-entered estimate"
-            />
-            <Button type="submit">Save food entry</Button>
-          </form>
-        </Modal>
-      )}
-      {targets && (
-        <Modal title="Your nutrition targets" onClose={() => setTargets(false)}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              update((s) => ({
-                ...s,
-                profile: { ...s.profile, calories: cal, protein },
-              }));
-              setTargets(false);
-            }}
-          >
-            <Notice>
-              Set targets appropriate for you. Starter figures are fictional
-              examples, not calculated requirements.
-            </Notice>
-            <Field
-              label="Daily calories (kcal)"
-              type="number"
-              min="1"
-              max="15000"
-              required
-              value={cal}
-              onChange={(e) => setCal(Number(e.target.value))}
-            />
-            <Field
-              label="Daily protein (g)"
-              type="number"
-              min="1"
-              max="1000"
-              required
-              value={protein}
-              onChange={(e) => setProtein(Number(e.target.value))}
-            />
-            <Button type="submit">Save targets</Button>
           </form>
         </Modal>
       )}

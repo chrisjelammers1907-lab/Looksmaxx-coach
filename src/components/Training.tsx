@@ -1,6 +1,7 @@
 import HScroll from "./HScroll";
 import { useEffect, useState } from "react";
 import { Check, Dumbbell, Plus, Repeat, Trash2, Trophy, X } from "lucide-react";
+import { fromKg, toKg, weightLabel } from "../lib/units";
 import { useDemo } from "../lib/store";
 import { dateLabel, today, uid } from "../lib/domain";
 import {
@@ -21,6 +22,8 @@ import { StoryComposer } from "./Stories";
 
 function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
   const { state, update, toast } = useDemo();
+  const unit = state.settings.weightUnit;
+  const Unit = unit === "kg" ? "Kg" : "Lb";
   const existing = state.trainingWeek[day];
   const [draft, setDraft] = useState<TrainingDay>(
     existing
@@ -101,7 +104,7 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
                 <div className="set-row set-head" aria-hidden="true">
                   <span />
                   <span>Reps</span>
-                  <span>Kg</span>
+                  <span>{Unit}</span>
                   <span />
                 </div>
                 {exercise.sets.map((set, setIndex) => (
@@ -126,19 +129,22 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
                       }
                     />
                     <Field
-                      label={`Kg, exercise ${index + 1} set ${setIndex + 1}`}
+                      label={`${Unit}, exercise ${index + 1} set ${setIndex + 1}`}
                       type="number"
                       min="0"
-                      max="1000"
+                      max="2000"
                       step="0.5"
                       required
-                      value={set.weight}
+                      value={fromKg(set.weight, unit)}
                       onChange={(e) =>
                         setExercise(index, {
                           ...exercise,
                           sets: exercise.sets.map((s, i) =>
                             i === setIndex
-                              ? { ...s, weight: Number(e.target.value) }
+                              ? {
+                                  ...s,
+                                  weight: toKg(Number(e.target.value), unit),
+                                }
                               : s,
                           ),
                         })
@@ -232,6 +238,7 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
 
 function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
   const { state, update, toast } = useDemo();
+  const unit = state.settings.weightUnit;
   const [story, setStory] = useState("");
   const date = today();
   const plan = planFor(state.trainingWeek, date);
@@ -329,20 +336,23 @@ function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
                       min="0"
                       max="1000"
                       step="0.5"
-                      aria-label={`${exercise.name} set ${i + 1} kg`}
-                      value={set.weight}
+                      aria-label={`${exercise.name} set ${i + 1} ${unit}`}
+                      value={fromKg(set.weight, unit)}
                       onChange={(e) =>
                         save(
                           exercise.id,
                           sets.map((s, j) =>
                             j === i
-                              ? { ...s, weight: Number(e.target.value) }
+                              ? {
+                                  ...s,
+                                  weight: toKg(Number(e.target.value), unit),
+                                }
                               : s,
                           ),
                         )
                       }
                     />
-                    kg
+                    {unit}
                   </label>
                   <button
                     type="button"
@@ -366,13 +376,14 @@ function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
             {pr && (
               <div className="pr-banner">
                 <span>
-                  {exercise.name}: {previous} → {top} kg
+                  {exercise.name}: {fromKg(previous, unit)} →{" "}
+                  {weightLabel(top, unit)}
                 </span>
                 <Button
                   variant="small"
                   onClick={() =>
                     setStory(
-                      `New PR · ${exercise.name} ${previous} → ${top} kg`,
+                      `New PR · ${exercise.name} ${fromKg(previous, unit)} → ${weightLabel(top, unit)}`,
                     )
                   }
                 >

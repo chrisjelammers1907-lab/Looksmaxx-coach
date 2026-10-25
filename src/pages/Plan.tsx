@@ -6,16 +6,17 @@ import { useDemo } from "../lib/store";
 import type { Goal, TopicId } from "../lib/types";
 import { topics } from "../lib/data";
 import Routines from "../components/Routines";
-import { today, uid } from "../lib/domain";
-import { alive } from "../lib/streaks";
+import { dateLabel, today, uid } from "../lib/domain";
 import {
-  Button,
-  Empty,
-  Field,
-  Modal,
-  PageHeader,
-  SectionTitle,
-} from "../components/ui";
+  groupLabels,
+  groupOf,
+  isDone,
+  repeatOf,
+  toggleDone,
+} from "../lib/tasks";
+import { weekdayOf } from "../lib/training";
+import { alive } from "../lib/streaks";
+import { Button, Field, Modal, PageHeader, Select } from "../components/ui";
 type PlanFilter = "all" | "routines" | "tasks";
 export default function PlanPage() {
   const { state, update, toast } = useDemo();
@@ -31,8 +32,10 @@ export default function PlanPage() {
   const [routineTopic, setRoutineTopic] = useState<TopicId | "all">(
     requested || "all",
   );
-  const completed = state.goals.filter((g) => g.done).length;
-  const total = state.goals.length;
+  const date = today();
+  const todayTasks = state.goals.filter((g) => groupOf(g, date) === "today");
+  const completed = todayTasks.filter((g) => isDone(g, date)).length;
+  const total = todayTasks.length;
   const ring = 2 * Math.PI * 26;
   const todayLabel = new Date().toLocaleDateString("en", {
     weekday: "long",
@@ -47,7 +50,14 @@ export default function PlanPage() {
         action={
           <Button
             onClick={() =>
-              setEditing({ id: uid(), text: "", cadence: "Daily", done: false })
+              setEditing({
+                id: uid(),
+                text: "",
+                cadence: "Daily",
+                done: false,
+                due: today(),
+                repeat: "none",
+              })
             }
           >
             <Plus size={16} />
@@ -69,7 +79,7 @@ export default function PlanPage() {
         </svg>
         <div>
           <strong>
-            {completed} of {total} tasks done
+            {completed} of {total} done today
           </strong>
           <span>
             {state.routines.length} routines for today
@@ -99,53 +109,83 @@ export default function PlanPage() {
       </HScroll>
       {filter !== "routines" && (
         <section className="plan-section">
-          <SectionTitle title="Tasks" />
-          <div className="goal-list">
-            {state.goals.map((g) => (
-              <div className={`goal-row ${g.done ? "done" : ""}`} key={g.id}>
-                <button
-                  className="goal-check"
-                  aria-label={`Complete ${g.text}`}
-                  aria-pressed={g.done}
-                  onClick={() =>
-                    update((s) => ({
-                      ...s,
-                      goals: s.goals.map((x) =>
-                        x.id === g.id ? { ...x, done: !x.done } : x,
-                      ),
-                    }))
-                  }
-                >
-                  {g.done && <Check size={17} />}
-                </button>
-                <span>{g.text}</span>
-                <button
-                  className="icon-button"
-                  aria-label={`Edit ${g.text}`}
-                  onClick={() => setEditing(g)}
-                >
-                  <Pencil size={15} />
-                </button>
-                <button
-                  className="icon-button"
-                  aria-label={`Delete ${g.text}`}
-                  onClick={() =>
-                    update((s) => ({
-                      ...s,
-                      goals: s.goals.filter((x) => x.id !== g.id),
-                    }))
-                  }
-                >
-                  <Trash2 size={15} />
-                </button>
+          {(["overdue", "today", "week", "later"] as const).map((group) => {
+            const tasks = state.goals.filter((g) => groupOf(g, date) === group);
+            if (!tasks.length && group !== "today") return null;
+            return (
+              <div className={`task-group task-group-${group}`} key={group}>
+                <h2 className="task-group-title">
+                  {groupLabels[group]}
+                  <span>{tasks.length}</span>
+                </h2>
+                {tasks.length ? (
+                  <div className="goal-list">
+                    {tasks.map((g) => {
+                      const done = isDone(g, date);
+                      const repeat = repeatOf(g);
+                      return (
+                        <div
+                          className={`goal-row ${done ? "done" : ""}`}
+                          key={g.id}
+                        >
+                          <button
+                            className="goal-check"
+                            aria-label={`Complete ${g.text}`}
+                            aria-pressed={done}
+                            onClick={() =>
+                              update((s) => ({
+                                ...s,
+                                goals: s.goals.map((x) =>
+                                  x.id === g.id ? toggleDone(x, date) : x,
+                                ),
+                              }))
+                            }
+                          >
+                            {done && <Check size={17} />}
+                          </button>
+                          <span className="goal-text">
+                            <span>{g.text}</span>
+                            {(g.due || repeat !== "none") && (
+                              <small>
+                                {repeat === "daily"
+                                  ? "Every day"
+                                  : repeat === "weekly"
+                                    ? `Every week${g.due ? ` · ${weekdayOf(g.due)}` : ""}`
+                                    : dateLabel(g.due!)}
+                              </small>
+                            )}
+                          </span>
+                          <button
+                            className="icon-button"
+                            aria-label={`Edit ${g.text}`}
+                            onClick={() => setEditing(g)}
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            className="icon-button"
+                            aria-label={`Delete ${g.text}`}
+                            onClick={() =>
+                              update((s) => ({
+                                ...s,
+                                goals: s.goals.filter((x) => x.id !== g.id),
+                              }))
+                            }
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="small-text muted task-empty">
+                    Nothing due today. Add a task or ask your coach.
+                  </p>
+                )}
               </div>
-            ))}
-          </div>
-          {!state.goals.length && (
-            <Empty title="No tasks for today.">
-              Add a task or ask your coach for a suggestion.
-            </Empty>
-          )}
+            );
+          })}
         </section>
       )}
       {filter !== "tasks" && (
@@ -204,6 +244,30 @@ export default function PlanPage() {
               maxLength={150}
               onChange={(e) => setEditing({ ...editing, text: e.target.value })}
             />
+            <div className="form-grid">
+              <Field
+                label="Date (optional)"
+                type="date"
+                value={editing.due || ""}
+                onChange={(e) =>
+                  setEditing({ ...editing, due: e.target.value || undefined })
+                }
+              />
+              <Select
+                label="Repeat"
+                value={repeatOf(editing)}
+                onChange={(e) =>
+                  setEditing({
+                    ...editing,
+                    repeat: e.target.value as Goal["repeat"],
+                  })
+                }
+              >
+                <option value="none">Doesn’t repeat</option>
+                <option value="daily">Every day</option>
+                <option value="weekly">Every week</option>
+              </Select>
+            </div>
             <Button type="submit">Save task</Button>
           </form>
         </Modal>

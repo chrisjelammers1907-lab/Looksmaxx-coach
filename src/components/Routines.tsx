@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
 import { useDemo } from "../lib/store";
 import type { Routine, TopicId } from "../lib/types";
-import { today, topicName, uid } from "../lib/domain";
+import { asset, today, topicName, uid } from "../lib/domain";
 import { alive, bump, unlocked } from "../lib/streaks";
 import { topics } from "../lib/data";
 import {
@@ -102,10 +102,41 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                       String(index + 1).padStart(2, "0")
                     )}
                   </button>
-                  <span>{step}</span>
+                  <span>
+                    {step}
+                    {r.stepProducts?.[index] && (
+                      <small className="step-product">
+                        {
+                          state.items.find(
+                            (i) => i.id === r.stepProducts![index],
+                          )?.name
+                        }
+                      </small>
+                    )}
+                  </span>
                 </li>
               ))}
             </ol>
+            {!!r.productIds?.length && (
+              <div className="routine-products" aria-label="Products used">
+                {state.items
+                  .filter((i) => r.productIds!.includes(i.id))
+                  .map((i) => (
+                    <span className="routine-product" key={i.id}>
+                      <img
+                        src={
+                          i.image.startsWith("data:") ? i.image : asset(i.image)
+                        }
+                        alt=""
+                      />
+                      <span>
+                        <small>{i.brand}</small>
+                        {i.name}
+                      </span>
+                    </span>
+                  ))}
+              </div>
+            )}
             <div className="card-controls">
               <button className="text-button" onClick={() => setEditing(r)}>
                 <Pencil size={13} />
@@ -201,6 +232,38 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                 hint="For example: Daily, or Mon, Wed, Fri"
               />
             </div>
+            {(() => {
+              const owned = state.items.filter(
+                (i) => i.topic === editing.topic,
+              );
+              const chosen = editing.productIds || [];
+              return owned.length ? (
+                <fieldset className="product-picker">
+                  <legend>Products used (optional)</legend>
+                  {owned.map((i) => (
+                    <label key={i.id} className="chip-check">
+                      <input
+                        type="checkbox"
+                        checked={chosen.includes(i.id)}
+                        onChange={() =>
+                          setEditing({
+                            ...editing,
+                            productIds: chosen.includes(i.id)
+                              ? chosen.filter((x) => x !== i.id)
+                              : [...chosen, i.id],
+                          })
+                        }
+                      />
+                      {i.name}
+                    </label>
+                  ))}
+                </fieldset>
+              ) : (
+                <p className="small-text muted">
+                  Add products to your shelf in this category to link them here.
+                </p>
+              );
+            })()}
             <Area
               label="Steps (one per line, in order)"
               required
@@ -209,6 +272,39 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                 setEditing({ ...editing, steps: e.target.value.split("\n") })
               }
             />
+            {!!editing.productIds?.length &&
+              editing.steps.filter((st) => st.trim()).length > 0 && (
+                <div className="step-product-list">
+                  {editing.steps
+                    .map((st, index) => ({ st, index }))
+                    .filter(({ st }) => st.trim())
+                    .map(({ st, index }) => (
+                      <Select
+                        key={index}
+                        label={`Product for “${st.trim()}”`}
+                        value={editing.stepProducts?.[index] || ""}
+                        onChange={(e) =>
+                          setEditing({
+                            ...editing,
+                            stepProducts: {
+                              ...editing.stepProducts,
+                              [index]: e.target.value,
+                            },
+                          })
+                        }
+                      >
+                        <option value="">No product</option>
+                        {state.items
+                          .filter((i) => editing.productIds!.includes(i.id))
+                          .map((i) => (
+                            <option key={i.id} value={i.id}>
+                              {i.name}
+                            </option>
+                          ))}
+                      </Select>
+                    ))}
+                </div>
+              )}
             <Notice icon="private">
               Your personal routine stays in this session. Sharing requires a
               separate post and explicit audience preview.

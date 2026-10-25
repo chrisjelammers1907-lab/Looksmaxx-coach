@@ -29,8 +29,6 @@ export interface Profile {
   currency: string;
   budget: number;
   coachStyle: "supportive" | "direct";
-  calories: number;
-  protein: number;
   messageRequests: boolean;
   photo?: string;
 }
@@ -56,6 +54,10 @@ export interface Routine {
   time: string;
   schedule: string;
   steps: string[];
+  /** Owned products used in this routine. */
+  productIds?: string[];
+  /** Optional product per step index. */
+  stepProducts?: Record<number, string>;
 }
 export interface Outfit {
   id: string;
@@ -180,19 +182,46 @@ export interface TrainingSession {
   status: "done" | "skipped";
   exercises: { name: string; sets: SetProgress[] }[];
 }
-export interface Food {
+/** Optional nutrients, keyed as in `extraNutrients` (lib/nutrition). */
+export type ExtraNutrients = Partial<Record<string, number>>;
+export interface Macros {
+  calories: number;
+  carbs: number;
+  protein: number;
+  fat: number;
+}
+export interface Food extends Macros {
   id: string;
   date: string;
   name: string;
-  calories: number;
-  protein: number;
-  source: string;
+  brand?: string;
+  /** Amount eaten in grams, when known. */
+  grams?: number;
+  barcode?: string;
+  source: "manual" | "scan";
+  extra?: ExtraNutrients;
+  /** Values per 100 g from a scanned label, so the amount can rescale. */
+  per100?: Macros & { extra?: ExtraNutrients };
+}
+export interface NutritionTargets extends Macros {
+  extra?: ExtraNutrients;
+}
+export interface WeightEntry {
+  id: string;
+  date: string;
+  kg: number;
 }
 export interface Goal {
   id: string;
   text: string;
+  /** Legacy cadence from coach proposals; `repeat` takes precedence. */
   cadence: "Daily" | "Weekly";
   done: boolean;
+  /** Optional due date (YYYY-MM-DD). */
+  due?: string;
+  repeat?: "none" | "daily" | "weekly";
+  /** For repeating tasks: the last day they were ticked off. */
+  doneOn?: string;
 }
 export interface ChatMessage {
   id: string;
@@ -264,6 +293,9 @@ export interface DemoState {
   photos: Photo[];
   workouts: Workout[];
   food: Food[];
+  /** Set by the person; there are no starter targets. */
+  nutritionTargets: NutritionTargets | null;
+  weights: WeightEntry[];
   goals: Goal[];
   schedule: Record<string, string>;
   notes: Partial<Record<TopicId, string>>;

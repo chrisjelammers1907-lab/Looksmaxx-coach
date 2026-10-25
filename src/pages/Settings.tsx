@@ -540,6 +540,8 @@ export default function SettingsPage() {
                   trainingProgress: {},
                   sessions: [],
                   food: [],
+                  weights: [],
+                  nutritionTargets: null,
                   notes: {},
                   chat: [],
                   messages: {},

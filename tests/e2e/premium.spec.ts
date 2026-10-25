@@ -231,7 +231,7 @@ test("long captions expand in place and push Shop the look down", async ({
 test("plan shows one day with routine and task filters", async ({ page }) => {
   await open(page, "/plan");
   await expect(page.getByText("Your next check-in")).toHaveCount(0);
-  await expect(page.getByText(/tasks done/)).toBeVisible();
+  await expect(page.getByText(/done today/)).toBeVisible();
   const filters = page.getByLabel("Show in plan");
   await filters.getByRole("button", { name: "Tasks", exact: true }).click();
   await expect(page.locator(".routine-card")).toHaveCount(0);
@@ -487,4 +487,124 @@ test("chat streaks unlock rewards and custom stickers can be made", async ({
   await expect(
     page.getByRole("button", { name: "Record voice message" }),
   ).toHaveCount(1);
+});
+
+test("tasks are grouped by date and routines show the products they use", async ({
+  page,
+}) => {
+  await open(page, "/plan");
+  for (const group of ["Today", "This week", "Later"])
+    await expect(
+      page.locator(".task-group-title", { hasText: group }),
+    ).toBeVisible();
+  await page.getByRole("button", { name: "Add a task" }).click();
+  await page.getByLabel("Task", { exact: true }).fill("Pick up new trainers");
+  const date = new Date(Date.now() + 30 * 86_400_000);
+  const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  await page.getByLabel("Date (optional)").fill(iso);
+  await page.getByRole("button", { name: "Save task" }).click();
+  await expect(
+    page.locator(".task-group-later").getByText("Pick up new trainers"),
+  ).toBeVisible();
+
+  const morning = page.locator(".routine-card").first();
+  await expect(morning.getByLabel("Products used")).toContainText(
+    "Gentle cream cleanser",
+  );
+  await expect(morning.locator(".step-product").first()).toHaveText(
+    "Gentle cream cleanser",
+  );
+  await morning.getByRole("button", { name: /^Edit/ }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Daily moisturizer").uncheck();
+  await dialog.getByRole("button", { name: /^Save/ }).click();
+  await expect(morning.getByLabel("Products used")).not.toContainText(
+    "Daily moisturizer",
+  );
+  await noAxeViolations(page);
+});
+
+test("nutrition: own targets, barcode scan, extra nutrients and weight", async ({
+  page,
+}) => {
+  await page.route("https://world.openfoodfacts.org/**", (route) =>
+    route.fulfill({
+      json: {
+        product: {
+          product_name: "Greek yoghurt",
+          brands: "Example Dairy",
+          serving_quantity: 150,
+          nutriments: {
+            "energy-kcal_100g": 80,
+            carbohydrates_100g: 4,
+            proteins_100g: 10,
+            fat_100g: 2,
+            sugars_100g: 4,
+            salt_100g: 0.1,
+            potassium_100g: 0.15,
+          },
+        },
+      },
+    }),
+  );
+  await open(page, "/topics/gym");
+  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await expect(page.getByText("Set your daily targets")).toBeVisible();
+
+  await page.getByRole("button", { name: "Calorie calculator" }).click();
+  await page.getByLabel("Age").fill("16");
+  await expect(page.getByLabel("Goal")).toBeDisabled();
+  await expect(page.getByText(/only shows maintenance/)).toBeVisible();
+  await page.getByLabel("Age").fill("30");
+  await page.getByLabel("Goal").selectOption("lose");
+  await page.getByRole("button", { name: "Use as my calorie target" }).click();
+  const calories = page.getByLabel("Daily calories (kcal)");
+  await expect(calories).not.toHaveValue("");
+  await calories.fill("2000");
+  await page.getByLabel("Daily carbohydrates (g)").fill("230");
+  await page.getByLabel("Daily protein (g)").fill("130");
+  await page.getByLabel("Daily fat (g)").fill("65");
+  await page.getByRole("button", { name: "Save targets" }).click();
+  await expect(page.getByText("kcal left")).toBeVisible();
+
+  await page.getByRole("button", { name: "Scan a barcode" }).click();
+  await page.getByLabel("Barcode number").fill("5200000000001");
+  await page.getByRole("button", { name: "Look up" }).click();
+  const food = page.getByRole("dialog", { name: "Add food" });
+  await expect(food.getByLabel("Food or meal")).toHaveValue("Greek yoghurt");
+  await expect(food.getByLabel("Calories (kcal)")).toHaveValue("120");
+  await food.getByLabel("Amount (g, optional)").fill("200");
+  await expect(food.getByLabel("Calories (kcal)")).toHaveValue("160");
+  await expect(food.getByLabel("Protein (g)", { exact: true })).toHaveValue(
+    "20",
+  );
+  await food.getByText("More nutrients (optional)").click();
+  await expect(food.getByLabel("Potassium (mg)")).toHaveValue("300");
+  await food.getByRole("button", { name: "Save food" }).click();
+  await expect(page.getByText("1840", { exact: true })).toBeVisible();
+  await page.getByText("More nutrients", { exact: true }).click();
+  await expect(page.locator(".nutrient-totals")).toContainText("300 mg");
+
+  await page.getByLabel("Weight (kg)").fill("78.4");
+  await page.getByRole("button", { name: "Log weight" }).click();
+  await expect(page.locator(".weight-stats")).toContainText("78.4 kg");
+
+  // Logs stay in this browser.
+  await page.reload();
+  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await expect(page.getByText("Greek yoghurt", { exact: true })).toBeVisible();
+  await expect(page.locator(".weight-stats")).toContainText("78.4 kg");
+  await noAxeViolations(page);
+});
+
+test("weights follow the unit chosen in settings", async ({ page }) => {
+  await open(page, "/settings");
+  await page.getByLabel("Weight", { exact: true }).selectOption("lb");
+  await go(page, "/topics/gym");
+  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await page.getByLabel("Weight (lb)").fill("176.4");
+  await page.getByRole("button", { name: "Log weight" }).click();
+  await expect(page.locator(".weight-stats")).toContainText("176.4 lb");
+  await page.getByRole("tab", { name: "Training & history" }).click();
+  await expect(page.locator(".stat-card").first()).toContainText("lb");
 });

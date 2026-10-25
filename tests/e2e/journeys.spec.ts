@@ -334,9 +334,7 @@ test("messages compose, rich routine card, request controls and blocking", async
     page.getByRole("heading", { name: "This recipient is blocked." }),
   ).toBeVisible();
 });
-test("training schedule, logs, history and nutrition targets", async ({
-  page,
-}) => {
+test("training schedule, nutrition targets and food log", async ({ page }) => {
   await open(page, "/topics/gym");
   await page.getByRole("button", { name: /^Monday:/ }).click();
   await page.getByLabel("Session name").fill("Comfortable strength");
@@ -344,37 +342,24 @@ test("training schedule, logs, history and nutrition targets", async ({
   await expect(
     page.getByRole("button", { name: /^Monday: Comfortable strength/ }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Log exercise" }).click();
-  await page.getByLabel("Exercise", { exact: true }).fill("Supported row");
-  await page.getByLabel("Weight (kg)").fill("20");
-  await page.getByRole("button", { name: "Save workout" }).click();
-  await expect(
-    page.locator("td").getByText("480 kg", { exact: true }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Edit Supported row" }).click();
-  await page.getByLabel("Repetitions per set").fill("10");
-  await page.getByRole("button", { name: "Save workout" }).click();
-  await expect(
-    page.locator("td").getByText("600 kg", { exact: true }),
-  ).toBeVisible();
   await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
-  await page.getByRole("button", { name: "Edit targets" }).click();
+  await page.getByRole("button", { name: "Set targets" }).click();
   await page.getByLabel("Daily calories (kcal)").fill("2400");
+  await page.getByLabel("Daily carbohydrates (g)").fill("280");
+  await page.getByLabel("Daily protein (g)").fill("140");
+  await page.getByLabel("Daily fat (g)").fill("70");
   await page.getByRole("button", { name: "Save targets" }).click();
-  await page.getByRole("button", { name: "Log food" }).click();
-  await page.getByLabel("Food / meal name").fill("Example lunch");
-  await page.getByLabel("Estimated calories (kcal)").fill("600");
-  await page.getByLabel("Estimated protein (g)").fill("30");
-  await page
-    .getByLabel("Nutrition data source")
-    .fill("Fictional recipe estimate");
-  await page.getByRole("button", { name: "Save food entry" }).click();
-  await expect(
-    page.getByText("Fictional recipe estimate · Estimate", { exact: true }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Add food" }).click();
+  await page.getByLabel("Food or meal").fill("Example lunch");
+  await page.getByLabel("Calories (kcal)").fill("600");
+  await page.getByLabel("Carbohydrates (g)").fill("70");
+  await page.getByLabel("Protein (g)", { exact: true }).fill("30");
+  await page.getByLabel("Fat (g)", { exact: true }).fill("18");
+  await page.getByRole("button", { name: "Save food" }).click();
+  await expect(page.getByText("1800", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Delete Example lunch" }).click();
   await expect(
-    page.getByRole("heading", { name: "What nourished you today?" }),
+    page.getByRole("heading", { name: "Nothing logged yet." }),
   ).toBeVisible();
   await page.getByRole("tab", { name: "Posture & mobility" }).click();
   await page
