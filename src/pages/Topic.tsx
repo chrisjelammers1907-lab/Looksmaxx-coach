@@ -509,6 +509,11 @@ const note: Partial<Record<TopicId, { title: string; text: string }>> = {
 const banner: Partial<
   Record<TopicId, { eyebrow: string; line: string; accent: string }>
 > = {
+  nutrition: {
+    eyebrow: "Targets · food · weight",
+    line: "Eat with intention.",
+    accent: "See it in the mirror.",
+  },
   skincare: {
     eyebrow: "Your daily ritual",
     line: "Care,",

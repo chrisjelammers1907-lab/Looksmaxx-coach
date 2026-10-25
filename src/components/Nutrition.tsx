@@ -255,7 +255,7 @@ export default function Nutrition() {
       <section className="nutrition-day" aria-labelledby="nutrition-title">
         <header className="nutrition-head">
           <div>
-            <h2 id="nutrition-title">Nutrition</h2>
+            <h2 id="nutrition-title">Food log</h2>
             <p>{date === today() ? "Today" : dateLabel(date)}</p>
           </div>
           <Field

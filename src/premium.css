@@ -6936,3 +6936,18 @@ h2,
   flex-wrap: wrap;
   gap: 8px;
 }
+/* Portrait photos fill banners without setting their height. */
+@media (min-width: 701px) {
+  .topic-page .topic-banner > img,
+  .guide-page .guide-hero > img,
+  .about-page .about-hero > img {
+    height: 0;
+    min-height: 100%;
+  }
+  .topic-page .topic-banner {
+    min-height: 340px;
+  }
+  .guide-page .guide-hero {
+    min-height: 420px;
+  }
+}

@@ -252,3 +252,15 @@ test("a post becomes a share card for Instagram and TikTok", async ({
     .click();
   expect((await download).suggestedFilename()).toMatch(/\.png$/);
 });
+
+test("portrait photos never stretch banners on desktop", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === "mobile", "desktop layout");
+  await open(page, "/topics/face");
+  const banner = await page.locator(".topic-banner").boundingBox();
+  expect(banner!.height).toBeLessThanOrEqual(460);
+  await go(page, "/topics/face/guide");
+  const hero = await page.locator(".guide-hero").boundingBox();
+  expect(hero!.height).toBeLessThanOrEqual(560);
+});
