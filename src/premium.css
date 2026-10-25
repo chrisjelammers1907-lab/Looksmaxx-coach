@@ -6580,3 +6580,11 @@ h2,
 .category-group .category-list {
   margin-top: 0;
 }
+.category-row .category-photo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 30%;
+}

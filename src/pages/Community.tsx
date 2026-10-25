@@ -40,6 +40,24 @@ import { topicPhoto } from "../lib/editorial";
 import { SponsoredPost } from "../components/Ads";
 import { AD_EVERY, ads } from "../lib/ads";
 import { limitsOf } from "../lib/plans";
+/** Short chip names for the feed filters, in category order. */
+const chipLabel: Partial<Record<TopicId, string>> = {
+  skincare: "Skincare",
+  makeup: "Makeup",
+  face: "Face",
+  colouring: "Colouring",
+  brows: "Brows",
+  smile: "Smile",
+  hair: "Hair",
+  grooming: "Beard",
+  gym: "Training",
+  nutrition: "Nutrition",
+  body: "Body",
+  sleep: "Sleep",
+  presence: "Presence",
+  clothing: "Outfits",
+  fragrance: "Fragrance",
+};
 /** Editorial photos a post can use; personal uploads stay private. */
 const editorialChoices: Record<string, string> = {
   "photo-feed-sunday": "Sunday in white",
@@ -643,12 +661,9 @@ function CommunityContent() {
     { kind: "style", id: "old-money", label: "Old money" },
     { kind: "style", id: "dark-casual", label: "Dark casual" },
     { kind: "style", id: "minimalist", label: "Minimalist" },
-    { kind: "topic", id: "clothing", label: "Outfits" },
-    { kind: "topic", id: "skincare", label: "Skincare" },
-    { kind: "topic", id: "hair", label: "Hair" },
-    { kind: "topic", id: "gym", label: "Training" },
-    { kind: "topic", id: "grooming", label: "Grooming" },
-    { kind: "topic", id: "fragrance", label: "Fragrance" },
+    ...topics
+      .filter((t) => t.id !== "photos")
+      .map((t) => ({ kind: "topic", id: t.id, label: chipLabel[t.id] })),
   ];
   return (
     <div

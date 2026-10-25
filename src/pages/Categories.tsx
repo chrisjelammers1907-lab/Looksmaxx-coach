@@ -1,45 +1,8 @@
 import { Link } from "react-router-dom";
-import {
-  Bath,
-  BookOpen,
-  Brush,
-  Camera,
-  ChevronRight,
-  Droplets,
-  Dumbbell,
-  Eye,
-  Moon,
-  Palette,
-  PersonStanding,
-  Salad,
-  ScanFace,
-  Scissors,
-  Shirt,
-  Smile,
-  SprayCan,
-  Wind,
-} from "lucide-react";
+import { BookOpen, ChevronRight } from "lucide-react";
 import { topicGroups, topics } from "../lib/data";
-import type { TopicId } from "../lib/types";
-
-const icons: Record<TopicId, typeof Droplets> = {
-  skincare: Droplets,
-  makeup: Brush,
-  face: ScanFace,
-  colouring: Palette,
-  brows: Eye,
-  smile: Smile,
-  hair: Wind,
-  grooming: Scissors,
-  gym: Dumbbell,
-  nutrition: Salad,
-  body: Bath,
-  sleep: Moon,
-  presence: PersonStanding,
-  clothing: Shirt,
-  fragrance: SprayCan,
-  photos: Camera,
-};
+import { asset } from "../lib/domain";
+import { topicPhoto } from "../lib/editorial";
 
 export default function CategoriesPage() {
   return (
@@ -62,13 +25,15 @@ export default function CategoriesPage() {
             {topics
               .filter((t) => t.group === group.id)
               .map((t) => {
-                const Icon = icons[t.id];
                 return (
                   <li key={t.id}>
                     <Link to={`/topics/${t.id}`} className="category-row">
-                      <span className="category-icon" aria-hidden="true">
-                        <Icon size={22} strokeWidth={1.5} />
-                      </span>
+                      <img
+                        className="category-photo"
+                        src={asset(topicPhoto(t.id))}
+                        alt=""
+                        loading="lazy"
+                      />
                       <span className="category-text">
                         <strong>{t.title}</strong>
                         <small>{t.subtitle}</small>

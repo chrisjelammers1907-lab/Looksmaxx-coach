@@ -147,3 +147,23 @@ test("nutrition has its own category", async ({ page }) => {
     page.getByRole("button", { name: "Calorie calculator" }),
   ).toBeVisible();
 });
+
+test("topic banners and category rows use real photos", async ({ page }) => {
+  await open(page, "/categories");
+  await expect(page.locator(".category-row img")).toHaveCount(16);
+  for (const id of ["makeup", "face", "sleep", "presence", "body"]) {
+    await go(page, `/topics/${id}`);
+    await expect(page.locator(".topic-banner img")).toHaveAttribute(
+      "src",
+      new RegExp(`photo-${id}`),
+    );
+  }
+  await go(page, "/");
+  const chips = page.getByLabel("Filter by style or topic");
+  await expect(
+    chips.getByRole("button", { name: "Makeup", exact: true }),
+  ).toBeAttached();
+  await expect(
+    chips.getByRole("button", { name: "Sleep", exact: true }),
+  ).toBeAttached();
+});
