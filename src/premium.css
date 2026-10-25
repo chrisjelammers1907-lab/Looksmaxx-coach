@@ -3165,16 +3165,12 @@ h4 {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
-    margin: 16px 0;
-    padding: 12px 0;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    margin: 18px 0;
+    padding: 0;
+    border: 0;
   }
   .profile-stats li {
     justify-content: center;
-  }
-  .profile-stats li + li {
-    border-left: 1px solid var(--line);
   }
   .profile-stats li,
   .profile-stats button {

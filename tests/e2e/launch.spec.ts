@@ -75,3 +75,19 @@ test("streaks show a green flame, never an emoji", async ({ page }) => {
   await expect(page.locator(".plan-progress .streak svg")).toBeVisible();
   await expect(page.getByText("🔥")).toHaveCount(0);
 });
+
+test("profile stats have no frame on phones", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await open(page, "/profile/mira");
+  const stats = page.getByRole("list", { name: "Profile stats" });
+  await expect(stats).toBeVisible();
+  expect(
+    await stats.evaluate((el) => getComputedStyle(el).borderTopWidth),
+  ).toBe("0px");
+  expect(
+    await stats
+      .locator("li")
+      .nth(1)
+      .evaluate((el) => getComputedStyle(el).borderLeftWidth),
+  ).toBe("0px");
+});
