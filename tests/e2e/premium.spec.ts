@@ -565,7 +565,7 @@ test("nutrition: own targets, barcode scan, extra nutrients and weight", async (
     }),
   );
   await open(page, "/topics/gym");
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await go(page, "/topics/nutrition");
   await expect(page.getByText("Set your daily targets")).toBeVisible();
 
   await page.getByRole("button", { name: "Calorie calculator" }).click();
@@ -608,7 +608,7 @@ test("nutrition: own targets, barcode scan, extra nutrients and weight", async (
 
   // Logs stay in this browser.
   await page.reload();
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await go(page, "/topics/nutrition");
   await expect(page.getByText("Greek yoghurt", { exact: true })).toBeVisible();
   await expect(page.locator(".weight-stats")).toContainText("78.4 kg");
   await noAxeViolations(page);
@@ -618,11 +618,11 @@ test("weights follow the unit chosen in settings", async ({ page }) => {
   await open(page, "/settings");
   await page.getByLabel("Weight", { exact: true }).selectOption("lb");
   await go(page, "/topics/gym");
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await go(page, "/topics/nutrition");
   await page.getByLabel("Weight (lb)").fill("176.4");
   await page.getByRole("button", { name: "Log weight" }).click();
   await expect(page.locator(".weight-stats")).toContainText("176.4 lb");
-  await page.getByRole("tab", { name: "Training & history" }).click();
+  await go(page, "/topics/gym");
   await expect(page.locator(".lift-card").first()).toContainText("lb");
 });
 
@@ -652,7 +652,7 @@ test("free members get limits, ads and an upgrade path", async ({ page }) => {
     page.getByText("Free includes 3 training days a week"),
   ).toBeVisible();
   await page.keyboard.press("Escape");
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await go(page, "/topics/nutrition");
   await expect(
     page.getByRole("link", { name: /Scan a barcode/ }),
   ).toHaveAttribute("href", "/plans");
@@ -688,7 +688,7 @@ test("signature shows a badge and unlocks every chat theme", async ({
 test("guides explain products, combinations and what works", async ({
   page,
 }) => {
-  await open(page, "/topics/gym");
+  await open(page, "/topics/nutrition");
   await page
     .locator(".topic-links")
     .getByRole("link", { name: /Weight guide/ })
@@ -703,7 +703,7 @@ test("guides explain products, combinations and what works", async ({
     }),
   ).toBeVisible();
   await page
-    .getByRole("link", { name: /Begin with a repeatable training week/ })
+    .getByRole("link", { name: /Eat for how you want to look and feel/ })
     .click();
   await expect(page.locator(".guide-verdict")).toContainText("Doesn’t");
   await expect(page.locator("main")).not.toContainText(

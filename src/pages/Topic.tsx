@@ -25,9 +25,10 @@ import {
 } from "../components/ui";
 import Items from "../components/Items";
 import Routines from "../components/Routines";
-import Gym from "./Gym";
+import Gym, { PostureCard } from "./Gym";
 import Photos from "./Photos";
 import { topicPhoto } from "../lib/editorial";
+import Nutrition from "../components/Nutrition";
 function TopicContent() {
   const { topic: id } = useParams();
   const topic = topics.find((t) => t.id === id);
@@ -52,11 +53,22 @@ function TopicContent() {
       "Fewer steps. More intention. Build a ritual that feels good to return to.",
     hair: "A shape, a texture, a little self-expression. Find a look that feels like you.",
     gym: "Strength for your everyday. A considered approach to movement and nourishment.",
-    grooming: "The small details that make a familiar face feel cared for.",
+    grooming: "A clean shave or a sharp beard line — without the irritation.",
     smile: "Good everyday habits, with room for your own observations.",
     fragrance:
       "A personal collection of notes, memories and quiet impressions.",
     photos: "Your private record. Honest observations, at your own pace.",
+    makeup:
+      "A little goes a long way. Even skin, defined brows and a touch of colour.",
+    face: "What actually changes the eye area, midface, cheekbones, jaw and chin — and what doesn’t.",
+    colouring:
+      "Find your undertone and contrast, then let colour work for you.",
+    brows: "The frame of your face. Shape a little, set them well.",
+    nutrition: "Your targets, your food and your weight — in one calm place.",
+    body: "Skin from the neck down, hands, feet and nails.",
+    sleep: "Better sleep shows up in your skin, your training and your mood.",
+    presence:
+      "Posture, eye contact and voice: how you show up before you say a word.",
   };
   const references = [
     {
@@ -94,6 +106,8 @@ function TopicContent() {
       <TopicLinks topic={topic.id} />
       {topic.id === "gym" ? (
         <Gym />
+      ) : topic.id === "nutrition" ? (
+        <Nutrition />
       ) : topic.id === "photos" ? (
         <Photos />
       ) : (
@@ -149,6 +163,7 @@ function TopicContent() {
               ) : (
                 <Routines topic={topicId} />
               )}
+              {topic.id === "presence" && <PostureCard />}
               <div className="editorial-note">
                 <Lightbulb size={20} strokeWidth={1.6} aria-hidden="true" />
                 <div>
@@ -450,12 +465,40 @@ const note: Partial<Record<TopicId, { title: string; text: string }>> = {
     text: "A front and a side view say more than any description. Ask how much styling the cut needs each morning.",
   },
   grooming: {
-    title: "Less is more with brows.",
-    text: "Trim and tweeze a little, then step back from the mirror. Over-plucked brows take months to grow back.",
+    title: "Set the neckline once.",
+    text: "One finger above the Adam’s apple, curving up behind the ears. Get it right once and the beard looks sharp for weeks.",
   },
   smile: {
     title: "When to see a dentist.",
     text: "Pain, bleeding gums, swelling or a tooth that changes colour needs a check-up — your routine can’t fix that on its own.",
+  },
+  makeup: {
+    title: "Blend into the jaw and neck.",
+    text: "Base that stops at the jawline is what gives makeup away. Use less than you think and blend outwards in daylight.",
+  },
+  face: {
+    title: "Start with what you control.",
+    text: "Body fat, sleep, posture and a good haircut change how your face reads more than any gadget. Give each change a month.",
+  },
+  colouring: {
+    title: "Judge colours in daylight.",
+    text: "Hold a shade under your chin by a window. If your skin looks brighter and shadows softer, the colour suits you.",
+  },
+  brows: {
+    title: "Less is more with brows.",
+    text: "Trim and tweeze a little, then step back from the mirror. Over-plucked brows take months to grow back.",
+  },
+  body: {
+    title: "Moisturise on damp skin.",
+    text: "Lotion holds water best right after the shower. Pat dry, then apply within a few minutes.",
+  },
+  sleep: {
+    title: "Keep the same wake-up time.",
+    text: "A steady wake-up time, also at the weekend, sets your body clock faster than any supplement.",
+  },
+  presence: {
+    title: "Slow down by a beat.",
+    text: "Speaking a little slower and holding eye contact a moment longer reads as calm and confident.",
   },
   fragrance: {
     title: "Test on skin, not paper.",
@@ -482,7 +525,7 @@ const banner: Partial<
     accent: "Build from there.",
   },
   grooming: {
-    eyebrow: "Brows · beard · shave",
+    eyebrow: "Shave · trim · beard",
     line: "Sharp lines,",
     accent: "soft on the skin.",
   },
@@ -490,6 +533,41 @@ const banner: Partial<
     eyebrow: "Everyday care",
     line: "Two minutes,",
     accent: "twice a day.",
+  },
+  makeup: {
+    eyebrow: "Base · brows · eyes · lips",
+    line: "Your skin,",
+    accent: "only better.",
+  },
+  face: {
+    eyebrow: "Eyes · midface · jaw · chin",
+    line: "Structure,",
+    accent: "honestly explained.",
+  },
+  colouring: {
+    eyebrow: "Undertone · contrast · colour",
+    line: "Colour that",
+    accent: "works with you.",
+  },
+  brows: {
+    eyebrow: "Shape · fill · set",
+    line: "The frame",
+    accent: "of your face.",
+  },
+  body: {
+    eyebrow: "Skin · hands · nails",
+    line: "Care that goes",
+    accent: "beyond the face.",
+  },
+  sleep: {
+    eyebrow: "Sleep · stress · recovery",
+    line: "Rest is",
+    accent: "where it starts.",
+  },
+  presence: {
+    eyebrow: "Posture · eye contact · voice",
+    line: "Stand tall,",
+    accent: "speak easy.",
   },
   fragrance: {
     eyebrow: "Your scent wardrobe",

@@ -135,6 +135,8 @@ describe("second-version privacy and format invariants", () => {
     expect(inferCoachTopic("My skin feels dry", "clothing")).toBe("skincare");
     expect(inferCoachTopic("Review my photo", "clothing")).toBe("clothing");
     expect(inferCoachTopic("Which hair colour should I try?")).toBe("hair");
-    expect(inferCoachTopic("Help me with my eyebrow shape")).toBe("grooming");
+    expect(inferCoachTopic("Help me with my eyebrow shape")).toBe("brows");
+    expect(inferCoachTopic("How do I fix my beard neckline?")).toBe("grooming");
+    expect(inferCoachTopic("Does mewing change my jaw?")).toBe("face");
   });
 });

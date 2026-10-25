@@ -846,7 +846,9 @@ export default function Nutrition() {
             <p className="small-text muted">
               An estimate (Mifflin-St Jeor). Watch your 7-day average weight for
               two to three weeks and adjust by about 100–200 kcal.{" "}
-              <Link to="/topics/gym/guide/weight">Read the weight guide</Link>
+              <Link to="/topics/nutrition/guide/weight">
+                Read the weight guide
+              </Link>
             </p>
             <Button
               onClick={() => {

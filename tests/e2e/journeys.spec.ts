@@ -342,7 +342,7 @@ test("training schedule, nutrition targets and food log", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: /^Monday: Comfortable strength/ }),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
+  await go(page, "/topics/nutrition");
   await page.getByRole("button", { name: "Set targets" }).click();
   await page.getByLabel("Daily calories (kcal)").fill("2400");
   await page.getByLabel("Daily carbohydrates (g)").fill("280");
@@ -361,7 +361,7 @@ test("training schedule, nutrition targets and food log", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Nothing logged yet." }),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "Posture & mobility" }).click();
+  await go(page, "/topics/presence");
   await page
     .getByRole("button", { name: "Add a movement break to my plan" })
     .click();

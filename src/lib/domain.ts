@@ -83,13 +83,21 @@ export const asset = (key: string) =>
   `/assets/${key}.${key.startsWith("sound-") ? "mp3" : key === "motion" ? "mp4" : ["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
 export const topicName: Record<string, string> = {
   skincare: "Skincare",
-  clothing: "Clothing & Style",
+  makeup: "Makeup",
+  face: "Face structure",
+  colouring: "Colouring",
+  brows: "Brows & lashes",
+  smile: "Teeth & smile",
   hair: "Hair",
-  gym: "Gym, Nutrition & Posture",
-  grooming: "Brows & Grooming",
-  smile: "Teeth & Smile",
+  grooming: "Beard & shaving",
+  gym: "Gym & physique",
+  nutrition: "Nutrition",
+  body: "Body care & nails",
+  sleep: "Sleep & recovery",
+  presence: "Posture & presence",
+  clothing: "Clothing & style",
   fragrance: "Fragrance",
-  photos: "Photos & Progress",
+  photos: "Photos & progress",
 };
 
 /** Stable, believable engagement for seeded posts; your own posts start at 0. */

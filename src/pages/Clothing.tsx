@@ -87,7 +87,7 @@ export default function ClothingPage() {
     >
       <PageHeader
         eyebrow="THE EDIT / 02"
-        title="Clothing & Style"
+        title="Clothing & style"
         description="A wardrobe with intention. A style that is entirely your own."
         action={
           <Link to="/profile" className="small-text text-link">

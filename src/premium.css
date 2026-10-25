@@ -6562,3 +6562,21 @@ h2,
 .plan-progress .streak svg path {
   fill: var(--champagne);
 }
+.category-group {
+  max-width: 720px;
+  margin: 0 auto 28px;
+}
+.category-group > h2 {
+  margin: 0 0 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+.category-group .category-list {
+  margin-top: 0;
+}

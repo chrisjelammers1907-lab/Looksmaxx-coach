@@ -91,3 +91,59 @@ test("profile stats have no frame on phones", async ({ page }) => {
       .evaluate((el) => getComputedStyle(el).borderLeftWidth),
   ).toBe("0px");
 });
+
+const allTopics: [string, string][] = [
+  ["skincare", "Skincare"],
+  ["makeup", "Makeup"],
+  ["face", "Face structure"],
+  ["colouring", "Colouring"],
+  ["brows", "Brows & lashes"],
+  ["smile", "Teeth & smile"],
+  ["hair", "Hair"],
+  ["grooming", "Beard & shaving"],
+  ["gym", "Gym & physique"],
+  ["nutrition", "Nutrition"],
+  ["body", "Body care & nails"],
+  ["sleep", "Sleep & recovery"],
+  ["presence", "Posture & presence"],
+  ["clothing", "Clothing & style"],
+  ["fragrance", "Fragrance"],
+  ["photos", "Photos & progress"],
+];
+
+test("every category page and guide renders", async ({ page }) => {
+  test.setTimeout(90000);
+  await open(page, "/categories");
+  for (const [id, title] of allTopics) {
+    await go(page, `/topics/${id}`);
+    await expect(page.locator("h1").first()).toHaveText(title);
+    await go(page, `/topics/${id}/guide`);
+    await expect(
+      page.getByRole("heading", { name: "Put it together" }),
+    ).toBeVisible();
+  }
+});
+
+test("face structure covers the four areas honestly", async ({ page }) => {
+  await open(page, "/topics/face/guide");
+  for (const area of [
+    "Eye area",
+    "Maxilla & midface",
+    "Cheekbones (zygos)",
+    "Jaw (mandible) & chin",
+  ])
+    await expect(page.getByText(area, { exact: true }).first()).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(
+    /testosterone|steroid|peptide|\bdose|\bmg\b/i,
+  );
+  await expect(page.locator("main")).toContainText(
+    "only via a qualified specialist",
+  );
+});
+
+test("nutrition has its own category", async ({ page }) => {
+  await open(page, "/topics/nutrition");
+  await expect(
+    page.getByRole("button", { name: "Calorie calculator" }),
+  ).toBeVisible();
+});

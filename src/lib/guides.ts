@@ -312,9 +312,265 @@ export const guides: Record<TopicId, Guide> = {
     remember: `Get advice first if an injury or condition affects training. ${doctorNote}`,
   },
   grooming: {
-    title: "Brows, lashes and the finer details",
+    title: "Shave and beard, without the irritation",
     intro:
-      "Small details frame the face: tidy brows, a clean shave or beard line, and skin that isn’t irritated.",
+      "A clean shave or a sharp beard line changes your face more than most products. The trick is preparation and a good neckline.",
+    productsTitle: "What each tool does",
+    products: [
+      {
+        name: "Safety razor",
+        does: "One sharp blade: fewer ingrown hairs than multi-blade razors.",
+      },
+      {
+        name: "Electric trimmer",
+        does: "Beard length, stubble and the neck, where razor bumps start most.",
+      },
+      {
+        name: "Shaving cream",
+        does: "Lets the blade glide and protects the skin.",
+      },
+      {
+        name: "Aftershave balm",
+        does: "Calms the skin after shaving. Skip alcohol-heavy splashes.",
+      },
+      {
+        name: "Beard oil",
+        does: "Softens the hair and stops itch under a longer beard.",
+      },
+    ],
+    routine: [
+      {
+        title: "Prepare",
+        text: "Shave after a warm shower, or exfoliate gently first so the hairs stand up.",
+      },
+      {
+        title: "Shave",
+        text: "Cream → shave with the grain → rinse cool → balm → sunscreen in the morning.",
+      },
+      {
+        title: "Shape a beard",
+        text: "Trim to one length. Neckline one finger above the Adam’s apple, curving up behind the ears. Clean up the cheek line.",
+      },
+      {
+        title: "Keep it",
+        text: "Re-trim the lines every 3–4 days. Wash the beard with face wash, then a drop of oil.",
+      },
+    ],
+    works: [
+      "A fresh blade every 5–7 shaves",
+      "A sharp neckline",
+      "Balm instead of alcohol aftershave",
+      "Letting irritated skin rest a few days",
+    ],
+    skip: [
+      "Shaving against the grain on sensitive skin",
+      "Pressing hard with a dull blade",
+      "A neckline on the jawbone",
+      "Dry shaving without cream",
+    ],
+  },
+  makeup: {
+    title: "Makeup that looks like good skin",
+    intro:
+      "Good makeup doesn’t look like makeup. Even out redness, define brows and lashes, add a touch of colour — for women and men alike.",
+    productsTitle: "What each product does",
+    products: [
+      {
+        name: "Tinted moisturiser or skin tint",
+        does: "Evens out redness and tone with a sheer finish. The base for everything.",
+      },
+      {
+        name: "Foundation",
+        does: "More coverage than a tint. Choose by undertone, test on the jaw in daylight.",
+      },
+      {
+        name: "Concealer",
+        does: "Covers spots and under-eye shadow. Tap on only where needed.",
+      },
+      {
+        name: "Setting powder",
+        does: "Takes away shine on the T-zone. A light press, not a layer.",
+      },
+      {
+        name: "Brow gel or pencil",
+        does: "Holds brows in place and fills gaps with fine strokes.",
+      },
+      {
+        name: "Mascara",
+        does: "Lengthens and darkens lashes; opens up the eyes.",
+      },
+      {
+        name: "Bronzer and contour",
+        does: "Bronzer warms where the sun hits; contour adds shadow under cheekbones and along the jaw.",
+      },
+      {
+        name: "Lip and cheek tint",
+        does: "A natural flush of colour; one shade for both.",
+      },
+    ],
+    routine: [
+      {
+        title: "Prep",
+        text: "Moisturiser → sunscreen → wait a minute so the base doesn’t slide.",
+      },
+      {
+        title: "Base",
+        text: "Mix a little tinted moisturiser with moisturiser on your fingertips. Blend from the centre outwards, into the jaw and neck.",
+      },
+      {
+        title: "Correct",
+        text: "Concealer only on spots and the inner under-eye. Tap, don’t rub.",
+      },
+      {
+        title: "Define",
+        text: "Brush brows up and set them. Mascara on the top lashes, wiggling at the roots.",
+      },
+      { title: "Day look", text: "Stop here, or add tint on lips and cheeks." },
+      {
+        title: "Evening look",
+        text: "Add bronzer to cheekbones and temples, contour under the cheekbones, a darker lip or a soft smoky liner.",
+      },
+    ],
+    works: [
+      "Less product, blended well",
+      "Matching base to your neck, not your hand",
+      "Applying in daylight",
+      "Non-comedogenic products if you get spots",
+    ],
+    skip: [
+      "A base line at the jaw",
+      "Heavy powder on dry skin",
+      "Sleeping in makeup",
+      "Sharing mascara or eye products",
+    ],
+  },
+  face: {
+    title: "Face structure: what really changes it",
+    intro:
+      "Bone structure is mostly set as an adult. What you can change is everything around it: fat, posture, sleep, hair and how you frame your features.",
+    productsTitle: "What each lever does",
+    products: [
+      {
+        name: "Body fat",
+        does: "The biggest lever for a defined jaw and cheekbones. A few kilos less often shows first in the face.",
+      },
+      {
+        name: "Posture and head position",
+        does: "A forward head softens the jawline. Neck long and chin level shows it.",
+      },
+      {
+        name: "Sleep and salt",
+        does: "Short sleep and salty evenings cause puffiness around the eyes and cheeks.",
+      },
+      {
+        name: "Haircut and beard",
+        does: "Volume on top lengthens the face; a beard can square a soft jaw or balance a long chin.",
+      },
+      {
+        name: "Brows",
+        does: "Well-groomed brows frame the eye area and lift the face.",
+      },
+      {
+        name: "Makeup contour",
+        does: "Shadow under cheekbones and along the jaw creates definition for photos and evenings.",
+      },
+    ],
+    routine: [
+      {
+        title: "Eye area",
+        text: "Do yourself: 7–9 hours of sleep, less salt in the evening, a cold compress and caffeine eye cream for puffiness, SPF and sunglasses against fine lines, groomed brows. Doesn’t work: creams that promise to remove hollows or change eye shape. Specialist: under-eye hollows, droopy lids or dark circles from volume loss — only via a qualified specialist.",
+      },
+      {
+        title: "Maxilla & midface",
+        text: "Do yourself: a good posture with the tongue resting on the roof of the mouth and nasal breathing, a healthy weight, and hair or makeup that adds focus to the cheek area. Doesn’t work: promises that mewing reshapes an adult’s upper jaw, or face yoga for bone changes. Specialist: a recessed midface or breathing problems — orthodontics and jaw treatments are only via a qualified specialist.",
+      },
+      {
+        title: "Cheekbones (zygos)",
+        text: "Do yourself: lower body fat, contour or bronzer high on the cheekbone, and a haircut that doesn’t hide the sides of your face. Doesn’t work: gua sha or massage tools that claim to lift bone. Specialist: fillers or implants for cheek volume — only via a qualified specialist.",
+      },
+      {
+        title: "Jaw (mandible) & chin",
+        text: "Do yourself: lose fat around the neck, keep the head up, shape the beard with a clean neckline, and contour along the jaw for photos. Doesn’t work: jaw exercisers and hard gum to “build” the jaw — they can strain the jaw joint. Specialist: a weak chin or bite problems — orthodontics, fillers or surgery only via a qualified specialist.",
+      },
+    ],
+    works: [
+      "A healthy, lower body-fat percentage",
+      "Good posture and nasal breathing",
+      "A haircut and beard that frame your face",
+      "Good sleep and less salt at night",
+    ],
+    skip: [
+      "Jaw exercisers and chewing for hours",
+      "Gua sha or tools that promise to reshape bone",
+      "Rating your face with apps",
+      "Anything sold as a shortcut to a new face",
+    ],
+    remember: `Bone changes are never a home project. ${"Hormones or medication only through a doctor."}`,
+  },
+  colouring: {
+    title: "Find the colours that suit you",
+    intro:
+      "Your colouring is the mix of skin undertone, hair and eye colour, and the contrast between them. Work with it and you look healthier without changing anything.",
+    productsTitle: "What each part does",
+    products: [
+      {
+        name: "Undertone",
+        does: "Warm (golden), cool (pink) or neutral. Shows in which metals and whites flatter you.",
+      },
+      {
+        name: "Contrast",
+        does: "The difference between your hair, skin and eyes. High contrast suits bold combinations; low contrast suits tone-on-tone.",
+      },
+      {
+        name: "Tinted SPF",
+        does: "Protects from sun and evens tone. Tanning damage ages skin faster than anything.",
+      },
+      {
+        name: "Gradual self-tan",
+        does: "A light, believable glow without sun damage.",
+      },
+      {
+        name: "Hair and brow colour",
+        does: "Brows a shade close to your hair keep your face in balance.",
+      },
+    ],
+    routine: [
+      {
+        title: "Find your undertone",
+        text: "Look at your wrist veins in daylight: green leans warm, blue leans cool, both is neutral. Gold or silver: which looks better against your skin?",
+      },
+      {
+        title: "Find your contrast",
+        text: "Take a black-and-white photo. Big difference between hair and skin: high contrast. Similar greys: low.",
+      },
+      {
+        title: "Choose colours",
+        text: "Warm: cream, camel, olive, rust. Cool: pure white, navy, grey, burgundy. Neutral: most colours. Wear your best ones near your face.",
+      },
+      {
+        title: "A glow, safely",
+        text: "Self-tan two to three times a week on moisturised skin; keep it off brows and hairline. Daily SPF stays.",
+      },
+    ],
+    works: [
+      "Testing colours under your chin in daylight",
+      "Self-tan instead of sunbeds",
+      "Brows close to your hair colour",
+      "Neutrals in your undertone as a base",
+    ],
+    skip: [
+      "Sunbeds and tanning without SPF",
+      "Tanning injections or pills",
+      "Judging colour under shop lights",
+      "Rules that say one skin tone is better",
+    ],
+    remember:
+      "Every skin tone is good; colouring is about harmony, not a ranking.",
+  },
+  brows: {
+    title: "Brows and lashes",
+    intro:
+      "Brows frame the face and lashes open up the eyes. Shape a little, fill where needed, and set them so they stay.",
     productsTitle: "What each tool does",
     products: [
       {
@@ -323,64 +579,292 @@ export const guides: Record<TopicId, Guide> = {
       },
       {
         name: "Small scissors",
-        does: "Trims long brow hairs without changing the shape.",
+        does: "Trims long hairs without changing the shape.",
       },
       {
         name: "Tweezers",
-        does: "Removes stray hairs between and under the brows. One hair at a time.",
+        does: "Removes strays between and under the brows, one hair at a time.",
       },
       {
         name: "Brow gel",
         does: "Holds brows in place; tinted gel fills light gaps.",
       },
       {
-        name: "Safety razor",
-        does: "A single blade causes fewer ingrown hairs than multi-blade razors.",
+        name: "Brow pencil",
+        does: "Fine, hair-like strokes where brows are sparse.",
       },
       {
-        name: "Electric trimmer",
-        does: "Beard lines and the neck, where razor bumps start most.",
-      },
-      {
-        name: "Shaving cream and aftershave balm",
-        does: "Cream lets the blade glide; the balm calms skin after.",
-      },
-      {
-        name: "Gradual self-tan",
-        does: "A light, even glow built up over a few days.",
+        name: "Mascara and lash curler",
+        does: "Curl first, then mascara at the roots for lift.",
       },
     ],
     routine: [
       {
-        title: "Brows",
-        text: "Brush up → trim what sticks out above the line → tweeze strays below and between. Stop and look in the mirror often.",
+        title: "Map",
+        text: "Brows start above the inner corner of the eye, arch above the outer edge of the iris, and end at a line from nose to outer eye corner.",
       },
       {
-        title: "Shave",
-        text: "Shower first or exfoliate gently → cream → shave with the grain → rinse with cool water → balm → SPF.",
+        title: "Trim",
+        text: "Brush up and trim what sticks out above the line.",
       },
       {
-        title: "Beard",
-        text: "Trim to one length → set a neckline one finger above the Adam’s apple → clean up the cheek line.",
+        title: "Tweeze",
+        text: "Strays below and between only. Stop often and step back.",
       },
       {
-        title: "Self-tan",
-        text: "On moisturised, dry skin, a small amount, every two or three days. Keep it off brows and hairline; wash your hands.",
+        title: "Set",
+        text: "Fill sparse spots with short strokes, then brush through with gel.",
       },
     ],
     works: [
-      "Doing less to brows than you planned",
-      "A sharp neckline",
-      "Clean tools and a fresh blade",
-      "Balm instead of alcohol aftershave",
+      "Doing less than you planned",
+      "Strokes, not a solid block",
+      "A brow tint at a salon for very light brows",
+      "Removing mascara every night",
     ],
     skip: [
       "Thin, over-plucked brows",
-      "Shaving against the grain on sensitive skin",
-      "Hair dye on lashes or brows",
+      "Hair dye on brows or lashes at home",
       "Heat tools near the eyes",
+      "Oils that promise lash growth",
     ],
-    remember: `Lash or hair growth serums with active drugs need a doctor. ${doctorNote}`,
+    remember:
+      "Lash or brow serums with active drugs need a doctor. Hormones or medication only through a doctor.",
+  },
+  nutrition: {
+    title: "Eat for how you want to look and feel",
+    intro:
+      "Your weight follows energy in versus energy out; your skin, energy and training follow what that food is made of.",
+    productsTitle: "What each part does",
+    products: [
+      { name: "Calories", does: "Set your direction: lose, maintain or gain." },
+      {
+        name: "Protein",
+        does: "Builds muscle and keeps you full. Some at every meal.",
+      },
+      { name: "Carbohydrates", does: "Fuel for training and your brain." },
+      { name: "Fat", does: "Needed for hormones and vitamins A, D, E and K." },
+      {
+        name: "Fibre and vegetables",
+        does: "Fullness and digestion for few calories.",
+      },
+      { name: "Water", does: "Thirst and hunger feel alike; drink first." },
+    ],
+    routine: [
+      {
+        title: "Set targets",
+        text: "Use the calorie calculator, then choose your carbs, protein and fat in your targets.",
+      },
+      {
+        title: "Build a plate",
+        text: "Half vegetables, a quarter protein, a quarter carbs, a thumb of fat.",
+      },
+      {
+        title: "Log",
+        text: "Scan or add what you eat for two weeks to learn your patterns.",
+      },
+      {
+        title: "Watch the trend",
+        text: "Weigh in a few mornings a week and look at the 7-day average, not one day.",
+      },
+    ],
+    works: [
+      "Protein at every meal",
+      "Planning the busy days",
+      "Scanning packaged food",
+      "Adjusting by 100–200 kcal at a time",
+    ],
+    skip: [
+      "Crash diets",
+      "Fat burners and detox teas",
+      "Cutting out whole food groups",
+      "Judging on one weigh-in",
+    ],
+    remember:
+      "Under 18, pregnant, or with a medical condition or an eating disorder? Talk to a doctor first.",
+  },
+  body: {
+    title: "Body care, hands and nails",
+    intro:
+      "Smooth skin, clean nails and fresh hands are details people notice up close. Ten minutes a day covers it.",
+    productsTitle: "What each product does",
+    products: [
+      {
+        name: "Gentle body wash",
+        does: "Cleans without stripping. Exfoliating versions twice a week for rough patches.",
+      },
+      {
+        name: "Body lotion",
+        does: "Keeps skin soft; richest after the shower on damp skin.",
+      },
+      {
+        name: "Deodorant or antiperspirant",
+        does: "Deodorant masks odour; antiperspirant reduces sweat. Apply to clean, dry skin.",
+      },
+      {
+        name: "Nail file and clipper",
+        does: "Short, even nails; file in one direction.",
+      },
+      {
+        name: "Cuticle oil and hand cream",
+        does: "Soft cuticles and hands that don’t crack.",
+      },
+      { name: "Body SPF", does: "Arms, neck and hands age from the sun too." },
+    ],
+    routine: [
+      {
+        title: "Shower",
+        text: "Lukewarm water, gentle wash, exfoliate twice a week.",
+      },
+      {
+        title: "After",
+        text: "Pat dry, lotion within a few minutes, deodorant on dry skin.",
+      },
+      {
+        title: "Hands and nails",
+        text: "Weekly: clip, file and push back cuticles after a shower. Nightly: cuticle oil and hand cream.",
+      },
+      {
+        title: "Hair removal",
+        text: "Shave with the grain after exfoliating, or trim. Moisturise after; give irritated skin a break.",
+      },
+    ],
+    works: [
+      "Lotion on damp skin",
+      "Short, clean nails",
+      "SPF on hands and neck",
+      "Clean towels and sheets weekly",
+    ],
+    skip: [
+      "Very hot showers",
+      "Cutting cuticles",
+      "Scrubbing irritated skin",
+      "Antiperspirant on freshly shaved skin",
+    ],
+  },
+  sleep: {
+    title: "Sleep and recovery",
+    intro:
+      "Sleep is when skin repairs, muscles grow and appetite resets. Better sleep is the cheapest glow-up there is.",
+    productsTitle: "What each lever does",
+    products: [
+      {
+        name: "Wake-up time",
+        does: "A steady time, also at weekends, sets your body clock.",
+      },
+      {
+        name: "Daylight",
+        does: "Ten minutes outside in the morning helps you sleep at night.",
+      },
+      {
+        name: "Caffeine cut-off",
+        does: "Caffeine lasts hours; stop around eight hours before bed.",
+      },
+      {
+        name: "A dark, cool room",
+        does: "Around 18 °C, dark curtains or a mask.",
+      },
+      {
+        name: "Wind-down",
+        does: "Screens away and a calm routine tell your body it’s time.",
+      },
+      {
+        name: "Silk pillowcase",
+        does: "Less friction on hair and skin. Nice to have, not essential.",
+      },
+    ],
+    routine: [
+      {
+        title: "Morning",
+        text: "Same wake-up time, daylight within an hour, coffee after you’re up.",
+      },
+      {
+        title: "Afternoon",
+        text: "No caffeine after about 2 pm; a short walk beats a long nap.",
+      },
+      {
+        title: "Evening",
+        text: "Dim lights, screens away 30 minutes before bed, the same simple routine.",
+      },
+      {
+        title: "Recovery days",
+        text: "Light movement, enough protein and water, and an extra half hour of sleep after hard training.",
+      },
+    ],
+    works: [
+      "Seven to nine hours",
+      "Morning daylight",
+      "A cool, dark bedroom",
+      "Training earlier in the day",
+    ],
+    skip: [
+      "Catching up only at the weekend",
+      "Alcohol to fall asleep",
+      "Scrolling in bed",
+      "Sleeping pills without a doctor",
+    ],
+    remember:
+      "Snoring loudly, waking up tired every day or long-term insomnia is worth a visit to a doctor.",
+  },
+  presence: {
+    title: "Posture and presence",
+    intro:
+      "How you stand, look and speak is read before your face is. These habits are free and work from day one.",
+    productsTitle: "What each habit does",
+    products: [
+      {
+        name: "Posture",
+        does: "Shoulders back and down, chin level: taller, calmer and a clearer jawline.",
+      },
+      {
+        name: "Mobility",
+        does: "Five minutes for the upper back undoes hours at a desk.",
+      },
+      {
+        name: "Eye contact",
+        does: "Holding it a beat longer reads as confident and interested.",
+      },
+      {
+        name: "Voice",
+        does: "Slower and a little lower than feels natural sounds calm.",
+      },
+      {
+        name: "Photos of yourself",
+        does: "Light from the side, camera at eye level, chin slightly forward and down.",
+      },
+    ],
+    routine: [
+      {
+        title: "At the desk",
+        text: "Screen at eye level, feet flat, stand up every hour.",
+      },
+      {
+        title: "Move",
+        text: "Foam roller for the upper back, doorway chest stretch and shoulder rolls — five minutes.",
+      },
+      {
+        title: "In conversations",
+        text: "Face the person, keep eye contact while they talk, pause before you answer.",
+      },
+      {
+        title: "In photos",
+        text: "Turn slightly to the side, chin out and down, relax the shoulders.",
+      },
+    ],
+    works: [
+      "Small breaks every hour",
+      "Strength training for the back",
+      "Slowing down when nervous",
+      "Natural light for photos",
+    ],
+    skip: [
+      "Holding a stiff posture all day",
+      "Staring instead of looking",
+      "Filters on progress photos",
+      "Comparing yourself to edited images",
+    ],
+    remember:
+      "Persistent pain, numbness or an injury needs a physiotherapist or doctor.",
   },
   smile: {
     title: "Everyday care for your smile",
@@ -560,7 +1044,7 @@ export const extraGuides: Record<
   Guide & { topic: TopicId; label: string }
 > = {
   weight: {
-    topic: "gym",
+    topic: "nutrition",
     label: "Weight guide",
     title: "Lose, maintain or gain weight",
     intro:

@@ -1,12 +1,21 @@
 export type TopicId =
   | "skincare"
-  | "clothing"
-  | "hair"
-  | "gym"
-  | "grooming"
+  | "makeup"
+  | "face"
+  | "colouring"
+  | "brows"
   | "smile"
+  | "hair"
+  | "grooming"
+  | "gym"
+  | "nutrition"
+  | "body"
+  | "sleep"
+  | "presence"
+  | "clothing"
   | "fragrance"
   | "photos";
+export type TopicGroup = "face" | "hair" | "body" | "style" | "progress";
 export type Weekday =
   | "Monday"
   | "Tuesday"

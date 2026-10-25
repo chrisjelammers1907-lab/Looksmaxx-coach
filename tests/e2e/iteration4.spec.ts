@@ -71,12 +71,14 @@ test("category list navigates and Photos/Reels keep Following independent", asyn
   page,
 }) => {
   await open(page);
-  // Home no longer repeats the category row; Categories is a single list.
+  // Home no longer repeats the category row; Categories groups 16 topics.
   await expect(page.locator(".category-strip")).toHaveCount(0);
   await go(page, "/categories");
-  const list = page.getByRole("list", { name: "Your eight categories" });
-  await expect(list.locator(".category-row")).toHaveCount(8);
-  await list.locator('a.category-row[href="/topics/hair"]').click();
+  await expect(page.locator(".category-row")).toHaveCount(16);
+  await page
+    .getByRole("region", { name: "Hair" })
+    .locator('a.category-row[href="/topics/hair"]')
+    .click();
   await expect(page).toHaveURL(/\/topics\/hair$/);
   await go(page, "/");
   await expect(
