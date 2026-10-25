@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import Monogram from "./Monogram";
 
 /** A quiet prompt where a Free limit is reached. */
 export function UpgradeCard({
@@ -11,7 +11,7 @@ export function UpgradeCard({
 }) {
   return (
     <div className="upgrade-card" role="note">
-      <Sparkles size={18} aria-hidden="true" />
+      <Monogram size={32} />
       <div>
         <strong>{title}</strong>
         {children && <p>{children}</p>}

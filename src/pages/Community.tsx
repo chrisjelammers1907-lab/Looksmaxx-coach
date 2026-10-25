@@ -36,9 +36,26 @@ import { PostCard } from "../components/Social";
 import { MediaPicker, PostMedia, mediaLabel } from "../components/FeedMedia";
 import { SoundPicker } from "../components/Sounds";
 import StoriesRow from "../components/Stories";
+import { topicPhoto } from "../lib/editorial";
 import { SponsoredPost } from "../components/Ads";
 import { AD_EVERY, ads } from "../lib/ads";
 import { limitsOf } from "../lib/plans";
+/** Editorial photos a post can use; personal uploads stay private. */
+const editorialChoices: Record<string, string> = {
+  "photo-feed-sunday": "Sunday in white",
+  "photo-home-hero": "Neutral tones, two people",
+  "photo-feed-linen": "Linen set",
+  "photo-feed-lounge": "Lounge in linen",
+  "photo-feed-cuff": "Cuff and watch",
+  "photo-feed-night": "Leather after dark",
+  motion: "Motion study · video",
+  "photo-skincare": "Skincare",
+  "photo-hair": "Hair",
+  "photo-gym": "Training",
+  "photo-grooming": "Shaving",
+  "photo-smile": "Smile",
+  "photo-fragrance": "Fragrance",
+};
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -53,7 +70,7 @@ function CommunityContent() {
       : topics.find((t) => t.id === params.get("topic"))?.id || "",
     title: outfit?.title || "",
     body: "",
-    image: "campaign",
+    image: "photo-feed-sunday",
     items: outfit
       ? state.items
           .filter((i) => outfit.itemIds.includes(i.id))
@@ -230,40 +247,31 @@ function CommunityContent() {
                     draft.format === "reel" && e.target.value !== "motion"
                       ? [
                           e.target.value,
-                          e.target.value === "ritual" ? "tailoring" : "ritual",
+                          e.target.value === "photo-feed-linen"
+                            ? "photo-feed-lounge"
+                            : "photo-feed-linen",
                         ]
                       : undefined,
                   image:
-                    e.target.value === "motion" ? "campaign" : e.target.value,
+                    e.target.value === "motion"
+                      ? "photo-feed-motion"
+                      : e.target.value,
                   media:
                     e.target.value === "motion"
                       ? {
                           kind: "video",
                           src: "motion",
-                          poster: "campaign",
+                          poster: "photo-feed-motion",
                           width: 1080,
                           height: 1350,
                           origin: "editorial",
-                          label: "AI editorial motion study",
+                          label: "Motion study",
                         }
                       : undefined,
                 })
               }
             >
-              {Object.entries({
-                campaign: "AI editorial · cream & forest tailoring",
-                ritual: "AI editorial · beauty still life",
-                tailoring: "AI editorial · Sunday outfit flat lay",
-                hero: "Licensed style reference",
-                motion: "Editorial motion study · video",
-                style: "Fashion inspiration",
-                skin: "Skincare reference",
-                hair: "Hair reference",
-                gym: "Training space",
-                grooming: "Grooming reference",
-                smile: "Smile care",
-                fragrance: "Fragrance reference",
-              }).map(([v, label]) => (
+              {Object.entries(editorialChoices).map(([v, label]) => (
                 <option value={v} key={v}>
                   {label}
                 </option>
@@ -296,7 +304,9 @@ function CommunityContent() {
                       draft.media?.origin !== "private-upload"
                         ? [
                             draft.image,
-                            draft.image === "ritual" ? "tailoring" : "ritual",
+                            draft.image === "photo-feed-linen"
+                              ? "photo-feed-lounge"
+                              : "photo-feed-linen",
                           ]
                         : undefined,
                   });
@@ -318,15 +328,9 @@ function CommunityContent() {
                     }
                   >
                     <option value="">Choose an editorial photo</option>
-                    <option value="ritual">
-                      AI editorial · beauty still life
-                    </option>
-                    <option value="tailoring">
-                      AI editorial · outfit flat lay
-                    </option>
-                    <option value="campaign">
-                      AI editorial · cream & forest
-                    </option>
+                    <option value="photo-feed-linen">Linen set</option>
+                    <option value="photo-feed-lounge">Lounge in linen</option>
+                    <option value="photo-feed-cuff">Cuff and watch</option>
                   </Select>
                 )}
             </div>
@@ -361,9 +365,9 @@ function CommunityContent() {
                   setDraft({
                     ...draft,
                     topic: e.target.value as TopicId,
-                    image:
-                      topics.find((t) => t.id === e.target.value)?.image ||
-                      "hero",
+                    image: e.target.value
+                      ? topicPhoto(e.target.value as TopicId)
+                      : "photo-feed-sunday",
                     style: e.target.value === "clothing" ? state.style : "",
                   })
                 }
@@ -508,7 +512,8 @@ function CommunityContent() {
           <PostMedia post={draft} />
           <h3>{draft.title}</h3>
           <p className="small-text">
-            Posting as {state.profile.name} · {mediaLabel(draft)}. Your private
+            Posting as {state.profile.name}
+            {mediaLabel(draft) && ` · ${mediaLabel(draft)}`}. Your private
             profile photo is excluded.
           </p>
           <p className="preserve-text">{draft.body}</p>

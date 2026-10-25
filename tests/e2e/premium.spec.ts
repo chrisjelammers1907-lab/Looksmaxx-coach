@@ -311,7 +311,9 @@ test("chats send stickers and photos, the coach accepts files", async ({
   await page.getByRole("button", { name: "Send Glow up sticker" }).click();
   await expect(page.locator(".outgoing .sticker")).toHaveText("Glow up");
   await page.getByRole("button", { name: "Add attachment" }).click();
-  await page.getByLabel("Send a photo").setInputFiles("public/assets/hair.jpg");
+  await page
+    .getByLabel("Send a photo")
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(page.locator(".outgoing .message-photo")).toBeVisible();
   await expect(

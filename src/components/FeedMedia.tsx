@@ -8,30 +8,15 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { asset } from "../lib/domain";
+import { asset, topicName } from "../lib/domain";
 import { normaliseFeedPhoto, privateVideoUrl } from "../lib/media";
 import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
 const editorialPhotos = new Map<string, Promise<string>>();
-export function mediaLabel(post: Post, image = post.image) {
-  return (
-    post.media?.label ||
-    (["campaign", "ritual", "tailoring"].includes(image)
-      ? "AI editorial inspiration"
-      : [
-            "skin",
-            "gym",
-            "smile",
-            "fragrance",
-            "shirt",
-            "tee",
-            "denim",
-            "food",
-          ].includes(image)
-        ? "Original editorial illustration"
-        : "Licensed editorial reference")
-  );
+/** The line under the handle, like a location on Instagram. */
+export function mediaLabel(post: Post) {
+  return post.media?.label || topicName[post.topic] || "";
 }
 export function PostMedia({
   post,
@@ -145,7 +130,7 @@ export function PostMedia({
       document.removeEventListener("visibilitychange", hidden);
     };
   }, [isVideo, sound?.id]);
-  const label = mediaLabel(post, currentImage);
+  const label = mediaLabel(post) || "editorial photo";
   return (
     <div className="post-media-wrap" ref={container}>
       <div
@@ -239,7 +224,7 @@ export function PostMedia({
             src={photo}
             width={1080}
             height={media?.height || (isReel ? 1920 : 1350)}
-            alt={`${post.title} — ${label}${media?.origin === "private-upload" ? "" : ", not a photo of its fictional creator"}`}
+            alt={`${post.title} — ${label}`}
           />
         ) : (
           <span className="media-loading" role="status">

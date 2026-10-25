@@ -1,17 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  ArrowRight,
-  BookOpen,
-  Check,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Check, X } from "lucide-react";
 import { extraGuides, guides } from "../lib/guides";
 import { topics } from "../lib/data";
 import { asset } from "../lib/domain";
 import { Empty } from "../components/ui";
-import { isAIEditorial, topicEditorial } from "../lib/editorial";
+import { topicPhoto } from "../lib/editorial";
+import Monogram from "../components/Monogram";
 export default function GuidePage() {
   const { topic, slug } = useParams();
   const entry = topics.find((t) => t.id === topic);
@@ -57,13 +51,7 @@ export default function GuidePage() {
             {guide.products.length} essentials · {guide.routine.length} steps
           </span>
         </div>
-        <img
-          src={asset(topicEditorial(entry.id, entry.image))}
-          alt={`${entry.title} editorial illustration`}
-        />
-        {isAIEditorial(topicEditorial(entry.id, entry.image)) && (
-          <span className="hero-image-credit">AI editorial inspiration</span>
-        )}
+        <img src={asset(topicPhoto(entry.id))} alt="" />
       </header>
       <div className="guide-layout">
         <nav aria-label="Guide chapters" className="guide-contents">
@@ -139,7 +127,7 @@ export default function GuidePage() {
             </aside>
           )}
           <section id="guide-coach" className="guide-coach">
-            <Sparkles size={22} aria-hidden="true" />
+            <Monogram size={44} />
             <div>
               <h2>Make it yours</h2>
               <p>

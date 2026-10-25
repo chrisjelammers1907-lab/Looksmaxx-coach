@@ -120,7 +120,7 @@ test("private upload is cropped proportionally and cannot be published as public
   await page.getByLabel("Caption").fill("A private image framing test");
   await page
     .getByLabel("Add a private test photo or video")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   const img = page.getByAltText("Private feed photo preview");
   await expect(img).toBeVisible();
   await expect
@@ -226,7 +226,7 @@ test("account privacy restricts rich cards and approved followers unlock only th
   await go(page, "/topics/photos");
   await page
     .getByLabel("Add a private progress photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await expect(page.getByLabel("Journal audience")).toHaveValue("private");
   await page.getByLabel("Journal audience").selectOption("followers");
   await page.getByRole("button", { name: "Save private photo" }).click();

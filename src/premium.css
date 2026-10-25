@@ -6493,3 +6493,55 @@ h2,
     margin-right: auto;
   }
 }
+
+/* ---------- Round 5: editorial, not generated ---------- */
+.monogram {
+  flex: none;
+  stroke: currentColor;
+  fill: currentColor;
+  color: var(--forest-text);
+}
+.monogram circle {
+  fill: none;
+}
+.empty > .monogram {
+  margin: 0 auto 14px;
+  color: var(--gold-deep);
+}
+.coach-header > .monogram,
+.coach-welcome > .monogram,
+.chat-message.coach > .monogram {
+  color: var(--forest-text);
+}
+.upgrade-card > .monogram {
+  color: var(--gold-deep);
+}
+/* Fewer floating cards: hairlines and whitespace carry the structure. */
+.routine-card,
+.list-card,
+.stat-card,
+.lift-card,
+.nutrition-day,
+.nutrition-meals,
+.weight-card,
+.settings-block,
+.plan-card,
+.goal-list {
+  box-shadow: none;
+}
+.section-title h2,
+.task-group-title,
+.nutrition-meals h3,
+.weight-card h3 {
+  letter-spacing: -0.01em;
+}
+.topic-banner {
+  border-radius: var(--radius-lg);
+}
+.topic-banner img,
+.guide-hero img,
+.about-hero > img {
+  object-fit: cover;
+  object-position: center 30%;
+  filter: none;
+}

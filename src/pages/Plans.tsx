@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Check, Crown, Sparkles } from "lucide-react";
+import { Check, Crown } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { euro, planOf, plans, yearlySaving, type Plan } from "../lib/plans";
 import { today } from "../lib/domain";
 import { Button, Modal, PageHeader } from "../components/ui";
+import Monogram from "../components/Monogram";
 
 type Billing = "monthly" | "yearly";
 
@@ -175,7 +176,7 @@ export default function PlansPage() {
                     {checkout.id === "signature" ? (
                       <Crown size={15} aria-hidden="true" />
                     ) : (
-                      <Sparkles size={15} aria-hidden="true" />
+                      <Monogram size={16} />
                     )}{" "}
                     CHARETT {checkout.name}
                   </dd>

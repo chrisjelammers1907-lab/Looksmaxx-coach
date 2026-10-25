@@ -380,7 +380,7 @@ test("private real photo comparison, edit, removal and no persistence", async ({
   ]) {
     await page
       .getByLabel("Add a private progress photo")
-      .setInputFiles("public/assets/hair.jpg");
+      .setInputFiles("tests/fixtures/portrait.jpg");
     await page.getByLabel("Photo date").fill(date);
     await page.getByLabel("Tag", { exact: true }).fill(tag);
     await page.getByRole("button", { name: "Save private photo" }).click();
@@ -410,7 +410,7 @@ test("coach photo example and inspected plan proposal", async ({ page }) => {
     .fill("Help me with fit and color");
   await page
     .getByLabel("Attach a private photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(
     page.getByText(/Your attached photo has not been analyzed/),

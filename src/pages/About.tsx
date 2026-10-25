@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
-  Sparkles,
+  MessageSquareText,
   BookOpen,
   Heart,
   LockKeyhole,
@@ -24,13 +24,7 @@ export default function AboutPage() {
           </p>
           <span className="about-wordmark">C</span>
         </div>
-        <img
-          src={asset("campaign")}
-          alt="AI fashion editorial inspiration with two fictional adults, not CHARETT customers"
-        />
-        <span className="hero-image-credit">
-          AI editorial · fictional inspiration
-        </span>
+        <img src={asset("photo-home-hero")} alt="" />
       </header>
       <section className="about-story">
         <span className="eyebrow">WHY WE’RE HERE</span>
@@ -50,7 +44,7 @@ export default function AboutPage() {
       </section>
       <section className="about-pillars">
         <div>
-          <Sparkles />
+          <MessageSquareText strokeWidth={1.5} />
           <h3>A conversation</h3>
           <p>
             Ask your coach in your own words. Keep your preferences in one

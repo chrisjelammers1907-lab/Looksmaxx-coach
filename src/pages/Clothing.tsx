@@ -142,19 +142,7 @@ export default function ClothingPage() {
                 <ArrowUpRight size={18} />
               </Button>
             </div>
-            <img
-              src={asset(state.style === "dark-casual" ? "style" : "campaign")}
-              alt={
-                state.style === "dark-casual"
-                  ? "Licensed stock clothing editorial reference"
-                  : "AI fashion editorial inspiration, not real customers or a try-on result"
-              }
-            />
-            <span className="clothing-hero-label">
-              {state.style === "dark-casual"
-                ? "LICENSED EDITORIAL INSPIRATION"
-                : "AI EDITORIAL · FICTIONAL INSPIRATION"}
-            </span>
+            <img src={asset(`photo-style-${state.style}`)} alt="" />
           </section>
           <div className="quick-grid">
             <button onClick={() => setView("wardrobe")}>
@@ -328,16 +316,16 @@ export default function ClothingPage() {
         <>
           <SectionTitle
             title={`The ${theme.label.toLowerCase()} point of view`}
-            subtitle="Stock editorial references. No owner photos or achieved transformations."
+            subtitle="Looks to save, copy and make your own."
           />
           <div className="inspiration-grid">
             <article className="inspiration-card">
               <img
-                src={asset(state.style === "dark-casual" ? "style" : "hero")}
-                alt="Stock worn-outfit editorial reference"
+                src={asset(`photo-style-${state.style}`)}
+                alt={`${theme.label} outfit`}
               />
               <div>
-                <span className="pill">Real stock photo · Worn outfit</span>
+                <span className="pill">Worn outfit</span>
                 <h3>{theme.hero}</h3>
                 <p>
                   Warm layers, individual proportions. Use this as a mood, not a

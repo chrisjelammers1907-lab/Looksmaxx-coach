@@ -52,7 +52,7 @@ test("corrupt images are rejected and generated inspiration is excluded from pro
   await expect(page.getByRole("alert")).toContainText("could not be decoded");
   await page
     .getByLabel("Add a private progress photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await page.getByLabel("Image category").selectOption("inspiration");
   await page.getByRole("button", { name: "Save private photo" }).click();
   await expect(
@@ -72,7 +72,7 @@ test("a private worn-outfit photo never enters a public post preview", async ({
   await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page
     .getByLabel("Add a private real worn-outfit photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await expect(
     page.getByAltText("Real worn-outfit private preview"),
   ).toBeVisible();

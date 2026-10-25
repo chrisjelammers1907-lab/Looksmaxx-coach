@@ -237,7 +237,9 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
     .getByRole("dialog")
     .getByRole("combobox", { name: "Post format", exact: true })
     .selectOption("reel");
-  await page.getByLabel("Second slideshow photo").selectOption("tailoring");
+  await page
+    .getByLabel("Second slideshow photo")
+    .selectOption("photo-feed-linen");
   await page.getByLabel("Audience", { exact: true }).selectOption("public");
   await page
     .getByRole("button", { name: "Preview audience & content" })
@@ -298,7 +300,7 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
     .selectOption("reel");
   await page
     .getByLabel("Add a private test photo or video")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await expect(page.getByAltText("Private feed photo preview")).toBeVisible();
   await expect(page.getByLabel("Second slideshow photo")).toHaveCount(0);
   await expect(

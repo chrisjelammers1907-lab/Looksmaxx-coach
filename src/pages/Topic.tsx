@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowUpRight, Bookmark, ArrowLeftRight, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Bookmark,
+  ArrowLeftRight,
+  Lightbulb,
+} from "lucide-react";
 import { topics } from "../lib/data";
 import { useDemo, toggle } from "../lib/store";
 import { asset } from "../lib/domain";
@@ -21,7 +27,7 @@ import Items from "../components/Items";
 import Routines from "../components/Routines";
 import Gym from "./Gym";
 import Photos from "./Photos";
-import { isAIEditorial, topicEditorial } from "../lib/editorial";
+import { topicPhoto } from "../lib/editorial";
 function TopicContent() {
   const { topic: id } = useParams();
   const topic = topics.find((t) => t.id === id);
@@ -55,13 +61,13 @@ function TopicContent() {
   const references = [
     {
       id: "Soft texture",
-      image: "hair",
-      text: "Soft movement · styling reference",
+      image: "photo-feed-hair",
+      text: "Soft waves · styling reference",
     },
     {
       id: "Clean crop",
-      image: "grooming",
-      text: "Shorter shape · styling reference",
+      image: "photo-hair",
+      text: "Short sides, curls on top",
     },
   ];
   return (
@@ -82,13 +88,7 @@ function TopicContent() {
             </h2>
             <p className="topic-purpose">{topic.subtitle}</p>
           </div>
-          <img
-            src={asset(topicEditorial(topic.id, topic.image))}
-            alt={`${topic.title} ${isAIEditorial(topicEditorial(topic.id, topic.image)) ? "AI fictional" : "licensed or illustrated"} editorial reference`}
-          />
-          {isAIEditorial(topicEditorial(topic.id, topic.image)) && (
-            <span className="hero-image-credit">AI editorial inspiration</span>
-          )}
+          <img src={asset(topicPhoto(topic.id))} alt="" />
         </div>
       )}
       <TopicLinks topic={topic.id} />
@@ -150,7 +150,7 @@ function TopicContent() {
                 <Routines topic={topicId} />
               )}
               <div className="editorial-note">
-                <Sparkles size={22} />
+                <Lightbulb size={20} strokeWidth={1.6} aria-hidden="true" />
                 <div>
                   <h3>
                     {note[topic.id]?.title || "Make the details your own."}
@@ -294,7 +294,7 @@ function TopicContent() {
                       setVisualReady(false);
                     }}
                   >
-                    Try the preview <Sparkles size={16} />
+                    Try the preview <ArrowRight size={16} />
                   </Button>
                 </div>
                 <Area
@@ -362,8 +362,8 @@ function TopicContent() {
           {visualReady && (
             <div className="visual-result">
               <img
-                src={asset("hair")}
-                alt="Stock portrait used as a visualization placeholder"
+                src={asset("photo-feed-hair")}
+                alt="Reference portrait for the colour preview"
               />
               <span className="image-tag">
                 Simulated illustration · Not your result

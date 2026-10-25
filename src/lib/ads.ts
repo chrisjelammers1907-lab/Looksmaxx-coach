@@ -16,7 +16,7 @@ export const ads: Ad[] = [
     initials: "MV",
     headline: "Linen, cut for long evenings.",
     text: "A relaxed shirt in washed linen, in five quiet colours.",
-    image: "tailoring",
+    image: "photo-ad-shirt",
     cta: "Shop the edit",
   },
   {
@@ -25,7 +25,7 @@ export const ads: Ad[] = [
     initials: "AN",
     headline: "Three steps. That’s the routine.",
     text: "Cleanser, moisturiser and SPF made to work together.",
-    image: "ritual",
+    image: "photo-ad-serum",
     cta: "Learn more",
   },
   {
@@ -34,7 +34,7 @@ export const ads: Ad[] = [
     initials: "FS",
     headline: "Strength, one session at a time.",
     text: "Small-group training for beginners, every weekday morning.",
-    image: "campaign",
+    image: "photo-ad-gym",
     cta: "Book a trial",
   },
 ];

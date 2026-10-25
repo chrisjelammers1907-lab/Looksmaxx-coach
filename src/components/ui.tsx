@@ -15,10 +15,11 @@ import {
   Plus,
   ImagePlus,
   LockKeyhole,
-  Sparkles,
+  Info,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
+import Monogram from "./Monogram";
 let modalCount = 0;
 let previousBodyOverflow = "";
 let previousRootInert = false;
@@ -106,7 +107,7 @@ export function Notice({
 }) {
   return (
     <div className={`notice ${icon}`}>
-      {icon === "private" ? <LockKeyhole size={16} /> : <Sparkles size={16} />}
+      {icon === "private" ? <LockKeyhole size={16} /> : <Info size={16} />}
       <span>{children}</span>
     </div>
   );
@@ -122,7 +123,7 @@ export function Empty({
 }) {
   return (
     <div className="empty">
-      <span className="empty-mark">C</span>
+      <Monogram size={44} />
       <h3>{title}</h3>
       <p>{children}</p>
       {action}

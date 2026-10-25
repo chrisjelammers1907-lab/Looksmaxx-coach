@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   FileText,
   Paperclip,
-  Sparkles,
   X,
   ListChecks,
   ShieldCheck,
@@ -24,6 +23,7 @@ import { UpgradeCard } from "../components/Upgrade";
 import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
 import { Button, ImageInput, Modal, Notice } from "../components/ui";
+import Monogram from "../components/Monogram";
 function FileChip({ file }: { file: NonNullable<ChatMessage["file"]> }) {
   const size =
     file.size > 1024 * 1024
@@ -119,9 +119,7 @@ export default function CoachPage() {
           aria-label="Demo coach conversation"
         >
           <header className="coach-header">
-            <span className="coach-orb small" aria-hidden="true">
-              <Sparkles size={18} />
-            </span>
+            <Monogram size={38} />
             <div>
               <h1>CHARETT Coach</h1>
               <small>AI coach · demo replies</small>
@@ -134,9 +132,7 @@ export default function CoachPage() {
           <div className="chat-messages" aria-live="polite">
             {!state.chat.length && (
               <div className="coach-welcome">
-                <span className="coach-orb">
-                  <Sparkles size={26} />
-                </span>
+                <Monogram size={64} />
                 <h2>
                   What would you like to <em>work on?</em>
                 </h2>
@@ -159,11 +155,7 @@ export default function CoachPage() {
             )}
             {state.chat.map((m) => (
               <div className={`chat-message ${m.author}`} key={m.id}>
-                {m.author === "coach" && (
-                  <span className="coach-orb tiny" aria-hidden="true">
-                    <Sparkles size={12} />
-                  </span>
-                )}
+                {m.author === "coach" && <Monogram size={26} />}
                 <div className="chat-bubble">
                   <span className="visually-hidden">
                     {m.author === "you" ? "You:" : "Coach:"}
@@ -205,9 +197,7 @@ export default function CoachPage() {
             ))}
             {busy && (
               <div className="chat-message coach typing" role="status">
-                <span className="coach-orb tiny" aria-hidden="true">
-                  <Sparkles size={12} />
-                </span>
+                <Monogram size={26} />
                 <div className="chat-bubble">
                   <span className="typing-dots" aria-hidden="true">
                     <i />

@@ -192,8 +192,8 @@ export function StoryComposer({
     { id: "forest", label: "Forest" },
     { id: "ivory", label: "Ivory" },
     { id: "champagne", label: "Champagne" },
-    { id: "tailoring", label: "Outfit photo" },
-    { id: "ritual", label: "Still life photo" },
+    { id: "photo-feed-linen", label: "Outfit photo" },
+    { id: "photo-feed-ritual", label: "Skincare photo" },
   ];
   const isPhoto = !["forest", "ivory", "champagne"].includes(look);
   const draft: Story = {
