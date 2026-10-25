@@ -14,7 +14,7 @@ import {
   Repeat,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
-import { creators } from "../lib/data";
+import { creators, parseStyle } from "../lib/data";
 import type { CardRef, Post } from "../lib/types";
 import {
   asset,
@@ -233,12 +233,7 @@ function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
                   id: uid(),
                   title: `${post.title} — my copy`,
                   itemIds: copied.map((i) => i.id),
-                  style:
-                    post.style === "dark-casual"
-                      ? "dark-casual"
-                      : post.style === "minimalist"
-                        ? "minimalist"
-                        : "old-money",
+                  style: parseStyle(post.style),
                   occasion: post.occasion,
                   season: post.season,
                   notes: "Copied from the community — make it yours.",

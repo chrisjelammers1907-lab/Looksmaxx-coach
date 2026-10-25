@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { makeInitialState, topicGroups, topics } from "../src/lib/data";
+import {
+  clothingStyles,
+  makeInitialState,
+  parseStyle,
+  seedPosts,
+  topicGroups,
+  topics,
+} from "../src/lib/data";
 
 describe("categories", () => {
   it("every topic has a group and a unique number", () => {
@@ -69,5 +76,37 @@ describe("categories", () => {
         state.items.filter((i) => i.topic === id).length,
       ).toBeGreaterThanOrEqual(2);
     }
+  });
+});
+
+describe("clothing styles", () => {
+  it("offers eight styles with copy", () => {
+    expect(clothingStyles.map((s) => s.id)).toEqual([
+      "old-money",
+      "dark-casual",
+      "minimalist",
+      "streetwear",
+      "smart-casual",
+      "athleisure",
+      "preppy",
+      "bohemian",
+    ]);
+    for (const s of clothingStyles)
+      expect(s.hero && s.sub && s.desc).toBeTruthy();
+  });
+  it("unknown stored style falls back", () => {
+    expect(parseStyle("y2k")).toBe("old-money");
+    expect(parseStyle(42)).toBe("old-money");
+    expect(parseStyle("preppy")).toBe("preppy");
+  });
+  it("every new style has a seed post", () => {
+    for (const id of [
+      "streetwear",
+      "smart-casual",
+      "athleisure",
+      "preppy",
+      "bohemian",
+    ])
+      expect(seedPosts.some((p) => p.style === id)).toBe(true);
   });
 });

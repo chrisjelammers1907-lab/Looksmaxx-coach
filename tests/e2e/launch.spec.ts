@@ -167,3 +167,46 @@ test("topic banners and category rows use real photos", async ({ page }) => {
     chips.getByRole("button", { name: "Sleep", exact: true }),
   ).toBeAttached();
 });
+
+test("all eight styles switch the page mood", async ({ page }) => {
+  test.setTimeout(120000);
+  const styles = [
+    ["old-money", "Old money"],
+    ["dark-casual", "Dark casual"],
+    ["minimalist", "Minimalist"],
+    ["streetwear", "Streetwear"],
+    ["smart-casual", "Smart casual"],
+    ["athleisure", "Athleisure"],
+    ["preppy", "Preppy"],
+    ["bohemian", "Bohemian"],
+  ];
+  // The page mood fades in; read contrast on the settled colours.
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page, "/settings");
+  for (const theme of ["Light", "Dark"]) {
+    await go(page, "/settings");
+    await page.getByRole("radio", { name: theme, exact: true }).check();
+    await go(page, "/topics/clothing");
+    const switcher = page.getByRole("group", { name: "Clothing style" });
+    for (const [id, label] of styles) {
+      await switcher.getByRole("button", { name: label }).click();
+      await expect(page.locator(".clothing-page")).toHaveClass(
+        new RegExp(`clothing-${id}`),
+      );
+      await expect(page.locator(".clothing-hero img")).toHaveAttribute(
+        "src",
+        new RegExp(`photo-style-${id}`),
+      );
+      await noAxeViolations(page);
+    }
+  }
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    )
+    .toBe(true);
+  await go(page, "/");
+  await expect(
+    page.getByLabel("Filter by style or topic").getByText("Streetwear"),
+  ).toBeVisible();
+});

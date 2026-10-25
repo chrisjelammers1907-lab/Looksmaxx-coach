@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { DemoState } from "./types";
-import { creators, makeInitialState, seedPosts } from "./data";
+import { creators, makeInitialState, seedPosts, parseStyle } from "./data";
 import { releasePrivateMedia } from "./media";
 import { autoLog } from "./training";
 import { today, uid } from "./domain";
@@ -99,8 +99,7 @@ function load(): DemoState {
               ? creators.some((c) => c.id === v)
               : ids.includes(v)),
         );
-    if (["old-money", "dark-casual", "minimalist"].includes(saved.style))
-      initial.style = saved.style;
+    initial.style = parseStyle(saved.style);
     initial.intake = saved.intake === true;
     // Preferences and streak counters only; never message contents.
     if (isRecord(saved.settings))

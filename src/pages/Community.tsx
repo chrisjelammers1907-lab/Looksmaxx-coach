@@ -18,7 +18,7 @@ import {
   Film,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
-import { seedItems, seedPosts, topics } from "../lib/data";
+import { clothingStyles, seedItems, seedPosts, topics } from "../lib/data";
 import type { Audience, Post, TopicId } from "../lib/types";
 import { totalPrice, uid, today, mayViewPost } from "../lib/domain";
 import {
@@ -428,9 +428,11 @@ function CommunityContent() {
                 onChange={(e) => setDraft({ ...draft, style: e.target.value })}
               >
                 <option value="">Not applicable</option>
-                <option value="old-money">Old money</option>
-                <option value="dark-casual">Dark casual</option>
-                <option value="minimalist">Minimalist</option>
+                {clothingStyles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.label}
+                  </option>
+                ))}
               </Select>
               <Select
                 label="Occasion"
@@ -658,9 +660,7 @@ function CommunityContent() {
       </div>
     );
   const chips = [
-    { kind: "style", id: "old-money", label: "Old money" },
-    { kind: "style", id: "dark-casual", label: "Dark casual" },
-    { kind: "style", id: "minimalist", label: "Minimalist" },
+    ...clothingStyles.map((s) => ({ kind: "style", id: s.id, label: s.label })),
     ...topics
       .filter((t) => t.id !== "photos")
       .map((t) => ({ kind: "topic", id: t.id, label: chipLabel[t.id] })),
@@ -839,9 +839,9 @@ function CommunityContent() {
                 onChange={(e) => setStyle(e.target.value)}
               >
                 <option value="all">All styles</option>
-                {["old-money", "dark-casual", "minimalist"].map((v) => (
-                  <option key={v} value={v}>
-                    {v.replace("-", " ")}
+                {clothingStyles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.label}
                   </option>
                 ))}
               </Select>

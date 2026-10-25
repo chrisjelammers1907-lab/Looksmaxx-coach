@@ -6,6 +6,7 @@ import type {
   Story,
   TopicGroup,
   TopicId,
+  ClothingStyle,
 } from "./types";
 import { today } from "./domain";
 import { addDays } from "./training";
@@ -154,6 +155,74 @@ export const topics: {
     number: "16",
   },
 ];
+/** The clothing styles, each with its own page mood and feed filter. */
+export const clothingStyles: {
+  id: ClothingStyle;
+  label: string;
+  desc: string;
+  hero: string;
+  sub: string;
+}[] = [
+  {
+    id: "old-money",
+    label: "Old money",
+    desc: "Classic, quietly confident.",
+    hero: "Considered classics.",
+    sub: "Cream, forest and a timeless point of view.",
+  },
+  {
+    id: "dark-casual",
+    label: "Dark casual",
+    desc: "Dark tones, after hours.",
+    hero: "A darker kind of effortless.",
+    sub: "Espresso, denim and a little edge.",
+  },
+  {
+    id: "minimalist",
+    label: "Minimalist",
+    desc: "Clean lines. Room to breathe.",
+    hero: "Less, beautifully considered.",
+    sub: "Soft neutrals and only what you love.",
+  },
+  {
+    id: "streetwear",
+    label: "Streetwear",
+    desc: "Bold shapes, city energy.",
+    hero: "Made for the street.",
+    sub: "Boxy fits, clean sneakers and one loud detail.",
+  },
+  {
+    id: "smart-casual",
+    label: "Smart casual",
+    desc: "Sharp, never stiff.",
+    hero: "Polished, off duty.",
+    sub: "Navy, white and a jacket that works with jeans.",
+  },
+  {
+    id: "athleisure",
+    label: "Athleisure",
+    desc: "Comfort that still looks put together.",
+    hero: "Built to move.",
+    sub: "Technical fabrics in stone, graphite and fog.",
+  },
+  {
+    id: "preppy",
+    label: "Preppy",
+    desc: "Collegiate and crisp.",
+    hero: "Crisp, collegiate, yours.",
+    sub: "Oxford cloth, knitwear and a stripe of colour.",
+  },
+  {
+    id: "bohemian",
+    label: "Bohemian",
+    desc: "Earthy, loose, collected.",
+    hero: "Easy, earthy, collected.",
+    sub: "Linen, suede and warm terracotta.",
+  },
+];
+/** A stored style is only trusted when it is one we know. */
+export const parseStyle = (value: unknown): ClothingStyle =>
+  clothingStyles.find((s) => s.id === value)?.id ?? "old-money";
 export const creators: Creator[] = [
   {
     id: "mira",
@@ -719,6 +788,88 @@ export const seedPosts: Post[] = [
     date: "2026-10-11",
   },
 ];
+seedPosts.push(
+  {
+    id: "p11",
+    author: "daan",
+    topic: "clothing",
+    title: "One loud detail",
+    body: "A boxy tee, wide trousers and clean sneakers. Keep everything quiet except one piece.",
+    image: "photo-style-streetwear",
+    items: [],
+    steps: [],
+    audience: "public",
+    style: "streetwear",
+    occasion: "Weekend",
+    season: "All seasons",
+    tags: "streetwear, sneakers",
+    date: "2026-10-10",
+  },
+  {
+    id: "p12",
+    author: "james",
+    topic: "clothing",
+    title: "The jacket that works with jeans",
+    body: "An unstructured navy blazer over a white tee. Smart enough for dinner, easy enough for Friday.",
+    image: "photo-style-smart-casual",
+    items: [],
+    steps: [],
+    audience: "public",
+    style: "smart-casual",
+    occasion: "Work",
+    season: "Spring",
+    tags: "smart casual, navy",
+    date: "2026-10-09",
+  },
+  {
+    id: "p13",
+    author: "sofia",
+    topic: "clothing",
+    title: "From the gym to coffee",
+    body: "Matte technical fabrics in one tone. Comfortable, and it still looks deliberate.",
+    image: "photo-style-athleisure",
+    items: [],
+    steps: [],
+    audience: "public",
+    style: "athleisure",
+    occasion: "Everyday",
+    season: "All seasons",
+    tags: "athleisure, tonal",
+    date: "2026-10-08",
+  },
+  {
+    id: "p14",
+    author: "noor",
+    topic: "clothing",
+    title: "Oxford cloth and a stripe",
+    body: "A crisp button-down, a knit over the shoulders and one stripe of colour.",
+    image: "photo-style-preppy",
+    items: [],
+    steps: [],
+    audience: "public",
+    style: "preppy",
+    occasion: "Weekend",
+    season: "Autumn",
+    tags: "preppy, knitwear",
+    date: "2026-10-07",
+  },
+  {
+    id: "p15",
+    author: "sofia",
+    topic: "clothing",
+    title: "Linen, suede, terracotta",
+    body: "Loose layers in warm earth tones. Collected over time, never bought as a set.",
+    image: "photo-style-bohemian",
+    items: [],
+    steps: [],
+    audience: "public",
+    style: "bohemian",
+    occasion: "Holiday",
+    season: "Summer",
+    tags: "bohemian, linen",
+    date: "2026-10-06",
+  },
+);
 seedPosts.push({
   id: "p10",
   author: "mira",

@@ -24,7 +24,15 @@ export type Weekday =
   | "Friday"
   | "Saturday"
   | "Sunday";
-export type ClothingStyle = "old-money" | "dark-casual" | "minimalist";
+export type ClothingStyle =
+  | "old-money"
+  | "dark-casual"
+  | "minimalist"
+  | "streetwear"
+  | "smart-casual"
+  | "athleisure"
+  | "preppy"
+  | "bohemian";
 export type Audience = "public" | "followers" | "private";
 export interface Profile {
   visibility: "public" | "private";

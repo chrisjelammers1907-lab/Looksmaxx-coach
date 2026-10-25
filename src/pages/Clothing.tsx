@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -13,6 +13,7 @@ import {
 import { useDemo } from "../lib/store";
 import { asset, money, totalPrice, uid } from "../lib/domain";
 import type { Outfit, ClothingStyle } from "../lib/types";
+import { clothingStyles } from "../lib/data";
 import Items, { ItemBreakdown } from "../components/Items";
 import {
   Area,
@@ -28,29 +29,6 @@ import {
   Tabs,
   TopicLinks,
 } from "../components/ui";
-const themes = [
-  {
-    id: "old-money",
-    label: "Old money",
-    desc: "Classic, quietly confident.",
-    hero: "Considered classics.",
-    sub: "Cream, forest and a timeless point of view.",
-  },
-  {
-    id: "dark-casual",
-    label: "Dark casual",
-    desc: "Dark tones, after hours.",
-    hero: "A darker kind of effortless.",
-    sub: "Espresso, denim and a little edge.",
-  },
-  {
-    id: "minimalist",
-    label: "Minimalist",
-    desc: "Clean lines. Room to breathe.",
-    hero: "Less, beautifully considered.",
-    sub: "Soft neutrals and only what you love.",
-  },
-];
 export default function ClothingPage() {
   const { state, update, toast } = useDemo();
   const [search, setSearch] = useSearchParams();
@@ -62,7 +40,16 @@ export default function ClothingPage() {
   const [illustration, setIllustration] = useState(false);
   const [illustrationLoading, setIllustrationLoading] = useState(false);
   const [illustrationDone, setIllustrationDone] = useState(false);
-  const theme = themes.find((t) => t.id === state.style)!;
+  const switcher = useRef<HTMLDivElement>(null);
+  // Keep the chosen style visible in the scrolling pill row.
+  useEffect(() => {
+    const row = switcher.current;
+    const pill = row?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (row && pill && row.scrollWidth > row.clientWidth)
+      row.scrollLeft = pill.offsetLeft - row.offsetLeft - 16;
+  }, [state.style]);
+  const theme =
+    clothingStyles.find((t) => t.id === state.style) ?? clothingStyles[0];
   const items = state.items.filter((i) => i.topic === "clothing");
   const outfits = state.outfits.filter((o) =>
     o.title.toLowerCase().includes(filter.toLowerCase()),
@@ -98,15 +85,18 @@ export default function ClothingPage() {
         }
       />
       <TopicLinks topic="clothing" />
-      <div className="style-switcher" aria-label="Clothing theme">
-        {themes.map((t) => (
+      <div
+        ref={switcher}
+        className="style-switcher"
+        role="group"
+        aria-label="Clothing style"
+      >
+        {clothingStyles.map((t) => (
           <button
             key={t.id}
             aria-pressed={state.style === t.id}
             className={state.style === t.id ? "selected" : ""}
-            onClick={() =>
-              update((s) => ({ ...s, style: t.id as ClothingStyle }))
-            }
+            onClick={() => update((s) => ({ ...s, style: t.id }))}
           >
             <span className={`theme-dot dot-${t.id}`} />
             <span>
@@ -443,7 +433,7 @@ export default function ClothingPage() {
                   })
                 }
               >
-                {themes.map((t) => (
+                {clothingStyles.map((t) => (
                   <option value={t.id} key={t.id}>
                     {t.label}
                   </option>

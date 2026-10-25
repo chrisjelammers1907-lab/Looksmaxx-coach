@@ -6588,3 +6588,321 @@ h2,
   object-fit: cover;
   object-position: center 30%;
 }
+
+/* ---------- Clothing: eight styles ---------- */
+/* The switcher is one scrolling row of pills at every width. */
+.clothing-page .style-switcher {
+  display: flex;
+  gap: 8px;
+  margin: 18px -4px;
+  padding: 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.clothing-page .style-switcher::-webkit-scrollbar {
+  display: none;
+}
+.clothing-page .style-switcher > button {
+  flex: none;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 16px 8px 10px;
+  gap: 8px;
+  justify-content: flex-start;
+  border-radius: var(--radius-pill);
+  box-shadow: none;
+  scroll-snap-align: start;
+}
+.clothing-page .style-switcher small,
+.clothing-page .style-switcher > button > svg {
+  display: none;
+}
+.clothing-page .style-switcher strong {
+  overflow: visible;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+.clothing-page .theme-dot {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+.dot-streetwear {
+  background: #e0642b;
+}
+.dot-smart-casual {
+  background: #14213d;
+}
+.dot-athleisure {
+  background: #8d8a84;
+}
+.dot-preppy {
+  background: linear-gradient(90deg, #1d2b4f 50%, #7a2433 50%);
+}
+.dot-bohemian {
+  background: #a8552f;
+}
+
+/* The five newer moods carry a full palette, so they read the same in light
+   and dark mode and every nested component follows it. */
+.clothing-streetwear,
+.clothing-smart-casual,
+.clothing-athleisure,
+.clothing-preppy,
+.clothing-bohemian {
+  --ink: var(--style-ink);
+  --muted: var(--style-muted);
+  --forest-text: var(--style-ink);
+  --green: var(--style-ink);
+  --porcelain: var(--style-card);
+  --ivory: var(--style-card);
+  --cream: var(--style-soft);
+  --linen: var(--style-soft);
+  --line: var(--style-border);
+  --line-strong: var(--style-border);
+  --sand: var(--style-border);
+  --gold-deep: var(--style-accent);
+  --forest: var(--style-button);
+  --on-dark: var(--style-on-button);
+  background: var(--style-bg);
+  color: var(--style-ink);
+  box-shadow: none;
+}
+.clothing-streetwear .button:not(.secondary):not(.ghost),
+.clothing-smart-casual .button:not(.secondary):not(.ghost),
+.clothing-athleisure .button:not(.secondary):not(.ghost),
+.clothing-preppy .button:not(.secondary):not(.ghost),
+.clothing-bohemian .button:not(.secondary):not(.ghost) {
+  background: var(--style-button);
+  border-color: var(--style-button);
+  color: var(--style-on-button);
+}
+.clothing-streetwear .eyebrow,
+.clothing-smart-casual .eyebrow,
+.clothing-athleisure .eyebrow,
+.clothing-preppy .eyebrow,
+.clothing-bohemian .eyebrow {
+  color: var(--style-accent);
+}
+.clothing-streetwear .product-card,
+.clothing-streetwear .outfit-card,
+.clothing-smart-casual .product-card,
+.clothing-smart-casual .outfit-card,
+.clothing-athleisure .product-card,
+.clothing-athleisure .outfit-card,
+.clothing-preppy .product-card,
+.clothing-preppy .outfit-card,
+.clothing-bohemian .product-card,
+.clothing-bohemian .outfit-card {
+  background: var(--style-card);
+  border-color: var(--style-border);
+  box-shadow: none;
+}
+
+/* Streetwear: black concrete, square corners, bold condensed caps, orange. */
+.clothing-streetwear {
+  --style-bg: #111111;
+  --style-soft: #1a1a1a;
+  --style-card: #1c1c1c;
+  --style-ink: #f5f5f2;
+  --style-muted: #b5b5b0;
+  --style-accent: #e8743d;
+  --style-border: #3a3a3a;
+  --style-button: #f5f5f2;
+  --style-on-button: #111111;
+  border-radius: 0;
+}
+.clothing-streetwear .page-header h1,
+.clothing-streetwear h2,
+.clothing-streetwear h3 {
+  font-family: "Helvetica Neue", Arial, var(--sans);
+  font-stretch: condensed;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.clothing-streetwear .page-header h1 {
+  font-size: clamp(34px, 4.4vw, 54px);
+}
+.clothing-streetwear .clothing-hero,
+.clothing-streetwear .product-card,
+.clothing-streetwear .outfit-card,
+.clothing-streetwear .button,
+.clothing-streetwear .chip,
+.clothing-streetwear .topic-links a,
+.clothing-streetwear .editorial-note,
+.clothing-streetwear .quick-grid > *,
+.clothing-streetwear .style-switcher > button {
+  border-radius: 0;
+}
+.clothing-streetwear .clothing-hero {
+  border-left: 4px solid var(--style-accent);
+}
+.clothing-streetwear .tabs > button.active {
+  border-bottom-color: var(--style-accent);
+}
+
+/* Smart casual: crisp white shirt, navy, fine lines, a tailored sans. */
+.clothing-smart-casual {
+  --style-bg: #f7f8fa;
+  --style-soft: #eef1f5;
+  --style-card: #ffffff;
+  --style-ink: #14213d;
+  --style-muted: #4a5468;
+  --style-accent: #2f4370;
+  --style-border: #d5dae3;
+  --style-button: #14213d;
+  --style-on-button: #ffffff;
+}
+.clothing-smart-casual .page-header h1,
+.clothing-smart-casual h2,
+.clothing-smart-casual h3 {
+  font-family: var(--sans);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.clothing-smart-casual .clothing-hero,
+.clothing-smart-casual .product-card,
+.clothing-smart-casual .outfit-card {
+  border-radius: 6px;
+}
+.clothing-smart-casual .tabs > button.active {
+  border-bottom-color: var(--style-ink);
+}
+
+/* Athleisure: graphite and fog, soft rounded shapes, light technical type. */
+.clothing-athleisure {
+  --style-bg: #2b2d2f;
+  --style-soft: #313437;
+  --style-card: #34373a;
+  --style-ink: #ecebe7;
+  --style-muted: #c4c1b9;
+  --style-accent: #c9c4b9;
+  --style-border: #4c5055;
+  --style-button: #ecebe7;
+  --style-on-button: #2b2d2f;
+  border-radius: 22px;
+}
+.clothing-athleisure .page-header h1,
+.clothing-athleisure h2,
+.clothing-athleisure h3 {
+  font-family: var(--sans);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+.clothing-athleisure .clothing-hero,
+.clothing-athleisure .product-card,
+.clothing-athleisure .outfit-card,
+.clothing-athleisure .editorial-note,
+.clothing-athleisure .quick-grid > * {
+  border-radius: 20px;
+}
+.clothing-athleisure .tabs > button.active {
+  border-bottom-color: var(--style-accent);
+}
+
+/* Preppy: cream oxford, navy and burgundy, a regimental stripe on the hero. */
+.clothing-preppy {
+  --style-bg: #f6f1e6;
+  --style-soft: #efe8d8;
+  --style-card: #fffdf8;
+  --style-ink: #1d2b4f;
+  --style-muted: #4f566a;
+  --style-accent: #7a2433;
+  --style-border: #dcd2bd;
+  --style-button: #1d2b4f;
+  --style-on-button: #ffffff;
+}
+.clothing-preppy .page-header h1,
+.clothing-preppy h2,
+.clothing-preppy h3 {
+  font-style: normal;
+  font-weight: 600;
+}
+.clothing-preppy .clothing-hero {
+  position: relative;
+  border-radius: 4px;
+}
+.clothing-preppy .clothing-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    #1d2b4f 0 14px,
+    #f6f1e6 14px 18px,
+    #7a2433 18px 26px,
+    #f6f1e6 26px 30px
+  );
+}
+.clothing-preppy .tabs > button.active {
+  border-bottom-color: var(--style-accent);
+}
+
+/* Bohemian: warm paper, terracotta, a soft serif and loose shapes. */
+.clothing-bohemian {
+  --style-bg: #f3e7d6;
+  --style-soft: #efe0cb;
+  --style-card: #faf2e6;
+  --style-ink: #3d2a1e;
+  --style-muted: #6a5244;
+  --style-accent: #96482a;
+  --style-border: #e0cdb3;
+  --style-button: #96482a;
+  --style-on-button: #ffffff;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgb(168 85 47 / 9%), transparent 60%),
+    var(--style-bg);
+  border-radius: 24px;
+}
+.clothing-bohemian .page-header h1,
+.clothing-bohemian h2,
+.clothing-bohemian h3 {
+  font-style: italic;
+  font-weight: 500;
+}
+.clothing-bohemian .clothing-hero,
+.clothing-bohemian .product-card,
+.clothing-bohemian .outfit-card,
+.clothing-bohemian .editorial-note,
+.clothing-bohemian .quick-grid > * {
+  border-radius: 18px;
+}
+.clothing-bohemian .tabs > button.active {
+  border-bottom-color: var(--style-accent);
+}
+:root[data-theme="dark"] .clothing-minimalist .editorial-note {
+  background: var(--cream);
+}
+@media (prefers-reduced-motion: reduce) {
+  .clothing-page {
+    transition: none;
+  }
+}
+/* Dark mode: the old styles' buttons keep their own fixed contrast. */
+.clothing-dark-casual .button:not(.secondary):not(.ghost) {
+  background: #d6c8ae;
+  border-color: #d6c8ae;
+}
+.clothing-page.clothing-minimalist .button:not(.secondary):not(.ghost) {
+  color: var(--porcelain);
+}
+/* The photo fills the hero but never sets its height, so the copy stays in view. */
+.clothing-page .clothing-hero > img {
+  height: 0;
+  min-height: 100%;
+}
+/* Phones: the style row runs to the page edge instead of clipping at the padding. */
+@media (max-width: 700px) {
+  .clothing-page .style-switcher {
+    margin: 16px -16px;
+    padding: 4px 16px;
+    scroll-padding-inline: 16px;
+  }
+}
