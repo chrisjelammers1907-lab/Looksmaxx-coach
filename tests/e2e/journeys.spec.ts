@@ -24,6 +24,7 @@ test("skippable intake and editable shared profile", async ({ page }) => {
   await go(page, "/");
   await expect(dialog(page)).toBeVisible();
   await page.getByLabel("What should we call you?").fill("Taylor Demo");
+  await page.getByRole("checkbox", { name: "I’m 18 or older" }).check();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Find my starting point" }).click();
   await go(page, "/profile");

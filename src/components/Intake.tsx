@@ -7,11 +7,12 @@ export default function Intake() {
   const [intake, setIntake] = useState(!state.intake);
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState(state.profile);
+  const [adult, setAdult] = useState(state.adult === true);
   const finish = (save: boolean) => {
     update((s) => ({
       ...s,
       intake: true,
-      ...(save ? { profile: draft } : {}),
+      ...(save ? { profile: draft, adult: true } : {}),
     }));
     setIntake(false);
   };
@@ -56,6 +57,14 @@ export default function Intake() {
                     setDraft({ ...draft, goals: e.target.value })
                   }
                 />
+                <label className="age-check">
+                  <input
+                    type="checkbox"
+                    checked={adult}
+                    onChange={(e) => setAdult(e.target.checked)}
+                  />
+                  <span>I&rsquo;m 18 or older</span>
+                </label>
               </>
             ) : (
               <>
@@ -102,7 +111,7 @@ export default function Intake() {
               >
                 Skip for now
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={step === 1 && !adult}>
                 {step === 1 ? "Continue" : "Find my starting point"}
                 <ArrowRight size={16} />
               </Button>

@@ -302,6 +302,8 @@ export interface DemoState {
   incomingRequests: string[];
   profile: Profile;
   intake: boolean;
+  /** Confirmed in the intake: CHARETT is for adults. */
+  adult?: boolean;
   style: ClothingStyle;
   items: Item[];
   routines: Routine[];

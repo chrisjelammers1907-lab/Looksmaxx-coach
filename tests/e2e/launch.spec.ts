@@ -210,3 +210,29 @@ test("all eight styles switch the page mood", async ({ page }) => {
     page.getByLabel("Filter by style or topic").getByText("Streetwear"),
   ).toBeVisible();
 });
+
+test("intake asks for 18+", async ({ page }) => {
+  await page.goto("/");
+  const dialog = page.getByRole("dialog");
+  const next = dialog.getByRole("button", { name: "Continue" });
+  await dialog.getByLabel("What should we call you?").fill("Sam");
+  await expect(next).toBeDisabled();
+  await dialog.getByRole("checkbox", { name: "I’m 18 or older" }).check();
+  await expect(next).toBeEnabled();
+  await next.click();
+  await dialog.getByRole("button", { name: "Find my starting point" }).click();
+  await expect(dialog).toHaveCount(0);
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("charett-demo-v1")!).adult,
+    ),
+  ).toBe(true);
+  await page.reload();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // Skipping stays possible and still lets a visitor browse.
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.getByRole("button", { name: "Skip for now" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.locator("h1").first()).toBeAttached();
+});

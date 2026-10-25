@@ -6906,3 +6906,18 @@ h2,
     scroll-padding-inline: 16px;
   }
 }
+.age-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 8px;
+  font-size: 14.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.age-check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--forest);
+}

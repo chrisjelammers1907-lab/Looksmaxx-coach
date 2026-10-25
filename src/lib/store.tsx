@@ -101,6 +101,7 @@ function load(): DemoState {
         );
     initial.style = parseStyle(saved.style);
     initial.intake = saved.intake === true;
+    initial.adult = saved.adult === true;
     // Preferences and streak counters only; never message contents.
     if (isRecord(saved.settings))
       initial.settings = {
@@ -165,6 +166,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       const {
         style,
         intake,
+        adult,
         likes,
         saved,
         following,
@@ -186,6 +188,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         JSON.stringify({
           style,
           intake,
+          adult,
           likes: likes.filter((i) => ids.includes(i)),
           saved: saved.filter((i) => ids.includes(i)),
           following,
