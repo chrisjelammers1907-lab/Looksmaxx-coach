@@ -8,6 +8,7 @@ import type { Goal, TopicId } from "../lib/types";
 import { topics } from "../lib/data";
 import { Link } from "react-router-dom";
 import { useCompleteRoutine } from "../lib/useCompleteRoutine";
+import Routines from "../components/Routines";
 import { dateLabel, today, uid } from "../lib/domain";
 import {
   groupLabels,
@@ -45,9 +46,6 @@ export default function PlanPage() {
     .filter(runsToday)
     .filter((r) => routineTopic === "all" || r.topic === routineTopic)
     .sort((a, b) => (order[a.time] ?? 1) - (order[b.time] ?? 1));
-  const otherRoutines = state.routines
-    .filter((r) => !runsToday(r))
-    .filter((r) => routineTopic === "all" || r.topic === routineTopic);
   const routinesDone = (state.routineLog[date] || []).filter((id) =>
     todayRoutines.some((r) => r.id === id),
   ).length;
@@ -161,111 +159,106 @@ export default function PlanPage() {
           ))}
         </HScroll>
       )}
-      <section className="plan-section">
-        {(["overdue", "today", "week", "later"] as const).map((group) => {
-          const tasks =
-            filter === "routines"
-              ? []
-              : state.goals.filter((g) => groupOf(g, date) === group);
-          const lines =
-            group === "today" && filter !== "tasks" ? todayRoutines : [];
-          const count = tasks.length + lines.length;
-          if (!count && group !== "today") return null;
-          return (
-            <div className={`task-group task-group-${group}`} key={group}>
-              <h2 className="task-group-title">
-                {groupLabels[group]}
-                <span>{count}</span>
-              </h2>
-              {count ? (
-                <div className="goal-list">
-                  {lines.map((r) => (
-                    <RoutineLine
-                      key={r.id}
-                      routine={r}
-                      done={!!state.routineLog[date]?.includes(r.id)}
-                      onDone={() => completeRoutine(r.id)}
-                    />
-                  ))}
-                  {tasks.map((g) => {
-                    const done = isDone(g, date);
-                    const repeat = repeatOf(g);
-                    return (
-                      <div
-                        className={`goal-row ${done ? "done" : ""}`}
-                        key={g.id}
-                      >
-                        <button
-                          className="goal-check"
-                          aria-label={`Complete ${g.text}`}
-                          aria-pressed={done}
-                          onClick={() =>
-                            update((s) => ({
-                              ...s,
-                              goals: s.goals.map((x) =>
-                                x.id === g.id ? toggleDone(x, date) : x,
-                              ),
-                            }))
-                          }
+      {filter === "routines" ? (
+        <section className="plan-section">
+          {/* Managing routines: the full, editable cards. */}
+          <Routines
+            key={routineTopic}
+            topic={routineTopic === "all" ? undefined : routineTopic}
+          />
+        </section>
+      ) : (
+        <section className="plan-section">
+          {(["overdue", "today", "week", "later"] as const).map((group) => {
+            const tasks = state.goals.filter((g) => groupOf(g, date) === group);
+            const lines =
+              group === "today" && filter !== "tasks" ? todayRoutines : [];
+            const count = tasks.length + lines.length;
+            if (!count && group !== "today") return null;
+            return (
+              <div className={`task-group task-group-${group}`} key={group}>
+                <h2 className="task-group-title">
+                  {groupLabels[group]}
+                  <span>{count}</span>
+                </h2>
+                {count ? (
+                  <div className="goal-list">
+                    {lines.map((r) => (
+                      <RoutineLine
+                        key={r.id}
+                        routine={r}
+                        done={!!state.routineLog[date]?.includes(r.id)}
+                        onDone={() => completeRoutine(r.id)}
+                      />
+                    ))}
+                    {tasks.map((g) => {
+                      const done = isDone(g, date);
+                      const repeat = repeatOf(g);
+                      return (
+                        <div
+                          className={`goal-row ${done ? "done" : ""}`}
+                          key={g.id}
                         >
-                          {done && <Check size={17} />}
-                        </button>
-                        <span className="goal-text">
-                          <span>{g.text}</span>
-                          {(g.due || repeat !== "none") && (
-                            <small>
-                              {repeat === "daily"
-                                ? "Every day"
-                                : repeat === "weekly"
-                                  ? `Every week${g.due ? ` · ${weekdayOf(g.due)}` : ""}`
-                                  : dateLabel(g.due!)}
-                            </small>
-                          )}
-                        </span>
-                        <button
-                          className="icon-button"
-                          aria-label={`Edit ${g.text}`}
-                          onClick={() => setEditing(g)}
-                        >
-                          <Pencil size={15} />
-                        </button>
-                        <button
-                          className="icon-button"
-                          aria-label={`Delete ${g.text}`}
-                          onClick={() =>
-                            update((s) => ({
-                              ...s,
-                              goals: s.goals.filter((x) => x.id !== g.id),
-                            }))
-                          }
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="small-text muted task-empty">
-                  Nothing due today. Add a task or ask your coach.
-                </p>
-              )}
-            </div>
-          );
-        })}
-        {filter === "routines" && otherRoutines.length > 0 && (
-          <div className="task-group task-group-other">
-            <h2 className="task-group-title">
-              Other days<span>{otherRoutines.length}</span>
-            </h2>
-            <div className="goal-list">
-              {otherRoutines.map((r) => (
-                <RoutineLine key={r.id} routine={r} />
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
+                          <button
+                            className="goal-check"
+                            aria-label={`Complete ${g.text}`}
+                            aria-pressed={done}
+                            onClick={() =>
+                              update((s) => ({
+                                ...s,
+                                goals: s.goals.map((x) =>
+                                  x.id === g.id ? toggleDone(x, date) : x,
+                                ),
+                              }))
+                            }
+                          >
+                            {done && <Check size={17} />}
+                          </button>
+                          <span className="goal-text">
+                            <span>{g.text}</span>
+                            {(g.due || repeat !== "none") && (
+                              <small>
+                                {repeat === "daily"
+                                  ? "Every day"
+                                  : repeat === "weekly"
+                                    ? `Every week${g.due ? ` · ${weekdayOf(g.due)}` : ""}`
+                                    : dateLabel(g.due!)}
+                              </small>
+                            )}
+                          </span>
+                          <button
+                            className="icon-button"
+                            aria-label={`Edit ${g.text}`}
+                            onClick={() => setEditing(g)}
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            className="icon-button"
+                            aria-label={`Delete ${g.text}`}
+                            onClick={() =>
+                              update((s) => ({
+                                ...s,
+                                goals: s.goals.filter((x) => x.id !== g.id),
+                              }))
+                            }
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="small-text muted task-empty">
+                    Nothing due today. Add a task or ask your coach.
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      )}
       {editing && (
         <Modal title="Your task" onClose={() => setEditing(null)}>
           <form
@@ -320,6 +313,13 @@ export default function PlanPage() {
   );
 }
 
+/** Category pages that show routine cards; the rest are managed in My Plan. */
+const managedOnTopic = new Set(
+  topics
+    .map((t) => t.id)
+    .filter((id) => !["gym", "nutrition", "photos", "fragrance"].includes(id)),
+);
+
 /** A routine as one line of the day: tick it off, or open it for its steps. */
 function RoutineLine({
   routine: r,
@@ -360,8 +360,15 @@ function RoutineLine({
             <li key={i}>{step}</li>
           ))}
         </ol>
-        <Link className="text-link" to={`/topics/${r.topic}`}>
-          Edit in {topic?.title ?? "its category"}
+        <Link
+          className="text-link"
+          to={
+            managedOnTopic.has(r.topic)
+              ? `/topics/${r.topic}`
+              : `/plan?routine=${r.topic}`
+          }
+        >
+          Edit in {managedOnTopic.has(r.topic) ? topic?.title : "My routines"}
         </Link>
       </details>
     </div>

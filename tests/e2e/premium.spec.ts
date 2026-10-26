@@ -252,9 +252,10 @@ test("plan shows one day with routine and task filters", async ({ page }) => {
   await filters.getByRole("button", { name: "Tasks", exact: true }).click();
   await expect(page.locator(".routine-line")).toHaveCount(0);
   await expect(page.locator(".goal-row").first()).toBeVisible();
+  // Routines is where routines are managed: the full, editable cards.
   await filters.getByRole("button", { name: "Routines", exact: true }).click();
-  await expect(page.locator(".goal-row:not(.routine-line)")).toHaveCount(0);
-  await expect(page.locator(".routine-line").first()).toBeVisible();
+  await expect(page.locator(".goal-row")).toHaveCount(0);
+  await expect(page.locator(".routine-card").first()).toBeVisible();
   await noAxeViolations(page);
 });
 
