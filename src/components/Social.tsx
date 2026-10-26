@@ -32,6 +32,7 @@ import {
 import { Button, Field, Modal, Notice, Select } from "./ui";
 import { ItemBreakdown } from "./Items";
 import { PostMedia, mediaLabel } from "./FeedMedia";
+import { DEMO } from "../lib/demo";
 const tagPositions = [
   { left: "8%", top: "16%" },
   { left: "44%", top: "46%" },
@@ -114,7 +115,11 @@ export function ShareDialog({
                   ],
                 },
               }));
-              toast("Linked card added to a local demo conversation.");
+              toast(
+                DEMO
+                  ? "Linked card added to a local demo conversation."
+                  : "Shared in your messages.",
+              );
               onClose();
               navigate(`/messages?to=${recipient}`);
             }}
@@ -140,7 +145,7 @@ export function ShareDialog({
             />
             <Button type="submit" disabled={state.blocked.includes(recipient)}>
               <Send size={15} />
-              Simulate sharing
+              {DEMO ? "Simulate sharing" : "Send"}
             </Button>
           </form>
         </>
@@ -433,7 +438,7 @@ function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
         <button
           type="submit"
           className="send-button"
-          aria-label="Post demo comment"
+          aria-label={DEMO ? "Post demo comment" : "Post comment"}
           disabled={!comment.trim()}
         >
           <Send size={16} />
@@ -817,10 +822,15 @@ export function PostCard({
         />
       )}
       {report && (
-        <Modal title="Report demo content" onClose={() => setReport(false)}>
-          <Notice>
-            Local simulation only. No moderation team is contacted.
-          </Notice>
+        <Modal
+          title={DEMO ? "Report demo content" : "Report this post"}
+          onClose={() => setReport(false)}
+        >
+          {DEMO && (
+            <Notice>
+              Local simulation only. No moderation team is contacted.
+            </Notice>
+          )}
           <Select
             label="Reason"
             value={reason}
@@ -840,10 +850,14 @@ export function PostCard({
             onClick={() => {
               update((s) => ({ ...s, reports: toggle(s.reports, post.id) }));
               setReport(false);
-              toast("Demo report recorded locally.");
+              toast(
+                DEMO
+                  ? "Demo report recorded locally."
+                  : "Thanks. Our team will review it.",
+              );
             }}
           >
-            Submit demo report
+            {DEMO ? "Submit demo report" : "Send report"}
           </Button>
         </Modal>
       )}

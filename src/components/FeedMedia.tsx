@@ -13,6 +13,7 @@ import { normaliseFeedPhoto, privateVideoUrl } from "../lib/media";
 import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
+import { DEMO } from "../lib/demo";
 const editorialPhotos = new Map<string, Promise<string>>();
 /** The line under the handle, like a location on Instagram. */
 export function mediaLabel(post: Post) {
@@ -424,7 +425,7 @@ export function MediaPicker({
               video.preload = "metadata";
               video.onloadedmetadata = () => {
                 if (!Number.isFinite(video.duration) || video.duration > 60) {
-                  setError("Choose a demo clip up to 60 seconds.");
+                  setError("Choose a clip up to 60 seconds.");
                 } else {
                   onChange({
                     kind: "video",
@@ -449,7 +450,8 @@ export function MediaPicker({
         />
       </label>
       <p className="small-text">
-        Private test media stays in this tab and cannot enter public demo posts.
+        {DEMO &&
+          "Private test media stays in this tab and cannot enter public demo posts. "}
         Feed photos are proportionally cropped to 1080 × 1350–1920. Upscaling
         adds no photographic detail.
       </p>

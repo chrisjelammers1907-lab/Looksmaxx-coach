@@ -278,3 +278,14 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - Disclosures use drawn chevrons, and the selected chip shows in dark mode.
   - Gym links are clean rows, and small controls get 44px hit areas.
 - Audit: 43 routes × 390/1440 × light/dark, 0 axe violations, no overflow. Vitest 136/136, Playwright 160 passed (3 project-specific skips).
+
+## Seventh round — owner's picks from the design review — 26 October 2026
+
+- **Category pages open on the routine.** The banner with its italic two-beat tagline (it repeated the subtitle) is now a slim photo strip, so routines start in the first phone screen. Skincare's seven identical weekly cards are one sentence.
+- **Membership sells outcomes.** Tier copy leads with what each plan lets you do. Stickers, chat themes and the badge are named once in a quiet "Also:" line. No "Most popular" pill or crown; Plus has an ink rule. Yearly reads "2 months free". Prices and limits are unchanged.
+- **My Plan is one day.** Today's routines and tasks share one list and one count. A routine is one line: tick it off in one tap (it keeps the routine streak), or open it for its steps and an "Edit in …" link.
+- **One launch switch.** Every demo-only line ("fictional", "demo", "simulated", the reset and checkout notices) sits behind `DEMO` in `src/lib/demo.ts`.
+  - Keep it on while the coach, accounts, payments and shopping are simulated.
+  - When they are real services, build with `VITE_DEMO=false`.
+  - `tests/launch-build.test.ts` builds that version and fails if any demo copy is left in the bundle.
+- Audience stays broad: looksmaxxing is the genre and preference, not an exclusive focus, so category order is unchanged.

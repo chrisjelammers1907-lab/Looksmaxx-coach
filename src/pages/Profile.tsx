@@ -36,6 +36,7 @@ import {
   Notice,
   Select,
 } from "../components/ui";
+import { DEMO } from "../lib/demo";
 
 const compact = compactCount;
 const isReel = (p: Post) => p.format === "reel" || p.media?.kind === "video";
@@ -114,7 +115,9 @@ function ProfileContent() {
   if (!own && !creator)
     return (
       <Empty title="Profile unavailable.">
-        This fictional profile could not be found.
+        {DEMO
+          ? "This fictional profile could not be found."
+          : "This profile could not be found."}
       </Empty>
     );
   if (creator && state.blocked.includes(creator.id))
@@ -492,9 +495,11 @@ function ProfileContent() {
               <UserX size={18} /> Block
             </button>
           </div>
-          <p className="small-text muted">
-            Demo controls · nothing is sent to a real service.
-          </p>
+          {DEMO && (
+            <p className="small-text muted">
+              Demo controls · nothing is sent to a real service.
+            </p>
+          )}
         </Modal>
       )}
       {reporting && creator && (
@@ -545,7 +550,7 @@ function ProfileContent() {
           >
             <Notice icon="private">
               Your details are not public. A private profile picture never
-              becomes a community avatar in this demo.
+              becomes a community avatar{DEMO ? " in this demo" : ""}.
             </Notice>
             <div className="form-grid">
               <Field

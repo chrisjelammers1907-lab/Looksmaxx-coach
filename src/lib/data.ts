@@ -10,6 +10,7 @@ import type {
 } from "./types";
 import { today } from "./domain";
 import { addDays } from "./training";
+import { DEMO } from "./demo";
 export const topicGroups: { id: TopicGroup; title: string }[] = [
   { id: "face", title: "Face" },
   { id: "hair", title: "Hair" },
@@ -223,12 +224,17 @@ export const clothingStyles: {
 /** A stored style is only trusted when it is one we know. */
 export const parseStyle = (value: unknown): ClothingStyle =>
   clothingStyles.find((s) => s.id === value)?.id ?? "old-money";
+/** Seed creators are fictional; the demo says so in every bio. */
+const creatorBio = (text: string) =>
+  DEMO ? `A fictional demo creator. ${text}` : text;
 export const creators: Creator[] = [
   {
     id: "mira",
     name: "Mira Laurent",
     handle: "mira.edits",
-    bio: "A fictional demo creator. Slow mornings, considered layers, and a less-is-more wardrobe.",
+    bio: creatorBio(
+      "Slow mornings, considered layers, and a less-is-more wardrobe.",
+    ),
     initials: "ML",
     followers: 248,
     following: 112,
@@ -238,7 +244,9 @@ export const creators: Creator[] = [
     id: "james",
     name: "James Ellis",
     handle: "james.everyday",
-    bio: "A fictional demo creator. Everyday strength and practical style. Sharing small things that stick.",
+    bio: creatorBio(
+      "Everyday strength and practical style. Sharing small things that stick.",
+    ),
     initials: "JE",
     followers: 184,
     following: 96,
@@ -248,7 +256,9 @@ export const creators: Creator[] = [
     id: "noor",
     name: "Noor Bennett",
     handle: "noor.notes",
-    bio: "A fictional demo creator. Gentle rituals, good scents and personal style for every season.",
+    bio: creatorBio(
+      "Gentle rituals, good scents and personal style for every season.",
+    ),
     initials: "NB",
     followers: 312,
     following: 140,
@@ -258,7 +268,7 @@ export const creators: Creator[] = [
     id: "sofia",
     name: "Sofia Marin",
     handle: "sofia.slow",
-    bio: "A fictional demo creator. Slow mornings and soft tailoring.",
+    bio: creatorBio("Slow mornings and soft tailoring."),
     initials: "SM",
     followers: 421,
     following: 180,
@@ -268,7 +278,7 @@ export const creators: Creator[] = [
     id: "daan",
     name: "Daan Visser",
     handle: "daan.lifts",
-    bio: "A fictional demo creator. Strength four days a week. Logging every set.",
+    bio: creatorBio("Strength four days a week. Logging every set."),
     initials: "DV",
     followers: 298,
     following: 150,
@@ -278,7 +288,7 @@ export const creators: Creator[] = [
     id: "amara",
     name: "Amara Okafor",
     handle: "amara.glow",
-    bio: "A fictional demo creator. Skin first, makeup second.",
+    bio: creatorBio("Skin first, makeup second."),
     initials: "AO",
     followers: 612,
     following: 233,
@@ -288,7 +298,7 @@ export const creators: Creator[] = [
     id: "luca",
     name: "Luca Romano",
     handle: "luca.tailored",
-    bio: "A fictional demo creator. Old money on a real budget.",
+    bio: creatorBio("Old money on a real budget."),
     initials: "LR",
     followers: 377,
     following: 201,
@@ -298,7 +308,7 @@ export const creators: Creator[] = [
     id: "yuki",
     name: "Yuki Tanaka",
     handle: "yuki.minimal",
-    bio: "A fictional demo creator. Ten pieces, endless outfits.",
+    bio: creatorBio("Ten pieces, endless outfits."),
     initials: "YT",
     followers: 254,
     following: 98,
@@ -308,7 +318,7 @@ export const creators: Creator[] = [
     id: "elif",
     name: "Elif Kaya",
     handle: "elif.rituals",
-    bio: "A fictional demo creator. Evening rituals and good scents.",
+    bio: creatorBio("Evening rituals and good scents."),
     initials: "EK",
     followers: 189,
     following: 120,
@@ -318,7 +328,7 @@ export const creators: Creator[] = [
     id: "noah",
     name: "Noah de Vries",
     handle: "noah.fits",
-    bio: "A fictional demo creator. Dark casual, every day.",
+    bio: creatorBio("Dark casual, every day."),
     initials: "NV",
     followers: 333,
     following: 176,
@@ -328,7 +338,7 @@ export const creators: Creator[] = [
     id: "mei",
     name: "Mei Chen",
     handle: "mei.skinnotes",
-    bio: "A fictional demo creator. Notes from my skincare shelf.",
+    bio: creatorBio("Notes from my skincare shelf."),
     initials: "MC",
     followers: 508,
     following: 260,
@@ -338,7 +348,7 @@ export const creators: Creator[] = [
     id: "omar",
     name: "Omar Haddad",
     handle: "omar.grooms",
-    bio: "A fictional demo creator. Beard, brows and the finer details.",
+    bio: creatorBio("Beard, brows and the finer details."),
     initials: "OH",
     followers: 276,
     following: 140,
@@ -348,7 +358,7 @@ export const creators: Creator[] = [
     id: "lina",
     name: "Lina Berg",
     handle: "lina.scent",
-    bio: "A fictional demo creator. A scent for every season.",
+    bio: creatorBio("A scent for every season."),
     initials: "LB",
     followers: 165,
     following: 88,
@@ -678,7 +688,9 @@ export const seedPosts: Post[] = [
     author: "mira",
     topic: "hair",
     title: "Soft texture, a little movement",
-    body: "A stock portrait for inspiration, not a photo of this fictional creator. A light styling routine to try.",
+    body: DEMO
+      ? "A stock portrait for inspiration, not a photo of this fictional creator. A light styling routine to try."
+      : "A light styling routine to try: a little cream, scrunch, and let it air-dry.",
     image: "photo-feed-hair",
     items: [],
     steps: [
@@ -718,7 +730,9 @@ export const seedPosts: Post[] = [
     author: "noor",
     topic: "smile",
     title: "A habit worth keeping",
-    body: "A fictional care routine. Personalized dental concerns belong with a dental professional.",
+    body: DEMO
+      ? "A fictional care routine. Personalized dental concerns belong with a dental professional."
+      : "Two minutes, twice a day, and floss at night. Personal dental concerns belong with a dentist.",
     image: "photo-feed-smile",
     items: [seedItems[8]],
     steps: [
@@ -737,7 +751,9 @@ export const seedPosts: Post[] = [
     author: "noor",
     topic: "fragrance",
     title: "Notes for an autumn evening",
-    body: "Cedar, citrus, and a little warmth. A fictional collection, with example prices.",
+    body: DEMO
+      ? "Cedar, citrus, and a little warmth. A fictional collection, with example prices."
+      : "Cedar, citrus, and a little warmth. Three bottles for the colder months.",
     image: "photo-feed-autumn",
     items: [seedItems[9]],
     steps: [
@@ -757,7 +773,9 @@ export const seedPosts: Post[] = [
     author: "james",
     topic: "photos",
     title: "Make room for small changes",
-    body: "A fictional journaling prompt: keep light, pose and camera consistent. No before/after transformation is represented by this stock reference.",
+    body: DEMO
+      ? "A fictional journaling prompt: keep light, pose and camera consistent. No before/after transformation is represented by this stock reference."
+      : "A journaling prompt: keep light, pose and camera the same, so the only change you see is yours.",
     image: "photo-feed-mirror",
     items: [],
     steps: [
@@ -776,7 +794,9 @@ export const seedPosts: Post[] = [
     author: "james",
     topic: "clothing",
     title: "After hours, effortlessly",
-    body: "Dark layers and clean lines. A fictional editorial outfit to make your own.",
+    body: DEMO
+      ? "Dark layers and clean lines. A fictional editorial outfit to make your own."
+      : "Dark layers and clean lines. An outfit to make your own.",
     image: "photo-feed-night",
     items: seedItems.slice(1, 3),
     steps: [],
@@ -1038,7 +1058,9 @@ export const makeInitialState = (): DemoState => ({
     visibility: "private",
     name: "Alex Morgan",
     handle: "alex.edit",
-    bio: "A private demo profile. Making space for small, thoughtful changes.",
+    bio: DEMO
+      ? "A private demo profile. Making space for small, thoughtful changes."
+      : "Making space for small, thoughtful changes.",
     goals: "Build a consistent routine and a wardrobe I love",
     preferences: "Simple routines, relaxed fit, neutral colors",
     restrictions: "",
@@ -1227,7 +1249,9 @@ export const makeInitialState = (): DemoState => ({
       style: "old-money",
       occasion: "Weekend",
       season: "Autumn",
-      notes: "Relaxed layers, soft neutrals. Fictional example.",
+      notes: DEMO
+        ? "Relaxed layers, soft neutrals. Fictional example."
+        : "Relaxed layers, soft neutrals.",
     },
   ],
   posts: structuredClone(seedPosts),

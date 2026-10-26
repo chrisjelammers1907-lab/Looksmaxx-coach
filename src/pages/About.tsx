@@ -2,6 +2,7 @@ import { Fragment, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { asset } from "../lib/domain";
+import { DEMO } from "../lib/demo";
 
 /** Each word is its own span, so the statement can light up as it is read. */
 function Words({ text, emphasis }: { text: string; emphasis?: string }) {
@@ -87,15 +88,15 @@ export default function AboutPage() {
       <section className="about-transparency">
         <div>
           <h2>
-            Made to explore.
-            <br />
-            <em>Honest about the demo.</em>
+            {DEMO ? "Honest about what this is." : "Your data, your call."}
           </h2>
-          <p>
-            This is an interactive preview. Creators, brands, ads and social
-            activity are fictional. The coach gives sample replies, and
-            payments, shopping and accounts are simulated.
-          </p>
+          {DEMO && (
+            <p>
+              This is an interactive preview. Creators, brands, ads and social
+              activity are fictional. The coach gives sample replies, and
+              payments, shopping and accounts are simulated.
+            </p>
+          )}
           <p>
             Photos, profile edits, your journal and messages stay in this
             browser tab and clear on reload. Your settings, streaks, plan,

@@ -11,6 +11,7 @@ import { creators, makeInitialState, seedPosts, parseStyle } from "./data";
 import { releasePrivateMedia } from "./media";
 import { autoLog } from "./training";
 import { today, uid } from "./domain";
+import { DEMO } from "./demo";
 const STORAGE_KEY = "charett-demo-v1";
 /** Training, nutrition and weight logs persist in this browser, as the owner chose. */
 const TRAINING_KEY = "charett-training-v1";
@@ -281,7 +282,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       /* Nothing stored. */
     }
     setState(makeInitialState());
-    toast("Demo reset. Private session content removed.");
+    toast(
+      DEMO
+        ? "Demo reset. Private session content removed."
+        : "Your data on this device is cleared.",
+    );
   };
   return (
     <Context.Provider value={{ state, update: setState, reset, toast }}>

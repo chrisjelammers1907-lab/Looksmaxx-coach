@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { Modal, Field, Select, Button, Area, Notice } from "./ui";
+import { DEMO } from "../lib/demo";
 export default function Intake() {
   const { state, update } = useDemo();
   const [intake, setIntake] = useState(!state.intake);
@@ -29,10 +30,12 @@ export default function Intake() {
             track progress with a personal AI coach. This short profile is
             optional; you can change or remove every detail later.
           </p>
-          <Notice icon="private">
-            This is a local demo. Personal details and photos stay in this
-            browser session. No account is created.
-          </Notice>
+          {DEMO && (
+            <Notice icon="private">
+              This is a local demo. Personal details and photos stay in this
+              browser session. No account is created.
+            </Notice>
+          )}
           <form
             onSubmit={(e) => {
               e.preventDefault();

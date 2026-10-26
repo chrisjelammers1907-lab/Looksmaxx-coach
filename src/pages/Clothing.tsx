@@ -29,6 +29,7 @@ import {
   Tabs,
   TopicLinks,
 } from "../components/ui";
+import { DEMO } from "../lib/demo";
 export default function ClothingPage() {
   const { state, update, toast } = useDemo();
   const [search, setSearch] = useSearchParams();
@@ -114,7 +115,7 @@ export default function ClothingPage() {
           { id: "wardrobe", label: "My wardrobe" },
           { id: "outfits", label: "My outfits" },
           { id: "inspiration", label: "Inspiration" },
-          { id: "shopping", label: "Shopping demo" },
+          { id: "shopping", label: DEMO ? "Shopping demo" : "Shopping" },
         ]}
       />
       {tab === "overview" && (
@@ -150,7 +151,11 @@ export default function ClothingPage() {
             <Link to={`/explore?topic=clothing&style=${state.style}`}>
               <Share2 />
               <h3>A shared point of view</h3>
-              <p>Explore fictional community edits.</p>
+              <p>
+                {DEMO
+                  ? "Explore fictional community edits."
+                  : "Explore edits from the community."}
+              </p>
               <ArrowUpRight size={19} />
             </Link>
           </div>
@@ -344,7 +349,7 @@ export default function ClothingPage() {
                   setIllustrationDone(false);
                 }}
               >
-                Open simulated try-on
+                {DEMO ? "Open simulated try-on" : "Sketch this outfit"}
               </Button>
             </article>
           </div>
@@ -577,7 +582,7 @@ export default function ClothingPage() {
       )}
       {illustration && (
         <Modal
-          title="Simulated outfit visualization"
+          title={DEMO ? "Simulated outfit visualization" : "Outfit sketch"}
           onClose={() => setIllustration(false)}
         >
           <Notice>
@@ -609,7 +614,9 @@ export default function ClothingPage() {
           >
             {illustrationLoading
               ? "Loading example…"
-              : "Show simulated illustration"}
+              : DEMO
+                ? "Show simulated illustration"
+                : "Show the sketch"}
           </Button>
         </Modal>
       )}

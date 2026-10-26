@@ -14,6 +14,7 @@ import {
   SectionTitle,
   Select,
 } from "../components/ui";
+import { DEMO } from "../lib/demo";
 export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
   const { state, update, toast } = useDemo();
   const [draft, setDraft] = useState<Photo | null>(null);
@@ -291,10 +292,10 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
             </Select>
             {draft.audience && draft.audience !== "private" && (
               <Notice icon="private">
-                Sharing preferences are simulated. Your original uploaded photo
-                stays private in this tab; this action does not publish it to
-                the feed or send it to anyone. Account privacy still limits
-                recipient access.
+                {DEMO && "Sharing preferences are simulated. "}Your original
+                uploaded photo stays private in this tab; this action does not
+                publish it to the feed or send it to anyone. Account privacy
+                still limits recipient access.
               </Notice>
             )}
             <Field

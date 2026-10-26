@@ -19,6 +19,7 @@ import { creators } from "../lib/data";
 import { dateLabel, mayViewPost } from "../lib/domain";
 import type { AppSettings } from "../lib/types";
 import { Button, Field, Modal, Notice, Select } from "../components/ui";
+import { DEMO } from "../lib/demo";
 
 const sections = [
   { id: "account", label: "Account", icon: UserRound },
@@ -142,7 +143,9 @@ export default function SettingsPage() {
               }
             >
               <option value="private">Private · approved followers</option>
-              <option value="public">Public · everyone in the demo</option>
+              <option value="public">
+                {DEMO ? "Public · everyone in the demo" : "Public · everyone"}
+              </option>
             </Select>
             <Button variant="secondary small" onClick={() => setVisitor(true)}>
               Preview as a visitor
@@ -432,7 +435,7 @@ export default function SettingsPage() {
                 <small>
                   {state.subscription.plan === "free"
                     ? "Feed, reels, stories and chats are always free."
-                    : `${state.subscription.billing === "yearly" ? "Billed yearly" : "Billed monthly"}${state.subscription.since ? ` · since ${dateLabel(state.subscription.since)}` : ""} · simulated`}
+                    : `${state.subscription.billing === "yearly" ? "Billed yearly" : "Billed monthly"}${state.subscription.since ? ` · since ${dateLabel(state.subscription.since)}` : ""}${DEMO ? " · simulated" : ""}`}
                 </small>
               </span>
               <Link className="button small" to="/plans">
@@ -447,14 +450,14 @@ export default function SettingsPage() {
             <Notice icon="private">
               Profile details, photos, routines and messages stay in this
               browser session. Preferences, streaks and your training plan are
-              saved in this browser. This demo has no real accounts.
+              saved in this browser.{DEMO && " This demo has no real accounts."}
             </Notice>
             <div className="button-row">
               <Button variant="secondary" onClick={() => setConfirm("details")}>
                 Remove my details
               </Button>
               <Button variant="secondary" onClick={() => setConfirm("reset")}>
-                Reset demo
+                {DEMO ? "Reset demo" : "Clear this device"}
               </Button>
             </div>
           </Section>
@@ -467,15 +470,15 @@ export default function SettingsPage() {
               Ask the AI coach <ArrowUpRight size={15} />
             </Link>
             <p className="small-text muted">
-              <LockKeyhole size={13} aria-hidden="true" /> CHARETT demo ·
-              version 0.3
+              <LockKeyhole size={13} aria-hidden="true" /> CHARETT
+              {DEMO ? " demo" : ""} · version 0.3
             </p>
           </Section>
         </div>
       </div>
       {visitor && (
         <Modal
-          title="Visitor preview · simulated"
+          title={DEMO ? "Visitor preview · simulated" : "Visitor preview"}
           onClose={() => setVisitor(false)}
         >
           <p className="eyebrow">@{state.profile.handle}</p>
@@ -513,7 +516,9 @@ export default function SettingsPage() {
         <Modal
           title={
             confirm === "reset"
-              ? "Reset this demo?"
+              ? DEMO
+                ? "Reset this demo?"
+                : "Clear CHARETT on this device?"
               : "Remove private information?"
           }
           onClose={() => setConfirm("")}
@@ -521,7 +526,7 @@ export default function SettingsPage() {
           <p>
             {confirm === "reset"
               ? "This removes your session content and resets locally saved preferences, streaks, training and clothing themes."
-              : "This removes profile details, routines, private photos, your posts, collection edits, notes, logs, coach conversations and messages from this session. Fictional public content remains."}
+              : "This removes profile details, routines, private photos, your posts, collection edits, notes, logs, coach conversations and messages from this session."}
           </p>
           <Button
             variant="danger"

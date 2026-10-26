@@ -5,6 +5,7 @@ import { euro, planOf, plans, type Plan } from "../lib/plans";
 import { today } from "../lib/domain";
 import { Button, Modal, PageHeader } from "../components/ui";
 import Monogram from "../components/Monogram";
+import { DEMO } from "../lib/demo";
 
 type Billing = "monthly" | "yearly";
 
@@ -181,10 +182,12 @@ export default function PlansPage() {
                   <dd>{euro(price(checkout))}</dd>
                 </div>
               </dl>
-              <p className="small-text muted">
-                Demo checkout: no payment details are asked and nothing is
-                charged.
-              </p>
+              {DEMO && (
+                <p className="small-text muted">
+                  Demo checkout: no payment details are asked and nothing is
+                  charged.
+                </p>
+              )}
               <Button onClick={() => choose(checkout, billing)}>
                 Start {checkout.name}
               </Button>

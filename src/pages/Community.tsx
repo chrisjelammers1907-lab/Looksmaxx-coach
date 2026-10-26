@@ -40,6 +40,7 @@ import { topicPhoto } from "../lib/editorial";
 import { SponsoredPost } from "../components/Ads";
 import { AD_EVERY, ads } from "../lib/ads";
 import { limitsOf } from "../lib/plans";
+import { DEMO } from "../lib/demo";
 /** Short chip names for the feed filters, in category order. */
 const chipLabel: Partial<Record<TopicId, string>> = {
   skincare: "Skincare",
@@ -146,7 +147,9 @@ function CommunityContent() {
         ? "Draft saved. Only you can see it."
         : saved.audience === "private"
           ? "Private session post saved."
-          : "Fictional post published locally. No real network activity.",
+          : DEMO
+            ? "Fictional post published locally. No real network activity."
+            : "Posted.",
     );
     navigate(`/post/${saved.id}`);
   };
@@ -569,7 +572,9 @@ function CommunityContent() {
             <Button onClick={() => save(false)}>
               {draft.audience === "private"
                 ? "Save private post"
-                : "Publish demo post"}
+                : DEMO
+                  ? "Publish demo post"
+                  : "Publish"}
             </Button>
           </div>
         </>
@@ -634,7 +639,7 @@ function CommunityContent() {
         {composerModal}
         {deletePost && (
           <Modal
-            title="Remove this demo post?"
+            title={DEMO ? "Remove this demo post?" : "Remove this post?"}
             onClose={() => setDeletePost(false)}
           >
             <p>
@@ -887,7 +892,8 @@ function CommunityContent() {
       )}
       {showFilters && (
         <div className="feed-count">
-          {visible.length} demo {visible.length === 1 ? "post" : "posts"}
+          {visible.length}
+          {DEMO ? " demo" : ""} {visible.length === 1 ? "post" : "posts"}
         </div>
       )}
       <h2 className="visually-hidden">

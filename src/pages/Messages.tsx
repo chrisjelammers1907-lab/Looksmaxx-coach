@@ -36,6 +36,7 @@ import type { CardRef, Message } from "../lib/types";
 import { LinkedCard } from "../components/Social";
 import { Button, Modal, Notice, Select } from "../components/ui";
 import StreakFlame from "../components/StreakFlame";
+import { DEMO } from "../lib/demo";
 export default function MessagesPage() {
   const { state, update, toast } = useDemo();
   const [params, setParams] = useSearchParams();
@@ -155,7 +156,7 @@ export default function MessagesPage() {
             <button
               type="button"
               className="icon-button"
-              aria-label="New demo message"
+              aria-label={DEMO ? "New demo message" : "New message"}
               onClick={() => setNewMessage(true)}
             >
               <SquarePen size={21} strokeWidth={1.7} />
@@ -181,7 +182,9 @@ export default function MessagesPage() {
                           {
                             id: uid(),
                             author: "james",
-                            text: "Thanks for accepting this simulated request. What are you working on?",
+                            text: DEMO
+                              ? "Thanks for accepting this simulated request. What are you working on?"
+                              : "Thanks for accepting. What are you working on?",
                             time: "Just now",
                           },
                         ],
@@ -196,7 +199,9 @@ export default function MessagesPage() {
                   variant="ghost small"
                   onClick={() => {
                     setRequest("declined");
-                    toast("Demo request declined.");
+                    toast(
+                      DEMO ? "Demo request declined." : "Request declined.",
+                    );
                   }}
                 >
                   Decline
@@ -588,11 +593,11 @@ export default function MessagesPage() {
       </div>
       {newMessage && (
         <Modal
-          title="Start a demo conversation"
+          title={DEMO ? "Start a demo conversation" : "New conversation"}
           onClose={() => setNewMessage(false)}
         >
           <Select
-            label="Fictional recipient"
+            label={DEMO ? "Fictional recipient" : "Recipient"}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           >
@@ -789,7 +794,7 @@ export default function MessagesPage() {
                       : p.items.length
                         ? "Product"
                         : "Post"}{" "}
-                  · Public · Fictional reference
+                  · Public{DEMO ? " · Fictional reference" : ""}
                 </small>
                 <Link2 size={15} />
               </button>
@@ -799,12 +804,16 @@ export default function MessagesPage() {
       )}
       {report && (
         <Modal
-          title="Report this demo conversation"
+          title={
+            DEMO ? "Report this demo conversation" : "Report this conversation"
+          }
           onClose={() => setReport(false)}
         >
-          <Notice>
-            Simulation only. No report is sent to a real moderation service.
-          </Notice>
+          {DEMO && (
+            <Notice>
+              Simulation only. No report is sent to a real moderation service.
+            </Notice>
+          )}
           <Select
             label="Report reason"
             value={reason}
@@ -819,10 +828,14 @@ export default function MessagesPage() {
           <Button
             onClick={() => {
               setReport(false);
-              toast("Conversation report simulated locally.");
+              toast(
+                DEMO
+                  ? "Conversation report simulated locally."
+                  : "Thanks. Our team will review it.",
+              );
             }}
           >
-            Submit demo report
+            {DEMO ? "Submit demo report" : "Send report"}
           </Button>
         </Modal>
       )}

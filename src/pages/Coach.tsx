@@ -24,6 +24,7 @@ import { demoCoach } from "../lib/services";
 import type { ChatMessage } from "../lib/types";
 import { Button, ImageInput, Modal, Notice } from "../components/ui";
 import Monogram from "../components/Monogram";
+import { DEMO } from "../lib/demo";
 function FileChip({ file }: { file: NonNullable<ChatMessage["file"]> }) {
   const size =
     file.size > 1024 * 1024
@@ -105,7 +106,9 @@ export default function CoachPage() {
       }));
     } catch {
       setError(
-        "The demo response could not load. Your plan has not changed. Please try again.",
+        DEMO
+          ? "The demo response could not load. Your plan has not changed. Please try again."
+          : "Your coach could not answer just now. Your plan has not changed. Please try again.",
       );
     } finally {
       setBusy(false);
@@ -116,13 +119,13 @@ export default function CoachPage() {
       <div className="coach-layout">
         <section
           className="coach-conversation"
-          aria-label="Demo coach conversation"
+          aria-label={DEMO ? "Demo coach conversation" : "Coach conversation"}
         >
           <header className="coach-header">
             <Monogram size={38} />
             <div>
               <h1>CHARETT Coach</h1>
-              <small>AI coach · demo replies</small>
+              <small>{DEMO ? "AI coach · demo replies" : "AI coach"}</small>
             </div>
             <Link to="/plan" className="button secondary small">
               <ListChecks size={15} />
@@ -289,7 +292,7 @@ export default function CoachPage() {
                   />
                 </label>
                 <textarea
-                  aria-label="Ask your demo coach"
+                  aria-label={DEMO ? "Ask your demo coach" : "Ask your coach"}
                   placeholder="Message your coach…"
                   enterKeyHint="send"
                   rows={1}

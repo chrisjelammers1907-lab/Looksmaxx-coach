@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { asset } from "../lib/domain";
 import type { Ad } from "../lib/ads";
+import { DEMO } from "../lib/demo";
 
 /** A sponsored post in the Free feed. The sponsors are fictional. */
 export function SponsoredPost({ ad }: { ad: Ad }) {
@@ -27,7 +28,13 @@ export function SponsoredPost({ ad }: { ad: Ad }) {
       <button
         type="button"
         className="sponsored-cta"
-        onClick={() => toast("Sponsored posts are simulated in this demo.")}
+        onClick={() =>
+          toast(
+            DEMO
+              ? "Sponsored posts are simulated in this demo."
+              : `Opening ${ad.brand}…`,
+          )
+        }
       >
         {ad.cta}
         <ChevronRight size={18} aria-hidden="true" />

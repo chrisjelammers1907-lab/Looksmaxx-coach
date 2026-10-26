@@ -29,6 +29,7 @@ import Gym, { PostureCard } from "./Gym";
 import Photos from "./Photos";
 import { topicPhoto } from "../lib/editorial";
 import Nutrition from "../components/Nutrition";
+import { DEMO } from "../lib/demo";
 function TopicContent() {
   const { topic: id } = useParams();
   const topic = topics.find((t) => t.id === id);
@@ -198,8 +199,8 @@ function TopicContent() {
                     .map((i) => i.name)
                     .join(", ") || "No scents shortlisted yet"}
                   . Budget: {state.profile.currency} {state.profile.budget}.
-                  Shopping is simulated; no live availability or purchase is
-                  provided.
+                  {DEMO &&
+                    " Shopping is simulated; no live availability or purchase is provided."}
                 </Notice>
               )}
               {topic.id === "skincare" && (
@@ -357,7 +358,9 @@ function TopicContent() {
                 alt="Reference portrait for the colour preview"
               />
               <span className="image-tag">
-                Simulated illustration · Not your result
+                {DEMO
+                  ? "Simulated illustration · Not your result"
+                  : "Colour preview · Not your result"}
               </span>
               <span
                 className="color-swatch"
@@ -386,7 +389,7 @@ function TopicContent() {
               }, 600);
             }}
           >
-            {visualLoading ? "Loading demo…" : "Show example preview"}
+            {visualLoading ? "Loading…" : "Show example preview"}
           </Button>
         </Modal>
       )}
