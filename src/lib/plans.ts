@@ -6,7 +6,10 @@ export interface Plan {
   monthly: number;
   yearly: number;
   tagline: string;
+  /** What the plan lets you do, in order of what matters. */
   features: string[];
+  /** The small extras, named once and quietly. */
+  extras?: string;
 }
 
 export interface Limits {
@@ -52,14 +55,13 @@ export const plans: Plan[] = [
     name: "Free",
     monthly: 0,
     yearly: 0,
-    tagline: "Everything you need to start.",
+    tagline: "Start your routines and find your style.",
     features: [
-      "Feed, reels, stories and chats",
-      "10 coach messages and 1 file a day",
-      "3 training days a week",
-      "Food log by hand",
-      "Routines, tasks and every guide",
-      "Includes sponsored posts",
+      "Routines, tasks and every beginner’s guide",
+      "A coach check-in: 10 messages and 1 photo a day",
+      "Plan 3 training days a week",
+      "Log what you eat by hand",
+      "The feed, reels and messages, with sponsored posts",
     ],
   },
   {
@@ -67,30 +69,29 @@ export const plans: Plan[] = [
     name: "Plus",
     monthly: 9.99,
     yearly: 99.99,
-    tagline: "More room, no ads.",
+    tagline: "Build the whole plan: face, body and style.",
     features: [
       "Everything in Free, without ads",
-      "50 coach messages and 5 files a day",
-      "5 training days a week",
-      "10 barcode scans a day",
-      "Up to 10 stickers of your own",
+      "Your coach on hand: 50 messages and 5 photos a day",
+      "Plan 5 training days a week",
+      "Scan food barcodes, 10 a day",
     ],
+    extras: "Also: up to 10 photo stickers of your own.",
   },
   {
     id: "signature",
     name: "Signature",
     monthly: 19.99,
     yearly: 199.99,
-    tagline: "Everything, without limits.",
+    tagline: "No limits, and your streaks are protected.",
     features: [
       "Everything in Plus",
-      "Unlimited coach messages and files",
-      "Unlimited training days and barcode scans",
-      "Unlimited stickers of your own",
-      "All chat themes and sticker packs from day one",
+      "Unlimited coach messages and photo feedback",
+      "Train every day and scan without limits",
       "Streak protection: one missed day won’t break a streak",
-      "Signature badge on your profile",
     ],
+    extras:
+      "Also: every chat theme and sticker pack, your own stickers without limit, and the Signature badge.",
   },
 ];
 

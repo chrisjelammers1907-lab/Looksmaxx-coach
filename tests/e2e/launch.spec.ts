@@ -568,3 +568,13 @@ test("category pages open on your routine, not on a slogan", async ({
   await expect(page.locator(".week-grid")).toHaveCount(0);
   await expect(page.locator(".routine-rhythm")).toContainText(/daily/i);
 });
+
+test("the plans page sells outcomes without a SaaS badge", async ({ page }) => {
+  await open(page, "/plans");
+  await expect(page.getByText("Most popular")).toHaveCount(0);
+  await expect(page.locator(".plan-card h2 svg")).toHaveCount(0);
+  await expect(
+    page.getByRole("radio", { name: /2 months free/ }),
+  ).toBeVisible();
+  await expect(page.locator(".plan-extras").first()).toBeVisible();
+});

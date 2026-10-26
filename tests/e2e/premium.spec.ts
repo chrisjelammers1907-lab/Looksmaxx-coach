@@ -733,10 +733,10 @@ test("plus has 50 coach messages a day; signature has no limit", async ({
   await expect(page.getByText(/1 of 50 messages left today/)).toBeVisible();
   await go(page, "/plans");
   await expect(page.locator(".plan-plus")).toContainText(
-    "50 coach messages and 5 files a day",
+    "50 messages and 5 photos a day",
   );
   await expect(page.locator(".plan-signature")).toContainText(
-    "Unlimited coach messages and files",
+    "Unlimited coach messages and photo feedback",
   );
   await page.getByRole("button", { name: "Choose Signature" }).click();
   await page.getByRole("button", { name: "Start Signature" }).click();

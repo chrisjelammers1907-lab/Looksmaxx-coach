@@ -7568,3 +7568,23 @@ details > summary::-webkit-details-marker {
     margin-bottom: 14px;
   }
 }
+
+/* ---------- Round 7: plans sell outcomes ---------- */
+.plan-extras {
+  margin: -4px 0 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.plan-signature .plan-extras {
+  color: var(--on-dark-muted);
+}
+/* Plus is marked by a quiet ink rule under its name, not a badge. */
+.plan-card.plan-plus header p::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  margin: 4px 0 12px;
+  background: var(--forest);
+}

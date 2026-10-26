@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Check, Crown } from "lucide-react";
+import { Check } from "lucide-react";
 import { useDemo } from "../lib/store";
-import { euro, planOf, plans, yearlySaving, type Plan } from "../lib/plans";
+import { euro, planOf, plans, type Plan } from "../lib/plans";
 import { today } from "../lib/domain";
 import { Button, Modal, PageHeader } from "../components/ui";
 import Monogram from "../components/Monogram";
@@ -51,7 +51,7 @@ export default function PlansPage() {
         {(
           [
             ["monthly", "Monthly"],
-            ["yearly", `Yearly · save ${yearlySaving(plans[1])}%`],
+            ["yearly", "Yearly · 2 months free"],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -74,16 +74,8 @@ export default function PlansPage() {
               className={`plan-card plan-${plan.id} ${isCurrent ? "current" : ""}`}
               aria-labelledby={`plan-${plan.id}`}
             >
-              {plan.id === "plus" && (
-                <span className="plan-flag">Most popular</span>
-              )}
               <header>
-                <h2 id={`plan-${plan.id}`}>
-                  {plan.id === "signature" && (
-                    <Crown size={18} aria-hidden="true" />
-                  )}
-                  {plan.name}
-                </h2>
+                <h2 id={`plan-${plan.id}`}>{plan.name}</h2>
                 <p>{plan.tagline}</p>
               </header>
               <div className="plan-price">
@@ -104,6 +96,7 @@ export default function PlansPage() {
                   </li>
                 ))}
               </ul>
+              {plan.extras && <p className="plan-extras">{plan.extras}</p>}
               {isCurrent ? (
                 <Button disabled variant="secondary">
                   Current plan
@@ -172,12 +165,7 @@ export default function PlansPage() {
                 <div>
                   <dt>Plan</dt>
                   <dd>
-                    {checkout.id === "signature" ? (
-                      <Crown size={15} aria-hidden="true" />
-                    ) : (
-                      <Monogram size={16} />
-                    )}{" "}
-                    CHARETT {checkout.name}
+                    <Monogram size={16} /> CHARETT {checkout.name}
                   </dd>
                 </div>
                 <div>
