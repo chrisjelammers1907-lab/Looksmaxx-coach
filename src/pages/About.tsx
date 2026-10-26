@@ -1,78 +1,91 @@
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowUpRight,
-  MessageSquareText,
-  BookOpen,
-  Heart,
-  LockKeyhole,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { asset } from "../lib/domain";
+
+/** Each word is its own span, so the statement can light up as it is read. */
+function Words({ text, emphasis }: { text: string; emphasis?: string }) {
+  const words = text.split(" ");
+  return (
+    <>
+      {words.map((word, i) => (
+        <Fragment key={i}>
+          <span className="word">
+            {word === emphasis ? <em>{word}</em> : word}
+          </span>
+          {i < words.length - 1 ? " " : ""}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+const values = [
+  {
+    title: "A conversation",
+    text: "Ask your coach in your own words. Keep your preferences in one shared profile and review suggestions before changing your plan.",
+  },
+  {
+    title: "A practical starting point",
+    text: "Find beginner guides alongside tools for your routines, wardrobe, training and personal observations.",
+  },
+  {
+    title: "A shared point of view",
+    text: "Discover photo and video inspiration, follow people you enjoy and save good ideas privately. A reference is a starting point, not a standard to live up to.",
+  },
+];
+
 export default function AboutPage() {
   return (
     <article className="about-page">
-      <header className="about-hero">
-        <div>
-          <span className="eyebrow">ABOUT CHARETT</span>
-          <h1>
-            A little intention.
-            <br />
-            <em>A little more you.</em>
-          </h1>
-          <p>
-            A personal space for style, self-care and progress—with a coach to
-            talk to and a community to discover.
-          </p>
-          <span className="about-wordmark">C</span>
+      <header className="about-stage">
+        <div className="about-stage-inner">
+          <div className="about-stage-copy">
+            <h1>
+              A little intention.
+              <br />
+              <em>A little more you.</em>
+            </h1>
+            <p>
+              A personal space for style, self-care and progress—with a coach to
+              talk to and a community to discover.
+            </p>
+          </div>
+          <figure className="about-stage-photo">
+            <img src={asset("photo-home-hero")} alt="" />
+          </figure>
         </div>
-        <img src={asset("photo-home-hero")} alt="" />
       </header>
-      <section className="about-story">
-        <span className="eyebrow">WHY WE’RE HERE</span>
-        <h2>
-          Good guidance should make room for <em>you.</em>
+      <section className="about-manifesto">
+        <h2 className="about-statement">
+          <Words
+            text="Good guidance should make room for you."
+            emphasis="you."
+          />
         </h2>
-        <p>
-          Looking after yourself can bring together a lot of little decisions:
-          what to wear, how to build a routine, what to keep and what to try
-          next. CHARETT brings those decisions into one considered space.
-        </p>
-        <p>
-          It is for people of all genders exploring their own style and everyday
-          care. Your preferences lead. There is no single ideal face, body,
-          wardrobe or way to be.
-        </p>
+        <div className="about-manifesto-body">
+          <p>
+            Looking after yourself can bring together a lot of little decisions:
+            what to wear, how to build a routine, what to keep and what to try
+            next. CHARETT brings those decisions into one considered space.
+          </p>
+          <p>
+            It is for people of all genders exploring their own style and
+            everyday care. Your preferences lead. There is no single ideal face,
+            body, wardrobe or way to be.
+          </p>
+        </div>
       </section>
-      <section className="about-pillars">
-        <div>
-          <MessageSquareText strokeWidth={1.5} />
-          <h3>A conversation</h3>
-          <p>
-            Ask your coach in your own words. Keep your preferences in one
-            shared profile and review suggestions before changing your plan.
-          </p>
-        </div>
-        <div>
-          <BookOpen />
-          <h3>A practical starting point</h3>
-          <p>
-            Find beginner guides alongside tools for your routines, wardrobe,
-            training and personal observations.
-          </p>
-        </div>
-        <div>
-          <Heart />
-          <h3>A shared point of view</h3>
-          <p>
-            Discover photo and video inspiration, follow people you enjoy and
-            save good ideas privately. A reference is a starting point, not a
-            standard to live up to.
-          </p>
-        </div>
+      <section className="about-values" aria-label="What CHARETT offers">
+        {values.map((v) => (
+          <div className="about-value" key={v.title}>
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
+          </div>
+        ))}
       </section>
       <section className="about-transparency">
-        <LockKeyhole size={24} />
         <div>
-          <span className="eyebrow">CLEAR FROM THE START</span>
           <h2>
             Made to explore.
             <br />
@@ -91,8 +104,8 @@ export default function AboutPage() {
           </p>
           <p>
             The guides are general education, not medical advice. Hormones or
-            medication only through a doctor. Editorial images are AI
-            inspiration, not real transformations.
+            medication only through a doctor. Editorial photos are licensed
+            stock images of models, not real transformations.
           </p>
           <Link className="text-link" to="/categories">
             Find your starting point <ArrowUpRight size={16} />

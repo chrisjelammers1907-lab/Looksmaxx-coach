@@ -6992,3 +6992,219 @@ main p {
   background: none;
   box-shadow: none;
 }
+
+/* ---------- About: one scroll story ---------- */
+/* Static by default: browsers without scroll timelines and people who ask
+   for reduced motion get the full page, still and legible. */
+.about-page {
+  --about-ease: cubic-bezier(0.23, 1, 0.32, 1);
+}
+.about-stage-inner {
+  display: grid;
+  gap: clamp(24px, 4vw, 44px);
+  padding: clamp(28px, 5vw, 64px) 0 0;
+}
+.about-stage-copy {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.about-stage-copy h1 {
+  margin: 0 0 18px;
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+.about-stage-copy h1 em {
+  color: var(--gold-deep);
+}
+.about-stage-copy p {
+  max-width: 46ch;
+  margin: 0 auto;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.about-stage-photo {
+  margin: 0;
+  height: clamp(320px, 62vh, 680px);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.about-stage-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 32%;
+}
+.about-manifesto {
+  display: grid;
+  gap: 28px;
+  max-width: 980px;
+  margin: clamp(72px, 12vw, 160px) auto clamp(56px, 8vw, 110px);
+}
+.about-statement {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 76px);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.about-statement em {
+  color: var(--gold-deep);
+}
+.about-manifesto-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 48px;
+  max-width: 820px;
+}
+.about-manifesto-body p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.about-values {
+  max-width: 980px;
+  margin: 0 auto clamp(56px, 8vw, 110px);
+  border-top: 1px solid var(--line-strong);
+}
+.about-value {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 12px 48px;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+.about-value h3 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.about-value p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.about-page .about-transparency {
+  display: block;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 56px);
+}
+.about-page .about-transparency h2 {
+  margin: 0 0 18px;
+  font-size: clamp(32px, 4vw, 48px);
+}
+.about-page .about-transparency p {
+  max-width: 64ch;
+  font-size: 15px;
+  line-height: 1.65;
+}
+@media (max-width: 700px) {
+  .about-manifesto-body,
+  .about-value {
+    grid-template-columns: 1fr;
+  }
+  .about-stage-copy p {
+    font-size: 16px;
+  }
+}
+
+/* The story: the stage pins while the photo opens to the full frame, then
+   the statement lights up word by word as it is read. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .about-stage {
+      height: 210vh;
+      view-timeline: --about-stage block;
+    }
+    .about-stage-inner {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      grid-template-rows: auto minmax(0, 1fr);
+      padding-bottom: clamp(16px, 3vw, 32px);
+    }
+    .about-stage-photo {
+      height: auto;
+      clip-path: inset(0 20% 0 20% round 22px);
+      animation: about-frame linear both;
+      animation-timeline: --about-stage;
+      animation-range: contain 0% contain 75%;
+    }
+    .about-stage-photo img {
+      animation: about-settle linear both;
+      animation-timeline: --about-stage;
+      animation-range: contain 0% contain 75%;
+    }
+    .about-stage-copy {
+      animation: about-lift linear both;
+      animation-timeline: --about-stage;
+      animation-range: contain 0% contain 75%;
+    }
+    .about-statement .word {
+      display: inline-block;
+      opacity: 0.5;
+      transform: translateY(0.22em);
+      animation: about-word linear both;
+      animation-timeline: view();
+      animation-range: cover 14% cover 38%;
+    }
+    .about-value {
+      clip-path: inset(0 0 100% 0);
+      animation: about-unfold linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+  }
+}
+@media (max-width: 700px) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .about-stage {
+        height: 190vh;
+      }
+      /* The bottom bar covers 68px plus its gap. */
+      .about-stage-inner {
+        height: calc(100svh - 92px);
+      }
+      .about-stage-photo {
+        clip-path: inset(0 8% 0 8% round 18px);
+      }
+    }
+  }
+}
+@keyframes about-frame {
+  to {
+    clip-path: inset(0 0 0 0 round var(--radius-lg));
+  }
+}
+@keyframes about-settle {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes about-lift {
+  to {
+    transform: translateY(-14px) scale(0.97);
+  }
+}
+@keyframes about-word {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes about-unfold {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

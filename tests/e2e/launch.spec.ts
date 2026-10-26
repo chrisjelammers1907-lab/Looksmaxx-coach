@@ -412,3 +412,48 @@ test("18+ stays confirmed when the second intake step is skipped", async ({
     ),
   ).toBe(true);
 });
+
+test("about tells its story on scroll: the frame opens and the words light up", async ({
+  page,
+}) => {
+  await open(page, "/about");
+  await expect(
+    page.getByRole("heading", { level: 1, name: /A little intention/ }),
+  ).toBeVisible();
+  await expect(page.locator("main")).not.toContainText("AI inspiration");
+  const frame = page.locator(".about-stage-photo");
+  const clip = () => frame.evaluate((n) => getComputedStyle(n).clipPath);
+  const before = await clip();
+  expect(before).not.toBe("none");
+  // Scroll through the stage: the photo opens to the full frame.
+  await page.evaluate(() => {
+    const stage = document.querySelector(".about-stage")!;
+    const box = stage.getBoundingClientRect();
+    scrollTo(0, scrollY + box.top + box.height - innerHeight);
+  });
+  await expect.poll(clip).not.toBe(before);
+  // The statement is read word by word; every word is real text.
+  const words = page.locator(".about-statement .word");
+  expect(await words.count()).toBe(7);
+  await expect(page.locator(".about-statement")).toHaveText(
+    /Good guidance should make room for you\./,
+  );
+  // Read to the end: every word is lit, and the page passes axe.
+  await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
+  await noAxeViolations(page);
+});
+
+test("about stays still and fully legible with reduced motion", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page, "/about");
+  const frame = page.locator(".about-stage-photo");
+  expect(await frame.evaluate((n) => getComputedStyle(n).clipPath)).toBe(
+    "none",
+  );
+  const opacities = await page
+    .locator(".about-statement .word")
+    .evaluateAll((ws) => ws.map((w) => getComputedStyle(w).opacity));
+  expect(new Set(opacities)).toEqual(new Set(["1"]));
+});
