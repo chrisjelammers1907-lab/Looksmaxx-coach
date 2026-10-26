@@ -7058,80 +7058,6 @@ main p {
   background: none;
   box-shadow: none;
 }
-
-/* ---------- About: one scroll story ---------- */
-/* Static by default: browsers without scroll timelines and people who ask
-   for reduced motion get the full page, still and legible. */
-.about-page {
-  --about-ease: cubic-bezier(0.23, 1, 0.32, 1);
-}
-.about-stage-inner {
-  display: grid;
-  gap: clamp(24px, 4vw, 44px);
-  padding: clamp(28px, 5vw, 64px) 0 0;
-}
-.about-stage-copy {
-  max-width: 760px;
-  margin: 0 auto;
-  text-align: center;
-}
-.about-stage-copy h1 {
-  margin: 0 0 18px;
-  font-size: clamp(44px, 7vw, 92px);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
-}
-.about-stage-copy h1 em {
-  color: var(--gold-deep);
-}
-.about-stage-copy p {
-  max-width: 46ch;
-  margin: 0 auto;
-  font-size: 17px;
-  line-height: 1.55;
-  color: var(--muted);
-}
-.about-stage-photo {
-  margin: 0;
-  height: clamp(320px, 62vh, 680px);
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-}
-.about-stage-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 32%;
-}
-.about-manifesto {
-  display: grid;
-  gap: 28px;
-  max-width: 980px;
-  margin: clamp(72px, 12vw, 160px) auto clamp(56px, 8vw, 110px);
-}
-.about-statement {
-  margin: 0;
-  font-size: clamp(36px, 6vw, 76px);
-  font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: -0.02em;
-  text-wrap: balance;
-}
-.about-statement em {
-  color: var(--gold-deep);
-}
-.about-manifesto-body {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px 48px;
-  max-width: 820px;
-}
-.about-manifesto-body p {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.65;
-  color: var(--muted);
-}
 .about-values {
   max-width: 980px;
   margin: 0 auto clamp(56px, 8vw, 110px);
@@ -7171,108 +7097,14 @@ main p {
   font-size: 15px;
   line-height: 1.65;
 }
-@media (max-width: 700px) {
-  .about-manifesto-body,
-  .about-value {
-    grid-template-columns: 1fr;
-  }
-  .about-stage-copy p {
-    font-size: 16px;
-  }
-}
 
 /* The story: the stage pins while the photo opens to the full frame, then
    the statement lights up word by word as it is read. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .about-stage {
-      height: 210vh;
-      view-timeline: --about-stage block;
-    }
-    .about-stage-inner {
-      position: sticky;
-      top: 0;
-      height: 100svh;
-      grid-template-rows: auto minmax(0, 1fr);
-      padding-bottom: clamp(16px, 3vw, 32px);
-    }
-    .about-stage-photo {
-      height: auto;
-      clip-path: inset(0 20% 0 20% round 22px);
-      animation: about-frame linear both;
-      animation-timeline: --about-stage;
-      animation-range: contain 0% contain 75%;
-    }
-    .about-stage-photo img {
-      animation: about-settle linear both;
-      animation-timeline: --about-stage;
-      animation-range: contain 0% contain 75%;
-    }
-    .about-stage-copy {
-      animation: about-lift linear both;
-      animation-timeline: --about-stage;
-      animation-range: contain 0% contain 75%;
-    }
-    .about-statement .word {
-      display: inline-block;
-      /* Unlit words, the gold one too, keep 3:1 for large text. */
-      opacity: 0.66;
-      transform: translateY(0.22em);
-      animation: about-word linear both;
-      animation-timeline: view();
-      animation-range: cover 14% cover 38%;
-    }
-    .about-value {
-      clip-path: inset(0 0 100% 0);
-      animation: about-unfold linear both;
-      animation-timeline: view();
-      animation-range: entry 10% cover 30%;
-    }
-  }
-}
 @media (max-width: 700px) {
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .about-stage {
-        height: 190vh;
-      }
       /* The bottom bar covers 68px plus its gap. */
-      .about-stage-inner {
-        height: calc(100svh - 92px);
-      }
-      .about-stage-photo {
-        clip-path: inset(0 8% 0 8% round 18px);
-      }
     }
-  }
-}
-@keyframes about-frame {
-  to {
-    clip-path: inset(0 0 0 0 round var(--radius-lg));
-  }
-}
-@keyframes about-settle {
-  from {
-    transform: scale(1.12);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-@keyframes about-lift {
-  to {
-    transform: translateY(-14px) scale(0.97);
-  }
-}
-@keyframes about-word {
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes about-unfold {
-  to {
-    clip-path: inset(0 0 0 0);
   }
 }
 .page-loading {
@@ -7501,45 +7333,10 @@ details > summary::-webkit-details-marker {
 .about-page .about-transparency p {
   max-width: 68ch;
 }
-/* About: the pin follows the bottom bar and its safe area. */
-@media (max-width: 700px) {
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .about-stage {
-        height: 190svh;
-      }
-      .about-stage-inner {
-        height: calc(
-          100svh - 82px - max(10px, env(safe-area-inset-bottom, 0px))
-        );
-      }
-    }
-  }
-}
-@supports (animation-timeline: view()) {
-  @media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
-    .about-stage {
-      height: 210svh;
-    }
-  }
-}
 /* The last 11.5px meta lines move up to the label floor. */
 .day-card p,
 .routine-card .routine-top .small-text {
   font-size: 12.5px;
-}
-/* The About statement lights up word by word, along the sentence. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .about-statement {
-      view-timeline: --statement block;
-    }
-    .about-statement .word {
-      animation-timeline: --statement;
-      animation-range: cover calc(12% + var(--i) * 3%) cover
-        calc(26% + var(--i) * 3%);
-    }
-  }
 }
 
 /* ---------- Round 7: category pages open on the routine ---------- */
@@ -7653,4 +7450,198 @@ details > summary::-webkit-details-marker {
   color: var(--muted);
   text-decoration: line-through;
   text-decoration-thickness: 1px;
+}
+
+/* ---------- About: the story, frame by frame ---------- */
+/* He turns from his back to the camera while the founder's story is read.
+   With reduced motion or Save-Data it is one still and the full text. */
+.about-turn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #8c837f;
+}
+.about-turn canvas,
+.about-turn img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.story-chapter h1,
+.story-chapter h2 {
+  margin: 0 0 18px;
+  font-size: clamp(34px, 4.2vw, 62px);
+  font-weight: 400;
+  line-height: 1.03;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.story-chapter p {
+  max-width: 44ch;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.story-chapter .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-top: 18px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Motion: the stage pins for six screens, one chapter per screen. */
+.has-motion .about-story {
+  height: 600svh;
+  margin-bottom: clamp(48px, 8vw, 110px);
+}
+.has-motion .about-story-stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+  height: 100svh;
+  padding: 36px 0;
+}
+.has-motion .about-turn {
+  grid-column: 2;
+  grid-row: 1;
+  height: calc(100svh - 72px);
+  aspect-ratio: 9 / 16;
+}
+.has-motion .about-chapters {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1;
+  align-items: center;
+}
+.has-motion .story-chapter {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 420ms var(--ease-out),
+    transform 560ms var(--ease-out);
+  pointer-events: none;
+}
+.has-motion .story-chapter.active,
+.has-motion .story-chapter:focus-within {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.about-progress {
+  position: absolute;
+  left: 0;
+  bottom: 40px;
+  display: flex;
+  gap: 6px;
+}
+.about-progress span {
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line-strong);
+  transition: background-color 300ms var(--ease-out);
+}
+.about-progress span.on {
+  background: var(--forest-text);
+}
+
+/* Still: the portrait beside the whole story, nothing moves. */
+.is-still .about-story-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 34%);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+  margin: clamp(28px, 5vw, 64px) 0 clamp(48px, 8vw, 110px);
+}
+.is-still .about-turn {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  top: 24px;
+  aspect-ratio: 9 / 16;
+}
+.is-still .about-chapters {
+  display: grid;
+  gap: clamp(40px, 6vw, 72px);
+}
+
+/* Phones: he fills the screen; the chapter sits over a deep scrim. */
+@media (max-width: 700px) {
+  .has-motion .about-story {
+    height: 560svh;
+  }
+  .has-motion .about-story-stage {
+    display: block;
+    height: calc(100svh - 82px - max(10px, env(safe-area-inset-bottom, 0px)));
+    padding: 10px 0;
+  }
+  .has-motion .about-turn {
+    position: absolute;
+    inset: 10px 0;
+    height: auto;
+    aspect-ratio: auto;
+    border-radius: 18px;
+  }
+  .has-motion .about-turn::after {
+    content: "";
+    position: absolute;
+    inset: 40% 0 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(8 32 26 / 0%),
+      rgb(8 32 26 / 72%) 45%,
+      rgb(8 32 26 / 92%)
+    );
+  }
+  .has-motion .about-chapters {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 34px;
+  }
+  .has-motion .story-chapter h1,
+  .has-motion .story-chapter h2 {
+    font-size: clamp(30px, 8.4vw, 38px);
+    color: #f6f0e4;
+  }
+  .has-motion .story-chapter p {
+    font-size: 15.5px;
+    color: #e4dccd;
+  }
+  .has-motion .story-chapter .text-link {
+    color: #f6f0e4;
+  }
+  .has-motion .about-progress {
+    top: 26px;
+    bottom: auto;
+    left: 20px;
+  }
+  .has-motion .about-progress span {
+    background: rgb(246 240 228 / 35%);
+  }
+  .has-motion .about-progress span.on {
+    background: #f6f0e4;
+  }
+  .is-still .about-story-stage {
+    grid-template-columns: 1fr;
+  }
+  .is-still .about-turn {
+    grid-column: 1;
+    position: static;
+    max-height: 70svh;
+    aspect-ratio: 4 / 5;
+  }
+  .is-still .about-chapters {
+    grid-row: 2;
+  }
 }

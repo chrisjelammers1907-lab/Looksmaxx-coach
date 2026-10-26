@@ -77,7 +77,9 @@ test("Home is For You, navigation is explicit, every category has a usable guide
     .getByRole("navigation", { name: "Profile menu" })
     .getByRole("link", { name: "About us" })
     .click();
-  await expect(page.locator("h1")).toContainText("A little intention.");
+  await expect(page.locator("h1")).toContainText(
+    "I always wanted to build something of my own.",
+  );
   await expect(page.getByText(/This is an interactive preview/)).toBeVisible();
 });
 test("feed video plays, photo frames have real supported pixel dimensions, topic is optional", async ({

@@ -45,6 +45,26 @@ await build({
             code.slice(end)
           );
         }
+        // The About turn frames live in a subfolder; inline the phone set.
+        if (id === path.join(root, "src/components/TurnSequence.tsx")) {
+          const start = code.indexOf("const framePath =");
+          const end = code.indexOf("/**", start);
+          if (start < 0 || end < start)
+            throw new Error("Cannot locate the frame helper safely.");
+          const dir = path.join(assetDir, "about-turn/s");
+          const frames = fs
+            .readdirSync(dir)
+            .sort()
+            .map(
+              (name) =>
+                `data:image/webp;base64,${fs.readFileSync(path.join(dir, name)).toString("base64")}`,
+            );
+          return (
+            code.slice(0, start) +
+            `const offlineFrames: string[] = ${JSON.stringify(frames)};\nconst framePath = (_size: "s" | "l", index: number) => offlineFrames[index];\n\n` +
+            code.slice(end)
+          );
+        }
       },
     },
     react(),

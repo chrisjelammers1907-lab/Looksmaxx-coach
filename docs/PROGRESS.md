@@ -72,7 +72,6 @@ Source notes and limitations: reference-based guides are original educational su
 
 Public deployment verification is recorded separately in WEB_PUBLICATION.md after its own run completes.
 
-
 ## 22 October 2026 — editorial design and post sounds
 
 Preserved the approved navigation, all eight tools/guides, privacy and social journeys. Added original labelled AI campaign/still-life imagery, coherent forest/ivory/rose/amber styling across ten pages, and three original sound loops for photo/video posts. Working previews, mixing, post playback, edit/removal, one player at a time and viewport/navigation cleanup. No third-party commercial tracks, new medical claims or private owner content were added.
@@ -89,13 +88,11 @@ Collected the owner's consecutive visual/feed messages as one change set. ITERAT
 
 On 24 October 2026, the final full regression passed all 72 browser cases; 15 domain tests, type checking, lint, formatting and build passed. The separate standalone export passed both viewport journeys with no browser/request errors. Fifteen routes fit at 320/390/768/1440 px, and the principal desktop/mobile screens were visually inspected. The initial ambiguous composer-test locator was fixed without removing assertions. Public run 40119164432 passed for source 6171e93068b854f0df449770c864033abb779d0b. The actual HTTPS export matched its expected checksum; both viewport journeys passed with no browser/request errors. Actual public screenshots were inspected. Pages commit 61b34ce89eafd57a243e225200587a5c8396fe09 and evidence commit d092187adeed4bba9236e24603f763a63561950e are recorded in WEB_PUBLICATION.md.
 
-
 ## Premium edit — 24 October 2026
 
 The owner asked for a more premium look with the same structure. Implemented: central design tokens (`src/tokens.css`) with forest, ivory, champagne and ink, plus removal of all light green and pink; centred Instagram/TikTok feed tabs with chip filters; captions below photo posts with like/comment/save actions; product tags and a "Shop the look" row in place of the old price block; reels unchanged with overlay captions; a floating rounded mobile bottom bar with safe-area insets; Instagram-DM-style Messages and AI Coach; less filler text. Vector illustrations in the feed now render instead of appearing as empty blocks. Details are in DESIGN_SYSTEM.md.
 
 Validation: typecheck, ESLint, Prettier, 15 domain tests and the production build passed. The full Chromium run passed 79 cases at 1440×1000 and 390×844. That covers the 72 existing cases, with four assertions updated where the UI changed on purpose (photo caption below the image, no topic line on untagged posts, the composer's "Message"/"Send message" labels), plus a new `premium.spec.ts` for centred tabs, chip filtering, product tags, the mobile bar and chat composers. Axe scans of 21 routes at both widths and all clothing themes found no violations. The standalone HashRouter export was built and opened locally without errors; `demo/CHARETT-demo.html` and `gh-pages` were not updated in this change. Before and after screenshots are in `docs/screenshots/premium/`.
-
 
 ## Second premium round — 24 October 2026
 
@@ -126,6 +123,7 @@ The owner's feedback on the first preview was agreed point by point before any b
    - The creator name is removed everywhere.
 
 **Validation**
+
 - Typecheck, ESLint and Prettier pass.
 - 19 unit tests pass, including the new training tests.
 - 93 Chromium cases pass, with 1 mobile-only case skipped on desktop.
@@ -167,6 +165,7 @@ Updated screenshots are `docs/screenshots/premium/v2-*.jpg`.
    - Signature adds all chat themes and sticker packs, streak protection and a profile badge.
 
 **Validation**
+
 - Typecheck, ESLint and Prettier (source) pass.
 - 27 unit tests pass.
 - All Chromium e2e cases pass at desktop and mobile width; the mobile-only and pointer-only cases are skipped where they don't apply.
@@ -177,6 +176,7 @@ Screenshots are `docs/screenshots/premium/v3-*.jpg`.
 ## Fourth premium round — 25 October 2026
 
 **Alignment fixes from the owner's screenshots**
+
 - Reels:
   - the action column uses 30 px icons with more space between them;
   - every action shows a count (likes, comments, reposts, saves, shares);
@@ -190,11 +190,13 @@ Screenshots are `docs/screenshots/premium/v3-*.jpg`.
 - Mobile pages use an 18 px side gutter (`--gutter`).
 
 **Membership tiers**
+
 - Plus (€9.99): 50 coach messages and 5 files a day, 5 training days, 10 barcode scans a day, 10 custom stickers, no ads.
 - Signature (€19.99): unlimited coach messages and files, training days, scans and stickers, plus all chat themes and sticker packs, streak protection and the badge.
 - Limits live in `limits` in `src/lib/plans.ts`; scan use is counted per day.
 
 **Design and copy audit**
+
 - Photo posts:
   - action order is like, comment, repost, share, save;
   - each action shows an inline count; counts stay exact below 10,000.
@@ -219,26 +221,31 @@ Screenshots are `docs/screenshots/premium/v3-*.jpg`.
 Spec: `docs/superpowers/specs/2026-10-25-charett-launch-design.md`. Plan: `docs/superpowers/plans/2026-10-25-charett-launch.md`.
 
 **Photography instead of generated art**
+
 - 41 licensed Pexels photos with models (`scripts/photos.json`, credited in `ASSET_CREDITS.md`), graded warm and kept under 90 KB each.
 - No "AI inspiration" labels, sparkles or orb remain; the coach and empty states use the CHARETT monogram.
 
 **Categories**
+
 - 16 categories in five groups: Face (skincare, makeup, face structure, colouring, brows & lashes, teeth & smile), Hair (hair, beard & shaving), Body (gym & physique, nutrition, body care & nails, sleep & recovery, posture & presence), Style (clothing & style, fragrance) and Progress (photos & progress).
 - Face structure covers the eye area, maxilla and midface, cheekbones, and jaw and chin honestly: what you can do yourself, what doesn't work, and what only a qualified specialist does. No face ratings, no hormone or medication advice.
 - Every new category has its own routine, products, tip and beginner's guide. Nutrition and posture moved out of the gym page into their own categories.
 - Category rows show a round photo; the home feed chips cover every style and category.
 
 **Clothing**
+
 - Eight styles: old money, dark casual, minimalist, streetwear, smart casual, athleisure, preppy and bohemian, each with its own page mood, hero photo, feed filter and seed post.
 - The style switcher is one scrolling pill row that keeps the chosen style in view.
 
 **Launch details**
+
 - Green streak flame next to names in chats, on the plan card and in training.
 - Profile stats on phones have no frame.
 - Intake asks for confirmation of 18 or older before continuing; skipping stays possible.
 - Share card: posts and new PRs become a 1080×1920 story card, shared through the device sheet or downloaded as PNG for Instagram and TikTok.
 
 **Fixes found by the audit**
+
 - Portrait photos no longer stretch topic banners, guide heroes or the clothing hero on desktop.
 - Dark-mode contrast for the dark casual and minimalist buttons and the minimalist note.
 - Audit: 43 routes × 390/1440 px × light/dark, 0 axe violations and no horizontal overflow.
@@ -289,3 +296,8 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - When they are real services, build with `VITE_DEMO=false`.
   - `tests/launch-build.test.ts` builds that version and fails if any demo copy is left in the bundle.
 - Audience stays broad: looksmaxxing is the genre and preference, not an exclusive focus, so category order is unchanged.
+- **About tells the founder's story, frame by frame.** While you scroll six screens, a model turns from his back to face you (90 WebP frames drawn on a canvas, Apple-style). Six first-person chapters come in at their own moment: the ambition, TikTok at the end of 2023, the name (Chico + Barrett), too many promises, who it is for, and what CHARETT promises.
+  - Phones: he fills the screen and the chapter sits on a dark scrim. Desktop: the chapter on the left, him on the right.
+  - Frames load only on `/about` (712 KB on phones, 1.5 MB on large screens); the first frame shows at once.
+  - With reduced motion or Save-Data: one still of him facing the camera beside the whole story.
+  - Old `.about-story` rules in `v2.css` and `editorial.css` are removed; they squeezed the new layout.

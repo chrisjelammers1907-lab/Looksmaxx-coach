@@ -84,3 +84,7 @@ Real photographs from Pexels, free to use commercially under the [Pexels licence
 | `photo-ad-shirt.jpg`           | Man adjusting a watch over a shirt cuff     | [Pexels](https://www.pexels.com/photo/37906241/) |
 | `photo-ad-serum.jpg`           | Hand holding unbranded serum bottles        | [Pexels](https://www.pexels.com/photo/34939729/) |
 | `photo-ad-gym.jpg`             | Man doing curls in a gym                    | [Pexels](https://www.pexels.com/photo/14085138/) |
+
+## About story frames (round 7)
+
+`public/assets/about-turn/{s,l}/001–090.webp` are 90 stills from the video [Man Touching his Hair and Posing for the Camera](https://www.pexels.com/video/7451428/) by cottonbro studio on Pexels, free to use commercially under the [Pexels licence](https://www.pexels.com/license/). `scripts/build-about-sequence.sh` takes 3.6 seconds of the clip at 25 frames a second, crops it to 9:16, gives it a light warm grade and writes 432 × 768 (phones) and 720 × 1280 (large screens) WebP frames. He is a model, not the founder, a customer or a result.

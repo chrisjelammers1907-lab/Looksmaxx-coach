@@ -1,25 +1,36 @@
-import { Fragment, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { asset } from "../lib/domain";
+import TurnSequence, { turnStill } from "../components/TurnSequence";
 import { DEMO } from "../lib/demo";
 
-/** Each word is its own span, so the statement can light up as it is read. */
-function Words({ text, emphasis }: { text: string; emphasis?: string }) {
-  const words = text.split(" ");
-  return (
-    <>
-      {words.map((word, i) => (
-        <Fragment key={i}>
-          <span className="word" style={{ "--i": i } as CSSProperties}>
-            {word === emphasis ? <em>{word}</em> : word}
-          </span>
-          {i < words.length - 1 ? " " : ""}
-        </Fragment>
-      ))}
-    </>
-  );
-}
+/** The founder's story, in his words; one chapter per screen of scroll. */
+const chapters = [
+  {
+    title: "I always wanted to build something of my own.",
+    text: "Something I believed in enough to give it my time and energy. For a long time, I just didn’t know what it would be.",
+  },
+  {
+    title: "It started on TikTok, at the end of 2023.",
+    text: "Mewing, fragrance, getting leaner. Everyone wanted to look better, but nobody agreed on what actually worked. The more I learned, the clearer it became: there was no single place to find it all, clearly and honestly.",
+  },
+  {
+    title: "Chico. Barrett. CHARETT.",
+    text: "The faces of that first wave were models like Francisco “Chico” Lachowski and Jordan Barrett. I took a piece of each, to remember where this began.",
+  },
+  {
+    title: "Too many promises. Too little proof.",
+    text: "Unproven methods sold as facts, by people with little to show for them. When you’re starting out, it’s hard to tell what works from what’s a trend or a sales pitch.",
+  },
+  {
+    title: "For anyone who looks in the mirror and wants more.",
+    text: "I’ve stood there too, and in some ways I still do. CHARETT is for people who are willing to put in the work, whether it’s their first day or their fifth year.",
+  },
+  {
+    title: "Honest about what works. Clear about what doesn’t.",
+    text: "No miracle fixes, no face scores. Just what you can do, what you can’t, and how to start. Because in the end, it’s not only about how you look. It’s about how you see yourself.",
+  },
+];
 
 const values = [
   {
@@ -36,45 +47,87 @@ const values = [
   },
 ];
 
+/** Motion is on unless the visitor asked for less of it or to save data. */
+const wantsMotion = () =>
+  typeof matchMedia === "function" &&
+  !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+  !(navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    ?.saveData;
+
 export default function AboutPage() {
+  const story = useRef<HTMLElement>(null);
+  const [motion] = useState(wantsMotion);
+  const [active, setActive] = useState(0);
+  // How far the reader is through the pinned story, 0–1.
+  const progress = useCallback(() => {
+    const node = story.current;
+    if (!node) return 0;
+    const box = node.getBoundingClientRect();
+    const run = box.height - innerHeight;
+    return run > 0 ? Math.min(1, Math.max(0, -box.top / run)) : 0;
+  }, []);
+  useEffect(() => {
+    if (!motion) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      setActive(
+        Math.min(chapters.length - 1, Math.floor(progress() * chapters.length)),
+      );
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      removeEventListener("scroll", onScroll);
+    };
+  }, [motion, progress]);
+
   return (
-    <article className="about-page">
-      <header className="about-stage">
-        <div className="about-stage-inner">
-          <div className="about-stage-copy">
-            <h1>
-              A little intention.
-              <br />
-              <em>A little more you.</em>
-            </h1>
-            <p>
-              A personal space for style, self-care and progress—with a coach to
-              talk to and a community to discover.
-            </p>
+    <article className={`about-page ${motion ? "has-motion" : "is-still"}`}>
+      <section
+        ref={story}
+        className="about-story"
+        aria-label="The story of CHARETT"
+      >
+        <div className="about-story-stage">
+          <div className="about-turn">
+            {motion ? (
+              <TurnSequence progress={progress} />
+            ) : (
+              <img src={turnStill()} alt="" />
+            )}
           </div>
-          <figure className="about-stage-photo">
-            <img src={asset("photo-home-hero")} alt="" />
-          </figure>
-        </div>
-      </header>
-      <section className="about-manifesto">
-        <h2 className="about-statement">
-          <Words
-            text="Good guidance should make room for you."
-            emphasis="you."
-          />
-        </h2>
-        <div className="about-manifesto-body">
-          <p>
-            Looking after yourself can bring together a lot of little decisions:
-            what to wear, how to build a routine, what to keep and what to try
-            next. CHARETT brings those decisions into one considered space.
-          </p>
-          <p>
-            It is for people of all genders exploring their own style and
-            everyday care. Your preferences lead. There is no single ideal face,
-            body, wardrobe or way to be.
-          </p>
+          <div className="about-chapters">
+            {chapters.map((c, i) => {
+              const Heading = i === 0 ? "h1" : "h2";
+              return (
+                <div
+                  key={c.title}
+                  className={`story-chapter ${!motion || i === active ? "active" : ""}`}
+                  data-chapter={i}
+                >
+                  <Heading>{c.title}</Heading>
+                  <p>{c.text}</p>
+                  {i === chapters.length - 1 && (
+                    <Link className="text-link" to="/categories">
+                      Find your starting point <ArrowUpRight size={16} />
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {motion && (
+            <div className="about-progress" aria-hidden="true">
+              {chapters.map((c, i) => (
+                <span key={c.title} className={i <= active ? "on" : ""} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
       <section className="about-values" aria-label="What CHARETT offers">
@@ -105,8 +158,8 @@ export default function AboutPage() {
           </p>
           <p>
             The guides are general education, not medical advice. Hormones or
-            medication only through a doctor. Editorial photos are licensed
-            stock images of models, not real transformations.
+            medication only through a doctor. Editorial photos and video are
+            licensed stock of models, not real transformations.
           </p>
           <Link className="text-link" to="/categories">
             Find your starting point <ArrowUpRight size={16} />

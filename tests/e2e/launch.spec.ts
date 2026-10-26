@@ -415,49 +415,80 @@ test("18+ stays confirmed when the second intake step is skipped", async ({
   ).toBe(true);
 });
 
-test("about tells its story on scroll: the frame opens and the words light up", async ({
+test("about tells the CHARETT story while he turns to face you", async ({
   page,
 }) => {
   await open(page, "/about");
   await expect(
-    page.getByRole("heading", { level: 1, name: /A little intention/ }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "I always wanted to build something of my own.",
+    }),
   ).toBeVisible();
-  await expect(page.locator("main")).not.toContainText("AI inspiration");
-  const frame = page.locator(".about-stage-photo");
-  const clip = () => frame.evaluate((n) => getComputedStyle(n).clipPath);
-  const before = await clip();
-  expect(before).not.toBe("none");
-  // Scroll through the stage: the photo opens to the full frame.
-  await page.evaluate(() => {
-    const stage = document.querySelector(".about-stage")!;
-    const box = stage.getBoundingClientRect();
-    scrollTo(0, scrollY + box.top + box.height - innerHeight);
-  });
-  await expect.poll(clip).not.toBe(before);
-  // The statement is read word by word; every word is real text.
-  const words = page.locator(".about-statement .word");
-  expect(await words.count()).toBe(7);
-  await expect(page.locator(".about-statement")).toHaveText(
-    /Good guidance should make room for you\./,
+  // Every chapter is real text, readable without scrolling through it.
+  for (const line of [
+    "It started on TikTok, at the end of 2023.",
+    "Chico. Barrett. CHARETT.",
+    "Too many promises. Too little proof.",
+    "For anyone who looks in the mirror and wants more.",
+    "Honest about what works. Clear about what doesn’t.",
+  ])
+    await expect(page.getByRole("heading", { name: line })).toBeAttached();
+  const canvas = page.locator(".about-turn canvas");
+  await expect(canvas).toHaveAttribute("data-frame", "0");
+  const scrollStory = (share: number) =>
+    page.evaluate((share) => {
+      const story = document.querySelector(".about-story")!;
+      const box = story.getBoundingClientRect();
+      const top = scrollY + box.top;
+      window.scrollTo(0, top + (box.height - innerHeight) * share);
+    }, share);
+  await scrollStory(0.5);
+  await expect
+    .poll(async () => Number(await canvas.getAttribute("data-frame")))
+    .toBeGreaterThan(20);
+  await expect(page.locator(".story-chapter.active")).not.toHaveAttribute(
+    "data-chapter",
+    "0",
   );
-  // Read to the end: every word is lit, and the page passes axe.
-  await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
+  await scrollStory(1);
+  await expect(canvas).toHaveAttribute("data-frame", "89");
+  await expect(page.locator(".story-chapter.active")).toHaveAttribute(
+    "data-chapter",
+    "5",
+  );
+  await expect(
+    page.locator(".story-chapter.active").getByRole("link", {
+      name: /Find your starting point/,
+    }),
+  ).toBeVisible();
   await noAxeViolations(page);
 });
 
-test("about stays still and fully legible with reduced motion", async ({
+test("about is one still portrait and the full story with reduced motion", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await open(page, "/about");
-  const frame = page.locator(".about-stage-photo");
-  expect(await frame.evaluate((n) => getComputedStyle(n).clipPath)).toBe(
-    "none",
-  );
-  const opacities = await page
-    .locator(".about-statement .word")
-    .evaluateAll((ws) => ws.map((w) => getComputedStyle(w).opacity));
-  expect(new Set(opacities)).toEqual(new Set(["1"]));
+  await expect(page.locator(".about-turn canvas")).toHaveCount(0);
+  await expect(page.locator(".about-turn img")).toBeVisible();
+  const hidden = await page
+    .locator(".story-chapter")
+    .evaluateAll(
+      (els) => els.filter((e) => getComputedStyle(e).opacity !== "1").length,
+    );
+  expect(hidden).toBe(0);
+  await noAxeViolations(page);
+});
+
+test("the About frames never load on other pages", async ({ page }) => {
+  const frames: string[] = [];
+  page.on("request", (r) => {
+    if (r.url().includes("about-turn")) frames.push(r.url());
+  });
+  await open(page, "/");
+  await go(page, "/categories");
+  expect(frames).toEqual([]);
 });
 
 test("a held story resumes where it paused, not from the start", async ({
