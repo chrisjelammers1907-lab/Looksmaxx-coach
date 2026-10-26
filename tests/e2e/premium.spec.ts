@@ -247,7 +247,7 @@ test("long captions expand in place and push Shop the look down", async ({
 test("plan shows one day with routine and task filters", async ({ page }) => {
   await open(page, "/plan");
   await expect(page.getByText("Your next check-in")).toHaveCount(0);
-  await expect(page.getByText(/done today/)).toBeVisible();
+  await expect(page.getByText(/of \d+ tasks? done/)).toBeVisible();
   const filters = page.getByLabel("Show in plan");
   await filters.getByRole("button", { name: "Tasks", exact: true }).click();
   await expect(page.locator(".routine-card")).toHaveCount(0);

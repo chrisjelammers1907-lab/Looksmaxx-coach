@@ -242,3 +242,39 @@ Spec: `docs/superpowers/specs/2026-10-25-charett-launch-design.md`. Plan: `docs/
 - Portrait photos no longer stretch topic banners, guide heroes or the clothing hero on desktop.
 - Dark-mode contrast for the dark casual and minimalist buttons and the minimalist note.
 - Audit: 43 routes × 390/1440 px × light/dark, 0 axe violations and no horizontal overflow.
+
+## Sixth round — polish with Impeccable, Taste and Emil Kowalski's skills — 26 October 2026
+
+Three design-skill packs are now project skills in `.claude/skills/` (Impeccable, emilkowalski/skill, Taste). They drove an audit (13/20), a critique (design review 21/40 plus detector), and a mobile/motion review. This round fixes what they found:
+
+- **Type floor.** No visible text is under 11px, and no long body copy is under 13px, on 16 key routes (guarded by a test). Page intros are 15.5px with a 62ch measure. Headings are balanced and prose wraps neatly.
+- **No AI patterns.**
+  - Kicker labels above headings are gone; My Plan's date now sits under the title.
+  - The header and story cards are flat (no radial glow).
+  - The pinstripe and the side stripe are gone.
+  - Streetwear uses self-hosted Anton instead of a system face.
+- **Flatter.** A routine's products are a flat list under a hairline, not boxed pills.
+- **Harden.**
+  - Feed and profile headings no longer skip a level.
+  - A missing photo falls back to a linen tint.
+  - 18+ is kept when intake step 2 is skipped.
+  - Share cards wait for the brand fonts, break over-long words and fit their ellipsis.
+  - Deleting a routine needs a second tap.
+- **About.** The page tells its story with CSS scroll-driven animations: the photo frame opens, the statement lights up word by word, and the values unfold. It is still and legible with reduced motion or without scroll-timeline support.
+- **Speed.** Pages load on first visit (main bundle 567 → 415 kB), and images load lazily.
+- **Native feel on phones.**
+  - All `:hover` rules apply to real pointers only (guarded by a test).
+  - Fields are 16px on touch screens and number fields bring up a decimal keypad.
+  - Taps give press feedback, and the easing is stronger.
+  - Sheets slide up on the drawer curve, and dialogs scale in.
+  - The story timer resumes after a hold.
+  - Scrolling inside a panel no longer moves the page behind it.
+  - Safe areas are respected, and long-pressing a control no longer selects its text.
+  - Reduced motion keeps fades.
+- **Details.**
+  - The streak flame on My Plan is sized correctly, and the counts are clear.
+  - Chat screens have no site footer.
+  - The nutrition scan button no longer clips.
+  - Disclosures use drawn chevrons, and the selected chip shows in dark mode.
+  - Gym links are clean rows, and small controls get 44px hit areas.
+- Audit: 43 routes × 390/1440 × light/dark, 0 axe violations, no overflow. Vitest 136/136, Playwright 160 passed (3 project-specific skips).
