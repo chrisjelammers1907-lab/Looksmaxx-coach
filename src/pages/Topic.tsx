@@ -86,17 +86,9 @@ function TopicContent() {
     <div className={`topic-page atmosphere-${topic.id}`} key={topic.id}>
       <PageHeader title={topic.title} description={intro[topic.id]} />
       {topic.id !== "photos" && (
-        <div className="topic-banner">
-          <div>
-            <h2>
-              {banner[topic.id]?.line}
-              <br />
-              <em>{banner[topic.id]?.accent}</em>
-            </h2>
-            <p className="topic-purpose">{topic.subtitle}</p>
-          </div>
+        <figure className="topic-photo-strip">
           <img src={asset(topicPhoto(topic.id))} alt="" />
-        </div>
+        </figure>
       )}
       <TopicLinks topic={topic.id} />
       {topic.id === "gym" ? (
@@ -173,31 +165,16 @@ function TopicContent() {
               </div>
               {topic.id === "skincare" && (
                 <>
-                  <SectionTitle
-                    title="Your weekly rhythm"
-                    subtitle="Each routine keeps its own editable schedule."
-                  />
-                  <div className="week-grid">
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                      (day) => (
-                        <div className="day-card" key={day}>
-                          <span className="eyebrow">{day}</span>
-                          {state.routines
-                            .filter(
-                              (r) =>
-                                r.topic === "skincare" &&
-                                (r.schedule === "Daily" ||
-                                  r.schedule.includes(day)),
-                            )
-                            .map((r) => (
-                              <p key={r.id}>
-                                {r.time} · {r.title}
-                              </p>
-                            ))}
-                        </div>
-                      ),
-                    )}
-                  </div>
+                  <p className="routine-rhythm">
+                    {state.routines
+                      .filter((r) => r.topic === "skincare")
+                      .map(
+                        (r) =>
+                          `${r.title} runs ${r.schedule === "Daily" ? "daily" : `on ${r.schedule}`}`,
+                      )
+                      .join(" · ") || "No routines scheduled yet"}
+                    . Change the days in a routine.
+                  </p>
                 </>
               )}
             </>
@@ -505,80 +482,6 @@ const note: Partial<Record<TopicId, { title: string; text: string }>> = {
   },
 };
 /** Banner copy per category: a short eyebrow and a two-line headline. */
-const banner: Partial<
-  Record<TopicId, { eyebrow: string; line: string; accent: string }>
-> = {
-  nutrition: {
-    eyebrow: "Targets · food · weight",
-    line: "Eat with intention.",
-    accent: "See it in the mirror.",
-  },
-  skincare: {
-    eyebrow: "Your daily ritual",
-    line: "Care,",
-    accent: "made personal.",
-  },
-  hair: {
-    eyebrow: "Cut · care · style",
-    line: "A little change.",
-    accent: "A familiar you.",
-  },
-  gym: {
-    eyebrow: "Train · eat · move",
-    line: "Feel good.",
-    accent: "Build from there.",
-  },
-  grooming: {
-    eyebrow: "Shave · trim · beard",
-    line: "Sharp lines,",
-    accent: "soft on the skin.",
-  },
-  smile: {
-    eyebrow: "Everyday care",
-    line: "Two minutes,",
-    accent: "twice a day.",
-  },
-  makeup: {
-    eyebrow: "Base · brows · eyes · lips",
-    line: "Your skin,",
-    accent: "only better.",
-  },
-  face: {
-    eyebrow: "Eyes · midface · jaw · chin",
-    line: "Structure,",
-    accent: "honestly explained.",
-  },
-  colouring: {
-    eyebrow: "Undertone · contrast · colour",
-    line: "Colour that",
-    accent: "works with you.",
-  },
-  brows: {
-    eyebrow: "Shape · fill · set",
-    line: "The frame",
-    accent: "of your face.",
-  },
-  body: {
-    eyebrow: "Skin · hands · nails",
-    line: "Care that goes",
-    accent: "beyond the face.",
-  },
-  sleep: {
-    eyebrow: "Sleep · stress · recovery",
-    line: "Rest is",
-    accent: "where it starts.",
-  },
-  presence: {
-    eyebrow: "Posture · eye contact · voice",
-    line: "Stand tall,",
-    accent: "speak easy.",
-  },
-  fragrance: {
-    eyebrow: "Your scent wardrobe",
-    line: "A signature,",
-    accent: "not a statement.",
-  },
-};
 export default function TopicPage() {
   const { topic } = useParams();
   return <TopicContent key={topic} />;

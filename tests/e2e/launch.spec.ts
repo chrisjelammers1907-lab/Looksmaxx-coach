@@ -5,6 +5,8 @@ const open = async (page: Page, path = "/") => {
   await page.goto(path);
   const skip = page.getByRole("button", { name: "Skip for now" });
   if (await skip.isVisible()) await skip.click();
+  // Pages load lazily; wait for the page's own heading, not just the frame.
+  await expect(page.locator("main h1").first()).toBeAttached();
 };
 
 const go = async (page: Page, path: string) => {
@@ -153,7 +155,7 @@ test("topic banners and category rows use real photos", async ({ page }) => {
   await expect(page.locator(".category-row img")).toHaveCount(16);
   for (const id of ["makeup", "face", "sleep", "presence", "body"]) {
     await go(page, `/topics/${id}`);
-    await expect(page.locator(".topic-banner img")).toHaveAttribute(
+    await expect(page.locator(".topic-photo-strip img")).toHaveAttribute(
       "src",
       new RegExp(`photo-${id}`),
     );
@@ -258,7 +260,7 @@ test("portrait photos never stretch banners on desktop", async ({
 }, info) => {
   test.skip(info.project.name === "mobile", "desktop layout");
   await open(page, "/topics/face");
-  const banner = await page.locator(".topic-banner").boundingBox();
+  const banner = await page.locator(".topic-photo-strip").boundingBox();
   expect(banner!.height).toBeLessThanOrEqual(460);
   await go(page, "/topics/face/guide");
   const hero = await page.locator(".guide-hero").boundingBox();
@@ -390,7 +392,7 @@ test("a missing photo falls back to a quiet tint, never a broken image", async (
     route.fulfill({ status: 404, body: "" }),
   );
   await open(page, "/topics/skincare");
-  const img = page.locator(".topic-banner img");
+  const img = page.locator(".topic-photo-strip img");
   await expect(img).toHaveAttribute("data-missing", "true");
   await expect
     .poll(() => img.evaluate((n: HTMLImageElement) => n.naturalWidth))
@@ -550,4 +552,19 @@ test("nutrition actions fit their buttons", async ({ page }) => {
       .map((e) => e.textContent),
   );
   expect(clipped).toEqual([]);
+});
+
+test("category pages open on your routine, not on a slogan", async ({
+  page,
+}, info) => {
+  await open(page, "/topics/skincare");
+  await expect(page.locator(".topic-banner")).toHaveCount(0);
+  await expect(page.locator(".topic-photo-strip img")).toBeVisible();
+  // On a phone the first routine starts in the first screen.
+  const first = await page.locator(".routine-card").first().boundingBox();
+  const limit = info.project.name === "mobile" ? 844 : 1000;
+  expect(first!.y).toBeLessThan(limit);
+  // The weekly rhythm is one sentence, not seven identical cards.
+  await expect(page.locator(".week-grid")).toHaveCount(0);
+  await expect(page.locator(".routine-rhythm")).toContainText(/daily/i);
 });

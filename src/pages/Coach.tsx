@@ -133,9 +133,7 @@ export default function CoachPage() {
             {!state.chat.length && (
               <div className="coach-welcome">
                 <Monogram size={64} />
-                <h2>
-                  What would you like to <em>work on?</em>
-                </h2>
+                <h2>What would you like to work on?</h2>
                 <p>
                   Ask about skin, hair, outfits or training. Your goals and the
                   things you own shape each reply.
