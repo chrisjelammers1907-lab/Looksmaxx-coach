@@ -44,7 +44,6 @@ export default function PlansPage() {
   return (
     <div className="plans-page">
       <PageHeader
-        eyebrow="MEMBERSHIP"
         title="Choose your plan."
         description="Start free. Upgrade when you want more — cancel any time."
       />

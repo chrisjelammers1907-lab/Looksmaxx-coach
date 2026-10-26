@@ -14,7 +14,7 @@ import {
   Repeat,
 } from "lucide-react";
 import { useDemo, toggle } from "../lib/store";
-import { creators, parseStyle } from "../lib/data";
+import { clothingStyles, creators, parseStyle } from "../lib/data";
 import ShareCardButton from "./ShareCard";
 import type { CardRef, Post } from "../lib/types";
 import {
@@ -473,7 +473,7 @@ export function PostCard({
   const captionShort = post.body.slice(0, 80).replace(/\s+\S*$/, "");
   const topicLine = [
     topicName[post.topic],
-    post.style && post.style.replace("-", " "),
+    clothingStyles.find((s) => s.id === post.style)?.label,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -542,7 +542,6 @@ export function PostCard({
           </Link>
           <FollowButton creator={post.author} />
         </div>
-        {topicLine && <div className="post-topic">{topicLine}</div>}
         <Link to={`/post/${post.id}`}>
           <h3>{post.title}</h3>
         </Link>
@@ -616,7 +615,9 @@ export function PostCard({
           {avatar}
           <span>
             <strong>{handle}</strong>
-            <small>{post.draft ? "Draft · only you" : mediaLabel(post)}</small>
+            <small>
+              {post.draft ? "Draft · only you" : topicLine || mediaLabel(post)}
+            </small>
           </span>
         </Link>
         <FollowButton creator={post.author} />
@@ -677,7 +678,6 @@ export function PostCard({
           </button>
         </div>
         <div className="post-caption">
-          {topicLine && <div className="post-topic">{topicLine}</div>}
           <Link to={`/post/${post.id}`}>
             <h3>{post.title}</h3>
           </Link>

@@ -7,6 +7,7 @@ import "@fontsource/dm-sans/latin-600.css";
 import "@fontsource/cormorant-garamond/latin-400.css";
 import "@fontsource/cormorant-garamond/latin-500.css";
 import "@fontsource/cormorant-garamond/latin-400-italic.css";
+import "@fontsource/anton/latin-400.css";
 import "./tokens.css";
 import "./styles.css";
 import "./v2.css";

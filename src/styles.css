@@ -253,7 +253,7 @@ textarea::placeholder {
   min-height: 36px;
 }
 .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   font-family: "DM Sans", sans-serif;
   letter-spacing: 1.7px;
   font-weight: 500;
@@ -276,7 +276,7 @@ textarea::placeholder {
   background: var(--cream);
   color: var(--forest-text);
   border-radius: 30px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .tag {
   background: var(--cream);
@@ -345,12 +345,12 @@ textarea::placeholder {
 .wordmark > span {
   display: block;
   font-family: "DM Sans", sans-serif;
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 2px;
   margin: 12px 0 0;
 }
 .nav-label {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 1.6px;
   margin: 0 13px 12px;
@@ -399,7 +399,7 @@ textarea::placeholder {
   gap: 1px;
 }
 .topic-nav > a {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   padding: 8px 11px;
   display: flex;
@@ -435,14 +435,14 @@ textarea::placeholder {
   margin-bottom: 14px;
 }
 .sidebar-coach > span {
-  font-size: 9px;
+  font-size: 11px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .sidebar-coach small {
   display: block;
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 1px;
   margin-top: 12px;
   color: var(--muted);
@@ -459,7 +459,7 @@ textarea::placeholder {
 .sidebar-user small {
   display: block;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   margin-top: 2px;
 }
 .sidebar-user > svg {
@@ -478,7 +478,7 @@ textarea::placeholder {
   padding: 0 44px;
 }
 .topbar-note {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
 }
 .topbar-right {
@@ -487,7 +487,7 @@ textarea::placeholder {
   gap: 21px;
 }
 .demo-pill {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 1px;
   background: var(--cream);
@@ -520,7 +520,7 @@ main {
   gap: 15px;
   justify-content: space-between;
   border-top: 1px solid var(--line);
-  font-size: 9px;
+  font-size: 11px;
   color: #767d6f;
   padding: 23px 44px 26px;
 }
@@ -535,7 +535,7 @@ main {
   margin-bottom: 17px;
 }
 .welcome-row > span {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .welcome-title {
@@ -567,7 +567,7 @@ main {
 }
 .hero-copy .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.8px;
 }
 .hero-copy h2 {
@@ -586,7 +586,7 @@ main {
   margin-bottom: 23px;
 }
 .hero-copy .button {
-  font-size: 10px;
+  font-size: 11.5px;
   min-height: 41px;
   padding: 10px 16px;
 }
@@ -594,7 +594,7 @@ main {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--on-dark-muted);
   margin-top: 17px;
 }
@@ -628,7 +628,7 @@ main {
   right: 22px;
   z-index: 1;
   color: white;
-  font-size: 7px;
+  font-size: 11px;
   letter-spacing: 1.7px;
   display: flex;
   justify-content: space-between;
@@ -651,7 +651,7 @@ main {
   margin: 36px 0 21px;
 }
 .home-section-header .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.4px;
   color: var(--muted);
   margin-bottom: 10px;
@@ -663,7 +663,7 @@ main {
   display: flex;
   align-items: center;
   gap: 15px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 5px;
 }
@@ -695,7 +695,7 @@ main {
   position: absolute;
   left: 12px;
   top: 11px;
-  font-size: 8px;
+  font-size: 11px;
   color: #fff;
   background: color-mix(in srgb, var(--forest) 31%, transparent);
   border: 1px solid #ffffff60;
@@ -723,7 +723,7 @@ main {
   letter-spacing: -0.25px;
 }
 .topic-copy p {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin: 7px 0 0;
 }
@@ -744,7 +744,7 @@ main {
   background: var(--cream);
 }
 .plan-promo .eyebrow {
-  font-size: 6px;
+  font-size: 11px;
   margin-bottom: 8px;
   color: var(--muted);
   letter-spacing: 1.1px;
@@ -755,7 +755,7 @@ main {
 }
 .plan-promo p,
 .community-promo p {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin: 6px 0 0;
 }
@@ -786,7 +786,7 @@ main {
 .home-signoff > span {
   display: block;
   font-family: "DM Sans", sans-serif;
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 2px;
   font-style: normal;
   margin-top: 10px;
@@ -802,7 +802,7 @@ main {
 .page-header .eyebrow {
   color: var(--muted);
   margin-bottom: 12px;
-  font-size: 8px;
+  font-size: 11px;
 }
 .page-header h1 {
   font-size: 50px;
@@ -909,7 +909,7 @@ main {
   padding: 32px;
 }
 .topic-banner .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 17px;
 }
@@ -918,7 +918,7 @@ main {
 }
 .topic-banner .text-link {
   margin-top: 20px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .topic-banner > img {
   height: 260px;
@@ -986,7 +986,7 @@ main {
   padding: 18px;
 }
 .product-content .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 1px;
 }
@@ -1016,7 +1016,7 @@ main {
   display: flex;
 }
 .card-controls .text-button {
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .routine-grid {
   display: grid;
@@ -1060,7 +1060,7 @@ main {
   flex-shrink: 0;
   background: transparent;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   display: grid;
   place-items: center;
 }
@@ -1110,13 +1110,13 @@ main {
   background: var(--cream);
 }
 .day-card p {
-  font-size: 10px;
+  font-size: 11.5px;
   line-height: 1.6;
   color: var(--muted);
   margin: 12px 0 0;
 }
 .day-card .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
 }
 .alternative-grid {
   display: grid;
@@ -1290,7 +1290,7 @@ main {
   background: color-mix(in srgb, var(--ivory) 92%, transparent);
   padding: 5px 9px;
   border-radius: 3px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: flex;
   gap: 5px;
@@ -1332,7 +1332,7 @@ main {
   background: color-mix(in srgb, var(--ivory) 93%, transparent);
   border-radius: 4px;
   padding: 6px 11px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .compare-caption.before {
   left: 12px;
@@ -1362,7 +1362,7 @@ table {
   font-size: 12px;
 }
 th {
-  font-size: 10px;
+  font-size: 11.5px;
   letter-spacing: 0.3px;
   font-weight: 500;
   background: var(--cream);
@@ -1414,7 +1414,7 @@ tr:last-child td {
   color: var(--muted);
 }
 .stat-card p {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   margin: 3px 0;
 }
@@ -1495,7 +1495,7 @@ progress {
   display: block;
   color: var(--muted);
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .list-row > span:not(.avatar) {
   font-size: 11px;
@@ -1550,7 +1550,7 @@ progress {
   margin-top: 20px;
 }
 .feed-count {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   margin: 20px 0;
 }
@@ -1587,7 +1587,7 @@ progress {
 }
 .author-link small {
   display: block;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -1607,7 +1607,7 @@ progress {
   padding: 22px;
 }
 .post-body > .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 10px;
 }
@@ -1627,7 +1627,7 @@ progress {
 }
 .post-price small {
   color: #7a7d6f;
-  font-size: 9px;
+  font-size: 11px;
   margin-left: 5px;
 }
 .post-actions {
@@ -1641,7 +1641,7 @@ progress {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: 11.5px;
   background: none;
   border: 0;
   min-height: 38px;
@@ -1660,7 +1660,7 @@ progress {
   padding-top: 16px;
 }
 .post-metadata {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
 }
 .post-expanded .button {
@@ -1694,7 +1694,7 @@ progress {
 .breakdown-row small {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.7;
   margin-top: 3px;
 }
@@ -1705,7 +1705,7 @@ progress {
   max-width: 95px;
 }
 .breakdown-row a {
-  font-size: 10px;
+  font-size: 11.5px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1716,7 +1716,7 @@ progress {
 .breakdown-row .small-text {
   display: block;
   margin-top: 5px;
-  font-size: 9px;
+  font-size: 11px;
 }
 .comment {
   font-size: 12px;
@@ -1726,7 +1726,7 @@ progress {
   border-radius: 4px;
 }
 .comment strong {
-  font-size: 10px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 .comment p {
@@ -1734,7 +1734,7 @@ progress {
   margin: 7px 0 0;
 }
 .comment .text-button {
-  font-size: 9px;
+  font-size: 11px;
 }
 .comment-form {
   display: flex;
@@ -1757,7 +1757,7 @@ progress {
   margin-top: 20px;
 }
 .moderation-actions .text-button {
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .community-detail {
   max-width: 760px;
@@ -1827,7 +1827,7 @@ progress {
   flex-wrap: wrap;
   gap: 20px;
   margin-top: 17px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .profile-stats > span {
   display: inline-flex;
@@ -1849,7 +1849,7 @@ progress {
   padding: 23px;
 }
 .profile-details small {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: var(--muted);
 }
@@ -2000,7 +2000,7 @@ progress {
 }
 .coach-welcome > .eyebrow {
   justify-content: center;
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
   margin-bottom: 15px;
 }
@@ -2048,7 +2048,7 @@ progress {
   margin-bottom: 20px;
 }
 .coach-context > .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--muted);
 }
 .coach-context p {
@@ -2061,11 +2061,11 @@ progress {
   display: block;
   color: var(--forest-text);
   font-weight: 500;
-  font-size: 10px;
+  font-size: 11.5px;
   margin-bottom: 4px;
 }
 .coach-context > small {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   line-height: 1.8;
 }
@@ -2082,7 +2082,7 @@ progress {
   margin-left: 40px;
 }
 .chat-author {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.3px;
   font-weight: 600;
   color: var(--muted);
@@ -2111,7 +2111,7 @@ progress {
   margin-top: 18px;
 }
 .proposal-card .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
 }
 .proposal-card p {
   margin: 10px 0 15px;
@@ -2149,14 +2149,14 @@ progress {
   min-height: 40px;
   border: 0;
   background: transparent;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .composer-actions .upload > svg {
   width: 17px;
   height: 17px;
 }
 .coach-composer > small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-top: 10px;
@@ -2165,7 +2165,7 @@ progress {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 10px;
+  font-size: 11.5px;
   margin-bottom: 15px;
 }
 .attachment-preview > img {
@@ -2217,7 +2217,7 @@ progress {
   font-weight: 500;
 }
 .conversation-preview small {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   overflow: hidden;
@@ -2233,20 +2233,20 @@ progress {
   border-radius: 4px;
 }
 .message-request .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
 }
 .message-request h3 {
   font-size: 24px;
   margin-top: 10px;
 }
 .message-request p {
-  font-size: 10px;
+  font-size: 11.5px;
   line-height: 1.8;
   color: var(--muted);
   margin-top: 8px;
 }
 .inbox-list > .text-link {
-  font-size: 10px;
+  font-size: 11.5px;
   margin: 8px;
 }
 .conversation {
@@ -2276,7 +2276,7 @@ progress {
 }
 .conversation-header small {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -2309,7 +2309,7 @@ progress {
   margin-bottom: 13px;
 }
 .message-bubble > small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
   margin-top: 10px;
@@ -2335,7 +2335,7 @@ progress {
   flex: 1;
 }
 .linked-card span {
-  font-size: 7px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: var(--muted);
@@ -2349,7 +2349,7 @@ progress {
   margin: 6px 0;
 }
 .linked-card small {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   display: block;
 }
@@ -2386,7 +2386,7 @@ progress {
   padding-right: 20px;
 }
 .attach-list small {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   display: block;
   margin-top: 5px;
@@ -2457,11 +2457,11 @@ progress {
   line-height: 1.9;
 }
 .modal > .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
 }
 .modal .notice {
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .modal-actions {
   display: flex;
@@ -2600,10 +2600,10 @@ progress {
     font-size: 18px;
   }
   .post-author strong {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .post-author .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 6px 9px;
   }
   .post-image {
@@ -2656,7 +2656,7 @@ progress {
     padding-left: 12px;
   }
   .topic-nav > a {
-    font-size: 9px;
+    font-size: 11px;
   }
   .app-content {
     margin-left: 175px;
@@ -2678,18 +2678,18 @@ progress {
     font-size: 44px;
   }
   .hero-copy p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .hero-image {
     min-height: 330px;
   }
   .hero-copy .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 10px 11px;
     gap: 6px;
   }
   .hero-footnote {
-    font-size: 6px;
+    font-size: 11px;
   }
   .topic-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2739,7 +2739,7 @@ progress {
     padding: 15px;
   }
   .composer-actions .button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 10px;
   }
   .product-grid,
@@ -2760,13 +2760,13 @@ progress {
   }
   .post-author .button {
     padding: 6px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .post-author .avatar {
     display: none;
   }
   .post-author small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .post-body {
     padding: 15px;
@@ -2803,7 +2803,7 @@ progress {
     font-size: 43px;
   }
   .page-header .button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 10px;
     gap: 6px;
   }
@@ -2821,10 +2821,10 @@ progress {
     font-size: 36px;
   }
   .topic-banner .text-link {
-    font-size: 9px;
+    font-size: 11px;
   }
   .topic-banner .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
   }
   .toast {
     left: calc(50% + 85px);
@@ -2856,7 +2856,7 @@ progress {
     gap: 13px;
   }
   .demo-pill {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 0.8px;
     padding: 4px 7px;
   }
@@ -2893,7 +2893,7 @@ progress {
     flex-direction: column;
     color: var(--muted);
     width: 60px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .mobile-nav > a.active {
     color: var(--forest-text);
@@ -2909,17 +2909,17 @@ progress {
   }
   .footer {
     padding: 23px 21px 98px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .welcome-row {
     margin-bottom: 17px;
   }
   .welcome-row .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 1.3px;
   }
   .welcome-row > span {
-    font-size: 7px;
+    font-size: 11px;
   }
   .welcome-title h1 {
     font-size: 46px;
@@ -2930,7 +2930,7 @@ progress {
     display: none;
   }
   .welcome-title p {
-    font-size: 10px;
+    font-size: 11.5px;
     margin-top: 12px;
   }
   .welcome-title {
@@ -2947,7 +2947,7 @@ progress {
     width: 185px;
   }
   .hero-copy .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 1.1px;
   }
   .hero-copy h2 {
@@ -2957,7 +2957,7 @@ progress {
     line-height: 1;
   }
   .hero-copy p {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.85;
     max-width: 155px;
     margin-bottom: 18px;
@@ -2966,7 +2966,7 @@ progress {
     display: none;
   }
   .hero-copy .button {
-    font-size: 8px;
+    font-size: 11px;
     padding: 9px 10px;
     min-height: 38px;
     gap: 6px;
@@ -2977,7 +2977,7 @@ progress {
     width: 13px;
   }
   .hero-footnote {
-    font-size: 5px;
+    font-size: 11px;
     gap: 4px;
     line-height: 1.6;
     margin-top: 14px;
@@ -3000,7 +3000,7 @@ progress {
     );
   }
   .hero-image-label {
-    font-size: 5px;
+    font-size: 11px;
     letter-spacing: 0.8px;
     bottom: 16px;
     left: 12px;
@@ -3013,7 +3013,7 @@ progress {
     margin: 29px 0 20px;
   }
   .home-section-header .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 1.2px;
     margin-bottom: 9px;
   }
@@ -3034,13 +3034,13 @@ progress {
     font-size: 21px;
   }
   .topic-copy p {
-    font-size: 8px;
+    font-size: 11px;
     line-height: 1.7;
     margin-top: 6px;
     max-width: 160px;
   }
   .topic-number {
-    font-size: 6px;
+    font-size: 11px;
     left: 9px;
     top: 9px;
     padding: 1px 5px;
@@ -3075,11 +3075,11 @@ progress {
   }
   .plan-promo p,
   .community-promo p {
-    font-size: 8px;
+    font-size: 11px;
     line-height: 1.7;
   }
   .plan-promo .eyebrow {
-    font-size: 5px;
+    font-size: 11px;
   }
   .plan-promo > svg,
   .community-promo > svg {
@@ -3094,7 +3094,7 @@ progress {
     margin: 34px 0 10px;
   }
   .home-signoff > span {
-    font-size: 5px;
+    font-size: 11px;
     margin-top: 12px;
   }
   .page-header {
@@ -3103,7 +3103,7 @@ progress {
     flex-wrap: wrap;
   }
   .page-header .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 1.4px;
   }
   .page-header h1 {
@@ -3120,7 +3120,7 @@ progress {
     padding: 10px 15px;
   }
   .page-header > .text-link {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .section-title {
     gap: 15px;
@@ -3131,20 +3131,20 @@ progress {
     font-size: 30px;
   }
   .section-title p {
-    font-size: 10px;
+    font-size: 11.5px;
     line-height: 1.8;
   }
   .section-title > .button,
   .section-title > .button-row {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .section-title .button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 9px 12px;
     min-height: 40px;
   }
   .notice {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 13px;
     line-height: 1.8;
     gap: 8px;
@@ -3174,13 +3174,13 @@ progress {
     line-height: 1.06;
   }
   .topic-banner .eyebrow {
-    font-size: 5px;
+    font-size: 11px;
     letter-spacing: 1px;
     line-height: 1.8;
     max-width: 150px;
   }
   .topic-banner .text-link {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.7;
     margin-top: 16px;
     max-width: 150px;
@@ -3193,7 +3193,7 @@ progress {
     margin: 20px 0;
   }
   .topic-links a {
-    font-size: 9px;
+    font-size: 11px;
     gap: 5px;
   }
   .topic-links svg {
@@ -3213,13 +3213,13 @@ progress {
     font-size: 22px;
   }
   .product-content p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .product-content .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
   }
   .product-content .small-text {
-    font-size: 9px;
+    font-size: 11px;
   }
   .card-controls {
     gap: 4px;
@@ -3228,7 +3228,7 @@ progress {
     margin-top: 13px;
   }
   .card-controls .text-button {
-    font-size: 9px;
+    font-size: 11px;
   }
   .card-controls .icon-button {
     min-width: 27px;
@@ -3243,7 +3243,7 @@ progress {
     font-size: 11px;
   }
   .routine-top .small-text {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .editorial-note {
     padding: 22px 18px;
@@ -3260,7 +3260,7 @@ progress {
     width: 20px;
   }
   .editorial-note a {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .week-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3270,7 +3270,7 @@ progress {
     padding: 14px;
   }
   .day-card p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .alternative-grid {
     grid-template-columns: 1fr;
@@ -3291,15 +3291,15 @@ progress {
     font-size: 25px;
   }
   .inspiration-card p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .inspiration-card .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 9px;
     gap: 5px;
   }
   .inspiration-card .pill {
-    font-size: 7px;
+    font-size: 11px;
     padding: 5px 7px;
     line-height: 1.6;
   }
@@ -3333,7 +3333,7 @@ progress {
     height: 180px;
   }
   .private-photo .image-tag {
-    font-size: 7px;
+    font-size: 11px;
     left: 7px;
     bottom: 7px;
   }
@@ -3341,7 +3341,7 @@ progress {
     font-size: 20px;
   }
   .photo-card .product-content > small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .comparison {
     padding: 15px;
@@ -3350,7 +3350,7 @@ progress {
     height: 300px;
   }
   .compare-caption {
-    font-size: 8px;
+    font-size: 11px;
   }
   .stats-grid {
     gap: 14px;
@@ -3364,12 +3364,12 @@ progress {
     margin-top: 17px;
   }
   .stat-card > strong > small {
-    font-size: 9px;
+    font-size: 11px;
     display: block;
     margin-top: 7px;
   }
   .stat-card > span {
-    font-size: 10px;
+    font-size: 11.5px;
     max-width: 110px;
   }
   .stat-card > svg {
@@ -3378,7 +3378,7 @@ progress {
     width: 16px;
   }
   .stat-card p {
-    font-size: 8px;
+    font-size: 11px;
   }
   .mobility-card {
     padding: 25px;
@@ -3396,10 +3396,10 @@ progress {
   th,
   td {
     padding: 12px 10px;
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .history-row {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .details,
   .filter-details {
@@ -3413,7 +3413,7 @@ progress {
     gap: 0 14px;
   }
   .feed-count {
-    font-size: 9px;
+    font-size: 11px;
   }
   .community-grid {
     grid-template-columns: 1fr;
@@ -3432,11 +3432,11 @@ progress {
     font-size: 11px;
   }
   .post-author small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .post-author .button {
     padding: 8px 13px;
-    font-size: 10px;
+    font-size: 11.5px;
     min-height: 36px;
   }
   .post-image {
@@ -3452,10 +3452,10 @@ progress {
     font-size: 11px;
   }
   .post-body > .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
   }
   .post-body > .post-price {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .community-detail .post-image {
     height: 320px;
@@ -3477,10 +3477,10 @@ progress {
     font-size: 11px;
   }
   .breakdown-row small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .breakdown-row > span {
-    font-size: 10px;
+    font-size: 11.5px;
     max-width: 70px;
   }
   .profile-hero {
@@ -3501,17 +3501,17 @@ progress {
     font-size: 29px;
   }
   .profile-hero p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .profile-stats {
     gap: 11px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .profile-actions {
     padding-left: 0;
   }
   .profile-actions .button {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .profile-details {
     grid-template-columns: 1fr;
@@ -3528,7 +3528,7 @@ progress {
     font-size: 24px;
   }
   .privacy-controls .button {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .list-row {
     padding: 15px 10px;
@@ -3539,10 +3539,10 @@ progress {
     font-size: 11px;
   }
   .list-row > span:not(.avatar) {
-    font-size: 9px;
+    font-size: 11px;
   }
   .list-row > .button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 9px 11px;
   }
   .plan-overview > div {
@@ -3558,17 +3558,17 @@ progress {
     font-size: 25px;
   }
   .plan-overview .field {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .plan-overview input {
     padding: 9px 5px;
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .plan-overview p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .plan-overview .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
   }
   .goal-row {
     gap: 10px;
@@ -3588,10 +3588,10 @@ progress {
     padding: 17px 15px;
   }
   .coach-controls .field {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .coach-controls select {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 10px 7px;
   }
   .chat-messages {
@@ -3603,10 +3603,10 @@ progress {
     font-size: 36px;
   }
   .coach-welcome > p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .prompt-chips > button {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .chat-message {
     padding: 15px;
@@ -3618,7 +3618,7 @@ progress {
     font-size: 11px;
   }
   .chat-author {
-    font-size: 8px;
+    font-size: 11px;
   }
   .coach-composer {
     padding: 17px 15px;
@@ -3628,7 +3628,7 @@ progress {
   }
   .coach-composer .composer-actions .upload {
     padding: 8px 0;
-    font-size: 9px;
+    font-size: 11px;
   }
   .coach-composer .composer-actions {
     gap: 6px;
@@ -3666,7 +3666,7 @@ progress {
     min-width: 30px;
   }
   .conversation-header small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .thread {
     padding: 20px 16px;
@@ -3692,13 +3692,13 @@ progress {
     font-size: 20px;
   }
   .linked-card small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .message-composer {
     padding: 17px 15px;
   }
   .message-composer .composer-actions .button {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .modal-backdrop {
     padding: 16px;
@@ -3728,7 +3728,7 @@ progress {
     font-size: 12px;
   }
   .modal .notice {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .modal .button {
     font-size: 11px;
@@ -3775,7 +3775,7 @@ progress {
     max-width: 140px;
   }
   .hero-copy .button {
-    font-size: 7px;
+    font-size: 11px;
   }
   .topic-photo {
     height: 140px;

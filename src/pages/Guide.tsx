@@ -41,10 +41,6 @@ export default function GuidePage() {
       </Link>
       <header className="guide-hero">
         <div>
-          <span className="eyebrow">
-            <BookOpen size={14} />{" "}
-            {extra ? "THE GUIDE" : "THE BEGINNER’S GUIDE"} / {entry.number}
-          </span>
           <h1>{guide.title}</h1>
           <p>{guide.intro}</p>
           <span className="guide-meta">

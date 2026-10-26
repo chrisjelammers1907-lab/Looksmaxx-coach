@@ -99,7 +99,7 @@ body {
   z-index: 2;
   background: color-mix(in srgb, var(--cream) 94%, transparent);
   color: var(--forest-text);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.3px;
   padding: 5px 8px;
   line-height: 1.5;
@@ -182,7 +182,7 @@ body {
   color: var(--danger);
 }
 .post-body > .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1.1px;
 }
 .tag-row .tag {
@@ -216,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--on-dark-muted);
   margin-top: 24px;
 }
@@ -241,7 +241,7 @@ body {
   position: absolute;
   bottom: 12px;
   left: 12px;
-  font-size: 8px;
+  font-size: 11px;
   background: color-mix(in srgb, var(--cream) 94%, transparent);
   color: var(--forest-text);
   padding: 4px 8px;
@@ -354,7 +354,7 @@ body {
 .clothing-hero-label {
   background: color-mix(in srgb, var(--cream) 93%, transparent);
   color: var(--forest-text);
-  font-size: 8px;
+  font-size: 11px;
   padding: 5px 8px;
 }
 .clothing-page .quick-grid > button,
@@ -557,19 +557,19 @@ body {
   display: block;
 }
 .sound-option-info small {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--muted);
   margin: 3px 0;
 }
 .sound-option-info > span {
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .sound-select {
   background: transparent;
   border-radius: 2px;
   gap: 6px;
-  font-size: 10px;
+  font-size: 11.5px;
   padding: 5px;
 }
 .sound-select[aria-pressed="true"] {
@@ -614,7 +614,7 @@ body {
   font-size: 11px;
 }
 .post-sound-info span {
-  font-size: 8px;
+  font-size: 11px;
   margin-top: 2px;
   color: var(--muted);
 }
@@ -748,7 +748,7 @@ body {
     max-width: none;
   }
   .feed-hero .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
     letter-spacing: 1.6px;
   }
   .feed-hero p {
@@ -758,13 +758,13 @@ body {
     margin-bottom: 12px;
   }
   .feed-hero-note {
-    font-size: 8px;
+    font-size: 11px;
   }
   .feed-hero .hero-image-credit {
     top: 10px;
     bottom: auto;
     right: 12px;
-    font-size: 7px;
+    font-size: 11px;
   }
   .feed-monogram {
     display: none;
@@ -791,7 +791,7 @@ body {
     margin-bottom: 0;
   }
   .feed-bar-actions .button {
-    font-size: 10px;
+    font-size: 11.5px;
     min-height: 40px;
     padding: 8px 10px;
     gap: 5px;
@@ -800,7 +800,7 @@ body {
     padding: 8px 10px;
   }
   .feed-disclosure {
-    font-size: 8px;
+    font-size: 11px;
     margin-top: 12px;
   }
   .feed-grid {
@@ -834,7 +834,7 @@ body {
     font-size: 12px;
   }
   .category-intro-count {
-    font-size: 8px;
+    font-size: 11px;
     gap: 9px;
     margin-top: 20px;
   }
@@ -875,10 +875,10 @@ body {
     font-size: 38px;
   }
   .topic-banner .topic-purpose {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .topic-banner .hero-image-credit {
-    font-size: 6px;
+    font-size: 11px;
     bottom: 7px;
     right: 7px;
   }
@@ -896,7 +896,7 @@ body {
     object-position: 66% 40%;
   }
   .clothing-hero-label {
-    font-size: 5px;
+    font-size: 11px;
     padding: 4px 5px;
     right: 6px;
     bottom: 7px;
@@ -931,7 +931,7 @@ body {
     font-size: 48px;
   }
   .about-hero .hero-image-credit {
-    font-size: 6px;
+    font-size: 11px;
   }
   .about-story {
     padding: 42px 8px;
@@ -951,7 +951,7 @@ body {
   }
   .guide-hero .hero-image-credit {
     bottom: 9px;
-    font-size: 7px;
+    font-size: 11px;
   }
   .coach-welcome h2 {
     font-size: 38px;
@@ -980,10 +980,10 @@ body {
     gap: 9px;
   }
   .sound-option-info small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .sound-option-info > span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .sound-mix .field {
     min-width: 100%;
@@ -996,7 +996,7 @@ body {
     font-size: 11px;
   }
   .post-sound-info span {
-    font-size: 8px;
+    font-size: 11px;
   }
   .post-sound-volume input {
     width: 45px;

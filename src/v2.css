@@ -66,7 +66,7 @@
   color: #423b31;
 }
 .sidebar-story .eyebrow {
-  font-size: 7px;
+  font-size: 11px;
   letter-spacing: 1px;
 }
 .sidebar-story p {
@@ -77,7 +77,7 @@
 }
 .sidebar-story > span:last-child {
   display: block;
-  font-size: 10px;
+  font-size: 11.5px;
   margin-top: 10px;
 }
 .sidebar-about {
@@ -108,7 +108,7 @@
 }
 .feed-hero .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .feed-hero h1 {
   font-size: clamp(47px, 4.5vw, 70px);
@@ -136,7 +136,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--on-dark-muted);
 }
 .feed-monogram {
@@ -178,12 +178,12 @@
 }
 .feed-disclosure {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11.5px;
   margin: 14px 0 0;
 }
 .feed-count {
   margin: 8px 0 22px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .feed-filter-panel {
   margin-top: 20px;
@@ -209,7 +209,7 @@
   font-size: 12px;
 }
 .author-link small {
-  font-size: 9px;
+  font-size: 11px;
 }
 .post-media,
 .community-detail .post-media {
@@ -237,7 +237,7 @@
   white-space: normal;
   background: color-mix(in srgb, var(--ivory) 93%, transparent);
   color: var(--forest-text);
-  font-size: 8px;
+  font-size: 11px;
   bottom: auto;
   top: 12px;
   left: 12px;
@@ -323,7 +323,7 @@
 }
 .category-intro .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 9px;
+  font-size: 11px;
 }
 .category-intro h1 {
   font-size: clamp(47px, 4vw, 65px);
@@ -469,7 +469,7 @@
 }
 .guide-hero .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 9px;
+  font-size: 11px;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -489,7 +489,7 @@
   object-fit: cover;
 }
 .guide-meta {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--on-dark-muted);
 }
 .guide-layout {
@@ -522,7 +522,7 @@
   text-decoration: underline;
 }
 .guide-contents .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   margin-bottom: 7px;
 }
 .guide-article {
@@ -594,7 +594,7 @@
 }
 .about-hero .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .about-hero h1 {
   font-size: 67px;
@@ -709,7 +709,7 @@
 .journal-audience {
   display: block;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11.5px;
   margin-top: 9px;
 }
 .coach-source-link {
@@ -774,7 +774,7 @@
     font-size: 24px;
   }
   .sidebar-story .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
   }
   .desktop-filter-label {
     display: none;
@@ -837,7 +837,7 @@
     padding: 25px 17px;
   }
   .feed-hero .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 1.2px;
   }
   .feed-hero h1 {
@@ -846,13 +846,13 @@
     margin: 14px 0;
   }
   .feed-hero p {
-    font-size: 10px;
+    font-size: 11.5px;
     line-height: 1.9;
     margin-bottom: 15px;
     max-width: 215px;
   }
   .feed-hero-note {
-    font-size: 7px;
+    font-size: 11px;
     max-width: 190px;
     align-items: start;
   }
@@ -888,17 +888,17 @@
   .feed-bar-actions .button {
     padding: 9px;
     min-height: 39px;
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .feed-bar-actions .button > svg {
     width: 14px;
   }
   .feed-disclosure {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.8;
   }
   .feed-count {
-    font-size: 9px;
+    font-size: 11px;
     margin-bottom: 16px;
   }
   .feed-grid {
@@ -921,10 +921,10 @@
     font-size: 12px;
   }
   .author-link small {
-    font-size: 9px;
+    font-size: 11px;
   }
   .post-media .image-tag {
-    font-size: 7px;
+    font-size: 11px;
     padding: 5px 8px;
   }
   .post-actions {
@@ -941,7 +941,7 @@
     font-size: 44px;
   }
   .category-intro .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
   }
   .category-intro p {
     font-size: 12px;
@@ -966,7 +966,7 @@
     font-size: 30px;
   }
   .category-closing .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
   }
   .guide-hero {
     grid-template-columns: 1fr;
@@ -982,7 +982,7 @@
     object-position: center 35%;
   }
   .guide-hero .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
   }
   .guide-hero p {
     font-size: 12px;
@@ -1026,7 +1026,7 @@
     font-size: 40px;
   }
   .about-story .eyebrow {
-    font-size: 8px;
+    font-size: 11px;
   }
   .about-transparency {
     padding: 27px 23px;

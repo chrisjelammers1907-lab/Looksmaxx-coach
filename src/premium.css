@@ -188,13 +188,7 @@ h4 {
   box-shadow: var(--shadow);
 }
 .site-header {
-  background:
-    radial-gradient(
-      120% 140% at 50% -40%,
-      color-mix(in srgb, var(--forest-soft) 70%, transparent) 0%,
-      transparent 60%
-    ),
-    var(--forest-deep);
+  background: var(--forest-deep);
   color: var(--on-dark);
 }
 .brand-bar {
@@ -208,7 +202,7 @@ h4 {
 }
 .brand-bar .wordmark > span {
   font-family: var(--sans);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.42em;
   color: var(--champagne);
   margin-top: 10px;
@@ -962,7 +956,7 @@ h4 {
     gap: 4px;
     padding: 0;
     color: var(--on-dark-muted);
-    font-size: 10.5px;
+    font-size: 11.5px;
     font-weight: 500;
     letter-spacing: 0.01em;
     white-space: nowrap;
@@ -1028,7 +1022,7 @@ h4 {
     letter-spacing: 0.2em;
   }
   .brand-bar .wordmark > span {
-    font-size: 7.5px;
+    font-size: 11px;
     letter-spacing: 0.36em;
     margin-top: 6px;
   }
@@ -1057,7 +1051,7 @@ h4 {
     border-radius: 12px;
   }
   .category-strip-credit {
-    font-size: 10.5px;
+    font-size: 11.5px;
     margin-top: 10px;
   }
   :root {
@@ -1139,7 +1133,7 @@ h4 {
     font-size: 14.5px;
   }
   .mobile-nav > a {
-    font-size: 9.5px;
+    font-size: 11px;
   }
   .mobile-nav > a::before,
   .mobile-nav > a.active::before {
@@ -1739,7 +1733,7 @@ h4 {
   background: var(--porcelain);
 }
 .coach-page .proposal-card .eyebrow {
-  font-size: 10.5px;
+  font-size: 11.5px;
 }
 .coach-page .proposal-card p {
   margin: 4px 0 10px;
@@ -1911,7 +1905,7 @@ h4 {
   letter-spacing: 0.01em;
 }
 .linked-card span {
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -2087,13 +2081,7 @@ h4 {
   );
 }
 .story-card.bg-forest {
-  background:
-    radial-gradient(
-      90% 60% at 30% 20%,
-      color-mix(in srgb, var(--champagne) 28%, transparent),
-      transparent 70%
-    ),
-    var(--forest);
+  background: var(--forest);
 }
 .story-card.bg-ivory {
   background: var(--ivory);
@@ -2716,7 +2704,7 @@ h4 {
   padding: 16px 18px 14px;
 }
 .product-content .eyebrow {
-  font-size: 10.5px;
+  font-size: 11.5px;
 }
 .product-content h3 {
   font-size: 21px;
@@ -3538,13 +3526,7 @@ h4 {
   --style-card: var(--porcelain);
   --style-border: color-mix(in srgb, var(--champagne) 60%, transparent);
   --style-muted: var(--muted);
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 26px,
-      color-mix(in srgb, var(--champagne) 12%, transparent) 26px 27px
-    ),
-    var(--linen);
+  background: var(--linen);
   box-shadow:
     inset 0 0 0 6px var(--linen),
     inset 0 0 0 7px color-mix(in srgb, var(--champagne) 55%, transparent);
@@ -5384,7 +5366,7 @@ h4 {
   line-height: 1.2;
 }
 .routine-product small {
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -6065,7 +6047,7 @@ h4 {
   border-radius: var(--radius-pill);
   background: var(--champagne);
   color: var(--forest-ink);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -6359,7 +6341,7 @@ h2,
   text-wrap: balance;
 }
 .breakdown-row .breakdown-brand {
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold-deep);
@@ -6716,11 +6698,10 @@ h2,
 .clothing-streetwear .page-header h1,
 .clothing-streetwear h2,
 .clothing-streetwear h3 {
-  font-family: "Helvetica Neue", Arial, var(--sans);
-  font-stretch: condensed;
+  font-family: Anton, "Arial Narrow", var(--sans);
   font-style: normal;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: 0.005em;
   text-transform: uppercase;
 }
 .clothing-streetwear .page-header h1 {
@@ -6737,9 +6718,7 @@ h2,
 .clothing-streetwear .style-switcher > button {
   border-radius: 0;
 }
-.clothing-streetwear .clothing-hero {
-  border-left: 4px solid var(--style-accent);
-}
+
 .clothing-streetwear .tabs > button.active {
   border-bottom-color: var(--style-accent);
 }
@@ -6856,9 +6835,7 @@ h2,
   --style-border: #e0cdb3;
   --style-button: #96482a;
   --style-on-button: #ffffff;
-  background:
-    radial-gradient(120% 80% at 100% 0%, rgb(168 85 47 / 9%), transparent 60%),
-    var(--style-bg);
+  background: var(--style-bg);
   border-radius: 24px;
 }
 .clothing-bohemian .page-header h1,
@@ -6949,5 +6926,53 @@ h2,
   }
   .guide-page .guide-hero {
     min-height: 420px;
+  }
+}
+
+/* ---------- Round 6: type floor and calmer surfaces ---------- */
+/* Readable body copy at every width; labels never under 11px. */
+.page-header p {
+  max-width: 62ch;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+.page-header .page-meta {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.clothing-hero p,
+.empty p,
+.topic-page details p,
+.coach-context p.coach-context-note {
+  font-size: 14px;
+  line-height: 1.55;
+}
+.step-number {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.mobile-nav a,
+.mobile-nav a span {
+  font-size: 11.5px;
+}
+/* Headings balance; prose avoids a lone last word and long measures. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+main p {
+  max-width: 72ch;
+}
+@media (max-width: 700px) {
+  .page-header p {
+    font-size: 15px;
   }
 }

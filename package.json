@@ -15,6 +15,7 @@
     "format:check": "prettier --check src tests *.ts *.json eslint.config.js index.html"
   },
   "dependencies": {
+    "@fontsource/anton": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
     "@zxing/browser": "0.2.1",

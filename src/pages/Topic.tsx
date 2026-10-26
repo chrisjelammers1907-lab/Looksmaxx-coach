@@ -84,15 +84,10 @@ function TopicContent() {
   ];
   return (
     <div className={`topic-page atmosphere-${topic.id}`} key={topic.id}>
-      <PageHeader
-        eyebrow={`THE EDIT / ${topic.number}`}
-        title={topic.title}
-        description={intro[topic.id]}
-      />
+      <PageHeader title={topic.title} description={intro[topic.id]} />
       {topic.id !== "photos" && (
         <div className="topic-banner">
           <div>
-            <span className="eyebrow">{banner[topic.id]?.eyebrow}</span>
             <h2>
               {banner[topic.id]?.line}
               <br />
@@ -296,7 +291,6 @@ function TopicContent() {
                 </div>
                 <div className="visual-promo">
                   <div>
-                    <div className="eyebrow">A LITTLE IMAGINATION</div>
                     <h2>Explore a different look.</h2>
                     <p>
                       Choose a hair color and see a labelled visual placeholder.

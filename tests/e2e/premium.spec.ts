@@ -366,8 +366,15 @@ test("gym days are planned per set, persist, and a PR can become a story", async
   await editor.getByLabel("Exercise 1", { exact: true }).fill("Bench press");
   await editor.getByLabel("Reps, exercise 1 set 1").fill("6");
   await editor.getByLabel("Kg, exercise 1 set 1").fill("65");
-  await editor.getByRole("button", { name: "Add set" }).click();
-  await expect(editor.getByLabel("Kg, exercise 1 set 2")).toHaveValue("65");
+  // Seeded days (Monday) already hold sets and more exercises, so the new
+  // set is checked against whatever set came last, not against set 1.
+  const kg = editor.getByLabel(/^Kg, exercise 1 set \d+$/);
+  const sets = await kg.count();
+  const last = await kg.nth(sets - 1).inputValue();
+  await editor.getByRole("button", { name: "Add set" }).first().click();
+  await expect(
+    editor.getByLabel(`Kg, exercise 1 set ${sets + 1}`, { exact: true }),
+  ).toHaveValue(last);
   await expect(editor.getByLabel(`Repeat every ${weekday}`)).toBeChecked();
   await editor.getByRole("button", { name: "Save day" }).click();
 

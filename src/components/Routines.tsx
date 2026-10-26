@@ -329,7 +329,6 @@ export default function Routines({ topic }: { topic?: TopicId }) {
           title="A simple starting point"
           onClose={() => setBuilder(false)}
         >
-          <div className="eyebrow">ROUTINE BUILDER</div>
           <p>
             Based on your preferences:{" "}
             {state.profile.preferences || "none entered yet"}. Budget:{" "}

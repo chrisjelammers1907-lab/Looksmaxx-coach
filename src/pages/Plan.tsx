@@ -52,8 +52,8 @@ export default function PlanPage() {
   return (
     <div className="plan-page">
       <PageHeader
-        eyebrow={todayLabel}
         title="Your day."
+        meta={todayLabel}
         action={
           <Button
             onClick={() =>

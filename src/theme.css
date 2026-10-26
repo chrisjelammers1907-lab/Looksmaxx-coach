@@ -67,7 +67,7 @@
 }
 .style-switcher small {
   display: block;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--style-muted);
   margin-top: 4px;
 }
@@ -108,7 +108,7 @@
   align-self: center;
 }
 .clothing-hero .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--style-muted);
 }
 .clothing-hero h2 {
@@ -133,12 +133,12 @@
   background: var(--style-ink);
   color: var(--style-card);
   border-color: var(--style-ink);
-  font-size: 10px;
+  font-size: 11.5px;
   margin: 5px 0 18px;
 }
 .clothing-hero .small-text {
   display: block;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--style-muted);
 }
 .clothing-hero-label {
@@ -146,7 +146,7 @@
   right: 18px;
   bottom: 16px;
   color: white;
-  font-size: 6px;
+  font-size: 11px;
   letter-spacing: 1.3px;
 }
 .quick-grid {
@@ -174,7 +174,7 @@
   margin: 18px 0 9px;
 }
 .quick-grid p {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--style-muted);
   margin: 0;
 }
@@ -219,7 +219,7 @@
   color: var(--style-ink);
 }
 .share-outfit {
-  font-size: 10px;
+  font-size: 11.5px;
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
@@ -283,7 +283,7 @@
   line-height: 1.8;
 }
 .tryon-card .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
 }
 .outfit-illustration {
   text-align: center;
@@ -312,7 +312,7 @@
   margin: -14px auto 20px;
 }
 .outfit-illustration > span {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1px;
 }
 .outfit-illustration > p {
@@ -418,7 +418,7 @@
     gap: 8px;
   }
   .style-switcher small {
-    font-size: 7px;
+    font-size: 11px;
   }
   .theme-dot {
     width: 18px;
@@ -446,7 +446,7 @@
     display: none;
   }
   .style-switcher strong {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .style-switcher > button {
     min-height: 55px;
@@ -462,7 +462,7 @@
     padding: 24px;
   }
   .clothing-hero .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 10px;
   }
   .clothing-hero p {
@@ -518,7 +518,7 @@
     min-height: 52px;
   }
   .style-switcher strong {
-    font-size: 9px;
+    font-size: 11px;
   }
   .style-switcher > button > svg {
     display: none;
@@ -536,7 +536,7 @@
     padding: 23px 0 23px 20px;
   }
   .clothing-hero .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 1px;
   }
   .clothing-hero h2 {
@@ -546,11 +546,11 @@
     max-width: 190px;
   }
   .clothing-hero p {
-    font-size: 10px;
+    font-size: 11.5px;
     max-width: 160px;
   }
   .clothing-hero .button {
-    font-size: 8px;
+    font-size: 11px;
     padding: 10px 9px;
     gap: 4px;
     white-space: nowrap;
@@ -559,12 +559,12 @@
     width: 13px;
   }
   .clothing-hero .small-text {
-    font-size: 7px;
+    font-size: 11px;
     max-width: 160px;
     line-height: 1.8;
   }
   .clothing-hero-label {
-    font-size: 4px;
+    font-size: 11px;
     right: 9px;
     bottom: 13px;
   }
@@ -579,7 +579,7 @@
     font-size: 25px;
   }
   .quick-grid p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .outfit-grid {
     grid-template-columns: 1fr;
@@ -611,7 +611,7 @@
     margin-bottom: 20px;
   }
   .tryon-card .eyebrow {
-    font-size: 6px;
+    font-size: 11px;
     letter-spacing: 1px;
   }
   .tryon-card h3 {
@@ -619,10 +619,10 @@
     margin: 12px 0;
   }
   .tryon-card p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .tryon-card .button {
-    font-size: 9px;
+    font-size: 11px;
     padding: 10px;
   }
   .item-picker {
@@ -632,7 +632,7 @@
     height: 110px;
   }
   .item-picker span {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .clothing-dark-casual .page-header h1 {
     font-size: 37px;
@@ -645,7 +645,7 @@
     gap: 5px;
   }
   .clothing-dark-casual .style-switcher strong {
-    font-size: 8px;
+    font-size: 11px;
   }
 }
 .clothing-page .product-card,

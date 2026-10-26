@@ -304,3 +304,62 @@ test("the share sheet opens inside the tap, so Safari allows it", async ({
     )
     .toBe(true);
 });
+
+test("no visible text is set below a readable size", async ({ page }) => {
+  test.setTimeout(120000);
+  await open(page, "/");
+  const routes = [
+    "/",
+    "/categories",
+    "/topics/skincare",
+    "/topics/face",
+    "/topics/face/guide",
+    "/topics/clothing",
+    "/topics/gym",
+    "/topics/nutrition",
+    "/plan",
+    "/plans",
+    "/profile",
+    "/messages",
+    "/messages?to=mira",
+    "/coach",
+    "/settings",
+    "/about",
+  ];
+  const offenders: string[] = [];
+  for (const route of routes) {
+    await go(page, route);
+    await page.waitForTimeout(150);
+    offenders.push(
+      ...(await page.evaluate((route) => {
+        const out: string[] = [];
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+        );
+        while (walker.nextNode()) {
+          const node = walker.currentNode as Text;
+          const text = node.textContent?.trim();
+          const el = node.parentElement;
+          if (!text || !el || el.closest("[aria-hidden='true']")) continue;
+          const style = getComputedStyle(el);
+          const box = el.getBoundingClientRect();
+          if (
+            style.visibility === "hidden" ||
+            style.display === "none" ||
+            box.width === 0 ||
+            box.height === 0 ||
+            el.closest(".sr-only, .visually-hidden, option")
+          )
+            continue;
+          const size = parseFloat(style.fontSize);
+          const floor = el.closest("p") && text.length > 40 ? 13 : 11;
+          if (size < floor)
+            out.push(`${route} ${size}px "${text.slice(0, 30)}"`);
+        }
+        return out;
+      }, route)),
+    );
+  }
+  expect([...new Set(offenders)]).toEqual([]);
+});

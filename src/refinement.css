@@ -28,7 +28,7 @@ body {
   gap: 24px;
 }
 .brand-note {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   color: var(--on-dark-muted);
   max-width: 180px;
@@ -44,7 +44,7 @@ body {
 }
 .brand-bar .wordmark > span {
   color: var(--on-dark-muted);
-  font-size: 7px;
+  font-size: 11px;
   letter-spacing: 2.8px;
   margin-top: 10px;
 }
@@ -118,7 +118,7 @@ main {
   margin-bottom: 13px;
 }
 .category-strip-heading .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.8px;
   color: var(--forest-text);
 }
@@ -139,7 +139,7 @@ main {
   gap: 9px;
   color: var(--forest-text);
   text-align: center;
-  font-size: 10px;
+  font-size: 11.5px;
   line-height: 1.3;
 }
 .category-rail-image {
@@ -166,7 +166,7 @@ main {
 .category-strip-credit {
   display: block;
   margin-top: 12px;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--muted);
   text-align: right;
 }
@@ -185,7 +185,7 @@ main {
 }
 .feed-intro .eyebrow {
   color: var(--on-dark-muted);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 2px;
 }
 .feed-intro h1 {
@@ -322,7 +322,7 @@ main {
   pointer-events: auto;
 }
 .post-caption > .eyebrow {
-  font-size: 8px;
+  font-size: 11px;
   color: var(--on-dark-muted);
   letter-spacing: 1.7px;
   margin-bottom: 9px;
@@ -342,7 +342,7 @@ main {
 }
 .post-caption .caption-more {
   color: var(--champagne-soft);
-  font-size: 10px;
+  font-size: 11.5px;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -390,7 +390,7 @@ main {
   z-index: 3;
   background: color-mix(in srgb, var(--cream) 96%, transparent);
   color: var(--forest-text);
-  font-size: 8px;
+  font-size: 11px;
 }
 .post-body {
   padding: 14px 20px 18px;
@@ -425,7 +425,7 @@ main {
   color: var(--muted);
 }
 .post-body .text-link {
-  font-size: 10px;
+  font-size: 11.5px;
 }
 .category-intro {
   margin: 0 0 28px;
@@ -503,7 +503,7 @@ main {
     padding-inline: 24px;
   }
   .brand-note {
-    font-size: 7px;
+    font-size: 11px;
     max-width: 140px;
   }
   .category-strip {
@@ -551,7 +551,7 @@ main {
     text-align: left;
   }
   .brand-bar .wordmark > span {
-    font-size: 5px;
+    font-size: 11px;
     letter-spacing: 2px;
     margin-top: 6px;
   }
@@ -572,7 +572,7 @@ main {
     display: none;
   }
   .category-strip-heading .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
     letter-spacing: 1.5px;
   }
   .category-rail {
@@ -584,11 +584,11 @@ main {
     height: 75px;
   }
   .category-rail > a {
-    font-size: 9px;
+    font-size: 11px;
     gap: 7px;
   }
   .category-strip-credit {
-    font-size: 6px;
+    font-size: 11px;
     margin-top: 6px;
     text-align: left;
   }
@@ -605,7 +605,7 @@ main {
     margin: 8px 0;
   }
   .feed-intro .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
   }
   .feed-intro p {
     font-size: 11px;
@@ -629,19 +629,19 @@ main {
   }
   .feed-bar-actions .button {
     padding: 9px 10px;
-    font-size: 10px;
+    font-size: 11.5px;
     min-height: 40px;
   }
   .feed-format-bar {
     padding-top: 12px;
   }
   .feed-format-bar .feed-format-tabs > button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 7px 20px;
     min-height: 36px;
   }
   .feed-disclosure {
-    font-size: 8px;
+    font-size: 11px;
     margin-top: 10px;
   }
   .feed-grid,
@@ -661,10 +661,10 @@ main {
     font-size: 11px;
   }
   .author-link small {
-    font-size: 8px;
+    font-size: 11px;
   }
   .post-author .button {
-    font-size: 10px;
+    font-size: 11.5px;
     padding: 7px 10px;
   }
   .post-caption {
@@ -679,7 +679,7 @@ main {
     line-height: 1.65;
   }
   .post-caption > .eyebrow {
-    font-size: 7px;
+    font-size: 11px;
     margin-bottom: 8px;
   }
   .post-body {
@@ -732,7 +732,7 @@ main {
     min-width: 0;
     width: 20%;
     color: var(--on-dark-muted);
-    font-size: 8px;
+    font-size: 11px;
     gap: 5px;
   }
   .mobile-nav > a.active {
@@ -744,7 +744,7 @@ main {
   .footer {
     padding: 25px 18px;
     gap: 14px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .page-header h1 {
     font-size: 39px;
@@ -767,7 +767,7 @@ main {
     font-size: 25px;
   }
   .post-caption p {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .post-sound {
     padding-inline: 9px;
@@ -824,7 +824,7 @@ main {
   outline-offset: -4px;
 }
 .slide-controls > [role="status"] {
-  font-size: 10px;
+  font-size: 11.5px;
 }
 @media (max-width: 700px) {
   .feed-format-note {
@@ -841,7 +841,7 @@ main {
   }
   .category-swipe-hint {
     display: inline;
-    font-size: 8px;
+    font-size: 11px;
     color: var(--muted);
   }
 }
@@ -853,7 +853,7 @@ main {
     display: none;
   }
   .category-rail > a {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   .profile-menu > summary {
     display: grid;

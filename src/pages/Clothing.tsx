@@ -73,7 +73,6 @@ export default function ClothingPage() {
       data-testid="clothing-section"
     >
       <PageHeader
-        eyebrow="THE EDIT / 02"
         title="Clothing & style"
         description="A wardrobe with intention. A style that is entirely your own."
         action={
@@ -122,9 +121,6 @@ export default function ClothingPage() {
         <>
           <section className="clothing-hero">
             <div>
-              <div className="eyebrow">
-                THE {theme.label.toUpperCase()} EDIT
-              </div>
               <h2>{theme.hero}</h2>
               <p>{theme.sub}</p>
               <Button variant="theme" onClick={() => setView("outfits")}>
@@ -331,7 +327,6 @@ export default function ClothingPage() {
             </article>
             <article className="tryon-card">
               <Shirt size={80} />
-              <span className="eyebrow">A DIFFERENT PERSPECTIVE</span>
               <h3>Imagine the combination.</h3>
               <p>
                 A separate AI try-on placeholder. It never counts as a real worn

@@ -8,7 +8,6 @@ export default function CategoriesPage() {
   return (
     <div className="categories-page">
       <header className="categories-header">
-        <span className="eyebrow">{topics.length} categories</span>
         <h1>Categories</h1>
         <p>
           Routines, tools and a beginner’s guide for every part of your look.

@@ -35,22 +35,23 @@ export function Button({
     </button>
   );
 }
+/** A page title; `meta` is factual context (a date), set under the title. */
 export function PageHeader({
-  eyebrow,
   title,
+  meta,
   description,
   action,
 }: {
-  eyebrow: string;
   title: string;
+  meta?: string;
   description?: string;
   action?: ReactNode;
 }) {
   return (
     <header className="page-header">
       <div>
-        <div className="eyebrow">{eyebrow}</div>
         <h1>{title}</h1>
+        {meta && <p className="page-meta">{meta}</p>}
         {description && <p>{description}</p>}
       </div>
       {action}

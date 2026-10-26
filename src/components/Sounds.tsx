@@ -61,7 +61,6 @@ export function SoundPicker({
       {open && (
         <div className="sound-library">
           <div className="sound-library-intro">
-            <span className="eyebrow">THE CHARETT SOUND EDIT</span>
             <p>
               Three original instrumental loops. Preview a mood, then make it
               yours.
