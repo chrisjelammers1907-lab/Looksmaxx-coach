@@ -27,6 +27,8 @@ export function ItemBreakdown({ items }: { items: Item[] }) {
       {items.map((i) => (
         <div className="breakdown-row" key={i.id}>
           <img
+            loading="lazy"
+            decoding="async"
             src={
               i.image.startsWith("data:") ? i.image : asset(i.image || "shirt")
             }
@@ -120,9 +122,10 @@ export default function Items({
             <article className="product-card" key={i.id}>
               <div className="product-image">
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={i.image.startsWith("data:") ? i.image : asset(i.image)}
                   alt={`${i.name} — ${i.image.startsWith("data:") ? "private upload" : "editorial reference"}`}
-                  loading="lazy"
                 />
                 {i.image.startsWith("data:") && (
                   <span className="image-tag">Private photo</span>

@@ -205,6 +205,8 @@ export default function ClothingPage() {
                     >
                       {o.wornPhoto ? (
                         <img
+                          loading="lazy"
+                          decoding="async"
                           src={o.wornPhoto}
                           alt="Private real worn-outfit photo"
                         />
@@ -213,6 +215,8 @@ export default function ClothingPage() {
                           .slice(0, 3)
                           .map((i) => (
                             <img
+                              loading="lazy"
+                              decoding="async"
                               key={i.id}
                               src={
                                 i.image.startsWith("data:")
@@ -307,6 +311,8 @@ export default function ClothingPage() {
           <div className="inspiration-grid">
             <article className="inspiration-card">
               <img
+                loading="lazy"
+                decoding="async"
                 src={asset(`photo-style-${state.style}`)}
                 alt={`${theme.label} outfit`}
               />

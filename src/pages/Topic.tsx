@@ -266,7 +266,12 @@ function TopicContent() {
                 <div className="inspiration-grid">
                   {references.map((ref) => (
                     <article className="inspiration-card" key={ref.id}>
-                      <img src={asset(ref.image)} alt={ref.text} />
+                      <img
+                        loading="lazy"
+                        decoding="async"
+                        src={asset(ref.image)}
+                        alt={ref.text}
+                      />
                       <div>
                         <h3>{ref.id}</h3>
                         <p>{ref.text}</p>

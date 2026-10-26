@@ -343,6 +343,8 @@ export default function MessagesPage() {
                         {m.sticker && <Sticker id={m.sticker} />}
                         {m.photo && (
                           <img
+                            loading="lazy"
+                            decoding="async"
                             className="message-photo"
                             src={m.photo}
                             alt="Photo you sent · stays in this tab"
@@ -380,6 +382,8 @@ export default function MessagesPage() {
                     {card && <LinkedCard card={card} />}
                     {photo && (
                       <img
+                        loading="lazy"
+                        decoding="async"
                         className="attachment-photo"
                         src={photo}
                         alt="Photo ready to send"

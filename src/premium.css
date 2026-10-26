@@ -7149,7 +7149,8 @@ main p {
     }
     .about-statement .word {
       display: inline-block;
-      opacity: 0.5;
+      /* Unlit words, the gold one too, keep 3:1 for large text. */
+      opacity: 0.66;
       transform: translateY(0.22em);
       animation: about-word linear both;
       animation-timeline: view();
@@ -7207,4 +7208,7 @@ main p {
   to {
     clip-path: inset(0 0 0 0);
   }
+}
+.page-loading {
+  min-height: 60vh;
 }

@@ -22,7 +22,7 @@ export function SponsoredPost({ ad }: { ad: Ad }) {
         </span>
       </div>
       <div className="post-media sponsored-media">
-        <img src={asset(ad.image)} alt="" />
+        <img loading="lazy" decoding="async" src={asset(ad.image)} alt="" />
       </div>
       <button
         type="button"

@@ -10,7 +10,7 @@ import {
   BookOpen,
   Settings,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { useDemo } from "../lib/store";
 const nav = [
   { to: "/", label: "Home", icon: Home },
@@ -94,7 +94,12 @@ export default function Layout() {
         </header>
         <div className="app-content">
           <main id="main" tabIndex={-1}>
-            <Outlet />
+            {/* Pages load on first visit; the frame stays put meanwhile. */}
+            <Suspense
+              fallback={<div className="page-loading" aria-busy="true" />}
+            >
+              <Outlet />
+            </Suspense>
           </main>
           <footer className="footer">
             <span className="footer-mark">CHARETT</span>

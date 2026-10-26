@@ -221,6 +221,8 @@ export function PostMedia({
           </video>
         ) : photo ? (
           <img
+            loading="lazy"
+            decoding="async"
             src={photo}
             width={1080}
             height={media?.height || (isReel ? 1920 : 1350)}

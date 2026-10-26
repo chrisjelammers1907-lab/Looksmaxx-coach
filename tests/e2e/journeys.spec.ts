@@ -66,17 +66,20 @@ test("all eight sections load without overflow or missing assets", async ({
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    const broken = await page
-      .locator("img")
-      .evaluateAll(
-        (imgs) =>
-          imgs.filter(
-            (i) =>
-              !(i as HTMLImageElement).complete ||
-              (i as HTMLImageElement).naturalWidth === 0,
-          ).length,
-      );
-    expect(broken).toBe(0);
+    // Lazy images below the fold have not loaded yet, so check that every
+    // file exists and that nothing fell back to the missing-photo tint.
+    const broken = await page.locator("img").evaluateAll(async (imgs) => {
+      const missing: string[] = [];
+      for (const i of imgs as HTMLImageElement[]) {
+        if (i.dataset.missing) missing.push(i.src);
+        else if (!i.src.startsWith("data:")) {
+          const res = await fetch(i.src, { method: "HEAD" });
+          if (!res.ok) missing.push(i.src);
+        }
+      }
+      return missing;
+    });
+    expect(broken).toEqual([]);
   }
 });
 test("clothing theme covers tabs, persists and stays section-scoped", async ({

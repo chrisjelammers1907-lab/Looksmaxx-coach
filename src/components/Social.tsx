@@ -209,7 +209,7 @@ export function LinkedCard({
     );
   return (
     <Link className="linked-card" to={`/post/${post.id}`}>
-      <img src={asset(post.image)} alt="" />
+      <img loading="lazy" decoding="async" src={asset(post.image)} alt="" />
       <div>
         <span>{topicName[post.topic] || "Community"}</span>
         <strong>{post.title}</strong>
@@ -285,6 +285,8 @@ function PostDetails({ post, onReport }: { post: Post; onReport: () => void }) {
             <span className="shop-thumbs" aria-hidden="true">
               {post.items.slice(0, 3).map((item) => (
                 <img
+                  loading="lazy"
+                  decoding="async"
                   key={item.id}
                   src={
                     item.image.startsWith("data:")
@@ -708,6 +710,8 @@ export function PostCard({
             <span className="shop-thumbs" aria-hidden="true">
               {post.items.slice(0, 3).map((item) => (
                 <img
+                  loading="lazy"
+                  decoding="async"
                   key={item.id}
                   src={
                     item.image.startsWith("data:")
