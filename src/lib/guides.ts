@@ -505,7 +505,7 @@ export const guides: Record<TopicId, Guide> = {
       "Rating your face with apps",
       "Anything sold as a shortcut to a new face",
     ],
-    remember: `Bone changes are never a home project. ${"Hormones or medication only through a doctor."}`,
+    remember: `Bone changes are never a home project. ${doctorNote}`,
   },
   colouring: {
     title: "Find the colours that suit you",

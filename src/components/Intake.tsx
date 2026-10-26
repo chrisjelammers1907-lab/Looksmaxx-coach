@@ -36,8 +36,11 @@ export default function Intake() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (step === 1) setStep(2);
-              else finish(true);
+              if (step === 1) {
+                // The age confirmation counts as soon as step 1 is done.
+                update((s) => ({ ...s, adult: true }));
+                setStep(2);
+              } else finish(true);
             }}
           >
             {step === 1 ? (

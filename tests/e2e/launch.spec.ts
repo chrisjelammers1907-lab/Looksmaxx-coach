@@ -363,3 +363,52 @@ test("no visible text is set below a readable size", async ({ page }) => {
   }
   expect([...new Set(offenders)]).toEqual([]);
 });
+
+test("heading levels never skip on the feed and the profile", async ({
+  page,
+}) => {
+  await open(page, "/");
+  for (const route of ["/", "/profile"]) {
+    await go(page, route);
+    const levels = await page.evaluate(() =>
+      [...document.querySelectorAll("main h1, main h2, main h3, main h4")].map(
+        (h) => Number(h.tagName[1]),
+      ),
+    );
+    levels.forEach((level, i) => {
+      if (i > 0)
+        expect(level - levels[i - 1], `${route} heading ${i}`).toBeLessThan(2);
+    });
+  }
+});
+
+test("a missing photo falls back to a quiet tint, never a broken image", async ({
+  page,
+}) => {
+  await page.route("**/assets/photo-topic*", (route) => route.abort());
+  await page.route("**/assets/photo-skincare.jpg", (route) =>
+    route.fulfill({ status: 404, body: "" }),
+  );
+  await open(page, "/topics/skincare");
+  const img = page.locator(".topic-banner img");
+  await expect(img).toHaveAttribute("data-missing", "true");
+  await expect
+    .poll(() => img.evaluate((n: HTMLImageElement) => n.naturalWidth))
+    .toBeGreaterThan(0);
+});
+
+test("18+ stays confirmed when the second intake step is skipped", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("What should we call you?").fill("Sam");
+  await dialog.getByRole("checkbox", { name: "I’m 18 or older" }).check();
+  await dialog.getByRole("button", { name: "Continue" }).click();
+  await dialog.getByRole("button", { name: "Skip for now" }).click();
+  expect(
+    await page.evaluate(
+      () => JSON.parse(localStorage.getItem("charett-demo-v1")!).adult,
+    ),
+  ).toBe(true);
+});

@@ -27,18 +27,33 @@ const loadImage = (src: string) =>
     img.src = src;
   });
 
-/** Splits text into lines that fit the width, at most `max` lines. */
-function wrap(
-  ctx: CanvasRenderingContext2D,
+/**
+ * Splits text into lines that fit the width, at most `max` lines. A word wider
+ * than the card is broken by character; cut-off text ends in an ellipsis.
+ */
+export function wrapLines(
+  ctx: { measureText(text: string): { width: number } },
   text: string,
   width: number,
   max: number,
 ) {
+  const fits = (t: string) => ctx.measureText(t).width <= width;
+  const words: string[] = [];
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    let rest = word;
+    while (!fits(rest)) {
+      let cut = rest.length - 1;
+      while (cut > 1 && !fits(rest.slice(0, cut))) cut--;
+      words.push(rest.slice(0, cut));
+      rest = rest.slice(cut);
+    }
+    words.push(rest);
+  }
   const lines: string[] = [];
   let line = "";
-  for (const word of text.split(/\s+/).filter(Boolean)) {
+  for (const word of words) {
     const next = line ? `${line} ${word}` : word;
-    if (ctx.measureText(next).width > width && line) {
+    if (!fits(next) && line) {
       lines.push(line);
       line = word;
     } else line = next;
@@ -46,12 +61,20 @@ function wrap(
   if (line) lines.push(line);
   if (lines.length > max) {
     lines.length = max;
-    lines[max - 1] = `${lines[max - 1].replace(/\s+\S*$/, "")}…`;
+    let last = lines[max - 1];
+    while (last && !fits(`${last}…`)) last = last.slice(0, -1);
+    lines[max - 1] = `${last.trimEnd()}…`;
   }
   return lines;
 }
 
 export async function renderShareCard(opts: ShareCardOptions): Promise<Blob> {
+  // Canvas text uses whatever face is ready, so load the brand faces first.
+  await Promise.all(
+    [`500 96px ${SERIF}`, `400 36px ${SANS}`, `600 30px ${SANS}`].map((f) =>
+      document.fonts?.load(f).catch(() => undefined),
+    ),
+  );
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
@@ -94,14 +117,14 @@ export async function renderShareCard(opts: ShareCardOptions): Promise<Blob> {
   ctx.fillStyle = IVORY;
   ctx.font = `500 96px ${SERIF}`;
   let y = photoH + 180;
-  const titleLines = wrap(ctx, opts.title, W - 192, 3);
+  const titleLines = wrapLines(ctx, opts.title, W - 192, 3);
   for (const line of titleLines) {
     ctx.fillText(line, 96, y);
     y += 104;
   }
   ctx.globalAlpha = 0.82;
   ctx.font = `400 36px ${SANS}`;
-  for (const line of wrap(
+  for (const line of wrapLines(
     ctx,
     opts.subtitle,
     W - 192,

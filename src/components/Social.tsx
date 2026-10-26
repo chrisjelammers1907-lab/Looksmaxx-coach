@@ -91,6 +91,8 @@ export function ShareDialog({
                 card={{
                   title: post.title,
                   subtitle: post.body,
+                  // post.image is always an editorial photo; private
+                  // uploads live in post.media and never reach a card.
                   image: post.image ? asset(post.image) : undefined,
                   kind: post.topic === "clothing" ? "outfit" : "post",
                 }}

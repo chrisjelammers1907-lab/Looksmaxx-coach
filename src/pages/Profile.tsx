@@ -302,6 +302,9 @@ function ProfileContent() {
           </button>
         ))}
       </HScroll>
+      <h2 className="visually-hidden">
+        {tabs.find((t) => t.id === tab)?.label}
+      </h2>
       {tab === "posts" && (
         <ProfileGrid
           posts={published}

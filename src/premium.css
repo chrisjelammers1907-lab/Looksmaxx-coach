@@ -6976,3 +6976,19 @@ main p {
     font-size: 15px;
   }
 }
+/* Products a routine uses: a flat list under a hairline, not boxed pills. */
+.routine-products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.routine-products .routine-product {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}

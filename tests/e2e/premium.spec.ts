@@ -337,6 +337,8 @@ test("chats send stickers and photos, the coach accepts files", async ({
 });
 
 test("each clothing style gives the page its own look", async ({ page }) => {
+  // The mood fades in; compare the settled colours, not a frame mid-fade.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await open(page, "/topics/clothing");
   const section = page.getByTestId("clothing-section");
   const backgrounds = new Set<string>();

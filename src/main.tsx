@@ -15,6 +15,7 @@ import "./editorial.css";
 import "./refinement.css";
 import "./premium.css";
 import { DemoProvider } from "./lib/store";
+import { installImageFallback } from "./lib/imageFallback";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Categories from "./pages/Categories";
@@ -29,6 +30,7 @@ import Coach from "./pages/Coach";
 import Plan from "./pages/Plan";
 import Settings from "./pages/Settings";
 import Plans from "./pages/Plans";
+installImageFallback();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

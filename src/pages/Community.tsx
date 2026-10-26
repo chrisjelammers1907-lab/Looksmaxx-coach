@@ -889,6 +889,9 @@ function CommunityContent() {
           {visible.length} demo {visible.length === 1 ? "post" : "posts"}
         </div>
       )}
+      <h2 className="visually-hidden">
+        {format === "reels" ? "Reels" : "Photos"}
+      </h2>
       {visible.length ? (
         <div
           className={`community-grid feed-grid ${format}-feed`}

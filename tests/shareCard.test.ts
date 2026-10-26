@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   prShareCard,
+  wrapLines,
   shareFileName,
   shareOrDownload,
 } from "../src/lib/shareCard";
@@ -71,5 +72,19 @@ describe("PR share card", () => {
       kind: "pr",
     });
     expect(prShareCard("Squat", 100, 105, "lb").subtitle).toMatch(/ lb\./);
+  });
+});
+
+describe("share card text", () => {
+  const ctx = { measureText: (t: string) => ({ width: t.length * 10 }) };
+  it("breaks a word wider than the card", () => {
+    const lines = wrapLines(ctx, "Supercalifragilistic", 80, 5);
+    expect(lines.every((l) => l.length <= 8)).toBe(true);
+    expect(lines.join("")).toBe("Supercalifragilistic");
+  });
+  it("ends a cut-off text with an ellipsis", () => {
+    const lines = wrapLines(ctx, "one two three four five six", 80, 2);
+    expect(lines).toHaveLength(2);
+    expect(lines[1].endsWith("…")).toBe(true);
   });
 });
