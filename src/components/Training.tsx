@@ -131,6 +131,7 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
                     <Field
                       label={`Reps, exercise ${index + 1} set ${setIndex + 1}`}
                       type="number"
+                      inputMode="decimal"
                       min="1"
                       max="200"
                       required
@@ -149,6 +150,7 @@ function DayEditor({ day, onClose }: { day: Weekday; onClose: () => void }) {
                     <Field
                       label={`${Unit}, exercise ${index + 1} set ${setIndex + 1}`}
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       max="2000"
                       step="0.5"
@@ -331,6 +333,7 @@ function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
                   <label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       max="200"
                       aria-label={`${exercise.name} set ${i + 1} reps`}
@@ -351,6 +354,7 @@ function TodayCard({ onPlan }: { onPlan: (day: Weekday) => void }) {
                   <label>
                     <input
                       type="number"
+                      inputMode="decimal"
                       min="0"
                       max="1000"
                       step="0.5"

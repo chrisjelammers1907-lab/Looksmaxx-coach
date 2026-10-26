@@ -457,3 +457,97 @@ test("about stays still and fully legible with reduced motion", async ({
     .evaluateAll((ws) => ws.map((w) => getComputedStyle(w).opacity));
   expect(new Set(opacities)).toEqual(new Set(["1"]));
 });
+
+test("a held story resumes where it paused, not from the start", async ({
+  page,
+}) => {
+  await open(page);
+  await page
+    .getByRole("region", { name: "Stories" })
+    .getByRole("button", { name: "View story from mira.edits" })
+    .click();
+  const viewer = page.getByRole("dialog", { name: "Story" });
+  const status = viewer.getByRole("status");
+  await expect(status).toContainText("Story 1 of 2");
+  await page.waitForTimeout(3000);
+  const box = (await viewer.locator(".story-viewer").boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(400);
+  await page.mouse.up();
+  // About 2 seconds were left; a full restart would need 5.
+  await expect(status).toContainText("Story 2 of 2", { timeout: 3200 });
+});
+
+test("form fields are 16px on touch screens, so iOS does not zoom", async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== "mobile", "touch screens only");
+  await open(page, "/");
+  await page
+    .getByRole("button", { name: "Create a post", exact: true })
+    .click();
+  const small = await page
+    .locator(
+      "input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), textarea, select",
+    )
+    .evaluateAll((els) =>
+      els
+        .filter((e) => (e as HTMLElement).offsetParent)
+        .map((e) => parseFloat(getComputedStyle(e).fontSize))
+        .filter((size) => size < 16),
+    );
+  expect(small).toEqual([]);
+});
+
+test("deleting a routine asks once more before it is gone", async ({
+  page,
+}) => {
+  await open(page, "/topics/skincare");
+  const card = page
+    .locator(".routine-card")
+    .filter({ hasText: "A fresh start" });
+  await card.getByRole("button", { name: "Delete A fresh start" }).click();
+  await expect(card).toHaveCount(1);
+  await card
+    .getByRole("button", { name: "Confirm: delete A fresh start" })
+    .click();
+  await expect(card).toHaveCount(0);
+});
+
+test("my plan counts clearly and keeps the streak flame small", async ({
+  page,
+}) => {
+  await open(page, "/plan");
+  const progress = page.locator(".plan-progress");
+  await expect(progress.locator("strong")).toHaveText(/of \d+ tasks done/);
+  await expect(progress).toContainText(/routines? on today’s plan/);
+  const flame = progress.locator(".streak svg");
+  if (await flame.count()) {
+    const box = (await flame.boundingBox())!;
+    expect(box.width).toBeLessThanOrEqual(16);
+  }
+});
+
+test("chat screens end at the composer, without the site footer", async ({
+  page,
+}) => {
+  await open(page, "/coach");
+  await expect(page.locator("footer.footer")).toBeHidden();
+  await go(page, "/messages?to=mira");
+  await expect(page.locator("footer.footer")).toBeHidden();
+  await go(page, "/categories");
+  await expect(page.locator("footer.footer")).toBeVisible();
+});
+
+test("nutrition actions fit their buttons", async ({ page }) => {
+  await open(page, "/topics/nutrition");
+  const buttons = page.locator(".nutrition-actions .button");
+  await expect(buttons.first()).toBeVisible();
+  const clipped = await buttons.evaluateAll((els) =>
+    els
+      .filter((e) => e.scrollWidth > e.clientWidth + 1)
+      .map((e) => e.textContent),
+  );
+  expect(clipped).toEqual([]);
+});

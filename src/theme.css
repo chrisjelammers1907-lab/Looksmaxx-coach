@@ -361,11 +361,15 @@
 .clothing-dark-casual .button.secondary {
   border-color: #7c6b5a;
 }
-.clothing-dark-casual .button.secondary:hover {
-  background: #514339;
+@media (hover: hover) and (pointer: fine) {
+  .clothing-dark-casual .button.secondary:hover {
+    background: #514339;
+  }
 }
-.clothing-dark-casual .icon-button:hover {
-  background: #514339;
+@media (hover: hover) and (pointer: fine) {
+  .clothing-dark-casual .icon-button:hover {
+    background: #514339;
+  }
 }
 .clothing-dark-casual .notice {
   background: #39382b;

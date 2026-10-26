@@ -75,6 +75,7 @@ function ExtraFields({
                   key={n.key}
                   label={`${n.label} (${n.unit})`}
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   step="any"
                   value={values[n.key] ?? ""}
@@ -492,6 +493,7 @@ export default function Nutrition() {
           <Field
             label={`Weight (${unit})`}
             type="number"
+            inputMode="decimal"
             min="20"
             max={unit === "lb" ? 1000 : 450}
             step="0.1"
@@ -602,6 +604,7 @@ export default function Nutrition() {
               <Field
                 label="Amount (g, optional)"
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max="5000"
                 step="any"
@@ -630,6 +633,7 @@ export default function Nutrition() {
                   key={m.key}
                   label={`${m.label} (${m.unit})`}
                   type="number"
+                  inputMode="decimal"
                   min="0"
                   max={m.key === "calories" ? 20000 : 2000}
                   step="any"
@@ -671,6 +675,7 @@ export default function Nutrition() {
                   key={m.key}
                   label={`Daily ${m.label.toLowerCase()} (${m.unit})`}
                   type="number"
+                  inputMode="decimal"
                   min={m.key === "calories" ? 1 : 0}
                   max={m.key === "calories" ? 15000 : 2000}
                   step="any"
@@ -722,6 +727,7 @@ export default function Nutrition() {
               <Field
                 label="Age"
                 type="number"
+                inputMode="decimal"
                 min="13"
                 max="100"
                 value={calc.age}
@@ -733,6 +739,7 @@ export default function Nutrition() {
                 <Field
                   label="Height (cm)"
                   type="number"
+                  inputMode="decimal"
                   min="120"
                   max="230"
                   value={Math.round(calc.heightCm)}
@@ -745,6 +752,7 @@ export default function Nutrition() {
                   <Field
                     label="Height (ft)"
                     type="number"
+                    inputMode="decimal"
                     min="4"
                     max="7"
                     value={height.feet}
@@ -761,6 +769,7 @@ export default function Nutrition() {
                   <Field
                     label="Height (in)"
                     type="number"
+                    inputMode="decimal"
                     min="0"
                     max="11"
                     value={height.inches}
@@ -779,6 +788,7 @@ export default function Nutrition() {
               <Field
                 label={`Weight (${unit})`}
                 type="number"
+                inputMode="decimal"
                 min="30"
                 max={unit === "lb" ? 1000 : 450}
                 step="0.1"

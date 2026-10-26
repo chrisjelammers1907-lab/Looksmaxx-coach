@@ -101,7 +101,10 @@ export default function Layout() {
               <Outlet />
             </Suspense>
           </main>
-          <footer className="footer">
+          <footer
+            className="footer"
+            hidden={/^\/(coach|messages)/.test(location.pathname)}
+          >
             <span className="footer-mark">CHARETT</span>
             <Link to="/about">About us & privacy</Link>
           </footer>

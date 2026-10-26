@@ -70,26 +70,32 @@ h4 {
     color 0.2s var(--ease),
     transform 0.2s var(--ease);
 }
-.button:hover:not(:disabled) {
-  background: var(--forest-deep);
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .button:hover:not(:disabled) {
+    background: var(--forest-deep);
+    transform: none;
+  }
 }
 .button.secondary {
   background: transparent;
   color: var(--forest-text);
   border-color: var(--line-strong);
 }
-.button.secondary:hover:not(:disabled) {
-  background: var(--cream);
-  border-color: var(--stone);
+@media (hover: hover) and (pointer: fine) {
+  .button.secondary:hover:not(:disabled) {
+    background: var(--cream);
+    border-color: var(--stone);
+  }
 }
 .button.ghost {
   background: transparent;
   border-color: transparent;
   color: var(--forest-text);
 }
-.button.ghost:hover:not(:disabled) {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .button.ghost:hover:not(:disabled) {
+    background: var(--cream);
+  }
 }
 .button.small {
   min-height: 36px;
@@ -107,8 +113,10 @@ h4 {
   border-radius: 50%;
   transition: background 0.2s var(--ease);
 }
-.icon-button:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .icon-button:hover {
+    background: var(--cream);
+  }
 }
 .field {
   font-size: 13px;
@@ -212,8 +220,10 @@ h4 {
   font-size: 13px;
   letter-spacing: 0.02em;
 }
-.brand-bar .topbar-about:hover {
-  color: var(--on-dark);
+@media (hover: hover) and (pointer: fine) {
+  .brand-bar .topbar-about:hover {
+    color: var(--on-dark);
+  }
 }
 .brand-bar .avatar {
   background: transparent;
@@ -231,9 +241,11 @@ h4 {
   padding: 16px 2px;
   transition: color 0.2s var(--ease);
 }
-.site-header .primary-nav > a:hover {
-  color: var(--on-dark);
-  background: transparent;
+@media (hover: hover) and (pointer: fine) {
+  .site-header .primary-nav > a:hover {
+    color: var(--on-dark);
+    background: transparent;
+  }
 }
 .site-header .primary-nav > a.active {
   color: var(--on-dark);
@@ -285,9 +297,11 @@ h4 {
   color: var(--forest-text);
   font-weight: 500;
 }
-.category-see-all:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .category-see-all:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 .category-rail {
   gap: 16px;
@@ -347,8 +361,10 @@ h4 {
   color: var(--muted);
   transition: color 0.2s var(--ease);
 }
-.feed-tabs .tabs > button:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .feed-tabs .tabs > button:hover {
+    color: var(--ink);
+  }
 }
 .feed-tabs .tabs > button.active {
   color: var(--ink);
@@ -387,8 +403,10 @@ h4 {
   font-size: 13.5px;
   font-weight: 500;
 }
-.feed-header-actions .create-button:hover {
-  background: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .feed-header-actions .create-button:hover {
+    background: var(--forest-deep);
+  }
 }
 
 /* Filter chips */
@@ -463,8 +481,10 @@ h4 {
     color 0.2s var(--ease),
     border-color 0.2s var(--ease);
 }
-.chip:hover {
-  border-color: var(--stone);
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: var(--stone);
+  }
 }
 .chip[aria-pressed="true"] {
   background: var(--forest-ink);
@@ -562,8 +582,10 @@ h4 {
   border-color: var(--cream);
   color: var(--ink);
 }
-.button.follow.following:hover:not(:disabled) {
-  background: var(--linen);
+@media (hover: hover) and (pointer: fine) {
+  .button.follow.following:hover:not(:disabled) {
+    background: var(--linen);
+  }
 }
 .post-card .post-media-wrap {
   position: relative;
@@ -677,7 +699,7 @@ h4 {
   transition: transform 0.15s var(--ease);
 }
 .post-card .post-actions > button:active {
-  transform: scale(0.88);
+  transform: scale(0.94);
 }
 .post-card .post-actions > button.liked {
   color: var(--danger);
@@ -725,10 +747,12 @@ h4 {
   color: var(--ink);
   margin: 0 0 6px;
 }
-.post-card .post-body .post-caption > a:hover h3 {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
+@media (hover: hover) and (pointer: fine) {
+  .post-card .post-body .post-caption > a:hover h3 {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+  }
 }
 .post-card .post-body .post-caption p {
   font-size: 14.5px;
@@ -768,9 +792,11 @@ h4 {
     border-color 0.2s var(--ease),
     background 0.2s var(--ease);
 }
-.shop-row:hover {
-  border-color: var(--line-strong);
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .shop-row:hover {
+    border-color: var(--line-strong);
+    background: var(--cream);
+  }
 }
 .shop-thumbs {
   display: flex;
@@ -814,8 +840,10 @@ h4 {
   color: var(--muted);
   font-size: 14px;
 }
-.comment-link:hover {
-  color: var(--ink);
+@media (hover: hover) and (pointer: fine) {
+  .comment-link:hover {
+    color: var(--ink);
+  }
 }
 .post-date {
   display: block;
@@ -987,7 +1015,7 @@ h4 {
     height: 32px;
     border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--champagne) 24%, transparent);
-    transform: translateX(-50%) scale(0.6);
+    transform: translateX(-50%) scale(0.85);
     opacity: 0;
     transition:
       transform 0.25s var(--ease),
@@ -1088,8 +1116,10 @@ h4 {
     margin-left: 4px;
     border-radius: 11px;
   }
-  .feed-header-actions .create-button:hover {
-    background: var(--cream);
+  @media (hover: hover) and (pointer: fine) {
+    .feed-header-actions .create-button:hover {
+      background: var(--cream);
+    }
   }
   .create-label {
     display: none;
@@ -1228,8 +1258,10 @@ h4 {
   color: var(--ink);
   transition: background 0.15s var(--ease);
 }
-.messages-page .conversation-preview:hover {
-  background: var(--ivory);
+@media (hover: hover) and (pointer: fine) {
+  .messages-page .conversation-preview:hover {
+    background: var(--ivory);
+  }
 }
 .messages-page .conversation-preview.selected {
   background: var(--cream);
@@ -1479,8 +1511,10 @@ h4 {
     background 0.2s var(--ease),
     opacity 0.2s var(--ease);
 }
-.send-button:hover:not(:disabled) {
-  background: var(--forest-deep);
+@media (hover: hover) and (pointer: fine) {
+  .send-button:hover:not(:disabled) {
+    background: var(--forest-deep);
+  }
 }
 .send-button:disabled {
   background: var(--line);
@@ -1516,8 +1550,10 @@ h4 {
   color: var(--forest-text);
   cursor: pointer;
 }
-.image-input.icon-only .upload:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .image-input.icon-only .upload:hover {
+    background: var(--cream);
+  }
 }
 .image-input.icon-only .upload:focus-within {
   outline: 2px solid var(--forest);
@@ -1680,9 +1716,11 @@ h4 {
     background 0.2s var(--ease),
     border-color 0.2s var(--ease);
 }
-.coach-page .prompt-chips > button:hover {
-  background: var(--cream);
-  border-color: var(--stone);
+@media (hover: hover) and (pointer: fine) {
+  .coach-page .prompt-chips > button:hover {
+    background: var(--cream);
+    border-color: var(--stone);
+  }
 }
 .coach-page .chat-message {
   display: flex;
@@ -2174,8 +2212,10 @@ h4 {
 .story-header .icon-button {
   color: var(--on-dark);
 }
-.story-header .icon-button:hover {
-  background: color-mix(in srgb, var(--on-dark) 14%, transparent);
+@media (hover: hover) and (pointer: fine) {
+  .story-header .icon-button:hover {
+    background: color-mix(in srgb, var(--on-dark) 14%, transparent);
+  }
 }
 .story-card.bg-ivory ~ .story-header,
 .story-card.bg-champagne ~ .story-header {
@@ -2203,9 +2243,13 @@ h4 {
   right: 0;
   justify-content: flex-end;
 }
-.story-nav:hover,
 .story-nav:focus-visible {
   opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .story-nav:hover {
+    opacity: 1;
+  }
 }
 .story-composer {
   display: grid;
@@ -2328,8 +2372,10 @@ h4 {
   border-radius: var(--radius);
   transition: background 0.2s var(--ease);
 }
-.category-row:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .category-row:hover {
+    background: var(--cream);
+  }
 }
 .category-icon {
   display: grid;
@@ -2360,9 +2406,11 @@ h4 {
   color: var(--stone);
   transition: transform 0.2s var(--ease);
 }
-.category-row:hover .category-chevron {
-  transform: translateX(3px);
-  color: var(--forest-text);
+@media (hover: hover) and (pointer: fine) {
+  .category-row:hover .category-chevron {
+    transform: translateX(3px);
+    color: var(--forest-text);
+  }
 }
 .category-guide {
   position: absolute;
@@ -2375,9 +2423,11 @@ h4 {
   font-weight: 500;
   color: var(--forest-text);
 }
-.category-guide:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .category-guide:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 .category-quote {
   max-width: 560px;
@@ -2666,8 +2716,10 @@ h4 {
   font-size: 13.5px;
   font-weight: 500;
 }
-.topic-links a:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .topic-links a:hover {
+    background: var(--cream);
+  }
 }
 .section-title h2 {
   font-size: clamp(26px, 2.6vw, 32px);
@@ -2875,9 +2927,11 @@ h4 {
 .profile-stats button {
   cursor: pointer;
 }
-.profile-stats button:hover span {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+@media (hover: hover) and (pointer: fine) {
+  .profile-stats button:hover span {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 .profile-stats strong {
   font-weight: 600;
@@ -2959,8 +3013,10 @@ h4 {
   object-fit: cover;
   transition: transform 0.3s var(--ease);
 }
-.profile-tile:hover img {
-  transform: scale(1.03);
+@media (hover: hover) and (pointer: fine) {
+  .profile-tile:hover img {
+    transform: scale(1.03);
+  }
 }
 .profile-tile-badges {
   position: absolute;
@@ -3046,8 +3102,10 @@ h4 {
   font-size: 15px;
   text-align: left;
 }
-.sheet-list > button:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .sheet-list > button:hover {
+    background: var(--cream);
+  }
 }
 .sheet-list > button.danger {
   color: var(--danger);
@@ -3253,9 +3311,13 @@ h4 {
   text-align: left;
   cursor: pointer;
 }
-.composer-menu-item:hover,
 .composer-menu-item:focus-within {
   background: var(--cream);
+}
+@media (hover: hover) and (pointer: fine) {
+  .composer-menu-item:hover {
+    background: var(--cream);
+  }
 }
 .composer-menu-item svg {
   color: var(--forest-text);
@@ -3371,8 +3433,10 @@ h4 {
   cursor: pointer;
   transition: background 0.2s var(--ease);
 }
-.sticker-grid > button:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .sticker-grid > button:hover {
+    background: var(--cream);
+  }
 }
 .voice-note {
   display: flex;
@@ -3437,8 +3501,10 @@ h4 {
   color: var(--forest-text);
   cursor: pointer;
 }
-.file-input:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .file-input:hover {
+    background: var(--cream);
+  }
 }
 .file-input:focus-within {
   outline: 2px solid var(--forest);
@@ -3483,8 +3549,8 @@ h4 {
   padding: 28px;
   border-radius: var(--radius-lg);
   transition:
-    background 0.4s var(--ease),
-    color 0.4s var(--ease);
+    background 250ms var(--ease),
+    color 250ms var(--ease);
 }
 .clothing-page .style-switcher > button {
   border-radius: var(--radius);
@@ -3652,9 +3718,11 @@ h4 {
     border-color 0.2s var(--ease),
     transform 0.2s var(--ease);
 }
-.day-tile:hover {
-  border-color: var(--stone);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .day-tile:hover {
+    border-color: var(--stone);
+    transform: translateY(-1px);
+  }
 }
 .day-tile.training {
   background: var(--forest);
@@ -4206,9 +4274,13 @@ h4 {
 .video-toggle.is-playing {
   opacity: 0;
 }
-.video-toggle.is-playing:focus-visible,
-.post-media:hover .video-toggle.is-playing {
+.video-toggle.is-playing:focus-visible {
   opacity: 0.85;
+}
+@media (hover: hover) and (pointer: fine) {
+  .post-media:hover .video-toggle.is-playing {
+    opacity: 0.85;
+  }
 }
 
 /* ---------- Round 3: reels (TikTok style) ---------- */
@@ -4351,7 +4423,7 @@ h4 {
   transition: transform 0.15s var(--ease);
 }
 .reel-actions > button:active {
-  transform: scale(0.88);
+  transform: scale(0.94);
 }
 .reel-actions > button span {
   font-size: 12.5px;
@@ -4659,17 +4731,10 @@ h4 {
     width: 100%;
     max-height: 86dvh;
     padding: 10px 18px 14px;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     border-radius: 24px 24px 0 0;
-    animation: sheet-up 0.3s var(--ease);
-  }
-  .modal.sheet::before {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 4px;
-    margin: 0 auto 8px;
-    border-radius: 2px;
-    background: var(--line-strong);
+    animation: sheet-up 320ms var(--ease-drawer);
+    overscroll-behavior: contain;
   }
   .comment-form {
     margin: 16px -18px -14px;
@@ -4678,8 +4743,7 @@ h4 {
 }
 @keyframes sheet-up {
   from {
-    transform: translateY(40%);
-    opacity: 0.4;
+    transform: translateY(100%);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -5032,8 +5096,10 @@ h4 {
   color: var(--ink);
   font-size: 14.5px;
 }
-.settings-nav a:hover {
-  background: var(--porcelain);
+@media (hover: hover) and (pointer: fine) {
+  .settings-nav a:hover {
+    background: var(--porcelain);
+  }
 }
 .settings-nav a svg:last-child {
   color: var(--stone);
@@ -5518,7 +5584,7 @@ h4 {
   height: 100%;
   border-radius: inherit;
   background: var(--champagne);
-  transition: width 0.4s ease;
+  transition: width 300ms var(--ease-out);
 }
 .macro-bar:first-child .macro-track span {
   background: var(--forest);
@@ -7211,4 +7277,267 @@ main p {
 }
 .page-loading {
   min-height: 60vh;
+}
+
+/* ---------- Round 6: native feel on phones ---------- */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+/* iOS zooms into any field under 16px; touch screens get 16px fields. */
+@media (pointer: coarse) {
+  :root:root
+    :is(
+      input:not(
+        [type="checkbox"],
+        [type="radio"],
+        [type="range"],
+        [type="file"]
+      ),
+      textarea,
+      select
+    ) {
+    font-size: 16px;
+  }
+}
+/* Press feedback: every tap is answered within a frame. */
+:is(
+  .button,
+  .icon-button,
+  .chip,
+  .text-button,
+  .mobile-nav > a,
+  .tabs > button,
+  .category-row,
+  .story-bubble,
+  .sheet-list > button
+) {
+  transition-property:
+    transform, background-color, border-color, color, opacity;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+:is(
+    .button,
+    .icon-button,
+    .chip,
+    .text-button,
+    .mobile-nav > a,
+    .tabs > button,
+    .story-bubble,
+    .sheet-list > button
+  ):active:not(:disabled) {
+  transform: scale(0.97);
+}
+.category-row:active {
+  transform: scale(0.99);
+}
+/* Long-press on a control should not select its label. */
+:is(button, [role="button"], .mobile-nav > a, .chip, .tabs > button) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.story-card img,
+.story-viewer img {
+  -webkit-touch-callout: none;
+}
+/* Scrolling inside a panel never drags the page behind it. */
+.modal,
+.messages-page .thread,
+.coach-page .chat-messages,
+.conversation-list,
+.post-caption.is-expanded,
+.hscroll-row {
+  overscroll-behavior: contain;
+}
+.hscroll-row {
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 16px;
+}
+.slideshow-media {
+  touch-action: pan-y;
+}
+/* The story viewer keeps its bar and close button clear of the notch. */
+.story-progress {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+}
+.story-viewer .story-header {
+  top: calc(24px + env(safe-area-inset-top, 0px));
+}
+/* Reels: the sound pill sits above the caption, not on it. */
+@media (max-width: 700px) {
+  .reels-mode .reel-meta {
+    bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+}
+/* Centred dialogs arrive instead of appearing. */
+.modal:not(.sheet) {
+  animation: modal-in 200ms var(--ease-out);
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+/* Viewport units that follow the phone's toolbars. */
+main {
+  min-height: calc(100svh - 160px);
+}
+.footer[hidden] {
+  display: none;
+}
+
+/* ---------- Round 6: details from the design review ---------- */
+/* My Plan: the ring rule must not size the streak flame inside it. */
+.plan-progress svg {
+  width: auto;
+  height: auto;
+  transform: none;
+}
+.plan-progress > svg {
+  width: 64px;
+  height: 64px;
+  transform: rotate(-90deg);
+}
+.plan-progress .streak svg {
+  width: 14px;
+  height: 14px;
+}
+/* Nutrition: the gated scan action takes the full row with its Plus tag. */
+@media (max-width: 700px) {
+  .nutrition-actions .button:has(.plus-tag) {
+    grid-column: 1 / -1;
+  }
+}
+/* Disclosure rows use a drawn chevron, never the browser triangle. */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+.plans-faq summary,
+.topic-page details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+.plans-faq summary::after,
+.topic-page details > summary::after {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 200ms var(--ease-out);
+}
+.plans-faq details[open] > summary::after,
+.topic-page details[open] > summary::after {
+  transform: rotate(225deg) translateY(-2px);
+}
+/* Dark mode: the selected chip stays visible. */
+:root[data-theme="dark"] .chip[aria-pressed="true"] {
+  background: var(--champagne);
+  border-color: var(--champagne);
+  color: #08201a;
+}
+/* Gym: related links are two clean rows, icon leading. */
+.gym-links {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 22px;
+}
+.gym-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--forest-text);
+  font-size: 14.5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.gym-links a > svg:last-child {
+  margin-left: auto;
+}
+/* Small controls get a 44px hit area without growing visually. */
+.step-number,
+.category-row .text-link,
+.card-controls .icon-button.compact {
+  position: relative;
+}
+.step-number::after,
+.card-controls .icon-button.compact::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+.danger-text {
+  color: var(--danger);
+}
+/* Quiet labels: sentence case, no wide tracking. */
+.post-date,
+.category-group > h2,
+.product-content .eyebrow,
+.piece-text small,
+.profile-details small,
+.plan-flag {
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.category-group > h2 {
+  font-size: 13px;
+  border-bottom-width: 1px;
+}
+/* Desktop measure for long reading. */
+.guide-page li > p,
+.about-page .about-transparency p {
+  max-width: 68ch;
+}
+/* About: the pin follows the bottom bar and its safe area. */
+@media (max-width: 700px) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .about-stage {
+        height: 190svh;
+      }
+      .about-stage-inner {
+        height: calc(
+          100svh - 82px - max(10px, env(safe-area-inset-bottom, 0px))
+        );
+      }
+    }
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (min-width: 701px) and (prefers-reduced-motion: no-preference) {
+    .about-stage {
+      height: 210svh;
+    }
+  }
+}
+/* The last 11.5px meta lines move up to the label floor. */
+.day-card p,
+.routine-card .routine-top .small-text {
+  font-size: 12.5px;
+}
+/* The About statement lights up word by word, along the sentence. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .about-statement {
+      view-timeline: --statement block;
+    }
+    .about-statement .word {
+      animation-timeline: --statement;
+      animation-range: cover calc(12% + var(--i) * 3%) cover
+        calc(26% + var(--i) * 3%);
+    }
+  }
 }

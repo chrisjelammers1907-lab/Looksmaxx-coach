@@ -612,6 +612,7 @@ function ProfileContent() {
               <Field
                 label="Shopping budget"
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max="100000"
                 value={draft.budget}

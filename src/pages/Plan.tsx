@@ -86,11 +86,11 @@ export default function PlanPage() {
         </svg>
         <div>
           <strong>
-            {completed} of {total} done today
+            {completed} of {total} {total === 1 ? "task" : "tasks"} done
           </strong>
           <span>
-            {routinesToday} {routinesToday === 1 ? "routine" : "routines"} for
-            today
+            {routinesToday} {routinesToday === 1 ? "routine" : "routines"} on
+            today’s plan
             {streak > 0 && (
               <>
                 {" "}

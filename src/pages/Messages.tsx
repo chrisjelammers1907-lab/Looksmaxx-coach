@@ -528,6 +528,7 @@ export default function MessagesPage() {
                     <textarea
                       aria-label="Message"
                       placeholder="Message…"
+                      enterKeyHint="send"
                       rows={1}
                       value={text}
                       maxLength={2000}

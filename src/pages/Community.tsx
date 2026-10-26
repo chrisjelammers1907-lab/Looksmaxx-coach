@@ -875,6 +875,7 @@ function CommunityContent() {
               <Field
                 label={`Max total (${state.profile.currency})`}
                 type="number"
+                inputMode="decimal"
                 min="0"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}

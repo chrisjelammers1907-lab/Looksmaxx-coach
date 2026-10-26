@@ -1,5 +1,5 @@
 import HScroll from "./HScroll";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDemo } from "../lib/store";
@@ -79,13 +79,22 @@ function StoryViewer({
     }
   };
 
+  // Time left on the visible story, so a hold resumes where the bar paused.
+  const left = useRef(STORY_MS);
+  useEffect(() => {
+    left.current = STORY_MS;
+  }, [story?.id]);
   useEffect(() => {
     if (!story) return;
     if (!state.seenStories.includes(story.id))
       update((s) => ({ ...s, seenStories: [...s.seenStories, story.id] }));
     if (paused) return;
-    const timer = setTimeout(next, STORY_MS);
-    return () => clearTimeout(timer);
+    const started = performance.now();
+    const timer = setTimeout(next, left.current);
+    return () => {
+      clearTimeout(timer);
+      left.current = Math.max(0, left.current - (performance.now() - started));
+    };
     // Advancing restarts whenever the visible story changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [story?.id, paused]);
@@ -107,6 +116,7 @@ function StoryViewer({
         onPointerDown={() => setPaused(true)}
         onPointerUp={() => setPaused(false)}
         onPointerLeave={() => setPaused(false)}
+        onPointerCancel={() => setPaused(false)}
       >
         <div className="story-progress" aria-hidden="true">
           {current.stories.map((s, i) => (

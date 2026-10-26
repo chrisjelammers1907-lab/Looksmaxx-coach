@@ -18,6 +18,8 @@ import {
 } from "./ui";
 export default function Routines({ topic }: { topic?: TopicId }) {
   const { state, update, toast } = useDemo();
+  // A routine is deleted on a second, explicit tap.
+  const [confirming, setConfirming] = useState<string | null>(null);
   const [editing, setEditing] = useState<Routine | null>(null);
   const [builder, setBuilder] = useState(false);
   const [done, setDone] = useState<string[]>([]);
@@ -144,19 +146,33 @@ export default function Routines({ topic }: { topic?: TopicId }) {
                 <Pencil size={13} />
                 Edit routine
               </button>
-              <button
-                className="icon-button compact"
-                aria-label={`Delete ${r.title}`}
-                onClick={() => {
-                  update((s) => ({
-                    ...s,
-                    routines: s.routines.filter((x) => x.id !== r.id),
-                  }));
-                  toast("Private routine deleted.");
-                }}
-              >
-                <Trash2 size={15} />
-              </button>
+              {confirming === r.id ? (
+                <button
+                  className="text-button danger-text"
+                  aria-label={`Confirm: delete ${r.title}`}
+                  onBlur={() => setConfirming(null)}
+                  autoFocus
+                  onClick={() => {
+                    update((s) => ({
+                      ...s,
+                      routines: s.routines.filter((x) => x.id !== r.id),
+                    }));
+                    setConfirming(null);
+                    toast("Private routine deleted.");
+                  }}
+                >
+                  <Trash2 size={13} />
+                  Delete for good
+                </button>
+              ) : (
+                <button
+                  className="icon-button compact"
+                  aria-label={`Delete ${r.title}`}
+                  onClick={() => setConfirming(r.id)}
+                >
+                  <Trash2 size={15} />
+                </button>
+              )}
             </div>
           </article>
         ))}

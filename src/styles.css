@@ -178,17 +178,21 @@ textarea::placeholder {
   white-space: normal;
   text-align: center;
 }
-.button:hover:not(:disabled) {
-  background: var(--forest-soft);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .button:hover:not(:disabled) {
+    background: var(--forest-soft);
+    transform: translateY(-1px);
+  }
 }
 .button.secondary {
   background: transparent;
   color: var(--forest-text);
   border-color: var(--sand);
 }
-.button.secondary:hover {
-  background: var(--cream);
+@media (hover: hover) and (pointer: fine) {
+  .button.secondary:hover {
+    background: var(--cream);
+  }
 }
 .button.ghost {
   background: transparent;
@@ -230,10 +234,12 @@ textarea::placeholder {
   padding: 5px 0;
   font-size: 12px;
 }
-.text-button:hover,
-.text-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+@media (hover: hover) and (pointer: fine) {
+  .text-button:hover,
+  .text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 }
 .icon-button {
   border: 0;
@@ -245,8 +251,10 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
 }
-.icon-button:hover {
-  background: var(--line);
+@media (hover: hover) and (pointer: fine) {
+  .icon-button:hover {
+    background: var(--line);
+  }
 }
 .icon-button.compact {
   min-width: 30px;
@@ -686,10 +694,12 @@ main {
   height: 100%;
   width: 100%;
   filter: saturate(0.58);
-  transition: transform 0.5s;
+  transition: transform 300ms var(--ease-out);
 }
-.topic-card:hover .topic-photo > img {
-  transform: scale(1.035);
+@media (hover: hover) and (pointer: fine) {
+  .topic-card:hover .topic-photo > img {
+    transform: scale(1.035);
+  }
 }
 .topic-number {
   position: absolute;
@@ -3790,9 +3800,14 @@ progress {
     padding: 20px 15px;
   }
 }
+/* Reduced motion keeps quiet fades and colour changes, but drops anything
+   that moves, scales or slides. */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    transition-property: opacity, color, border-color !important;
+    transition-duration: 150ms !important;
     animation: none !important;
     scroll-behavior: auto !important;
   }

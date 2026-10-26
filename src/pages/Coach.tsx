@@ -293,6 +293,7 @@ export default function CoachPage() {
                 <textarea
                   aria-label="Ask your demo coach"
                   placeholder="Message your coach…"
+                  enterKeyHint="send"
                   rows={1}
                   value={text}
                   maxLength={2000}

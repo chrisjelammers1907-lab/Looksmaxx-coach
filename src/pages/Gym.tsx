@@ -173,6 +173,7 @@ export default function Gym() {
               <Field
                 label="Sets"
                 type="number"
+                inputMode="decimal"
                 min="1"
                 max="100"
                 required
@@ -184,6 +185,7 @@ export default function Gym() {
               <Field
                 label="Repetitions per set"
                 type="number"
+                inputMode="decimal"
                 min="1"
                 max="500"
                 required
@@ -195,6 +197,7 @@ export default function Gym() {
               <Field
                 label={`Weight (${unit})`}
                 type="number"
+                inputMode="decimal"
                 min="0"
                 max="2000"
                 step="0.5"

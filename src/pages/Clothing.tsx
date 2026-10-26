@@ -363,6 +363,7 @@ export default function ClothingPage() {
           <Field
             label={`Maximum example price (${state.profile.currency})`}
             type="number"
+            inputMode="decimal"
             min="0"
             value={shopBudget}
             onChange={(e) => setShopBudget(Number(e.target.value))}

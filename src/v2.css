@@ -40,8 +40,10 @@
   padding: 12px;
   font-size: 12px;
 }
-.profile-menu nav a:hover {
-  background: var(--beige);
+@media (hover: hover) and (pointer: fine) {
+  .profile-menu nav a:hover {
+    background: var(--beige);
+  }
 }
 .sidebar {
   background: var(--cream);
@@ -355,10 +357,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 300ms var(--ease-out);
 }
-.category-tile-image:hover img {
-  transform: scale(1.025);
+@media (hover: hover) and (pointer: fine) {
+  .category-tile-image:hover img {
+    transform: scale(1.025);
+  }
 }
 .category-tile-image > span {
   position: absolute;
@@ -518,8 +522,10 @@
   line-height: 1.6;
   color: var(--muted);
 }
-.guide-contents button:hover {
-  text-decoration: underline;
+@media (hover: hover) and (pointer: fine) {
+  .guide-contents button:hover {
+    text-decoration: underline;
+  }
 }
 .guide-contents .eyebrow {
   font-size: 11px;

@@ -279,6 +279,7 @@ export default function Items({
               <Field
                 label="Price (leave blank if unknown)"
                 type="number"
+                inputMode="decimal"
                 min="0"
                 step="0.01"
                 value={editing.price ?? ""}

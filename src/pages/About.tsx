@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { asset } from "../lib/domain";
@@ -10,7 +10,7 @@ function Words({ text, emphasis }: { text: string; emphasis?: string }) {
     <>
       {words.map((word, i) => (
         <Fragment key={i}>
-          <span className="word">
+          <span className="word" style={{ "--i": i } as CSSProperties}>
             {word === emphasis ? <em>{word}</em> : word}
           </span>
           {i < words.length - 1 ? " " : ""}
