@@ -522,8 +522,10 @@ test("my plan counts clearly and keeps the streak flame small", async ({
 }) => {
   await open(page, "/plan");
   const progress = page.locator(".plan-progress");
-  await expect(progress.locator("strong")).toHaveText(/of \d+ tasks done/);
-  await expect(progress).toContainText(/routines? on today’s plan/);
+  await expect(progress.locator("strong")).toHaveText(
+    /^\d+ of \d+ done today$/,
+  );
+  await expect(progress).toContainText(/\d+ routines? · \d+ tasks?/);
   const flame = progress.locator(".streak svg");
   if (await flame.count()) {
     const box = (await flame.boundingBox())!;
@@ -577,4 +579,24 @@ test("the plans page sells outcomes without a SaaS badge", async ({ page }) => {
     page.getByRole("radio", { name: /2 months free/ }),
   ).toBeVisible();
   await expect(page.locator(".plan-extras").first()).toBeVisible();
+});
+
+test("my plan is one day: routines and tasks in one list", async ({ page }) => {
+  await open(page, "/plan");
+  await expect(page.locator(".plan-page .routine-card")).toHaveCount(0);
+  const today = page.locator(".task-group-today");
+  const routine = today.locator(".routine-line").first();
+  await expect(routine).toBeVisible();
+  await expect(
+    today.locator(".goal-row:not(.routine-line)").first(),
+  ).toBeVisible();
+  const count = page.locator(".plan-progress strong");
+  const before = Number((await count.textContent())!.split(" ")[0]);
+  // The steps are one tap away, and the routine is done in one tap.
+  await routine.locator("summary").click();
+  await expect(routine.locator("ol li").first()).toBeVisible();
+  await expect(routine.getByRole("link", { name: /Edit in/ })).toBeVisible();
+  await routine.getByRole("button", { name: /^Mark .* done$/ }).click();
+  await expect(count).toHaveText(new RegExp(`^${before + 1} of`));
+  await noAxeViolations(page);
 });

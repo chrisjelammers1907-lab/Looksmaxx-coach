@@ -247,14 +247,14 @@ test("long captions expand in place and push Shop the look down", async ({
 test("plan shows one day with routine and task filters", async ({ page }) => {
   await open(page, "/plan");
   await expect(page.getByText("Your next check-in")).toHaveCount(0);
-  await expect(page.getByText(/of \d+ tasks? done/)).toBeVisible();
+  await expect(page.getByText(/of \d+ done today/)).toBeVisible();
   const filters = page.getByLabel("Show in plan");
   await filters.getByRole("button", { name: "Tasks", exact: true }).click();
-  await expect(page.locator(".routine-card")).toHaveCount(0);
+  await expect(page.locator(".routine-line")).toHaveCount(0);
   await expect(page.locator(".goal-row").first()).toBeVisible();
   await filters.getByRole("button", { name: "Routines", exact: true }).click();
-  await expect(page.locator(".goal-row")).toHaveCount(0);
-  await expect(page.locator(".routine-card").first()).toBeVisible();
+  await expect(page.locator(".goal-row:not(.routine-line)")).toHaveCount(0);
+  await expect(page.locator(".routine-line").first()).toBeVisible();
   await noAxeViolations(page);
 });
 
@@ -532,6 +532,8 @@ test("tasks are grouped by date and routines show the products they use", async 
     page.locator(".task-group-later").getByText("Pick up new trainers"),
   ).toBeVisible();
 
+  // Routines are edited in their category; My Plan lists them compactly.
+  await go(page, "/topics/skincare");
   const morning = page.locator(".routine-card").first();
   await expect(morning.getByLabel("Products used")).toContainText(
     "Gentle cream cleanser",

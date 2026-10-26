@@ -1,11 +1,13 @@
 import HScroll from "../components/HScroll";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import type { Routine } from "../lib/types";
 import { Check, Plus, Pencil, Trash2 } from "lucide-react";
 import { useDemo } from "../lib/store";
 import type { Goal, TopicId } from "../lib/types";
 import { topics } from "../lib/data";
-import Routines from "../components/Routines";
+import { Link } from "react-router-dom";
+import { useCompleteRoutine } from "../lib/useCompleteRoutine";
 import { dateLabel, today, uid } from "../lib/domain";
 import {
   groupLabels,
@@ -36,13 +38,26 @@ export default function PlanPage() {
   );
   const date = today();
   const weekday = new Date().toLocaleDateString("en", { weekday: "short" });
-  const routinesToday = state.routines.filter(
-    (r) => r.schedule === "Daily" || r.schedule.includes(weekday),
+  const order = { AM: 0, Anytime: 1, PM: 2 } as Record<string, number>;
+  const runsToday = (r: Routine) =>
+    r.schedule === "Daily" || r.schedule.includes(weekday);
+  const todayRoutines = state.routines
+    .filter(runsToday)
+    .filter((r) => routineTopic === "all" || r.topic === routineTopic)
+    .sort((a, b) => (order[a.time] ?? 1) - (order[b.time] ?? 1));
+  const otherRoutines = state.routines
+    .filter((r) => !runsToday(r))
+    .filter((r) => routineTopic === "all" || r.topic === routineTopic);
+  const routinesDone = (state.routineLog[date] || []).filter((id) =>
+    todayRoutines.some((r) => r.id === id),
   ).length;
+  const completeRoutine = useCompleteRoutine();
   const streak = alive(state.routineStreak, date, streakGrace(state));
   const todayTasks = state.goals.filter((g) => groupOf(g, date) === "today");
-  const completed = todayTasks.filter((g) => isDone(g, date)).length;
-  const total = todayTasks.length;
+  const tasksDone = todayTasks.filter((g) => isDone(g, date)).length;
+  // One count for the day: routines and tasks together.
+  const completed = tasksDone + routinesDone;
+  const total = todayTasks.length + todayRoutines.length;
   const ring = 2 * Math.PI * 26;
   const todayLabel = new Date().toLocaleDateString("en", {
     weekday: "long",
@@ -86,11 +101,12 @@ export default function PlanPage() {
         </svg>
         <div>
           <strong>
-            {completed} of {total} {total === 1 ? "task" : "tasks"} done
+            {completed} of {total} done today
           </strong>
           <span>
-            {routinesToday} {routinesToday === 1 ? "routine" : "routines"} on
-            today’s plan
+            {todayRoutines.length}{" "}
+            {todayRoutines.length === 1 ? "routine" : "routines"} ·{" "}
+            {todayTasks.length} {todayTasks.length === 1 ? "task" : "tasks"}
             {streak > 0 && (
               <>
                 {" "}
@@ -119,121 +135,137 @@ export default function PlanPage() {
           </button>
         ))}
       </HScroll>
-      {filter !== "routines" && (
-        <section className="plan-section">
-          {(["overdue", "today", "week", "later"] as const).map((group) => {
-            const tasks = state.goals.filter((g) => groupOf(g, date) === group);
-            if (!tasks.length && group !== "today") return null;
-            return (
-              <div className={`task-group task-group-${group}`} key={group}>
-                <h2 className="task-group-title">
-                  {groupLabels[group]}
-                  <span>{tasks.length}</span>
-                </h2>
-                {tasks.length ? (
-                  <div className="goal-list">
-                    {tasks.map((g) => {
-                      const done = isDone(g, date);
-                      const repeat = repeatOf(g);
-                      return (
-                        <div
-                          className={`goal-row ${done ? "done" : ""}`}
-                          key={g.id}
-                        >
-                          <button
-                            className="goal-check"
-                            aria-label={`Complete ${g.text}`}
-                            aria-pressed={done}
-                            onClick={() =>
-                              update((s) => ({
-                                ...s,
-                                goals: s.goals.map((x) =>
-                                  x.id === g.id ? toggleDone(x, date) : x,
-                                ),
-                              }))
-                            }
-                          >
-                            {done && <Check size={17} />}
-                          </button>
-                          <span className="goal-text">
-                            <span>{g.text}</span>
-                            {(g.due || repeat !== "none") && (
-                              <small>
-                                {repeat === "daily"
-                                  ? "Every day"
-                                  : repeat === "weekly"
-                                    ? `Every week${g.due ? ` · ${weekdayOf(g.due)}` : ""}`
-                                    : dateLabel(g.due!)}
-                              </small>
-                            )}
-                          </span>
-                          <button
-                            className="icon-button"
-                            aria-label={`Edit ${g.text}`}
-                            onClick={() => setEditing(g)}
-                          >
-                            <Pencil size={15} />
-                          </button>
-                          <button
-                            className="icon-button"
-                            aria-label={`Delete ${g.text}`}
-                            onClick={() =>
-                              update((s) => ({
-                                ...s,
-                                goals: s.goals.filter((x) => x.id !== g.id),
-                              }))
-                            }
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="small-text muted task-empty">
-                    Nothing due today. Add a task or ask your coach.
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </section>
-      )}
-      {filter !== "tasks" && (
-        <section className="plan-section">
-          {routineTopics.length > 1 && (
-            <HScroll
-              className="plan-topic-chips chip-scroller"
-              aria-label="Routine category"
+      {filter === "routines" && routineTopics.length > 1 && (
+        <HScroll
+          className="plan-topic-chips chip-scroller"
+          aria-label="Routine category"
+        >
+          <button
+            type="button"
+            className="chip"
+            aria-pressed={routineTopic === "all"}
+            onClick={() => setRoutineTopic("all")}
+          >
+            All categories
+          </button>
+          {routineTopics.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className="chip"
+              aria-pressed={routineTopic === t.id}
+              onClick={() => setRoutineTopic(t.id)}
             >
-              <button
-                type="button"
-                className="chip"
-                aria-pressed={routineTopic === "all"}
-                onClick={() => setRoutineTopic("all")}
-              >
-                All categories
-              </button>
-              {routineTopics.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  className="chip"
-                  aria-pressed={routineTopic === t.id}
-                  onClick={() => setRoutineTopic(t.id)}
-                >
-                  {t.title}
-                </button>
-              ))}
-            </HScroll>
-          )}
-          <Routines
-            key={routineTopic}
-            topic={routineTopic === "all" ? undefined : routineTopic}
-          />
-        </section>
+              {t.title}
+            </button>
+          ))}
+        </HScroll>
       )}
+      <section className="plan-section">
+        {(["overdue", "today", "week", "later"] as const).map((group) => {
+          const tasks =
+            filter === "routines"
+              ? []
+              : state.goals.filter((g) => groupOf(g, date) === group);
+          const lines =
+            group === "today" && filter !== "tasks" ? todayRoutines : [];
+          const count = tasks.length + lines.length;
+          if (!count && group !== "today") return null;
+          return (
+            <div className={`task-group task-group-${group}`} key={group}>
+              <h2 className="task-group-title">
+                {groupLabels[group]}
+                <span>{count}</span>
+              </h2>
+              {count ? (
+                <div className="goal-list">
+                  {lines.map((r) => (
+                    <RoutineLine
+                      key={r.id}
+                      routine={r}
+                      done={!!state.routineLog[date]?.includes(r.id)}
+                      onDone={() => completeRoutine(r.id)}
+                    />
+                  ))}
+                  {tasks.map((g) => {
+                    const done = isDone(g, date);
+                    const repeat = repeatOf(g);
+                    return (
+                      <div
+                        className={`goal-row ${done ? "done" : ""}`}
+                        key={g.id}
+                      >
+                        <button
+                          className="goal-check"
+                          aria-label={`Complete ${g.text}`}
+                          aria-pressed={done}
+                          onClick={() =>
+                            update((s) => ({
+                              ...s,
+                              goals: s.goals.map((x) =>
+                                x.id === g.id ? toggleDone(x, date) : x,
+                              ),
+                            }))
+                          }
+                        >
+                          {done && <Check size={17} />}
+                        </button>
+                        <span className="goal-text">
+                          <span>{g.text}</span>
+                          {(g.due || repeat !== "none") && (
+                            <small>
+                              {repeat === "daily"
+                                ? "Every day"
+                                : repeat === "weekly"
+                                  ? `Every week${g.due ? ` · ${weekdayOf(g.due)}` : ""}`
+                                  : dateLabel(g.due!)}
+                            </small>
+                          )}
+                        </span>
+                        <button
+                          className="icon-button"
+                          aria-label={`Edit ${g.text}`}
+                          onClick={() => setEditing(g)}
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          className="icon-button"
+                          aria-label={`Delete ${g.text}`}
+                          onClick={() =>
+                            update((s) => ({
+                              ...s,
+                              goals: s.goals.filter((x) => x.id !== g.id),
+                            }))
+                          }
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="small-text muted task-empty">
+                  Nothing due today. Add a task or ask your coach.
+                </p>
+              )}
+            </div>
+          );
+        })}
+        {filter === "routines" && otherRoutines.length > 0 && (
+          <div className="task-group task-group-other">
+            <h2 className="task-group-title">
+              Other days<span>{otherRoutines.length}</span>
+            </h2>
+            <div className="goal-list">
+              {otherRoutines.map((r) => (
+                <RoutineLine key={r.id} routine={r} />
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
       {editing && (
         <Modal title="Your task" onClose={() => setEditing(null)}>
           <form
@@ -284,6 +316,54 @@ export default function PlanPage() {
           </form>
         </Modal>
       )}
+    </div>
+  );
+}
+
+/** A routine as one line of the day: tick it off, or open it for its steps. */
+function RoutineLine({
+  routine: r,
+  done,
+  onDone,
+}: {
+  routine: Routine;
+  done?: boolean;
+  onDone?: () => void;
+}) {
+  const topic = topics.find((t) => t.id === r.topic);
+  return (
+    <div className={`goal-row routine-line ${done ? "done" : ""}`}>
+      {onDone ? (
+        <button
+          className="goal-check"
+          aria-label={done ? `${r.title} done today` : `Mark ${r.title} done`}
+          aria-pressed={!!done}
+          disabled={done}
+          onClick={onDone}
+        >
+          {done && <Check size={17} />}
+        </button>
+      ) : (
+        <span className="goal-check routine-later" aria-hidden="true" />
+      )}
+      <details className="routine-line-detail">
+        <summary>
+          <span>{r.title}</span>
+          <small>
+            {r.time} · {topic?.title ?? "Routine"} · {r.steps.length}{" "}
+            {r.steps.length === 1 ? "step" : "steps"}
+            {r.schedule !== "Daily" ? ` · ${r.schedule}` : ""}
+          </small>
+        </summary>
+        <ol>
+          {r.steps.map((step, i) => (
+            <li key={i}>{step}</li>
+          ))}
+        </ol>
+        <Link className="text-link" to={`/topics/${r.topic}`}>
+          Edit in {topic?.title ?? "its category"}
+        </Link>
+      </details>
     </div>
   );
 }

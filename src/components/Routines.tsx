@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
-import { streakGrace } from "../lib/plans";
 import { useDemo } from "../lib/store";
+import { useCompleteRoutine } from "../lib/useCompleteRoutine";
 import type { Routine, TopicId } from "../lib/types";
-import { asset, today, topicName, uid } from "../lib/domain";
-import { alive, bump, unlocked } from "../lib/streaks";
+import { asset, topicName, uid } from "../lib/domain";
 import { topics } from "../lib/data";
 import {
   Area,
@@ -25,27 +24,7 @@ export default function Routines({ topic }: { topic?: TopicId }) {
   const [done, setDone] = useState<string[]>([]);
   const routines = state.routines.filter((r) => !topic || r.topic === topic);
   // Finishing every step of a routine keeps the daily routine streak alive.
-  const completeRoutine = (id: string) => {
-    const date = today();
-    if (state.routineLog[date]?.includes(id)) return;
-    const grace = streakGrace(state);
-    const before = alive(state.routineStreak, date, grace);
-    const next = bump(state.routineStreak, date, grace);
-    update((s) => ({
-      ...s,
-      routineLog: {
-        ...s.routineLog,
-        [date]: [...(s.routineLog[date] || []), id],
-      },
-      routineStreak: next,
-    }));
-    const reward = unlocked(before, next.count);
-    toast(
-      reward
-        ? `${next.count}-day routine streak · Unlocked: ${reward.label}.`
-        : `Routine done · ${next.count}-day streak`,
-    );
-  };
+  const completeRoutine = useCompleteRoutine();
   const blank = (): Routine => ({
     id: uid(),
     topic: topic || "skincare",
