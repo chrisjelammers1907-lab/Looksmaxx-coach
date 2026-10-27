@@ -1724,8 +1724,9 @@ h4 {
 }
 .coach-page .chat-message {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
+  /* The coach's mark sits beside the first line, with room to breathe. */
+  align-items: flex-start;
+  gap: 12px;
   margin: 0 0 12px;
   padding: 0;
   border: 0;
@@ -1738,7 +1739,11 @@ h4 {
   background: none;
 }
 .coach-page .chat-message.coach .chat-bubble {
-  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+}
+.coach-page .chat-message.coach > .monogram {
+  flex: none;
+  margin-top: 4px;
 }
 .coach-page .chat-message.you .chat-bubble {
   border-bottom-right-radius: 6px;
@@ -2289,9 +2294,17 @@ h4 {
 
 /* Home order: tabs, then Photos/Reels, then filter chips */
 .feed-format-row {
+  position: sticky;
+  top: calc(var(--feed-header-h, 58px) + 8px);
+  z-index: 19;
   display: flex;
   justify-content: center;
   margin: 12px 0 0;
+  pointer-events: none;
+}
+.feed-format-row .feed-format-tabs {
+  pointer-events: auto;
+  box-shadow: var(--shadow-sm);
 }
 .feed-format-row .feed-format-tabs {
   display: inline-flex;
@@ -4280,6 +4293,10 @@ h4 {
 @media (hover: hover) and (pointer: fine) {
   .post-media:hover .video-toggle.is-playing {
     opacity: 0.85;
+  }
+  /* A reel that plays by itself keeps its button out of the picture. */
+  .post-media:hover .video-toggle.is-quiet {
+    opacity: 0;
   }
 }
 
@@ -7499,20 +7516,14 @@ details > summary::-webkit-details-marker {
 /* Motion: the film fills the screen and stays put while the chapters scroll
    over it, one screen each, after an opening screen with the wordmark. The
    last chapter stays while he holds your gaze and the frame closes in. */
-html:has(.has-motion .about-story) {
-  overflow-x: clip;
-}
-.site-shell:has(.has-motion .about-story) {
-  overflow: visible;
-}
 .has-motion .about-story {
   --rest: 50vh;
   --rest: 50svh;
   --shift: -50%;
   position: relative;
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  margin-bottom: clamp(48px, 8vw, 110px);
+  /* Edge to edge in the app frame, flush under the masthead. */
+  margin: calc(-1 * var(--bleed-top, 0px)) calc(-1 * var(--bleed-right, 0px))
+    clamp(48px, 8vw, 110px) calc(-1 * var(--bleed-left, 0px));
   background: #1c1512;
 }
 .has-motion .about-turn {
@@ -7520,8 +7531,6 @@ html:has(.has-motion .about-story) {
   top: 0;
   height: 100vh;
   height: 100svh;
-  margin-bottom: -100vh;
-  margin-bottom: -100svh;
   border-radius: 0;
   background: #1c1512;
 }
@@ -7600,9 +7609,13 @@ html:has(.has-motion .about-story) {
     opacity: 0;
   }
 }
+/* The chapters pull up over the film. The film keeps its own height, so it
+   stops sticking where the story ends instead of covering what follows. */
 .has-motion .about-chapters {
   position: relative;
   z-index: 3;
+  margin-top: -100vh;
+  margin-top: -100svh;
 }
 .has-motion .story-intro {
   height: 100vh;

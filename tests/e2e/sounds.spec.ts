@@ -107,7 +107,7 @@ test("video sound follows playback and seeking, with volume mixing", async ({
   const video = page.locator(".post-media video");
   const audio = page.locator(".post-sound audio");
   await page
-    .getByRole("button", { name: "Play sound After hours", exact: true })
+    .getByRole("button", { name: "Turn sound on for reels", exact: true })
     .click();
   await expect
     .poll(() => audio.evaluate((a: HTMLAudioElement) => a.currentTime))
@@ -157,15 +157,15 @@ test("only one reel sound plays; changing format, scrolling and navigation stop 
   });
   const videoSound = videoCard.locator("audio");
   const slideSound = slideCard.locator("audio");
+  await videoCard.locator(".post-media").scrollIntoViewIfNeeded();
   await videoCard
-    .getByRole("button", { name: "Play sound Golden hour", exact: true })
+    .getByRole("button", { name: "Turn sound on for reels", exact: true })
     .click();
   await expect
     .poll(() => videoSound.evaluate((a: HTMLAudioElement) => a.currentTime))
     .toBeGreaterThan(0.1);
-  await slideCard
-    .getByRole("button", { name: "Play sound After hours", exact: true })
-    .click();
+  // The next reel takes over, with sound, as it scrolls into view.
+  await slideCard.locator(".post-media").scrollIntoViewIfNeeded();
   await expect
     .poll(() => videoSound.evaluate((a: HTMLAudioElement) => a.paused))
     .toBe(true);

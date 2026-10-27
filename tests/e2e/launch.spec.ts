@@ -436,6 +436,13 @@ test("about tells the CHARETT story while he walks in and turns to face you", as
     await expect(page.getByRole("heading", { name: line })).toBeAttached();
   const canvas = page.locator(".about-turn canvas");
   await expect(canvas).toHaveAttribute("data-frame", "0");
+  // The film starts right under the masthead, with no strip of page between.
+  const seam = await page.evaluate(
+    () =>
+      document.querySelector(".about-story")!.getBoundingClientRect().top -
+      document.querySelector(".site-header")!.getBoundingClientRect().bottom,
+  );
+  expect(Math.round(seam)).toBe(0);
   const scrollStory = (share: number) =>
     page.evaluate((share) => {
       const story = document.querySelector(".about-story")!;
@@ -447,21 +454,24 @@ test("about tells the CHARETT story while he walks in and turns to face you", as
   await expect
     .poll(async () => Number(await canvas.getAttribute("data-frame")))
     .toBeGreaterThan(20);
-  // He fills the whole screen, edge to edge, and is really drawn.
+  // He fills the app frame edge to edge and the full height, really drawn.
   const fill = await canvas.evaluate((c: HTMLCanvasElement) => {
     const box = c.getBoundingClientRect();
+    const shell = document
+      .querySelector(".site-shell")!
+      .getBoundingClientRect();
     const px = c
       .getContext("2d")!
       .getImageData(c.width >> 1, c.height >> 1, 1, 1).data;
     return {
-      left: Math.round(box.left),
+      left: Math.round(box.left - shell.left),
+      width: Math.round(box.width - shell.width),
       top: Math.round(box.top),
-      width: Math.round(box.width) - innerWidth,
       height: Math.round(box.height) - innerHeight,
       drawn: px[3] > 0,
     };
   });
-  expect(fill).toEqual({ left: 0, top: 0, width: 0, height: 0, drawn: true });
+  expect(fill).toEqual({ left: 0, width: 0, top: 0, height: 0, drawn: true });
   // The text scrolls with the page instead of swapping in place.
   const heading = page.getByRole("heading", {
     name: "Too many promises. Too little proof.",
@@ -476,6 +486,16 @@ test("about tells the CHARETT story while he walks in and turns to face you", as
   await expect(
     page.getByRole("link", { name: /Find your starting point/ }).first(),
   ).toBeInViewport();
+  // Once the story ends, the film stops with it: the next section is not
+  // covered.
+  const next = page.getByRole("heading", { name: "A conversation" });
+  await next.scrollIntoViewIfNeeded();
+  const onTop = await next.evaluate((h) => {
+    const r = h.getBoundingClientRect();
+    const hit = document.elementFromPoint(r.left + 4, r.top + r.height / 2);
+    return !!hit && h.contains(hit);
+  });
+  expect(onTop).toBe(true);
   await noAxeViolations(page);
 });
 
@@ -493,6 +513,52 @@ test("about is one still portrait and the full story with reduced motion", async
     );
   expect(hidden).toBe(0);
   await noAxeViolations(page);
+});
+
+test("Photos and Reels stay in reach while you scroll the feed", async ({
+  page,
+}) => {
+  await open(page, "/");
+  await page.getByRole("tab", { name: "Photos" }).click();
+  await page.mouse.wheel(0, 2500);
+  const reels = page.getByRole("tab", { name: "Reels" });
+  await expect(reels).toBeInViewport();
+  await reels.click();
+  await expect(reels).toHaveAttribute("aria-selected", "true");
+});
+
+test("reels play by themselves, muted, with one sound switch", async ({
+  page,
+}) => {
+  await open(page, "/");
+  await page.getByRole("tab", { name: "Reels" }).click();
+  const reel = page.locator(".post-card").filter({
+    has: page.getByRole("heading", { name: "A moment in motion", exact: true }),
+  });
+  await reel.locator(".post-media").scrollIntoViewIfNeeded();
+  const video = reel.locator("video");
+  // No tap needed: it plays, muted, and the big play button stays away.
+  await expect
+    .poll(() =>
+      video.evaluate((v: HTMLVideoElement) => !v.paused && v.currentTime > 0.1),
+    )
+    .toBe(true);
+  expect(await video.evaluate((v: HTMLVideoElement) => v.muted)).toBe(true);
+  await expect(
+    reel.getByRole("button", { name: "Pause video A moment in motion" }),
+  ).toHaveCSS("opacity", "0");
+  const audio = reel.locator("audio");
+  await reel.getByRole("button", { name: "Turn sound on for reels" }).click();
+  await expect
+    .poll(() =>
+      audio.evaluate((a: HTMLAudioElement) => !a.paused && a.currentTime > 0.1),
+    )
+    .toBe(true);
+  await reel.getByRole("button", { name: "Turn sound off for reels" }).click();
+  await expect
+    .poll(() => audio.evaluate((a: HTMLAudioElement) => a.paused))
+    .toBe(true);
+  expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(false);
 });
 
 test("the About frames never load on other pages", async ({ page }) => {

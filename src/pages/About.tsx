@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import TurnSequence, { turnStill } from "../components/TurnSequence";
@@ -65,6 +65,23 @@ export default function AboutPage() {
     const run = box.height - innerHeight;
     return run > 0 ? Math.min(1, Math.max(0, -box.top / run)) : 0;
   }, []);
+
+  // The film reaches past the page's padding, so it meets the masthead and
+  // both sides of the app frame.
+  useLayoutEffect(() => {
+    const node = story.current;
+    const main = node?.closest("main");
+    if (!motion || !node || !main) return;
+    const bleed = () => {
+      const css = getComputedStyle(main);
+      node.style.setProperty("--bleed-top", css.paddingTop);
+      node.style.setProperty("--bleed-left", css.paddingLeft);
+      node.style.setProperty("--bleed-right", css.paddingRight);
+    };
+    bleed();
+    addEventListener("resize", bleed);
+    return () => removeEventListener("resize", bleed);
+  }, [motion]);
 
   return (
     <article className={`about-page ${motion ? "has-motion" : "is-still"}`}>

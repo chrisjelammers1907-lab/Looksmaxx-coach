@@ -303,3 +303,8 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - Frames load only on `/about` (about 2 MB per set); the first frame shows at once. The canvas sizes from a ResizeObserver and each `svh` has a `vh` fallback.
   - With reduced motion or Save-Data: one still of him facing the camera beside the whole story.
   - Old `.about-story` rules in `v2.css` and `editorial.css` are removed; they squeezed the new layout.
+- **Owner's fixes after the About film.**
+  - About: the film sits inside the app frame, flush under the masthead and edge to edge, and stops where the story ends instead of hanging over the next section (the chapters now pull up over the film, so its sticky box keeps its own height).
+  - AI Coach: the coach's mark sits beside the first line of each reply, with 12px between them.
+  - Home: Photos/Reels sticks just under the feed header, so you can switch without scrolling back up.
+  - Reels play by themselves once mostly in view and pause as they leave it, muted at first. One sound switch (`src/lib/reelSound.ts`) turns sound on or off for every reel. The big play button stays out of the picture while a reel plays; with reduced motion nothing autoplays.

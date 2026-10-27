@@ -156,7 +156,7 @@ export default function CoachPage() {
             )}
             {state.chat.map((m) => (
               <div className={`chat-message ${m.author}`} key={m.id}>
-                {m.author === "coach" && <Monogram size={26} />}
+                {m.author === "coach" && <Monogram size={32} />}
                 <div className="chat-bubble">
                   <span className="visually-hidden">
                     {m.author === "you" ? "You:" : "Coach:"}
@@ -198,7 +198,7 @@ export default function CoachPage() {
             ))}
             {busy && (
               <div className="chat-message coach typing" role="status">
-                <Monogram size={26} />
+                <Monogram size={32} />
                 <div className="chat-bubble">
                   <span className="typing-dots" aria-hidden="true">
                     <i />

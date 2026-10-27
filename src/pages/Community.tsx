@@ -1,5 +1,5 @@
 import HScroll from "../components/HScroll";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Link,
   useNavigate,
@@ -115,6 +115,20 @@ function CommunityContent() {
     params.get("format") === "reels" ? "reels" : "photos",
   );
   const [showFilters, setShowFilters] = useState(false);
+  // Photos/Reels sticks just under the feed header, so it stays in reach.
+  const feedHeader = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = feedHeader.current;
+    if (!node) return;
+    const sync = () =>
+      node.parentElement?.style.setProperty(
+        "--feed-header-h",
+        `${node.offsetHeight}px`,
+      );
+    const resize = new ResizeObserver(sync);
+    resize.observe(node);
+    return () => resize.disconnect();
+  }, []);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState(params.get("topic") || "all");
   const [style, setStyle] = useState(params.get("style") || "all");
@@ -676,7 +690,7 @@ function CommunityContent() {
     >
       <h1 className="visually-hidden">Your daily edit.</h1>
       <StoriesRow />
-      <div className="feed-header">
+      <div className="feed-header" ref={feedHeader}>
         <span className="feed-header-spacer" aria-hidden="true" />
         <div className="feed-tabs">
           <Tabs

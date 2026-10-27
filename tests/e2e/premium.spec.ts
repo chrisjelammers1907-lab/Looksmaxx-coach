@@ -423,12 +423,16 @@ test("reels fill the phone screen with in-reel actions and a details sheet", asy
     expect(media.width).toBeGreaterThanOrEqual(viewport.width - 2);
   }
   await expect(reel.locator("video")).not.toHaveAttribute("controls");
-  await reel
-    .getByRole("button", { name: "Play video A moment in motion" })
-    .click();
+  // In view, it plays by itself; the pause control is there without a tap.
+  await reel.locator(".post-media").scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      reel.locator("video").evaluate((v: HTMLVideoElement) => !v.paused),
+    )
+    .toBe(true);
   await expect(
     reel.getByRole("button", { name: "Pause video A moment in motion" }),
-  ).toBeVisible();
+  ).toBeAttached();
   await reel
     .getByRole("button", { name: "Read more of A moment in motion" })
     .click();

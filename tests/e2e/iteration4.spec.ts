@@ -163,7 +163,7 @@ test("photo reels have accessible slideshow controls and keep their chosen sound
   const counter = card.locator(".slide-controls").getByRole("status");
   await expect(counter).toHaveText("1 / 3");
   await card
-    .getByRole("button", { name: "Play sound After hours", exact: true })
+    .getByRole("button", { name: "Turn sound on for reels", exact: true })
     .click();
   const audio = card.locator("audio");
   await expect
@@ -206,7 +206,7 @@ test("photo reels have accessible slideshow controls and keep their chosen sound
     await cdp.detach();
   }
   await card
-    .getByRole("button", { name: "Pause sound After hours", exact: true })
+    .getByRole("button", { name: "Turn sound off for reels", exact: true })
     .click();
   const scan = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])

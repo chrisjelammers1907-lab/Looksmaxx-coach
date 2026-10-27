@@ -5,6 +5,7 @@ import {
   Play,
   Pause,
   Volume2,
+  VolumeX,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -13,6 +14,7 @@ import { normaliseFeedPhoto, privateVideoUrl } from "../lib/media";
 import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
+import { reelSound, useReelMuted } from "../lib/reelSound";
 import { DEMO } from "../lib/demo";
 const editorialPhotos = new Map<string, Promise<string>>();
 /** The line under the handle, like a location on Instagram. */
@@ -54,6 +56,18 @@ export function PostMedia({
       (current) => (current + direction + slides.length) % slides.length,
     );
   const sound = findSound(post.sound?.id);
+  const muted = useReelMuted();
+  // A reel plays by itself once it is mostly on screen, unless the visitor
+  // asked for less motion; its sound follows the one reel sound switch.
+  const autoplay =
+    isReel &&
+    (isVideo || !!sound) &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const onScreen = useRef(false);
+  const videoMuted = () =>
+    (isReel && reelSound.muted()) ||
+    !post.sound ||
+    post.sound.originalVolume === 0;
   const startSound = async () => {
     if (!sound || !audio.current) return;
     claimPlayback(video.current, audio.current);
@@ -66,6 +80,24 @@ export function PostMedia({
       setSoundError("Sound could not start. Tap play to try again.");
     }
   };
+  /** Plays this reel: the video (muted or not), or a photo reel's sound. */
+  const startReel = () => {
+    const film = video.current;
+    if (film) {
+      film.muted = videoMuted();
+      void film.play().catch(() => undefined);
+    } else if (!reelSound.muted()) void startSound();
+  };
+  useEffect(() => {
+    if (!isReel) return;
+    const film = video.current;
+    if (film) film.muted = videoMuted();
+    if (muted) audio.current?.pause();
+    else if (sound && (film ? !film.paused : onScreen.current))
+      void startSound();
+    // Only the switch itself should restart or silence the sound.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [muted]);
   useEffect(() => {
     if (audio.current) audio.current.volume = post.sound?.volume ?? 0.65;
     if (video.current) video.current.volume = post.sound?.originalVolume ?? 1;
@@ -119,9 +151,25 @@ export function PostMedia({
     };
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries[0].isIntersecting) stop();
+        const entry = entries[0];
+        if (!autoplay) {
+          if (!entry.isIntersecting) stop();
+          return;
+        }
+        // Reels start when mostly in view and stop as they leave it. A reel
+        // taller than the screen counts as in view when it fills most of it.
+        const fits = Math.min(
+          entry.boundingClientRect.height,
+          entry.rootBounds?.height ?? innerHeight,
+        );
+        const visible =
+          entry.isIntersecting && entry.intersectionRect.height >= fits * 0.6;
+        if (visible === onScreen.current) return;
+        onScreen.current = visible;
+        if (visible) startReel();
+        else stop();
       },
-      { threshold: 0.05 },
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
     );
     observer.observe(node);
     document.addEventListener("visibilitychange", hidden);
@@ -130,7 +178,9 @@ export function PostMedia({
       observer.disconnect();
       document.removeEventListener("visibilitychange", hidden);
     };
-  }, [isVideo, sound?.id]);
+    // startReel reads refs and the sound switch at call time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVideo, sound?.id, autoplay]);
   const label = mediaLabel(post) || "editorial photo";
   return (
     <div className="post-media-wrap" ref={container}>
@@ -180,13 +230,13 @@ export function PostMedia({
             poster={media.poster ? asset(media.poster) : undefined}
             playsInline
             loop
-            muted={!post.sound || post.sound.originalVolume === 0}
+            muted={videoMuted()}
             preload="none"
             aria-label={`${post.title} — ${label}`}
             onPlay={() => {
               setVideoPlaying(true);
               claimPlayback(video.current, audio.current);
-              void startSound();
+              if (!isReel || !reelSound.muted()) void startSound();
             }}
             onPause={() => {
               setVideoPlaying(false);
@@ -237,7 +287,7 @@ export function PostMedia({
         {isVideo && (
           <button
             type="button"
-            className={`video-toggle ${videoPlaying ? "is-playing" : ""}`}
+            className={`video-toggle ${videoPlaying ? "is-playing" : ""} ${autoplay && videoPlaying ? "is-quiet" : ""}`}
             aria-label={`${videoPlaying ? "Pause" : "Play"} video ${post.title}`}
             onClick={() => {
               const film = video.current;
@@ -277,7 +327,26 @@ export function PostMedia({
         )}
         {sound && (
           <div className={`post-sound ${playing ? "is-playing" : ""}`}>
-            {playing && (
+            {isReel ? (
+              <button
+                type="button"
+                className="post-sound-play"
+                aria-label={`Turn sound ${muted ? "on" : "off"} for reels`}
+                aria-pressed={!muted}
+                title={`${sound.title} · CHARETT original`}
+                onClick={() => {
+                  reelSound.set(!muted);
+                  // Turning the sound on also starts this reel, in the tap.
+                  if (muted) {
+                    if (video.current?.paused) startReel();
+                    else void startSound();
+                  }
+                }}
+              >
+                {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              </button>
+            ) : null}
+            {!isReel && playing && (
               <label className="post-sound-volume">
                 <Volume2 size={14} aria-hidden="true" />
                 <input
@@ -294,28 +363,30 @@ export function PostMedia({
                 />
               </label>
             )}
-            <button
-              type="button"
-              className="post-sound-play"
-              aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
-              aria-pressed={playing}
-              title={`${sound.title} · CHARETT original`}
-              onClick={async () => {
-                if (playing) {
-                  audio.current?.pause();
-                  video.current?.pause();
-                } else if (video.current) {
-                  try {
-                    await video.current.play();
-                    await startSound();
-                  } catch {
-                    setSoundError("Video could not start. Try again.");
-                  }
-                } else await startSound();
-              }}
-            >
-              {playing ? <Volume2 size={17} /> : <Music2 size={17} />}
-            </button>
+            {!isReel && (
+              <button
+                type="button"
+                className="post-sound-play"
+                aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
+                aria-pressed={playing}
+                title={`${sound.title} · CHARETT original`}
+                onClick={async () => {
+                  if (playing) {
+                    audio.current?.pause();
+                    video.current?.pause();
+                  } else if (video.current) {
+                    try {
+                      await video.current.play();
+                      await startSound();
+                    } catch {
+                      setSoundError("Video could not start. Try again.");
+                    }
+                  } else await startSound();
+                }}
+              >
+                {playing ? <Volume2 size={17} /> : <Music2 size={17} />}
+              </button>
+            )}
             <audio
               ref={audio}
               src={asset(sound.id)}
