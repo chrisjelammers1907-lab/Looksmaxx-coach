@@ -75,12 +75,18 @@ export default function AboutPage() {
       >
         <div className="about-turn">
           {motion ? (
-            <TurnSequence progress={progress} />
+            <>
+              <TurnSequence progress={progress} />
+              <p className="about-wordmark" aria-hidden="true">
+                CHARETT
+              </p>
+            </>
           ) : (
             <img src={turnStill()} alt="" />
           )}
         </div>
         <div className="about-chapters">
+          {motion && <div className="story-intro" aria-hidden="true" />}
           {chapters.map((c, i) => {
             const Heading = i === 0 ? "h1" : "h2";
             return (

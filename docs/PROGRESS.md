@@ -296,10 +296,10 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - When they are real services, build with `VITE_DEMO=false`.
   - `tests/launch-build.test.ts` builds that version and fails if any demo copy is left in the bundle.
 - Audience stays broad: looksmaxxing is the genre and preference, not an exclusive focus, so category order is unchanged.
-- **About tells the founder's story, frame by frame.** While you scroll six screens, a model turns from his back to face you (90 WebP frames drawn on a canvas, Apple-style). Six first-person chapters scroll past over him, one screen each: the ambition, TikTok at the end of 2023, the name (Chico + Barrett), too many promises, who it is for, and what CHARETT promises.
-  - He fills the whole screen, edge to edge, and stays put while the text scrolls with the page (owner's feedback: no box, no text swapping in place).
-  - Phones: he covers the screen and each chapter rises from the bottom over a dark scrim. Wide screens: he stands full height at the left edge (where the clip itself is cut) and the studio wall carries on to the right behind the text.
-  - The canvas sizes itself from a ResizeObserver, so a page laid out after first paint still draws, and `vh` fallbacks sit before every `svh`.
-  - Frames load only on `/about` (712 KB on phones, 1.5 MB on large screens); the first frame shows at once.
+- **About tells the founder's story, frame by frame.** A short film scrubbed by the scroll: 120 WebP frames on a full-screen canvas, eased so it glides (Apple-style). Picked with the owner from ten 4K clips for a clean start and end (Pexels 10210101).
+  - It opens on an empty, dark studio with the CHARETT wordmark. He walks in, stops in profile and turns to look into the camera, centred.
+  - The six first-person chapters scroll over him, one screen each, each on its own moment of the film: the ambition, TikTok at the end of 2023, the name (Chico + Barrett), too many promises, who it is for, and what CHARETT promises. The last one stays while he holds your gaze and the frame slowly closes in.
+  - Wide screens get the full landscape frame; phones get a 9:16 crop that pans with him, so he is always in the picture. Light grain and a vignette.
+  - Frames load only on `/about` (about 2 MB per set); the first frame shows at once. The canvas sizes from a ResizeObserver and each `svh` has a `vh` fallback.
   - With reduced motion or Save-Data: one still of him facing the camera beside the whole story.
   - Old `.about-story` rules in `v2.css` and `editorial.css` are removed; they squeezed the new layout.

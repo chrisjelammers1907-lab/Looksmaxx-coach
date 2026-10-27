@@ -415,7 +415,7 @@ test("18+ stays confirmed when the second intake step is skipped", async ({
   ).toBe(true);
 });
 
-test("about tells the CHARETT story while he turns to face you", async ({
+test("about tells the CHARETT story while he walks in and turns to face you", async ({
   page,
 }) => {
   await open(page, "/about");
@@ -472,7 +472,7 @@ test("about tells the CHARETT story while he turns to face you", async ({
     .poll(async () => Math.round(before - (await heading.boundingBox())!.y))
     .toBe(200);
   await scrollStory(1);
-  await expect(canvas).toHaveAttribute("data-frame", "89");
+  await expect(canvas).toHaveAttribute("data-frame", "119");
   await expect(
     page.getByRole("link", { name: /Find your starting point/ }).first(),
   ).toBeInViewport();
