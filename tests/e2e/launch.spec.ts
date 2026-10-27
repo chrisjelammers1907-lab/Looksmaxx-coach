@@ -447,21 +447,35 @@ test("about tells the CHARETT story while he turns to face you", async ({
   await expect
     .poll(async () => Number(await canvas.getAttribute("data-frame")))
     .toBeGreaterThan(20);
-  await expect(page.locator(".story-chapter.active")).not.toHaveAttribute(
-    "data-chapter",
-    "0",
-  );
+  // He fills the whole screen, edge to edge, and is really drawn.
+  const fill = await canvas.evaluate((c: HTMLCanvasElement) => {
+    const box = c.getBoundingClientRect();
+    const px = c
+      .getContext("2d")!
+      .getImageData(c.width >> 1, c.height >> 1, 1, 1).data;
+    return {
+      left: Math.round(box.left),
+      top: Math.round(box.top),
+      width: Math.round(box.width) - innerWidth,
+      height: Math.round(box.height) - innerHeight,
+      drawn: px[3] > 0,
+    };
+  });
+  expect(fill).toEqual({ left: 0, top: 0, width: 0, height: 0, drawn: true });
+  // The text scrolls with the page instead of swapping in place.
+  const heading = page.getByRole("heading", {
+    name: "Too many promises. Too little proof.",
+  });
+  const before = (await heading.boundingBox())!.y;
+  await page.evaluate(() => window.scrollBy(0, 200));
+  await expect
+    .poll(async () => Math.round(before - (await heading.boundingBox())!.y))
+    .toBe(200);
   await scrollStory(1);
   await expect(canvas).toHaveAttribute("data-frame", "89");
-  await expect(page.locator(".story-chapter.active")).toHaveAttribute(
-    "data-chapter",
-    "5",
-  );
   await expect(
-    page.locator(".story-chapter.active").getByRole("link", {
-      name: /Find your starting point/,
-    }),
-  ).toBeVisible();
+    page.getByRole("link", { name: /Find your starting point/ }).first(),
+  ).toBeInViewport();
   await noAxeViolations(page);
 });
 

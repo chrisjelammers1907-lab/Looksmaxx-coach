@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import TurnSequence, { turnStill } from "../components/TurnSequence";
@@ -57,8 +57,7 @@ const wantsMotion = () =>
 export default function AboutPage() {
   const story = useRef<HTMLElement>(null);
   const [motion] = useState(wantsMotion);
-  const [active, setActive] = useState(0);
-  // How far the reader is through the pinned story, 0–1.
+  // How far the reader is through the story, 0–1.
   const progress = useCallback(() => {
     const node = story.current;
     if (!node) return 0;
@@ -66,25 +65,6 @@ export default function AboutPage() {
     const run = box.height - innerHeight;
     return run > 0 ? Math.min(1, Math.max(0, -box.top / run)) : 0;
   }, []);
-  useEffect(() => {
-    if (!motion) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      setActive(
-        Math.min(chapters.length - 1, Math.floor(progress() * chapters.length)),
-      );
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      removeEventListener("scroll", onScroll);
-    };
-  }, [motion, progress]);
 
   return (
     <article className={`about-page ${motion ? "has-motion" : "is-still"}`}>
@@ -93,23 +73,19 @@ export default function AboutPage() {
         className="about-story"
         aria-label="The story of CHARETT"
       >
-        <div className="about-story-stage">
-          <div className="about-turn">
-            {motion ? (
-              <TurnSequence progress={progress} />
-            ) : (
-              <img src={turnStill()} alt="" />
-            )}
-          </div>
-          <div className="about-chapters">
-            {chapters.map((c, i) => {
-              const Heading = i === 0 ? "h1" : "h2";
-              return (
-                <div
-                  key={c.title}
-                  className={`story-chapter ${!motion || i === active ? "active" : ""}`}
-                  data-chapter={i}
-                >
+        <div className="about-turn">
+          {motion ? (
+            <TurnSequence progress={progress} />
+          ) : (
+            <img src={turnStill()} alt="" />
+          )}
+        </div>
+        <div className="about-chapters">
+          {chapters.map((c, i) => {
+            const Heading = i === 0 ? "h1" : "h2";
+            return (
+              <div key={c.title} className="story-chapter" data-chapter={i}>
+                <div>
                   <Heading>{c.title}</Heading>
                   <p>{c.text}</p>
                   {i === chapters.length - 1 && (
@@ -118,16 +94,9 @@ export default function AboutPage() {
                     </Link>
                   )}
                 </div>
-              );
-            })}
-          </div>
-          {motion && (
-            <div className="about-progress" aria-hidden="true">
-              {chapters.map((c, i) => (
-                <span key={c.title} className={i <= active ? "on" : ""} />
-              ))}
-            </div>
-          )}
+              </div>
+            );
+          })}
         </div>
       </section>
       <section className="about-values" aria-label="What CHARETT offers">
