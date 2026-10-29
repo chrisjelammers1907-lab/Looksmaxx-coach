@@ -2,16 +2,18 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { Modal, Field, Select, Button, Area, Notice } from "./ui";
+import { DEMO } from "../lib/demo";
 export default function Intake() {
   const { state, update } = useDemo();
   const [intake, setIntake] = useState(!state.intake);
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState(state.profile);
+  const [adult, setAdult] = useState(state.adult === true);
   const finish = (save: boolean) => {
     update((s) => ({
       ...s,
       intake: true,
-      ...(save ? { profile: draft } : {}),
+      ...(save ? { profile: draft, adult: true } : {}),
     }));
     setIntake(false);
   };
@@ -22,21 +24,26 @@ export default function Intake() {
           title={step === 1 ? "Welcome to CHARETT" : "Make it your own."}
           onClose={() => finish(false)}
         >
-          <div className="eyebrow">WELCOME TO CHARETT · {step} OF 2</div>
+          <div className="eyebrow">Step {step} of 2</div>
           <p>
             Discover style and self-care inspiration, organise your routines and
             track progress with a personal AI coach. This short profile is
             optional; you can change or remove every detail later.
           </p>
-          <Notice icon="private">
-            This is a local demo. Personal details and photos stay in this
-            browser session. No account is created.
-          </Notice>
+          {DEMO && (
+            <Notice icon="private">
+              This is a local demo. Personal details and photos stay in this
+              browser session. No account is created.
+            </Notice>
+          )}
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (step === 1) setStep(2);
-              else finish(true);
+              if (step === 1) {
+                // The age confirmation counts as soon as step 1 is done.
+                update((s) => ({ ...s, adult: true }));
+                setStep(2);
+              } else finish(true);
             }}
           >
             {step === 1 ? (
@@ -56,6 +63,14 @@ export default function Intake() {
                     setDraft({ ...draft, goals: e.target.value })
                   }
                 />
+                <label className="age-check">
+                  <input
+                    type="checkbox"
+                    checked={adult}
+                    onChange={(e) => setAdult(e.target.checked)}
+                  />
+                  <span>I&rsquo;m 18 or older</span>
+                </label>
               </>
             ) : (
               <>
@@ -102,7 +117,7 @@ export default function Intake() {
               >
                 Skip for now
               </Button>
-              <Button type="submit">
+              <Button type="submit" disabled={step === 1 && !adult}>
                 {step === 1 ? "Continue" : "Find my starting point"}
                 <ArrowRight size={16} />
               </Button>

@@ -1,10 +1,11 @@
 import type { DemoState, TopicId } from "./types";
-import { topicName } from "./domain";
 import { guides } from "./guides";
+import { DEMO } from "./demo";
 export interface CoachRequest {
   text: string;
   topic?: TopicId;
   hasPhoto: boolean;
+  fileName?: string;
   state: DemoState;
 }
 export interface CoachResponse {
@@ -28,28 +29,49 @@ export function inferCoachTopic(
   text: string,
   fallback?: TopicId,
 ): TopicId | undefined {
+  // Whole words only, so "chinos" is not "chin" and "handbag" is not "hands".
   const rules: [TopicId, RegExp][] = [
+    // A named garment means the question is about clothing first.
     [
-      "grooming",
-      /\b(brows?|eyebrows?|lashes|eyelash|groom|shav|beard|makeup|concealer)/i,
+      "clothing",
+      /\b(outfits?|wardrobe|capsule|shoes|sneakers|trainers|chinos|trousers|jeans|denim|shirts?|t-shirts?|tank tops?|suit|blazers?|jackets?|dress(es)?|handbags?)\b/i,
+    ],
+    [
+      "makeup",
+      /\b(makeup|make-up|concealer|foundation|mascara|contour|blush)\b/i,
+    ],
+    ["brows", /\b(brows?|eyebrows?|lashes|eyelash(es)?)\b/i],
+    ["grooming", /\b(groom\w*|shav\w*|beards?|razors?|stubble)\b/i],
+    [
+      "face",
+      /\b(jaw\w*|chin|cheekbones?|zygos?|zygomatic|maxilla|midface|mandible|mewing|eye area|under-eyes?|face shape)\b/i,
+    ],
+    [
+      "colouring",
+      /(?<!hair )\b(undertones?|colouring|coloring|tan|self-tan|contrast|palette)\b/i,
+    ],
+    ["sleep", /\b(sleep\w*|insomnia|tired|recovery|rest day)\b/i],
+    ["presence", /\b(posture|presence|confiden\w*|eye contact|voice)\b/i],
+    ["body", /\b(body lotion|nails?|cuticles?|deodorant|body care|hands?)\b/i],
+    [
+      "nutrition",
+      /\b(calori\w*|protein|nutrition|food|meals?|diet\w*|macros?|weight loss|lose weight|losing weight|gain weight|fat loss)\b/i,
     ],
     [
       "skincare",
-      /\b(skin|acne|cleanser|moisturi|sunscreen|spf|irritat|retinol|serum|tretinoin|spironolactone)/i,
+      /\b(skin\w*|acne|cleanser|moisturi\w*|sunscreen|spf|irritat\w*|retinol|serum|tretinoin|spironolactone)\b/i,
     ],
-    ["hair", /\b(hair|barber|shampoo|conditioner|fringe|scalp)/i],
-    [
-      "clothing",
-      /\b(outfit|wardrobe|cloth|wear|shirt|denim|dress|style|fit|colour|color|shoes|jacket)/i,
-    ],
+    ["hair", /\b(hair\w*|barbers?|shampoo|conditioner|fringe|scalp)\b/i],
+    ["clothing", /\b(cloth\w*|wear\w*|style|fit|colour|color)\b/i],
     [
       "gym",
-      /\b(gym|workout|train|exercise|protein|calori|nutrition|food|meal|posture|mobility|weight|muscle)/i,
+      /\b(gym|workouts?|train\w*|exercis\w*|mobility|weights?|muscles?)\b/i,
     ],
-    ["smile", /\b(teeth|tooth|dental|smile|floss|gum|whiten)/i],
-    ["fragrance", /\b(fragrance|perfume|scent|cologne)/i],
-    ["photos", /\b(journal|progress|before|after|comparison)/i],
+    ["smile", /\b(teeth|tooth|dental|smile|floss\w*|gums?|whiten\w*)\b/i],
+    ["fragrance", /\b(fragrances?|perfumes?|scents?|cologne)\b/i],
+    ["photos", /\b(journal|progress|before|after|comparison)\b/i],
   ];
+
   return (
     rules.find(([, pattern]) => pattern.test(text))?.[0] ||
     fallback ||
@@ -57,18 +79,17 @@ export function inferCoachTopic(
   );
 }
 export const demoCoach: CoachingService = {
-  async reply({ text, topic: entryTopic, hasPhoto, state }) {
+  async reply({ text, topic: entryTopic, hasPhoto, fileName, state }) {
     await new Promise((resolve) => setTimeout(resolve, 450));
     const topic = inferCoachTopic(
       text,
       entryTopic || [...state.chat].reverse().find((m) => m.guide)?.guide,
     );
-    const owned =
-      state.items
-        .filter((item) => !topic || item.topic === topic)
-        .slice(0, 4)
-        .map((item) => item.name)
-        .join(", ") || "No relevant items entered yet";
+    const ownedNames = state.items
+      .filter((item) => !topic || item.topic === topic)
+      .slice(0, 4)
+      .map((item) => item.name)
+      .join(", ");
     const medical =
       /medicat|dnp|steroid|testosterone|spironolactone|dos(e|age)|diagnos|ghk|mk.?677|mounjaro|anavar|attractiveness score|bone measur/i.test(
         text,
@@ -78,36 +99,56 @@ export const demoCoach: CoachingService = {
       state.profile.coachStyle === "direct"
         ? "Let’s make this practical."
         : "Let’s find a manageable starting point for you.";
-    const specific: Partial<Record<TopicId, string>> = {
+    const specific: Record<TopicId, string> = {
       skincare:
-        "Keep cleansing, moisturising and sun protection as separate jobs. Start with what you already tolerate, then record one change at a time. Compatibility depends on full formulas and your response; a product name is not enough to establish it.",
-      clothing:
-        "Build one complete outfit from your own pieces first. Compare fit and colours for the occasion you actually have in mind. A reference is a starting point; adjust it to your preferences instead of replacing your whole wardrobe.",
-      hair: "Save a couple of references and note what you like about their length, texture or colour. Compare maintenance as well as appearance. A visualization is inspiration, not a prediction of a result.",
-      gym: "Start with your current week and comfortable experience level. Log exercises, sets, repetitions and load; keep nutrition estimates and their sources separate from measured facts. The demo’s starter targets are not calculated personal requirements.",
-      grooming:
-        "Start with clean tools and a small, reversible change. Brow shape and darkness are preferences, not universal ideals. Keep ordinary hair dyes and heated tools away from your eyes; lash-growth claims in the references do not establish suitability for you.",
+        "Keep it to cleanse, moisturise and SPF in the morning, and one treatment at night. Add one new product at a time and give it two weeks.",
+      makeup:
+        "Start with a sheer tint blended into the jaw, concealer only where needed, brows set and a coat of mascara. Less product, blended well, always looks better.",
+      face: "The biggest levers are body fat, posture, sleep and how your hair and beard frame your face. Bone itself doesn’t change at home, so skip gadgets that promise it.",
+      colouring:
+        "Find your undertone and contrast first, then keep your best colours near your face. A gradual self-tan with daily SPF gives a glow without sun damage.",
+      brows:
+        "Brush up, trim what sticks out and only tweeze strays below and between. Set with gel. Doing a little less than planned usually looks best.",
       smile:
-        "Keep daily brushing and interdental care manageable, following suitable dental and product guidance. A photo cannot diagnose a dental problem or predict whitening. A dental professional can help with clinical questions.",
+        "Two minutes twice a day with fluoride toothpaste, and clean between your teeth once a day. Pain, bleeding or swelling deserves a dentist.",
+      hair: "Choose the cut first, then two or three products that hold it. Bring a front and a side photo to your barber or stylist.",
+      grooming:
+        "Prepare the skin, shave with the grain and finish with a balm. For a beard, one length and a neckline one finger above the Adam’s apple.",
+      gym: "Three full-body sessions a week, a few compound lifts and a little more weight over time covers most beginner progress.",
+      nutrition:
+        "Set your calories with the calculator, then choose your carbs, protein and fat. Protein at every meal and the 7-day weight average keep you on track.",
+      body: "Lotion on damp skin after the shower, short clean nails and cuticle oil at night. SPF on hands and neck too.",
+      sleep:
+        "A steady wake-up time, morning daylight, no caffeine after early afternoon and a cool, dark room do more than any supplement.",
+      presence:
+        "Shoulders back and down, chin level, five minutes of upper-back mobility and a beat longer eye contact. Speak a little slower than feels natural.",
+      clothing:
+        "Build one complete outfit from pieces you own. Fit first, three colours at most, and balance a loose piece with a fitted one.",
       fragrance:
-        "Start with what you own, how it smells to you over time and the setting you want it for. Compare samples within your budget rather than assuming a popular scent will suit everyone.",
+        "Keep one fresh scent for the day and one warm scent for the evening. Test on skin and wait a few hours before you buy.",
       photos:
-        "Keep dates, light, camera distance and pose consistent when comparing real progress. Record a neutral observation. Separate edited or generated inspiration from real photos, and keep your journal audience independent of account visibility.",
+        "Same spot, same light, same distance, every few weeks. Compare months, not days.",
     };
-    const nextQuestion: Partial<Record<TopicId, string>> = {
-      skincare:
-        "Which products are you using now, and how does your skin feel?",
+    const nextQuestion: Record<TopicId, string> = {
+      skincare: "Which products do you use now, and how does your skin feel?",
+      makeup: "Is this for every day, or for an evening or photos?",
+      face: "Which area would you like to work on first: eyes, midface, cheekbones or jaw?",
+      colouring: "Do gold or silver look better against your skin?",
+      brows: "Are your brows sparse, unruly or just in need of shape?",
+      smile: "Is this about daily care, or is something bothering you?",
+      hair: "What length and how much styling time do you want each morning?",
+      grooming: "Clean shave, stubble or a full beard?",
+      gym: "How many sessions fit your week, and what’s your experience?",
+      nutrition: "Would you like to lose, maintain or gain weight?",
+      body: "Which part matters most to you: skin, hands or nails?",
+      sleep:
+        "What time do you usually wake up, and how do you feel in the morning?",
+      presence:
+        "Where would you like to feel more confident: at work, on dates or in photos?",
       clothing:
-        "Which occasion are you dressing for, and which owned pieces would you like to use?",
-      hair: "What length, texture and maintenance level are you aiming for?",
-      gym: "What is your current experience, and how many sessions fit your week?",
-      grooming:
-        "Are you interested in maintenance, shaping or a reversible cosmetic change?",
-      smile:
-        "Are you organising daily care, or is there a symptom you need help describing to a professional?",
+        "Which occasion are you dressing for, and which pieces do you own?",
       fragrance: "What do you already enjoy, and when do you want to wear it?",
-      photos:
-        "What would you like to observe, and do you have comparable dates and lighting?",
+      photos: "What would you like to track over the next months?",
     };
     const proposal =
       topic === "clothing"
@@ -120,8 +161,37 @@ export const demoCoach: CoachingService = {
               ? "Review two saved hairstyle references"
               : "Spend five minutes reviewing my personal routine";
     const priceQuestion = /budget|buy|shop|cost|price|afford/i.test(text);
+    const advice = topic
+      ? specific[topic]
+      : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words.";
+    const context = [
+      state.profile.goals &&
+        `Your goal: ${state.profile.goals.replace(/\.$/, "")}.`,
+      ownedNames && `You already have: ${ownedNames}.`,
+      priceQuestion &&
+        `Your budget: ${state.profile.currency} ${state.profile.budget}.${DEMO ? " Demo prices are examples, not live offers." : ""}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const reply = [
+      opening,
+      medical &&
+        `I can’t diagnose, score faces or advise on medication and doses.${guide?.shortcuts?.length ? " The guide for this category says straight what these shortcuts do and what they cost." : ""} Treatment goes through a doctor.`,
+      advice,
+      context,
+      (topic && nextQuestion[topic]) || "What would you like to work on first?",
+      hasPhoto &&
+        "I can’t look at photos yet, so I haven’t judged yours. Tell me what you see or what you would like to change.",
+      fileName &&
+        `${fileName} stays in this session. ${DEMO ? "I can’t read files yet, so tell me" : "Tell me"} what you would like to know about it.`,
+      DEMO
+        ? `Sample coach · These replies are written for this preview from your words and what you have saved; this is not live AI yet.${guide ? " The guide for this category goes deeper." : ""}`
+        : guide && "The guide for this category goes deeper.",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
     return {
-      text: `${opening}\n\n${medical ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. The uploaded treatment references are unvalidated. Discuss treatment questions with a qualified clinician.\n\n" : ""}${topic ? `ABOUT ${topicName[topic].toUpperCase()}\n` : "YOUR NEXT STEP\n"}${topic ? specific[topic] : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words."}\n\nYour stated goal: ${state.profile.goals || "Not provided"}.\nOwned items in this context: ${owned}.${priceQuestion ? `\nYour saved budget: ${state.profile.currency} ${state.profile.budget}. Demo prices are examples, not live offers.` : ""}\n\n${(topic ? nextQuestion[topic] : undefined) || "What would you like to work on first?"}${hasPhoto ? "\n\nPHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. No feature measurement or diagnosis is inferred." : ""}\n\nSimulated coach · This sample uses message keywords and your session context; it is not a live AI assessment.${guide ? " The linked beginner guide explains the reference material behind this topic." : ""}`,
+      text: reply,
       proposal,
       guide: topic,
     };

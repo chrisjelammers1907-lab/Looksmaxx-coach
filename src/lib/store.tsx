@@ -7,9 +7,71 @@ import {
   type ReactNode,
 } from "react";
 import type { DemoState } from "./types";
-import { makeInitialState, seedPosts } from "./data";
+import { creators, makeInitialState, seedPosts, parseStyle } from "./data";
 import { releasePrivateMedia } from "./media";
+import { autoLog } from "./training";
+import { today, uid } from "./domain";
+import { DEMO } from "./demo";
+import { keepDemoStreaks } from "./streaks";
 const STORAGE_KEY = "charett-demo-v1";
+/** Training, nutrition and weight logs persist in this browser, as the owner chose. */
+const TRAINING_KEY = "charett-training-v1";
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
+function loadTraining(state: DemoState) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TRAINING_KEY) || "null");
+    if (!isRecord(saved)) return state;
+    return {
+      ...state,
+      trainingWeek: isRecord(saved.trainingWeek)
+        ? (saved.trainingWeek as DemoState["trainingWeek"])
+        : state.trainingWeek,
+      trainingProgress: isRecord(saved.trainingProgress)
+        ? (saved.trainingProgress as DemoState["trainingProgress"])
+        : {},
+      sessions: Array.isArray(saved.sessions)
+        ? (saved.sessions as DemoState["sessions"])
+        : [],
+      workouts: Array.isArray(saved.workouts)
+        ? (saved.workouts as DemoState["workouts"]).filter(
+            (w) =>
+              isRecord(w) &&
+              typeof w.exercise === "string" &&
+              typeof w.weight === "number",
+          )
+        : state.workouts,
+      trainingSince:
+        typeof saved.trainingSince === "string"
+          ? saved.trainingSince
+          : state.trainingSince,
+      food: Array.isArray(saved.food)
+        ? (saved.food as DemoState["food"]).filter(
+            (f) =>
+              isRecord(f) &&
+              typeof f.name === "string" &&
+              typeof f.calories === "number" &&
+              typeof f.carbs === "number",
+          )
+        : state.food,
+      weights: Array.isArray(saved.weights)
+        ? (saved.weights as DemoState["weights"]).filter(
+            (w) =>
+              isRecord(w) &&
+              typeof w.date === "string" &&
+              typeof w.kg === "number",
+          )
+        : state.weights,
+      nutritionTargets:
+        isRecord(saved.nutritionTargets) &&
+        typeof saved.nutritionTargets.calories === "number"
+          ? (saved.nutritionTargets as unknown as DemoState["nutritionTargets"])
+          : state.nutritionTargets,
+    };
+  } catch {
+    return state;
+  }
+}
 export type Patch = (state: DemoState) => DemoState;
 interface Store {
   state: DemoState;
@@ -29,22 +91,77 @@ function load(): DemoState {
       "following",
       "blocked",
       "reports",
+      "reposts",
     ] as const)
       if (Array.isArray(saved[key]))
         initial[key] = saved[key].filter(
           (v: unknown) =>
             typeof v === "string" &&
             (key === "following" || key === "blocked"
-              ? ["mira", "james", "noor"].includes(v)
+              ? creators.some((c) => c.id === v)
               : ids.includes(v)),
         );
-    if (["old-money", "dark-casual", "minimalist"].includes(saved.style))
-      initial.style = saved.style;
+    initial.style = parseStyle(saved.style);
     initial.intake = saved.intake === true;
+    initial.adult = saved.adult === true;
+    // Preferences and streak counters only; never message contents.
+    if (isRecord(saved.settings))
+      initial.settings = {
+        ...initial.settings,
+        ...(saved.settings as Partial<DemoState["settings"]>),
+        notifications: {
+          ...initial.settings.notifications,
+          ...(isRecord(saved.settings.notifications)
+            ? (saved.settings.notifications as Partial<
+                DemoState["settings"]["notifications"]
+              >)
+            : {}),
+        },
+      };
+    if (
+      isRecord(saved.subscription) &&
+      ["free", "plus", "signature"].includes(saved.subscription.plan as string)
+    )
+      initial.subscription = {
+        plan: saved.subscription.plan as DemoState["subscription"]["plan"],
+        billing: saved.subscription.billing === "yearly" ? "yearly" : "monthly",
+        since:
+          typeof saved.subscription.since === "string"
+            ? saved.subscription.since
+            : undefined,
+      };
+    if (
+      isRecord(saved.coachUsage) &&
+      typeof saved.coachUsage.date === "string" &&
+      typeof saved.coachUsage.messages === "number"
+    )
+      initial.coachUsage = {
+        date: saved.coachUsage.date,
+        messages: saved.coachUsage.messages,
+        files: Number(saved.coachUsage.files) || 0,
+        scans: Number(saved.coachUsage.scans) || 0,
+      };
+    if (isRecord(saved.chatStreaks)) {
+      const chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
+      initial.chatStreaks = DEMO
+        ? keepDemoStreaks(chatStreaks, initial.chatStreaks)
+        : chatStreaks;
+    }
+    if (isRecord(saved.routineStreak))
+      initial.routineStreak = saved.routineStreak as DemoState["routineStreak"];
+    if (isRecord(saved.routineLog))
+      initial.routineLog = saved.routineLog as DemoState["routineLog"];
+    if (isRecord(saved.chatThemes))
+      initial.chatThemes = saved.chatThemes as DemoState["chatThemes"];
+    if (Array.isArray(saved.customStickers))
+      initial.customStickers = (
+        saved.customStickers as DemoState["customStickers"]
+      ).filter((st) => isRecord(st) && st.kind === "text");
   } catch {
     /* Storage is optional: a fresh local demo still works. */
   }
-  return initial;
+  const withTraining = loadTraining(initial);
+  return { ...withTraining, ...autoLog(withTraining, today(), uid) };
 }
 export function DemoProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(load);
@@ -52,25 +169,109 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const toast = useCallback((text: string) => setNotice(text), []);
   useEffect(() => {
     try {
-      const { style, intake, likes, saved, following, blocked, reports } =
-        state;
+      const {
+        style,
+        intake,
+        adult,
+        likes,
+        saved,
+        following,
+        blocked,
+        reports,
+        reposts,
+        settings,
+        chatStreaks,
+        routineStreak,
+        routineLog,
+        chatThemes,
+        customStickers,
+        subscription,
+        coachUsage,
+      } = state;
       const ids = seedPosts.map((p) => p.id);
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
           style,
           intake,
+          adult,
           likes: likes.filter((i) => ids.includes(i)),
           saved: saved.filter((i) => ids.includes(i)),
           following,
           blocked,
           reports: reports.filter((i) => ids.includes(i)),
+          reposts: reposts.filter((i) => ids.includes(i)),
+          settings,
+          chatStreaks,
+          routineStreak,
+          routineLog,
+          chatThemes,
+          subscription,
+          coachUsage,
+          // Photo stickers stay in this tab like other private uploads.
+          customStickers: customStickers.filter((st) => st.kind === "text"),
         }),
       );
     } catch {
       /* No sensitive state is persisted. */
     }
   }, [state]);
+  const {
+    trainingWeek,
+    trainingProgress,
+    sessions,
+    workouts,
+    trainingSince,
+    food,
+    weights,
+    nutritionTargets,
+  } = state;
+  const { theme, textSize } = state.settings;
+  // Light, dark or follow the device; the choice is applied to <html>.
+  useEffect(() => {
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const dark = theme === "dark" || (theme === "system" && media.matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute("content", dark ? "#0b2a22" : "#123D32");
+    };
+    apply();
+    media.addEventListener("change", apply);
+    return () => media.removeEventListener("change", apply);
+  }, [theme]);
+  useEffect(() => {
+    document.documentElement.dataset.textSize = textSize;
+  }, [textSize]);
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        TRAINING_KEY,
+        JSON.stringify({
+          trainingWeek,
+          trainingProgress,
+          sessions,
+          workouts,
+          trainingSince,
+          food,
+          weights,
+          nutritionTargets,
+        }),
+      );
+    } catch {
+      /* The plan still works for this session without storage. */
+    }
+  }, [
+    trainingWeek,
+    trainingProgress,
+    sessions,
+    workouts,
+    trainingSince,
+    food,
+    weights,
+    nutritionTargets,
+  ]);
   useEffect(() => {
     if (!notice) return;
     const timer = setTimeout(() => setNotice(""), 4500);
@@ -79,9 +280,18 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   useEffect(() => () => releasePrivateMedia(), []);
   const reset = () => {
     releasePrivateMedia();
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TRAINING_KEY);
+    } catch {
+      /* Nothing stored. */
+    }
     setState(makeInitialState());
-    toast("Demo reset. Private session content removed.");
+    toast(
+      DEMO
+        ? "Demo reset. Private session content removed."
+        : "Your data on this device is cleared.",
+    );
   };
   return (
     <Context.Provider value={{ state, update: setState, reset, toast }}>

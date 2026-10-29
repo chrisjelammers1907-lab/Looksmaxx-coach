@@ -14,6 +14,7 @@ import {
   SectionTitle,
   Select,
 } from "../components/ui";
+import { DEMO } from "../lib/demo";
 export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
   const { state, update, toast } = useDemo();
   const [draft, setDraft] = useState<Photo | null>(null);
@@ -31,9 +32,8 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
   return (
     <>
       <Notice icon="private">
-        Real photos stay in memory in this tab. They are never uploaded to a
-        server, saved to local storage, or attached to public demo content.
-        Reloading or resetting removes them.
+        Your photos stay on this device, are never posted and clear when you
+        reload.
       </Notice>
       <SectionTitle
         title={
@@ -41,7 +41,7 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
             ? "Your private photo journal"
             : "Dated observations"
         }
-        subtitle="Your pace. Your perspective. No scores, no assumed transformations."
+        subtitle="Same light, same spot, every few weeks. No scores."
       >
         <div className="button-row">
           <Button
@@ -145,9 +145,8 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
         </div>
       ) : (
         <Empty title="Every story starts somewhere.">
-          Add your own photos, declare real progress or edited/generated
-          inspiration, and record observations and compare two real entries. We
-          never fill this space with fabricated results.
+          Add your first photo with a short note. After a few weeks, compare two
+          side by side.
         </Empty>
       )}
       {compare && (
@@ -293,10 +292,10 @@ export default function Photos({ topic = "photos" }: { topic?: TopicId }) {
             </Select>
             {draft.audience && draft.audience !== "private" && (
               <Notice icon="private">
-                Sharing preferences are simulated. Your original uploaded photo
-                stays private in this tab; this action does not publish it to
-                the feed or send it to anyone. Account privacy still limits
-                recipient access.
+                {DEMO && "Sharing preferences are simulated. "}Your original
+                uploaded photo stays private in this tab; this action does not
+                publish it to the feed or send it to anyone. Account privacy
+                still limits recipient access.
               </Notice>
             )}
             <Field

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { focusStyle } from "../lib/editorial";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -11,8 +12,9 @@ import {
   Share2,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
-import { asset, totalPrice, uid } from "../lib/domain";
+import { asset, money, totalPrice, uid } from "../lib/domain";
 import type { Outfit, ClothingStyle } from "../lib/types";
+import { clothingStyles } from "../lib/data";
 import Items, { ItemBreakdown } from "../components/Items";
 import {
   Area,
@@ -28,29 +30,7 @@ import {
   Tabs,
   TopicLinks,
 } from "../components/ui";
-const themes = [
-  {
-    id: "old-money",
-    label: "Old money",
-    desc: "Classic, quietly confident.",
-    hero: "Considered classics.",
-    sub: "Cream, forest and a timeless point of view.",
-  },
-  {
-    id: "dark-casual",
-    label: "Dark casual",
-    desc: "Damon-inspired, after hours.",
-    hero: "A darker kind of effortless.",
-    sub: "Espresso, denim and a little edge.",
-  },
-  {
-    id: "minimalist",
-    label: "Minimalist",
-    desc: "Clean lines. Room to breathe.",
-    hero: "Less, beautifully considered.",
-    sub: "Soft neutrals and only what you love.",
-  },
-];
+import { DEMO } from "../lib/demo";
 export default function ClothingPage() {
   const { state, update, toast } = useDemo();
   const [search, setSearch] = useSearchParams();
@@ -62,7 +42,16 @@ export default function ClothingPage() {
   const [illustration, setIllustration] = useState(false);
   const [illustrationLoading, setIllustrationLoading] = useState(false);
   const [illustrationDone, setIllustrationDone] = useState(false);
-  const theme = themes.find((t) => t.id === state.style)!;
+  const switcher = useRef<HTMLDivElement>(null);
+  // Keep the chosen style visible in the scrolling pill row.
+  useEffect(() => {
+    const row = switcher.current;
+    const pill = row?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if (row && pill && row.scrollWidth > row.clientWidth)
+      row.scrollLeft = pill.offsetLeft - row.offsetLeft - 16;
+  }, [state.style]);
+  const theme =
+    clothingStyles.find((t) => t.id === state.style) ?? clothingStyles[0];
   const items = state.items.filter((i) => i.topic === "clothing");
   const outfits = state.outfits.filter((o) =>
     o.title.toLowerCase().includes(filter.toLowerCase()),
@@ -86,8 +75,7 @@ export default function ClothingPage() {
       data-testid="clothing-section"
     >
       <PageHeader
-        eyebrow="THE EDIT / 02"
-        title="Clothing & Style"
+        title="Clothing & style"
         description="A wardrobe with intention. A style that is entirely your own."
         action={
           <Link to="/profile" className="small-text text-link">
@@ -98,15 +86,18 @@ export default function ClothingPage() {
         }
       />
       <TopicLinks topic="clothing" />
-      <div className="style-switcher" aria-label="Clothing theme">
-        {themes.map((t) => (
+      <div
+        ref={switcher}
+        className="style-switcher"
+        role="group"
+        aria-label="Clothing style"
+      >
+        {clothingStyles.map((t) => (
           <button
             key={t.id}
             aria-pressed={state.style === t.id}
             className={state.style === t.id ? "selected" : ""}
-            onClick={() =>
-              update((s) => ({ ...s, style: t.id as ClothingStyle }))
-            }
+            onClick={() => update((s) => ({ ...s, style: t.id }))}
           >
             <span className={`theme-dot dot-${t.id}`} />
             <span>
@@ -125,39 +116,25 @@ export default function ClothingPage() {
           { id: "wardrobe", label: "My wardrobe" },
           { id: "outfits", label: "My outfits" },
           { id: "inspiration", label: "Inspiration" },
-          { id: "shopping", label: "Shopping demo" },
+          { id: "shopping", label: DEMO ? "Shopping demo" : "Shopping" },
         ]}
       />
       {tab === "overview" && (
         <>
           <section className="clothing-hero">
             <div>
-              <div className="eyebrow">
-                THE {theme.label.toUpperCase()} EDIT
-              </div>
               <h2>{theme.hero}</h2>
               <p>{theme.sub}</p>
               <Button variant="theme" onClick={() => setView("outfits")}>
                 Build your everyday edit
                 <ArrowUpRight size={18} />
               </Button>
-              <span className="small-text">
-                Inclusive styles · Choose what feels like you
-              </span>
             </div>
             <img
-              src={asset(state.style === "dark-casual" ? "style" : "campaign")}
-              alt={
-                state.style === "dark-casual"
-                  ? "Licensed stock clothing editorial reference"
-                  : "AI fashion editorial inspiration, not real customers or a try-on result"
-              }
+              src={asset(`photo-style-${state.style}`)}
+              style={focusStyle(`photo-style-${state.style}`)}
+              alt=""
             />
-            <span className="clothing-hero-label">
-              {state.style === "dark-casual"
-                ? "LICENSED EDITORIAL INSPIRATION"
-                : "AI EDITORIAL · FICTIONAL INSPIRATION"}
-            </span>
           </section>
           <div className="quick-grid">
             <button onClick={() => setView("wardrobe")}>
@@ -179,7 +156,11 @@ export default function ClothingPage() {
             <Link to={`/explore?topic=clothing&style=${state.style}`}>
               <Share2 />
               <h3>A shared point of view</h3>
-              <p>Explore fictional community edits.</p>
+              <p>
+                {DEMO
+                  ? "Explore fictional community edits."
+                  : "Explore edits from the community."}
+              </p>
               <ArrowUpRight size={19} />
             </Link>
           </div>
@@ -234,6 +215,8 @@ export default function ClothingPage() {
                     >
                       {o.wornPhoto ? (
                         <img
+                          loading="lazy"
+                          decoding="async"
                           src={o.wornPhoto}
                           alt="Private real worn-outfit photo"
                         />
@@ -242,6 +225,8 @@ export default function ClothingPage() {
                           .slice(0, 3)
                           .map((i) => (
                             <img
+                              loading="lazy"
+                              decoding="async"
                               key={i.id}
                               src={
                                 i.image.startsWith("data:")
@@ -331,16 +316,19 @@ export default function ClothingPage() {
         <>
           <SectionTitle
             title={`The ${theme.label.toLowerCase()} point of view`}
-            subtitle="Stock editorial references. No owner photos or achieved transformations."
+            subtitle="Looks to save, copy and make your own."
           />
           <div className="inspiration-grid">
             <article className="inspiration-card">
               <img
-                src={asset(state.style === "dark-casual" ? "style" : "hero")}
-                alt="Stock worn-outfit editorial reference"
+                loading="lazy"
+                decoding="async"
+                src={asset(`photo-style-${state.style}`)}
+                style={focusStyle(`photo-style-${state.style}`)}
+                alt={`${theme.label} outfit`}
               />
               <div>
-                <span className="pill">Real stock photo · Worn outfit</span>
+                <span className="pill">Worn outfit</span>
                 <h3>{theme.hero}</h3>
                 <p>
                   Warm layers, individual proportions. Use this as a mood, not a
@@ -356,7 +344,6 @@ export default function ClothingPage() {
             </article>
             <article className="tryon-card">
               <Shirt size={80} />
-              <span className="eyebrow">A DIFFERENT PERSPECTIVE</span>
               <h3>Imagine the combination.</h3>
               <p>
                 A separate AI try-on placeholder. It never counts as a real worn
@@ -368,7 +355,7 @@ export default function ClothingPage() {
                   setIllustrationDone(false);
                 }}
               >
-                Open simulated try-on
+                {DEMO ? "Open simulated try-on" : "Sketch this outfit"}
               </Button>
             </article>
           </div>
@@ -377,10 +364,8 @@ export default function ClothingPage() {
       {tab === "shopping" && (
         <>
           <Notice>
-            SIMULATED SHOPPING · Fictional brands, example prices dated
-            2026-10-19. No live search, stock, checkout or affiliate links. Your
-            currency is {state.profile.currency} and country is{" "}
-            {state.profile.country}.
+            Prices shown in {state.profile.currency} for {state.profile.country}
+            . Example prices — live shops come later.
           </Notice>
           <SectionTitle
             title={`Considered finds · ${theme.label}`}
@@ -389,6 +374,7 @@ export default function ClothingPage() {
           <Field
             label={`Maximum example price (${state.profile.currency})`}
             type="number"
+            inputMode="decimal"
             min="0"
             value={shopBudget}
             onChange={(e) => setShopBudget(Number(e.target.value))}
@@ -460,7 +446,7 @@ export default function ClothingPage() {
                   })
                 }
               >
-                {themes.map((t) => (
+                {clothingStyles.map((t) => (
                   <option value={t.id} key={t.id}>
                     {t.label}
                   </option>
@@ -505,6 +491,7 @@ export default function ClothingPage() {
                 >
                   <input
                     type="checkbox"
+                    aria-label={`${i.name}${i.brand ? `, ${i.brand}` : ""}`}
                     checked={editing.itemIds.includes(i.id)}
                     onChange={() =>
                       setEditing({
@@ -519,7 +506,13 @@ export default function ClothingPage() {
                     src={i.image.startsWith("data:") ? i.image : asset(i.image)}
                     alt=""
                   />
-                  <span>{i.name}</span>
+                  <span className="piece-text">
+                    <small>{i.brand || "No brand added"}</small>
+                    <strong>{i.name}</strong>
+                    {i.price !== null && (
+                      <small>{money(i.price, i.currency)}</small>
+                    )}
+                  </span>
                 </label>
               ))}
             </div>
@@ -595,13 +588,12 @@ export default function ClothingPage() {
       )}
       {illustration && (
         <Modal
-          title="Simulated outfit visualization"
+          title={DEMO ? "Simulated outfit visualization" : "Outfit sketch"}
           onClose={() => setIllustration(false)}
         >
           <Notice>
-            SIMULATED AI TRY-ON · No image is generated or analyzed. This
-            illustration is a diagram, not a real photograph, fit prediction or
-            achieved result.
+            A sketch of the outfit, not a try-on. Fit and colour can look
+            different on you.
           </Notice>
           {illustrationDone ? (
             <div className="outfit-illustration">
@@ -628,7 +620,9 @@ export default function ClothingPage() {
           >
             {illustrationLoading
               ? "Loading example…"
-              : "Show simulated illustration"}
+              : DEMO
+                ? "Show simulated illustration"
+                : "Show the sketch"}
           </Button>
         </Modal>
       )}

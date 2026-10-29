@@ -1,5 +1,9 @@
 import type { Item, Post } from "./types";
-export const today = () => new Date().toISOString().slice(0, 10);
+/** Today's date in the viewer's own time zone (YYYY-MM-DD). */
+export const today = (now = new Date()) =>
+  new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 10);
 export const uid = () => crypto.randomUUID();
 export function totalPrice(items: Item[]): string {
   if (!items.length) return "No items yet";
@@ -8,7 +12,8 @@ export function totalPrice(items: Item[]): string {
   if (currencies.length > 1) return "Mixed currencies · no combined total";
   const value = known.reduce((sum, i) => sum + (i.price ?? 0), 0);
   if (!known.length) return "Price unavailable";
-  return `${money(value, currencies[0])}${known.length < items.length ? " + unpriced items" : ""}`;
+  // Some prices unknown: the total is a minimum.
+  return `${known.length < items.length ? "From " : ""}${money(value, currencies[0])}`;
 }
 export function money(value: number, currency = "EUR") {
   try {
@@ -38,6 +43,7 @@ export function mayViewPost(
 ) {
   if (!post || blocked.includes(post.author)) return false;
   if (post.author === viewer) return true;
+  if (post.draft) return false;
   if (post.media?.origin === "private-upload" || post.audience === "private")
     return false;
   if (
@@ -54,7 +60,7 @@ export function maySharePost(
   recipient?: string,
   approvedFollowers: string[] = [],
 ) {
-  if (!post || post.audience === "private") return false;
+  if (!post || post.audience === "private" || post.draft) return false;
   if (post.media?.origin === "private-upload") return false;
   return mayViewPost(
     post,
@@ -77,11 +83,40 @@ export const asset = (key: string) =>
   `/assets/${key}.${key.startsWith("sound-") ? "mp3" : key === "motion" ? "mp4" : ["skin", "gym", "smile", "fragrance", "shirt", "tee", "denim", "food"].includes(key) ? "svg" : "jpg"}`;
 export const topicName: Record<string, string> = {
   skincare: "Skincare",
-  clothing: "Clothing & Style",
+  makeup: "Makeup",
+  face: "Face structure",
+  colouring: "Colouring",
+  brows: "Brows & lashes",
+  smile: "Teeth & smile",
   hair: "Hair",
-  gym: "Gym, Nutrition & Posture",
-  grooming: "Brows & Grooming",
-  smile: "Teeth & Smile",
+  grooming: "Beard & shaving",
+  gym: "Gym & physique",
+  nutrition: "Nutrition",
+  body: "Body care & nails",
+  sleep: "Sleep & recovery",
+  presence: "Posture & presence",
+  clothing: "Clothing & style",
   fragrance: "Fragrance",
-  photos: "Photos & Progress",
+  photos: "Photos & progress",
 };
+
+/** Stable, believable engagement for seeded posts; your own posts start at 0. */
+export function engagement(id: string, own = false) {
+  if (own) return { likes: 0, reposts: 0, saves: 0, shares: 0 };
+  let hash = 2166136261;
+  for (const c of id) hash = Math.imul(hash ^ c.charCodeAt(0), 16777619);
+  const pick = (min: number, max: number, salt: number) =>
+    min + (Math.abs(Math.imul(hash ^ salt, 2654435761)) % (max - min));
+  return {
+    likes: pick(240, 4800, 11),
+    reposts: pick(4, 120, 23),
+    saves: pick(30, 900, 37),
+    shares: pick(6, 260, 41),
+  };
+}
+
+/** 2975 → "2,975"; from 10,000 on: "12K", like Instagram. */
+export const compactCount = (n: number) =>
+  n < 10_000
+    ? n.toLocaleString("en")
+    : new Intl.NumberFormat("en", { notation: "compact" }).format(n);

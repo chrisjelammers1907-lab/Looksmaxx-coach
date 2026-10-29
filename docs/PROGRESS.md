@@ -72,7 +72,6 @@ Source notes and limitations: reference-based guides are original educational su
 
 Public deployment verification is recorded separately in WEB_PUBLICATION.md after its own run completes.
 
-
 ## 22 October 2026 — editorial design and post sounds
 
 Preserved the approved navigation, all eight tools/guides, privacy and social journeys. Added original labelled AI campaign/still-life imagery, coherent forest/ivory/rose/amber styling across ten pages, and three original sound loops for photo/video posts. Working previews, mixing, post playback, edit/removal, one player at a time and viewport/navigation cleanup. No third-party commercial tracks, new medical claims or private owner content were added.
@@ -88,3 +87,241 @@ The temporary native-Git authentication rejection resolved on a later check. Bot
 Collected the owner's consecutive visual/feed messages as one change set. ITERATION_4.md records the bounded canvas and side gutters, richer forest-green surfaces, uniform category cards and top image row, image-overlaid captions, separate Photos/Reels with independent For You/Following, and accessible photo slideshows in Reels. The existing wordmark, typefaces, sounds, all eight tools, guides and privacy/social journeys remain selected. The referenced example image was unavailable; no inspection of it or of the current Victoria's Secret site is claimed.
 
 On 24 October 2026, the final full regression passed all 72 browser cases; 15 domain tests, type checking, lint, formatting and build passed. The separate standalone export passed both viewport journeys with no browser/request errors. Fifteen routes fit at 320/390/768/1440 px, and the principal desktop/mobile screens were visually inspected. The initial ambiguous composer-test locator was fixed without removing assertions. Public run 40119164432 passed for source 6171e93068b854f0df449770c864033abb779d0b. The actual HTTPS export matched its expected checksum; both viewport journeys passed with no browser/request errors. Actual public screenshots were inspected. Pages commit 61b34ce89eafd57a243e225200587a5c8396fe09 and evidence commit d092187adeed4bba9236e24603f763a63561950e are recorded in WEB_PUBLICATION.md.
+
+## Premium edit — 24 October 2026
+
+The owner asked for a more premium look with the same structure. Implemented: central design tokens (`src/tokens.css`) with forest, ivory, champagne and ink, plus removal of all light green and pink; centred Instagram/TikTok feed tabs with chip filters; captions below photo posts with like/comment/save actions; product tags and a "Shop the look" row in place of the old price block; reels unchanged with overlay captions; a floating rounded mobile bottom bar with safe-area insets; Instagram-DM-style Messages and AI Coach; less filler text. Vector illustrations in the feed now render instead of appearing as empty blocks. Details are in DESIGN_SYSTEM.md.
+
+Validation: typecheck, ESLint, Prettier, 15 domain tests and the production build passed. The full Chromium run passed 79 cases at 1440×1000 and 390×844. That covers the 72 existing cases, with four assertions updated where the UI changed on purpose (photo caption below the image, no topic line on untagged posts, the composer's "Message"/"Send message" labels), plus a new `premium.spec.ts` for centred tabs, chip filtering, product tags, the mobile bar and chat composers. Axe scans of 21 routes at both widths and all clothing themes found no violations. The standalone HashRouter export was built and opened locally without errors; `demo/CHARETT-demo.html` and `gh-pages` were not updated in this change. Before and after screenshots are in `docs/screenshots/premium/`.
+
+## Second premium round — 24 October 2026
+
+The owner's feedback on the first preview was agreed point by point before any building started, and was then delivered in four phases. Each phase was published to the private preview.
+
+1. **Home and layout**
+   - Masthead tagline spacing is fixed and the Explore row is removed.
+   - Stories sit at the top of Home.
+   - Home order is For You/Following, then Photos/Reels, then filters.
+   - Captions expand in place.
+   - Categories is an icon list with a closing quote.
+   - My Plan shows one day with Routines/Tasks filters, and the check-in is removed.
+   - Topic banners and cards are aligned.
+2. **Profiles, chats, coach and clothing**
+   - Instagram-style profiles: stats, drafts, private posts, reposts, likes, the ⋯ menu and settings.
+   - Chat photos, stickers and voice messages.
+   - Coach file attachments.
+   - Brand and price in the outfit builder.
+   - Old money and Minimalist page moods.
+3. **Gym planner**
+   - Named days with per-set reps and kg, repeated weekly or applied once.
+   - Today tick-off, then automatic logging after midnight (untouched sessions are recorded as skipped).
+   - PR detection that can be shared as a story.
+   - Training data persists in `localStorage` (`charett-training-v1`), as the owner approved; reset clears it.
+4. **Beginner guides**
+   - The skincare, grooming and hair guides now contain practical tips from the five supplied Looksmax PDFs.
+   - Medication doses, injections, self-sourcing of prescription products and DMSO use are deliberately left out.
+   - The creator name is removed everywhere.
+
+**Validation**
+
+- Typecheck, ESLint and Prettier pass.
+- 19 unit tests pass, including the new training tests.
+- 93 Chromium cases pass, with 1 mobile-only case skipped on desktop.
+- Axe finds no violations on 21 routes at both widths or in the three clothing themes.
+
+Updated screenshots are `docs/screenshots/premium/v2-*.jpg`.
+
+## Third premium round — 25 October 2026
+
+1. **Home, reels and scrolling**
+   - Stories run continuously for every creator and scroll with touch, wheel, drag or arrows.
+   - All chip rows scroll the same way.
+   - On a phone a reel fills the screen, with likes, caption and "more" inside the reel. Tapping it opens an Instagram-style sheet with Shop the look.
+   - Photo sound is a small icon on the image.
+   - Captions no longer repeat the handle.
+2. **Chats, settings and dark mode**
+   - The microphone sits only at the bottom right; camera and stickers are in the + menu.
+   - Custom stickers can be made from text or a photo.
+   - Streaks for chats, routines and the gym unlock rewards at 3, 7, 30 and 100 days.
+   - A full Settings page (account, notifications, appearance with light/dark/device, privacy, units, subscription, data). The app is English only for now.
+3. **Plan, gym and nutrition**
+   - Tasks have an optional date and repeat, grouped Overdue / Today / This week / Later.
+   - Routines link owned products, per routine and per step.
+   - The separate exercise log is gone; history stays editable and weights follow the kg/lb setting.
+   - Nutrition targets are set by the person: kcal, carbs, protein and fat are required; fibre, sugars, salt, potassium, minerals and vitamins are optional.
+   - Food is entered by hand or scanned (BarcodeDetector, or ZXing on Safari and Firefox, plus typing the number). Values come from Open Food Facts and scale to the grams eaten.
+   - A weight log shows a chart and the 7-day average.
+   - A calorie calculator (Mifflin-St Jeor) gives maintenance only under 18 and never suggests less than 1200/1500 kcal.
+   - Food, weights and targets persist in `charett-training-v1`.
+4. **Guides and membership**
+   - Every guide now explains what each product does, how to put it together, and what works and what doesn't.
+   - The guides list no sources, and the extreme drug content is removed.
+   - Wherever hormones or medication come up, the guides say "Hormones or medication only through a doctor."
+   - A new weight guide (lose, maintain, gain) is linked from Gym and the calculator.
+   - Each guide ends with a coach call to action.
+   - `/plans` offers Free, Plus (€9.99 a month or €99.99 a year) and Signature (€19.99 a month or €199.99 a year), with a simulated checkout that asks for no payment details.
+   - Free includes 10 coach messages and 1 file a day, 3 training days and food logging by hand. It shows sponsored posts every sixth post and between stories; the sponsors are fictional.
+   - Plus lifts the limits, adds the barcode scan and custom stickers, and removes ads.
+   - Signature adds all chat themes and sticker packs, streak protection and a profile badge.
+
+**Validation**
+
+- Typecheck, ESLint and Prettier (source) pass.
+- 27 unit tests pass.
+- All Chromium e2e cases pass at desktop and mobile width; the mobile-only and pointer-only cases are skipped where they don't apply.
+- Axe finds no violations in light and dark mode on the new routes.
+
+Screenshots are `docs/screenshots/premium/v3-*.jpg`.
+
+## Fourth premium round — 25 October 2026
+
+**Alignment fixes from the owner's screenshots**
+
+- Reels:
+  - the action column uses 30 px icons with more space between them;
+  - every action shows a count (likes, comments, reposts, saves, shares);
+  - the repost icon is the taller loop instead of the flattened one;
+  - the author row and Follow have breathing room;
+  - slideshow arrows and the counter form one centred group, clear of the action column.
+- Profile:
+  - on phones, name and handle sit beside the avatar;
+  - the bio and a four-column stats row with dividers span the full width;
+  - the tab icons share the full width.
+- Mobile pages use an 18 px side gutter (`--gutter`).
+
+**Membership tiers**
+
+- Plus (€9.99): 50 coach messages and 5 files a day, 5 training days, 10 barcode scans a day, 10 custom stickers, no ads.
+- Signature (€19.99): unlimited coach messages and files, training days, scans and stickers, plus all chat themes and sticker packs, streak protection and the badge.
+- Limits live in `limits` in `src/lib/plans.ts`; scan use is counted per day.
+
+**Design and copy audit**
+
+- Photo posts:
+  - action order is like, comment, repost, share, save;
+  - each action shows an inline count; counts stay exact below 10,000.
+- Topic banners: each category has its own eyebrow and headline, replacing "Your own kind of remarkable".
+- Each category has its own practical tip under its routines.
+- Routine steps and seed products are concrete:
+  - products are listed under fictional house brands;
+  - real sizes and short notes replace "M · example";
+  - the evening skincare routine links its products.
+- Gym "Your training story" uses lift cards with a line chart and "+2.5 kg since 5 Oct", replacing the block bars.
+- Settings:
+  - the theme and text-size cards show a check mark;
+  - follower requests show Accept and Decline side by side;
+  - unit names are short enough not to truncate;
+  - the data buttons match.
+- The demo-only labels are rewritten in plain language: "SIMULATED …", "fictional" after names and "Demo inbox".
+- The About text matches what persists now and no longer mentions source files.
+- Desktop filter chips are centred over the feed. Today's tile in the week strip uses an inner ring, so the row never clips it.
+
+## Fifth round — launch edit — 25 October 2026
+
+Spec: `docs/superpowers/specs/2026-10-25-charett-launch-design.md`. Plan: `docs/superpowers/plans/2026-10-25-charett-launch.md`.
+
+**Photography instead of generated art**
+
+- 41 licensed Pexels photos with models (`scripts/photos.json`, credited in `ASSET_CREDITS.md`), graded warm and kept under 90 KB each.
+- No "AI inspiration" labels, sparkles or orb remain; the coach and empty states use the CHARETT monogram.
+
+**Categories**
+
+- 16 categories in five groups: Face (skincare, makeup, face structure, colouring, brows & lashes, teeth & smile), Hair (hair, beard & shaving), Body (gym & physique, nutrition, body care & nails, sleep & recovery, posture & presence), Style (clothing & style, fragrance) and Progress (photos & progress).
+- Face structure covers the eye area, maxilla and midface, cheekbones, and jaw and chin honestly: what you can do yourself, what doesn't work, and what only a qualified specialist does. No face ratings, no hormone or medication advice.
+- Every new category has its own routine, products, tip and beginner's guide. Nutrition and posture moved out of the gym page into their own categories.
+- Category rows show a round photo; the home feed chips cover every style and category.
+
+**Clothing**
+
+- Eight styles: old money, dark casual, minimalist, streetwear, smart casual, athleisure, preppy and bohemian, each with its own page mood, hero photo, feed filter and seed post.
+- The style switcher is one scrolling pill row that keeps the chosen style in view.
+
+**Launch details**
+
+- Green streak flame next to names in chats, on the plan card and in training.
+- Profile stats on phones have no frame.
+- Intake asks for confirmation of 18 or older before continuing; skipping stays possible.
+- Share card: posts and new PRs become a 1080×1920 story card, shared through the device sheet or downloaded as PNG for Instagram and TikTok.
+
+**Fixes found by the audit**
+
+- Portrait photos no longer stretch topic banners, guide heroes or the clothing hero on desktop.
+- Dark-mode contrast for the dark casual and minimalist buttons and the minimalist note.
+- Audit: 43 routes × 390/1440 px × light/dark, 0 axe violations and no horizontal overflow.
+
+## Sixth round — polish with Impeccable, Taste and Emil Kowalski's skills — 26 October 2026
+
+Three design-skill packs are now project skills in `.claude/skills/` (Impeccable, emilkowalski/skill, Taste). They drove an audit (13/20), a critique (design review 21/40 plus detector), and a mobile/motion review. This round fixes what they found:
+
+- **Type floor.** No visible text is under 11px, and no long body copy is under 13px, on 16 key routes (guarded by a test). Page intros are 15.5px with a 62ch measure. Headings are balanced and prose wraps neatly.
+- **No AI patterns.**
+  - Kicker labels above headings are gone; My Plan's date now sits under the title.
+  - The header and story cards are flat (no radial glow).
+  - The pinstripe and the side stripe are gone.
+  - Streetwear uses self-hosted Anton instead of a system face.
+- **Flatter.** A routine's products are a flat list under a hairline, not boxed pills.
+- **Harden.**
+  - Feed and profile headings no longer skip a level.
+  - A missing photo falls back to a linen tint.
+  - 18+ is kept when intake step 2 is skipped.
+  - Share cards wait for the brand fonts, break over-long words and fit their ellipsis.
+  - Deleting a routine needs a second tap.
+- **About.** The page tells its story with CSS scroll-driven animations: the photo frame opens, the statement lights up word by word, and the values unfold. It is still and legible with reduced motion or without scroll-timeline support.
+- **Speed.** Pages load on first visit (main bundle 567 → 415 kB), and images load lazily.
+- **Native feel on phones.**
+  - All `:hover` rules apply to real pointers only (guarded by a test).
+  - Fields are 16px on touch screens and number fields bring up a decimal keypad.
+  - Taps give press feedback, and the easing is stronger.
+  - Sheets slide up on the drawer curve, and dialogs scale in.
+  - The story timer resumes after a hold.
+  - Scrolling inside a panel no longer moves the page behind it.
+  - Safe areas are respected, and long-pressing a control no longer selects its text.
+  - Reduced motion keeps fades.
+- **Details.**
+  - The streak flame on My Plan is sized correctly, and the counts are clear.
+  - Chat screens have no site footer.
+  - The nutrition scan button no longer clips.
+  - Disclosures use drawn chevrons, and the selected chip shows in dark mode.
+  - Gym links are clean rows, and small controls get 44px hit areas.
+- Audit: 43 routes × 390/1440 × light/dark, 0 axe violations, no overflow. Vitest 136/136, Playwright 160 passed (3 project-specific skips).
+
+## Seventh round — owner's picks from the design review — 26 October 2026
+
+- **Category pages open on the routine.** The banner with its italic two-beat tagline (it repeated the subtitle) is now a slim photo strip, so routines start in the first phone screen. Skincare's seven identical weekly cards are one sentence.
+- **Membership sells outcomes.** Tier copy leads with what each plan lets you do. Stickers, chat themes and the badge are named once in a quiet "Also:" line. No "Most popular" pill or crown; Plus has an ink rule. Yearly reads "2 months free". Prices and limits are unchanged.
+- **My Plan is one day.** Today's routines and tasks share one list and one count. A routine is one line: tick it off in one tap (it keeps the routine streak), or open it for its steps and an "Edit in …" link.
+- **One launch switch.** Every demo-only line ("fictional", "demo", "simulated", the reset and checkout notices) sits behind `DEMO` in `src/lib/demo.ts`.
+  - Keep it on while the coach, accounts, payments and shopping are simulated.
+  - When they are real services, build with `VITE_DEMO=false`.
+  - `tests/launch-build.test.ts` builds that version and fails if any demo copy is left in the bundle.
+- Audience stays broad: looksmaxxing is the genre and preference, not an exclusive focus, so category order is unchanged.
+- **About tells the founder's story, frame by frame.** A short film scrubbed by the scroll: 120 WebP frames on a full-screen canvas, eased so it glides (Apple-style). Picked with the owner from ten 4K clips for a clean start and end (Pexels 10210101).
+  - It opens on an empty, dark studio with the CHARETT wordmark. He walks in, stops in profile and turns to look into the camera, centred.
+  - The six first-person chapters scroll over him, one screen each, each on its own moment of the film: the ambition, TikTok at the end of 2023, the name (Chico + Barrett), too many promises, who it is for, and what CHARETT promises. The last one stays while he holds your gaze and the frame slowly closes in.
+  - Wide screens get the full landscape frame; phones get a 9:16 crop that pans with him, so he is always in the picture. Light grain and a vignette.
+  - Frames load only on `/about` (about 2 MB per set); the first frame shows at once. The canvas sizes from a ResizeObserver and each `svh` has a `vh` fallback.
+  - With reduced motion or Save-Data: one still of him facing the camera beside the whole story.
+  - Old `.about-story` rules in `v2.css` and `editorial.css` are removed; they squeezed the new layout.
+- **Owner's fixes after the About film.**
+  - About: the film sits inside the app frame, flush under the masthead and edge to edge, and stops where the story ends instead of hanging over the next section (the chapters now pull up over the film, so its sticky box keeps its own height).
+  - AI Coach: the coach's mark sits beside the first line of each reply, with 12px between them.
+  - Home: Photos/Reels sticks just under the feed header, so you can switch without scrolling back up.
+  - Reels play by themselves once mostly in view and pause as they leave it, muted at first. One sound switch (`src/lib/reelSound.ts`) turns sound on or off for every reel. The big play button stays out of the picture while a reel plays; with reduced motion nothing autoplays.
+
+## Eighth round — before launch — 29 October 2026
+
+- **AI Coach welcome:** the mark, question, intro and suggestions have room between them.
+- **Chat streaks:** they were never removed; a returning visitor's saved demo streaks had simply expired after days without a message. In the demo, a sample streak stays as seeded until you chat in that thread (`keepDemoStreaks`).
+- **Photos show their subject.** Every editorial photo has a focus point (`photoFocus` in `src/lib/editorial.ts`, usually the face) that every crop keeps in view: round thumbnails, strips, guide heroes, style heroes, stories, ads, profile tiles and the 4:5 feed crop. A unit test fails if a photo has none. On wide screens the category photo stands beside the title at 3:2 instead of a 4:1 sliver.
+- **Guides, from the owner's PDFs, told straight.**
+  - Out: the wrist-vein undertone test, a single brow arch for everyone, "no brow tint at home", and anything filed under "doesn't work" that does work.
+  - In: prescription retinoids, marks and scars, copper peptides, minoxidil, a masculine and a softer brow map, brow tint and lash lift, colour from food, dark spots on every skin tone, lips, teeth and lenses, and steps against social anxiety.
+  - New on seven guides: **What people use, and what it costs** — isotretinoin, spironolactone, finasteride/dutasteride, MT2, skin lighteners, steroids and Anavar, MK-677, GLP-1s, DNP, anxiety medication, bimatoprost, oral minoxidil and transplants. Each says what it really does (including that it works) and what it costs; never doses, schedules or sources (a unit test checks).
+- **Pre-launch audit.**
+  - Every route at 390 and 1440 px, light and dark: no console errors, failed requests, broken images, dead internal links or horizontal scroll; one `h1` per page; axe 0 violations.
+  - Tabs carry the page's name ("Skincare · CHARETT", "Mira Laurent · CHARETT") instead of the URL slug. The 404 says "Page not found" (it said "This page has moved").
+  - `index.html`: no slogan in the title and no "demo" in the description; social preview tags, an apple-touch icon and a web manifest (`public/icon-*.png`, `manifest.webmanifest`). The build also writes `404.html`, so a shared deep link opens the app on any static host.
+  - The coach speaks plainly (no "ABOUT SKINCARE", "Owned items in this context"), never claims to have judged a photo, and points medication questions to the guide's shortcuts and a doctor.
+  - Copy: the Plus welcome no longer says "without limits"; Signature promises "photos", not "photo feedback" the coach can't give; the coach's limit prompt reads from the plan table; category intros say what the page does instead of slogans.
+  - Spelling checked over all visible text (unknown words are terms, names or British spelling).

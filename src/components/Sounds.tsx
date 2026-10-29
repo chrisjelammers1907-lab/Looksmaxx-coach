@@ -42,7 +42,7 @@ export function SoundPicker({
           </strong>
           <p>
             {selected
-              ? "Original CHARETT demo sound"
+              ? "Original CHARETT sound"
               : "Add a sound to your photo or video. Optional, always."}
           </p>
         </div>
@@ -61,7 +61,6 @@ export function SoundPicker({
       {open && (
         <div className="sound-library">
           <div className="sound-library-intro">
-            <span className="eyebrow">THE CHARETT SOUND EDIT</span>
             <p>
               Three original instrumental loops. Preview a mood, then make it
               yours.
@@ -105,7 +104,7 @@ export function SoundPicker({
                 <strong>{sound.title}</strong>
                 <small>{sound.mood}</small>
                 <span>
-                  {sound.bpm} BPM · {sound.duration}s · original demo audio
+                  {sound.bpm} BPM · {sound.duration}s · original audio
                 </span>
               </div>
               <button
@@ -130,8 +129,7 @@ export function SoundPicker({
             </div>
           ))}
           <p className="small-text">
-            Demo library · Original synthesized instrumentals, not a commercial
-            music catalogue.
+            Original CHARETT instrumentals, not a commercial music catalogue.
           </p>
         </div>
       )}

@@ -24,6 +24,7 @@ test("skippable intake and editable shared profile", async ({ page }) => {
   await go(page, "/");
   await expect(dialog(page)).toBeVisible();
   await page.getByLabel("What should we call you?").fill("Taylor Demo");
+  await page.getByRole("checkbox", { name: "I’m 18 or older" }).check();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Find my starting point" }).click();
   await go(page, "/profile");
@@ -36,7 +37,7 @@ test("skippable intake and editable shared profile", async ({ page }) => {
     .fill("Build a capsule wardrobe");
   await page.getByLabel("Shopping budget").fill("95");
   await page.getByRole("button", { name: "Save profile" }).click();
-  await page.getByRole("tab", { name: "Private routines & details" }).click();
+  await page.getByRole("link", { name: "Settings", exact: true }).click();
   await expect(
     page.getByText("Build a capsule wardrobe", { exact: true }),
   ).toBeVisible();
@@ -65,17 +66,20 @@ test("all eight sections load without overflow or missing assets", async ({
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    const broken = await page
-      .locator("img")
-      .evaluateAll(
-        (imgs) =>
-          imgs.filter(
-            (i) =>
-              !(i as HTMLImageElement).complete ||
-              (i as HTMLImageElement).naturalWidth === 0,
-          ).length,
-      );
-    expect(broken).toBe(0);
+    // Lazy images below the fold have not loaded yet, so check that every
+    // file exists and that nothing fell back to the missing-photo tint.
+    const broken = await page.locator("img").evaluateAll(async (imgs) => {
+      const missing: string[] = [];
+      for (const i of imgs as HTMLImageElement[]) {
+        if (i.dataset.missing) missing.push(i.src);
+        else if (!i.src.startsWith("data:")) {
+          const res = await fetch(i.src, { method: "HEAD" });
+          if (!res.ok) missing.push(i.src);
+        }
+      }
+      return missing;
+    });
+    expect(broken).toEqual([]);
   }
 });
 test("clothing theme covers tabs, persists and stays section-scoped", async ({
@@ -145,11 +149,9 @@ test("owned product CRUD, ordering and routine builder", async ({ page }) => {
   const r = page.locator(".routine-card").filter({
     has: page.getByRole("heading", { name: "My reviewed morning" }),
   });
-  await r
-    .getByRole("button", { name: "Complete Gentle cleanse if needed" })
-    .click();
+  await r.getByRole("button", { name: "Complete Gentle cleanse" }).click();
   await expect(
-    r.getByRole("button", { name: "Complete Gentle cleanse if needed" }),
+    r.getByRole("button", { name: "Complete Gentle cleanse" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page
     .getByRole("button", { name: "Delete My reviewed morning" })
@@ -163,8 +165,8 @@ test("outfit builder saves, edits, duplicates and deletes", async ({
     .getByRole("button", { name: "Build an outfit", exact: true })
     .click();
   await page.getByLabel("Outfit name").fill("Sunday test edit");
-  await page.getByLabel("The linen shirt", { exact: true }).check();
-  await page.getByLabel("Straight-leg denim", { exact: true }).check();
+  await page.getByLabel(/^The linen shirt/).check();
+  await page.getByLabel(/^Straight-leg denim/).check();
   await expect(
     dialog(page).getByText("€148.00", { exact: true }),
   ).toBeVisible();
@@ -189,7 +191,7 @@ test("outfit builder saves, edits, duplicates and deletes", async ({
 test("public outfit journey: preview, social actions, copy, share, edit and removed card", async ({
   page,
 }) => {
-  await open(page, "/profile");
+  await open(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/topics/clothing?tab=outfits");
   await page.getByRole("link", { name: "Preview & share outfit" }).click();
@@ -200,7 +202,9 @@ test("public outfit journey: preview, social actions, copy, share, edit and remo
   await page
     .getByRole("button", { name: "Preview audience & content" })
     .click();
-  await expect(dialog(page).getByText(/Public: title/)).toBeVisible();
+  await expect(
+    dialog(page).getByText(/Everyone can see the title/),
+  ).toBeVisible();
   await expect(
     dialog(page).getByText("€148.00", { exact: true }),
   ).toBeVisible();
@@ -269,7 +273,7 @@ test("following, saved feed, comments and local moderation", async ({
   await page.getByRole("tab", { name: "Reels", exact: true }).click();
   await expect(page.locator(".post-card")).toHaveCount(1);
   await go(page, "/profile?saved=true");
-  await expect(page.locator(".post-card")).toHaveCount(1);
+  await expect(page.locator(".profile-tile")).toHaveCount(1);
   await go(page, "/post/p1");
   await page.getByRole("button", { name: "Block creator" }).click();
   await expect(
@@ -311,12 +315,13 @@ test("messages compose, rich routine card, request controls and blocking", async
       .locator(".thread")
       .getByText(/Thanks for accepting this simulated request/),
   ).toBeVisible();
-  await page.getByLabel("Your demo message").fill("A fictional hello.");
-  await page.getByRole("button", { name: "Attach linked card" }).click();
+  await page.getByLabel("Message", { exact: true }).fill("A fictional hello.");
+  await page.getByRole("button", { name: "Add attachment" }).click();
+  await page.getByRole("menuitem", { name: "Share a post" }).click();
   await dialog(page)
     .getByRole("button", { name: /My slower morning ritual/ })
     .click();
-  await page.getByRole("button", { name: "Simulate send" }).click();
+  await page.getByRole("button", { name: "Send message" }).click();
   await expect(page.locator(".outgoing")).toContainText("A fictional hello.");
   await page.locator(".outgoing .linked-card").click();
   await expect(
@@ -333,51 +338,34 @@ test("messages compose, rich routine card, request controls and blocking", async
     page.getByRole("heading", { name: "This recipient is blocked." }),
   ).toBeVisible();
 });
-test("training schedule, logs, history and nutrition targets", async ({
-  page,
-}) => {
+test("training schedule, nutrition targets and food log", async ({ page }) => {
   await open(page, "/topics/gym");
-  await page.getByRole("button", { name: "Edit schedule" }).click();
-  await page
-    .getByLabel("Monday", { exact: true })
-    .fill("Comfortable strength session");
-  await page.getByRole("button", { name: "Save schedule" }).click();
+  await page.getByRole("button", { name: /^Monday:/ }).click();
+  await page.getByLabel("Session name").fill("Comfortable strength");
+  await page.getByRole("button", { name: "Save day" }).click();
   await expect(
-    page.getByText("Comfortable strength session", { exact: true }),
+    page.getByRole("button", { name: /^Monday: Comfortable strength/ }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Log workout" }).click();
-  await page.getByLabel("Exercise", { exact: true }).fill("Supported row");
-  await page.getByLabel("Weight (kg)").fill("20");
-  await page.getByRole("button", { name: "Save workout" }).click();
-  await expect(
-    page.locator("td").getByText("480 kg", { exact: true }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Edit Supported row" }).click();
-  await page.getByLabel("Repetitions per set").fill("10");
-  await page.getByRole("button", { name: "Save workout" }).click();
-  await expect(
-    page.locator("td").getByText("600 kg", { exact: true }),
-  ).toBeVisible();
-  await page.getByRole("tab", { name: "Nutrition", exact: true }).click();
-  await page.getByRole("button", { name: "Edit targets" }).click();
+  await go(page, "/topics/nutrition");
+  await page.getByRole("button", { name: "Set targets" }).click();
   await page.getByLabel("Daily calories (kcal)").fill("2400");
+  await page.getByLabel("Daily carbohydrates (g)").fill("280");
+  await page.getByLabel("Daily protein (g)").fill("140");
+  await page.getByLabel("Daily fat (g)").fill("70");
   await page.getByRole("button", { name: "Save targets" }).click();
-  await page.getByRole("button", { name: "Log food" }).click();
-  await page.getByLabel("Food / meal name").fill("Example lunch");
-  await page.getByLabel("Estimated calories (kcal)").fill("600");
-  await page.getByLabel("Estimated protein (g)").fill("30");
-  await page
-    .getByLabel("Nutrition data source")
-    .fill("Fictional recipe estimate");
-  await page.getByRole("button", { name: "Save food entry" }).click();
-  await expect(
-    page.getByText("Fictional recipe estimate · Estimate", { exact: true }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Add food" }).click();
+  await page.getByLabel("Food or meal").fill("Example lunch");
+  await page.getByLabel("Calories (kcal)").fill("600");
+  await page.getByLabel("Carbohydrates (g)").fill("70");
+  await page.getByLabel("Protein (g)", { exact: true }).fill("30");
+  await page.getByLabel("Fat (g)", { exact: true }).fill("18");
+  await page.getByRole("button", { name: "Save food" }).click();
+  await expect(page.getByText("1800", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Delete Example lunch" }).click();
   await expect(
-    page.getByRole("heading", { name: "What nourished you today?" }),
+    page.getByRole("heading", { name: "Nothing logged yet." }),
   ).toBeVisible();
-  await page.getByRole("tab", { name: "Posture & mobility" }).click();
+  await go(page, "/topics/presence");
   await page
     .getByRole("button", { name: "Add a movement break to my plan" })
     .click();
@@ -396,7 +384,7 @@ test("private real photo comparison, edit, removal and no persistence", async ({
   ]) {
     await page
       .getByLabel("Add a private progress photo")
-      .setInputFiles("public/assets/hair.jpg");
+      .setInputFiles("tests/fixtures/portrait.jpg");
     await page.getByLabel("Photo date").fill(date);
     await page.getByLabel("Tag", { exact: true }).fill(tag);
     await page.getByRole("button", { name: "Save private photo" }).click();
@@ -426,10 +414,10 @@ test("coach photo example and inspected plan proposal", async ({ page }) => {
     .fill("Help me with fit and color");
   await page
     .getByLabel("Attach a private photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(
-    page.getByText(/Your attached photo has not been analyzed/),
+    page.getByText(/I haven’t judged yours/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Inspect proposed change" }).click();
   await expect(
@@ -500,7 +488,7 @@ test("private audience cannot be shared, reset removes session content", async (
     dialog(page).getByRole("button", { name: "Simulate sharing" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close dialog" }).click();
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByRole("button", { name: "Reset demo", exact: true }).click();
   await page.getByRole("button", { name: "Confirm reset" }).click();
   await go(page, "/explore");

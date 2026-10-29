@@ -8,10 +8,10 @@ import {
   Sparkles,
   ArrowUpRight,
   BookOpen,
+  Settings,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { useDemo } from "../lib/store";
-import CategoryRail from "./CategoryRail";
 const nav = [
   { to: "/", label: "Home", icon: Home },
   { to: "/categories", label: "Categories", icon: Grid2X2 },
@@ -19,6 +19,17 @@ const nav = [
   { to: "/plan", label: "My Plan", icon: ListChecks },
   { to: "/messages", label: "Messages", icon: MessageCircle },
 ];
+const sectionTitles: Record<string, string> = {
+  "/categories": "Categories",
+  "/about": "About",
+  "/explore": "Explore",
+  "/profile": "Profile",
+  "/messages": "Messages",
+  "/coach": "AI Coach",
+  "/plan": "My Plan",
+  "/settings": "Settings",
+  "/plans": "Membership",
+};
 export default function Layout() {
   const { state } = useDemo();
   const location = useLocation();
@@ -26,8 +37,34 @@ export default function Layout() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (menu.current) menu.current.open = false;
-    document.title = `CHARETT — ${location.pathname === "/" ? "For You" : location.pathname.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")}`;
   }, [location.pathname, location.search]);
+  // The tab shows the page's name: a fixed name for the main sections, the
+  // page's own heading for a category, guide, profile or post.
+  useEffect(() => {
+    const section = sectionTitles[location.pathname];
+    const name = () =>
+      section ??
+      document.querySelector("main h1")?.textContent?.trim().replace(/\.$/, "");
+    const set = () => {
+      const title = name();
+      document.title = title ? `${title} · CHARETT` : "CHARETT";
+    };
+    if (location.pathname === "/") {
+      document.title = "CHARETT";
+      return;
+    }
+    set();
+    // Pages load lazily, so follow the heading once it appears.
+    const main = document.getElementById("main");
+    const watch = new MutationObserver(set);
+    if (main && !section)
+      watch.observe(main, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    return () => watch.disconnect();
+  }, [location.pathname]);
   const active = (to: string) =>
     to === "/categories" && location.pathname.startsWith("/topics/");
   return (
@@ -45,11 +82,9 @@ export default function Layout() {
       <div className="site-shell">
         <header className="site-header">
           <div className="brand-bar">
-            <span className="brand-note">
-              STYLE. SELF-CARE. YOUR OWN DIRECTION.
-            </span>
+            <span className="brand-note" aria-hidden="true" />
             <Link className="wordmark" to="/" aria-label="CHARETT home">
-              CHARETT<span>THE ART OF BECOMING</span>
+              CHARETT<span>The art of becoming</span>
             </Link>
             <div className="topbar-right">
               <Link className="topbar-about" to="/about">
@@ -67,6 +102,9 @@ export default function Layout() {
                   </Link>
                   <Link to="/profile?saved=true">
                     <BookOpen size={16} /> Private saves
+                  </Link>
+                  <Link to="/settings">
+                    <Settings size={16} /> Settings
                   </Link>
                   <Link to="/about">
                     About us <ArrowUpRight size={15} />
@@ -91,19 +129,21 @@ export default function Layout() {
             ))}
           </nav>
         </header>
-        {(location.pathname === "/" ||
-          location.pathname === "/categories" ||
-          location.pathname === "/explore") && <CategoryRail />}
         <div className="app-content">
           <main id="main" tabIndex={-1}>
-            <Outlet />
+            {/* Pages load on first visit; the frame stays put meanwhile. */}
+            <Suspense
+              fallback={<div className="page-loading" aria-busy="true" />}
+            >
+              <Outlet />
+            </Suspense>
           </main>
-          <footer className="footer">
-            <span>
-              CHARETT <i>·</i> Your everyday, elevated.
-            </span>
-            <Link to="/about">About us & demo privacy</Link>
-            <span>Fictional activity · Private uploads stay in this tab</span>
+          <footer
+            className="footer"
+            hidden={/^\/(coach|messages)/.test(location.pathname)}
+          >
+            <span className="footer-mark">CHARETT</span>
+            <Link to="/about">About us & privacy</Link>
           </footer>
         </div>
       </div>
@@ -117,8 +157,8 @@ export default function Layout() {
               isActive || active(to) ? "active" : ""
             }
           >
-            <Icon size={21} />
-            <span>{label === "My Plan" ? "My Plan" : label}</span>
+            <Icon size={22} strokeWidth={1.6} aria-hidden="true" />
+            <span>{label}</span>
           </NavLink>
         ))}
       </nav>

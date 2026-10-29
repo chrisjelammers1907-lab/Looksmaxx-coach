@@ -1,26 +1,36 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ImagePlus,
-  Film,
   Music2,
   Play,
   Pause,
   Volume2,
+  VolumeX,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { asset } from "../lib/domain";
+import { asset, topicName } from "../lib/domain";
 import { normaliseFeedPhoto, privateVideoUrl } from "../lib/media";
 import type { FeedMedia, Post } from "../lib/types";
 import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
+import { reelSound, useReelMuted } from "../lib/reelSound";
+import { DEMO } from "../lib/demo";
+import { focusOf } from "../lib/editorial";
 const editorialPhotos = new Map<string, Promise<string>>();
+/** The line under the handle, like a location on Instagram. */
+export function mediaLabel(post: Post) {
+  return post.media?.label || topicName[post.topic] || "";
+}
 export function PostMedia({
   post,
   children,
+  onOpen,
 }: {
   post: Post;
   children?: ReactNode;
+  /** Tapping the media itself (not its controls) opens the post sheet. */
+  onOpen?: () => void;
 }) {
   const [photo, setPhoto] = useState("");
   const [failed, setFailed] = useState(false);
@@ -28,6 +38,7 @@ export function PostMedia({
   const audio = useRef<HTMLAudioElement>(null);
   const container = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [soundError, setSoundError] = useState("");
   const [slide, setSlide] = useState(0);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -46,6 +57,18 @@ export function PostMedia({
       (current) => (current + direction + slides.length) % slides.length,
     );
   const sound = findSound(post.sound?.id);
+  const muted = useReelMuted();
+  // A reel plays by itself once it is mostly on screen, unless the visitor
+  // asked for less motion; its sound follows the one reel sound switch.
+  const autoplay =
+    isReel &&
+    (isVideo || !!sound) &&
+    !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const onScreen = useRef(false);
+  const videoMuted = () =>
+    (isReel && reelSound.muted()) ||
+    !post.sound ||
+    post.sound.originalVolume === 0;
   const startSound = async () => {
     if (!sound || !audio.current) return;
     claimPlayback(video.current, audio.current);
@@ -58,6 +81,24 @@ export function PostMedia({
       setSoundError("Sound could not start. Tap play to try again.");
     }
   };
+  /** Plays this reel: the video (muted or not), or a photo reel's sound. */
+  const startReel = () => {
+    const film = video.current;
+    if (film) {
+      film.muted = videoMuted();
+      void film.play().catch(() => undefined);
+    } else if (!reelSound.muted()) void startSound();
+  };
+  useEffect(() => {
+    if (!isReel) return;
+    const film = video.current;
+    if (film) film.muted = videoMuted();
+    if (muted) audio.current?.pause();
+    else if (sound && (film ? !film.paused : onScreen.current))
+      void startSound();
+    // Only the switch itself should restart or silence the sound.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [muted]);
   useEffect(() => {
     if (audio.current) audio.current.volume = post.sound?.volume ?? 0.65;
     if (video.current) video.current.volume = post.sound?.originalVolume ?? 1;
@@ -70,14 +111,25 @@ export function PostMedia({
       return;
     }
     setPhoto("");
+    // Vector illustrations have no intrinsic pixel size; CSS cover-crops them.
+    const source = asset(currentImage);
+    if (source.endsWith(".svg") || source.startsWith("data:image/svg")) {
+      setPhoto(source);
+      return;
+    }
     let active = true;
     const cacheKey = `${currentImage}:${isReel ? 1920 : 1350}`;
     if (!editorialPhotos.has(cacheKey))
       editorialPhotos.set(
         cacheKey,
-        normaliseFeedPhoto(asset(currentImage), isReel ? 1920 : 1350).then(
-          (result) => result.src,
-        ),
+        normaliseFeedPhoto(
+          asset(currentImage),
+          isReel ? 1920 : 1350,
+          ...(focusOf(currentImage).split(" ").map(parseFloat) as [
+            number,
+            number,
+          ]),
+        ).then((result) => result.src),
       );
     editorialPhotos
       .get(cacheKey)!
@@ -105,9 +157,25 @@ export function PostMedia({
     };
     const observer = new IntersectionObserver(
       (entries) => {
-        if (!entries[0].isIntersecting) stop();
+        const entry = entries[0];
+        if (!autoplay) {
+          if (!entry.isIntersecting) stop();
+          return;
+        }
+        // Reels start when mostly in view and stop as they leave it. A reel
+        // taller than the screen counts as in view when it fills most of it.
+        const fits = Math.min(
+          entry.boundingClientRect.height,
+          entry.rootBounds?.height ?? innerHeight,
+        );
+        const visible =
+          entry.isIntersecting && entry.intersectionRect.height >= fits * 0.6;
+        if (visible === onScreen.current) return;
+        onScreen.current = visible;
+        if (visible) startReel();
+        else stop();
       },
-      { threshold: 0.05 },
+      { threshold: Array.from({ length: 21 }, (_, i) => i / 20) },
     );
     observer.observe(node);
     document.addEventListener("visibilitychange", hidden);
@@ -116,23 +184,10 @@ export function PostMedia({
       observer.disconnect();
       document.removeEventListener("visibilitychange", hidden);
     };
-  }, [isVideo, sound?.id]);
-  const label =
-    media?.label ||
-    (["campaign", "ritual", "tailoring"].includes(currentImage)
-      ? "AI editorial inspiration"
-      : [
-            "skin",
-            "gym",
-            "smile",
-            "fragrance",
-            "shirt",
-            "tee",
-            "denim",
-            "food",
-          ].includes(currentImage)
-        ? "Original editorial illustration"
-        : "Licensed editorial reference");
+    // startReel reads refs and the sound switch at call time.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVideo, sound?.id, autoplay]);
+  const label = mediaLabel(post) || "editorial photo";
   return (
     <div className="post-media-wrap" ref={container}>
       <div
@@ -140,6 +195,12 @@ export function PostMedia({
         className={`post-image post-media ${isVideo ? "video-media" : ""} ${isReel ? "reel-media" : ""} ${hasSlides ? "slideshow-media" : ""}`}
         style={{
           aspectRatio: `1080 / ${isReel ? 1920 : media?.height || 1350}`,
+        }}
+        onClick={(event) => {
+          if (!onOpen) return;
+          const target = event.target as HTMLElement;
+          if (target.closest("button, a, input, label")) return;
+          onOpen();
         }}
         tabIndex={hasSlides ? 0 : undefined}
         role={hasSlides ? "region" : undefined}
@@ -173,16 +234,20 @@ export function PostMedia({
             ref={video}
             src={media.origin === "editorial" ? asset(media.src) : media.src}
             poster={media.poster ? asset(media.poster) : undefined}
-            controls
             playsInline
-            muted={!post.sound || post.sound.originalVolume === 0}
+            loop
+            muted={videoMuted()}
             preload="none"
             aria-label={`${post.title} — ${label}`}
             onPlay={() => {
+              setVideoPlaying(true);
               claimPlayback(video.current, audio.current);
-              void startSound();
+              if (!isReel || !reelSound.muted()) void startSound();
             }}
-            onPause={() => audio.current?.pause()}
+            onPause={() => {
+              setVideoPlaying(false);
+              audio.current?.pause();
+            }}
             onEnded={() => audio.current?.pause()}
             onSeeked={() => {
               if (audio.current && sound && video.current)
@@ -213,20 +278,33 @@ export function PostMedia({
           </video>
         ) : photo ? (
           <img
+            loading="lazy"
+            decoding="async"
             src={photo}
             width={1080}
             height={media?.height || (isReel ? 1920 : 1350)}
-            alt={`${post.title} — ${label}${media?.origin === "private-upload" ? "" : ", not a photo of its fictional creator"}`}
+            alt={`${post.title} — ${label}`}
           />
         ) : (
           <span className="media-loading" role="status">
             {failed ? "This image could not load." : "Preparing photo…"}
           </span>
         )}
-        <span className="image-tag">
-          {isVideo ? <Film size={12} /> : null}
-          {label} · {post.audience}
-        </span>
+        {isVideo && (
+          <button
+            type="button"
+            className={`video-toggle ${videoPlaying ? "is-playing" : ""} ${autoplay && videoPlaying ? "is-quiet" : ""}`}
+            aria-label={`${videoPlaying ? "Pause" : "Play"} video ${post.title}`}
+            onClick={() => {
+              const film = video.current;
+              if (!film) return;
+              if (film.paused) void film.play().catch(() => undefined);
+              else film.pause();
+            }}
+          >
+            {videoPlaying ? <Pause size={30} /> : <Play size={34} />}
+          </button>
+        )}
         {hasSlides && (
           <div className="slide-controls">
             <button
@@ -253,77 +331,86 @@ export function PostMedia({
             </button>
           </div>
         )}
+        {sound && (
+          <div className={`post-sound ${playing ? "is-playing" : ""}`}>
+            {isReel ? (
+              <button
+                type="button"
+                className="post-sound-play"
+                aria-label={`Turn sound ${muted ? "on" : "off"} for reels`}
+                aria-pressed={!muted}
+                title={`${sound.title} · CHARETT original`}
+                onClick={() => {
+                  reelSound.set(!muted);
+                  // Turning the sound on also starts this reel, in the tap.
+                  if (muted) {
+                    if (video.current?.paused) startReel();
+                    else void startSound();
+                  }
+                }}
+              >
+                {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+              </button>
+            ) : null}
+            {!isReel && playing && (
+              <label className="post-sound-volume">
+                <Volume2 size={14} aria-hidden="true" />
+                <input
+                  aria-label={`Sound volume for ${post.title}`}
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  defaultValue={post.sound?.volume ?? 0.65}
+                  onChange={(e) => {
+                    if (audio.current)
+                      audio.current.volume = Number(e.target.value);
+                  }}
+                />
+              </label>
+            )}
+            {!isReel && (
+              <button
+                type="button"
+                className="post-sound-play"
+                aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
+                aria-pressed={playing}
+                title={`${sound.title} · CHARETT original`}
+                onClick={async () => {
+                  if (playing) {
+                    audio.current?.pause();
+                    video.current?.pause();
+                  } else if (video.current) {
+                    try {
+                      await video.current.play();
+                      await startSound();
+                    } catch {
+                      setSoundError("Video could not start. Try again.");
+                    }
+                  } else await startSound();
+                }}
+              >
+                {playing ? <Volume2 size={17} /> : <Music2 size={17} />}
+              </button>
+            )}
+            <audio
+              ref={audio}
+              src={asset(sound.id)}
+              preload="none"
+              loop
+              onPlay={() => {
+                claimPlayback(video.current, audio.current);
+                setPlaying(true);
+              }}
+              onPause={() => setPlaying(false)}
+              onError={() =>
+                setSoundError("This sound could not load. Try again.")
+              }
+            />
+          </div>
+        )}
         {children}
       </div>
-      {sound && (
-        <div className={`post-sound ${playing ? "is-playing" : ""}`}>
-          <button
-            type="button"
-            className="post-sound-play"
-            aria-label={`${playing ? "Pause" : "Play"} sound ${sound.title}`}
-            aria-pressed={playing}
-            onClick={async () => {
-              if (playing) {
-                audio.current?.pause();
-                video.current?.pause();
-              } else if (video.current) {
-                try {
-                  if (video.current.ended) video.current.currentTime = 0;
-                  await video.current.play();
-                  await startSound();
-                } catch {
-                  setSoundError("Video could not start. Try its play control.");
-                }
-              } else await startSound();
-            }}
-          >
-            {playing ? <Pause size={17} /> : <Play size={17} />}
-          </button>
-          <Music2 size={15} />
-          <div className="post-sound-info">
-            <strong>{sound.title}</strong>
-            <span>
-              CHARETT original · {isVideo ? "video sound" : "photo sound"}
-            </span>
-          </div>
-          <span className="sound-wave" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-          <label className="post-sound-volume">
-            <Volume2 size={15} />
-            <input
-              aria-label={`Sound volume for ${post.title}`}
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              defaultValue={post.sound?.volume ?? 0.65}
-              onChange={(e) => {
-                if (audio.current)
-                  audio.current.volume = Number(e.target.value);
-              }}
-            />
-          </label>
-          <audio
-            ref={audio}
-            src={asset(sound.id)}
-            preload="none"
-            loop
-            onPlay={() => {
-              claimPlayback(video.current, audio.current);
-              setPlaying(true);
-            }}
-            onPause={() => setPlaying(false)}
-            onError={() =>
-              setSoundError("This sound could not load. Try again.")
-            }
-          />
-        </div>
-      )}
       {soundError && (
         <p className="error sound-error" role="alert">
           {soundError}
@@ -415,7 +502,7 @@ export function MediaPicker({
               video.preload = "metadata";
               video.onloadedmetadata = () => {
                 if (!Number.isFinite(video.duration) || video.duration > 60) {
-                  setError("Choose a demo clip up to 60 seconds.");
+                  setError("Choose a clip up to 60 seconds.");
                 } else {
                   onChange({
                     kind: "video",
@@ -440,7 +527,8 @@ export function MediaPicker({
         />
       </label>
       <p className="small-text">
-        Private test media stays in this tab and cannot enter public demo posts.
+        {DEMO &&
+          "Private test media stays in this tab and cannot enter public demo posts. "}
         Feed photos are proportionally cropped to 1080 × 1350–1920. Upscaling
         adds no photographic detail.
       </p>

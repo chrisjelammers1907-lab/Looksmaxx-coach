@@ -1,0 +1,96 @@
+/*
+ * CHARETT design tokens — the single source of truth for colour, radius,
+ * elevation and motion. Every other stylesheet refers to these variables.
+ *
+ * Palette: deep forest green with warm ivory, champagne and a green-black ink.
+ * Text pairs (WCAG 2.1 contrast):
+ *   --ink on --ivory 15.3:1 · --muted on --ivory 6.4:1 · --muted on --linen 5.3:1
+ *   --gold-deep on --ivory 5.6:1 · --forest on --cream 10.2:1
+ *   --on-dark on --forest 10.6:1 · --on-dark-muted on --forest 6.9:1
+ *   --champagne on --forest 5.1:1 (accent text on dark only; decorative on light)
+ */
+:root {
+  /* Greens */
+  --forest: #123d32;
+  --forest-deep: #0b2a22;
+  --forest-soft: #1d4a3d;
+  --forest-ink: #08201a;
+
+  /* Neutrals */
+  --ivory: #f8f4ec;
+  --porcelain: #fdfbf7;
+  --cream: #f1ebe0;
+  --linen: #e7dfd0;
+  --line: #e0d7c7;
+  --line-strong: #cfc3ae;
+  --sand: #d6c8ae;
+  --stone: #9d927f;
+
+  /* Metallic accent */
+  --champagne: #c5a46d;
+  --champagne-soft: #ece0c6;
+  --gold-deep: #684b1e;
+  --gold-light: #e9d29b;
+  --gold-dark: #9f7b3c;
+
+  /* Text */
+  --forest-text: #123d32;
+  --ink: #15201b;
+  --muted: #524e46;
+  --on-dark: #f6f0e4;
+  --on-dark-muted: #cdc3ae;
+  --danger: #8f3a32;
+
+  /* Legacy aliases kept so older rules resolve to the new palette. */
+  --green: var(--forest);
+  --paper: var(--ivory);
+  --beige: var(--cream);
+  --canvas: var(--linen);
+  --rose: var(--linen);
+  --sage: var(--cream);
+  --amber: var(--champagne);
+
+  /* Shape, depth and motion */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(8 32 26 / 4%);
+  --shadow: 0 1px 2px rgb(8 32 26 / 4%), 0 8px 24px rgb(8 32 26 / 5%);
+  --shadow-float: 0 10px 30px rgb(8 32 26 / 22%), 0 2px 6px rgb(8 32 26 / 12%);
+  /* Strong ease-out for every UI entrance and state change. */
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "DM Sans", system-ui, sans-serif;
+}
+
+/*
+ * Dark theme: surfaces and text invert, forest surfaces brighten slightly so
+ * buttons stay visible, and accents keep their champagne warmth.
+ * Contrast (WCAG 2.1): --ink on --ivory 15.6:1 · --muted on --ivory 8.1:1 ·
+ * --forest-text on --cream 8.4:1 · --on-dark on --forest 7.4:1.
+ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --forest: #1f5a48;
+  --forest-soft: #2a6a56;
+  --forest-text: #9fcbb4;
+  --ivory: #0e1613;
+  --porcelain: #141e1a;
+  --cream: #1b2722;
+  --linen: #22302a;
+  --line: #26342e;
+  --line-strong: #364740;
+  --sand: #4b5a52;
+  --stone: #7f8b83;
+  --ink: #efe9dd;
+  --muted: #b4ab9b;
+  --gold-deep: #d4b47a;
+  --danger: #e3907f;
+  --canvas: #070d0b;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 30%), 0 2px 8px rgb(0 0 0 / 25%);
+  --shadow: 0 2px 6px rgb(0 0 0 / 30%), 0 18px 48px rgb(0 0 0 / 40%);
+}

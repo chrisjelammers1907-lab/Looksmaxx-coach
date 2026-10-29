@@ -42,12 +42,15 @@ test("Home is For You, navigation is explicit, every category has a usable guide
       .click();
     await expect(page).toHaveURL(new RegExp(`/topics/${topic}/guide$`));
     await expect(
-      page.getByRole("heading", { name: "Where this guide comes from" }),
+      page.getByRole("heading", { name: "Put it together" }),
     ).toBeVisible();
     await page
       .getByRole("navigation", { name: "Guide chapters" })
-      .getByRole("button", { name: "References & further reading" })
+      .getByRole("button", { name: "Make it yours" })
       .click();
+    await expect(
+      page.getByRole("link", { name: /Ask your coach/ }),
+    ).toHaveAttribute("href", `/coach?topic=${topic}`);
     await expect(page).toHaveURL(new RegExp(`/topics/${topic}/guide$`));
     expect(
       await page.evaluate(
@@ -66,18 +69,18 @@ test("Home is For You, navigation is explicit, every category has a usable guide
     .getByRole("link", { name: "Private saves", exact: true })
     .click();
   await expect(
-    page.getByRole("tab", { name: "Private saves", exact: true }),
+    page.getByRole("tab", { name: "Saved", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator(".post-card")).toHaveCount(1);
+  await expect(page.locator(".profile-tile")).toHaveCount(1);
   await page.getByLabel("Open profile and menu").click();
   await page
     .getByRole("navigation", { name: "Profile menu" })
     .getByRole("link", { name: "About us" })
     .click();
-  await expect(page.locator("h1")).toContainText("A little intention.");
-  await expect(
-    page.getByText(/This version is an interactive demonstration/),
-  ).toBeVisible();
+  await expect(page.locator("h1")).toContainText(
+    "I always wanted to build something of my own.",
+  );
+  await expect(page.getByText(/This is an interactive preview/)).toBeVisible();
 });
 test("feed video plays, photo frames have real supported pixel dimensions, topic is optional", async ({
   page,
@@ -109,9 +112,8 @@ test("feed video plays, photo frames have real supported pixel dimensions, topic
   await expect(
     page.getByRole("heading", { name: "A fictional caption without a topic" }),
   ).toBeVisible();
-  await expect(page.locator(".post-caption > .eyebrow")).toHaveText(
-    "Community",
-  );
+  // An untagged post shows no topic or default style line.
+  await expect(page.locator(".post-card .post-topic")).toHaveCount(0);
 });
 test("private upload is cropped proportionally and cannot be published as public demo media", async ({
   page,
@@ -120,7 +122,7 @@ test("private upload is cropped proportionally and cannot be published as public
   await page.getByLabel("Caption").fill("A private image framing test");
   await page
     .getByLabel("Add a private test photo or video")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   const img = page.getByAltText("Private feed photo preview");
   await expect(img).toBeVisible();
   await expect
@@ -141,7 +143,7 @@ test("private upload is cropped proportionally and cannot be published as public
     page.getByRole("button", { name: "Preview audience & content" }),
   ).toBeDisabled();
   await expect(page.getByRole("alert")).toContainText(
-    "Personal test uploads stay private",
+    "Personal uploads stay private",
   );
   await page.getByLabel("Audience", { exact: true }).selectOption("private");
   await page
@@ -202,7 +204,7 @@ test("account privacy restricts rich cards and approved followers unlock only th
     page.getByRole("button", { name: "Simulate sharing" }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Close dialog" }).click();
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await expect(page.getByLabel("Account visibility")).toHaveValue("private");
   await page.getByRole("button", { name: "Accept request" }).click();
   await go(page, postPath);
@@ -221,12 +223,12 @@ test("account privacy restricts rich cards and approved followers unlock only th
   await expect(page.locator(".outgoing .linked-card")).toContainText(
     "An account privacy example",
   );
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/topics/photos");
   await page
     .getByLabel("Add a private progress photo")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await expect(page.getByLabel("Journal audience")).toHaveValue("private");
   await page.getByLabel("Journal audience").selectOption("followers");
   await page.getByRole("button", { name: "Save private photo" }).click();
@@ -244,7 +246,7 @@ test("coach follows natural questions across topics without category or style fi
     .fill("What should I wear this weekend?");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.locator(".chat-message.coach").last()).toContainText(
-    "ABOUT CLOTHING & STYLE",
+    "Build one complete outfit",
   );
   await expect(page.locator(".chat-message.coach").last()).toContainText(
     "The linen shirt",
@@ -254,7 +256,7 @@ test("coach follows natural questions across topics without category or style fi
     .fill("My skin feels dry, what should I start with?");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.locator(".chat-message.coach").last()).toContainText(
-    "ABOUT SKINCARE",
+    "Keep it to cleanse, moisturise and SPF",
   );
   await page
     .locator(".chat-message.coach")

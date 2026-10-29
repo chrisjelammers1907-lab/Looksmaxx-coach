@@ -1,109 +1,157 @@
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowUpRight,
-  Sparkles,
-  BookOpen,
-  Heart,
-  LockKeyhole,
-} from "lucide-react";
-import { asset } from "../lib/domain";
+import { ArrowUpRight } from "lucide-react";
+import TurnSequence, { turnStill } from "../components/TurnSequence";
+import { DEMO } from "../lib/demo";
+
+/** The founder's story, in his words; one chapter per screen of scroll. */
+const chapters = [
+  {
+    title: "I always wanted to build something of my own.",
+    text: "Something I believed in enough to give it my time and energy. For a long time, I just didn’t know what it would be.",
+  },
+  {
+    title: "It started on TikTok, at the end of 2023.",
+    text: "Mewing, fragrance, getting leaner. Everyone wanted to look better, but nobody agreed on what actually worked. The more I learned, the clearer it became: there was no single place to find it all, clearly and honestly.",
+  },
+  {
+    title: "Chico. Barrett. CHARETT.",
+    text: "The faces of that first wave were models like Francisco “Chico” Lachowski and Jordan Barrett. I took a piece of each, to remember where this began.",
+  },
+  {
+    title: "Too many promises. Too little proof.",
+    text: "Unproven methods sold as facts, by people with little to show for them. When you’re starting out, it’s hard to tell what works from what’s a trend or a sales pitch.",
+  },
+  {
+    title: "For anyone who looks in the mirror and wants more.",
+    text: "I’ve stood there too, and in some ways I still do. CHARETT is for people who are willing to put in the work, whether it’s their first day or their fifth year.",
+  },
+  {
+    title: "Honest about what works. Clear about what doesn’t.",
+    text: "No miracle fixes, no face scores. Just what you can do, what you can’t, and how to start. Because in the end, it’s not only about how you look. It’s about how you see yourself.",
+  },
+];
+
+const values = [
+  {
+    title: "A conversation",
+    text: "Ask your coach in your own words. Keep your preferences in one shared profile and review suggestions before changing your plan.",
+  },
+  {
+    title: "A practical starting point",
+    text: "Find beginner guides alongside tools for your routines, wardrobe, training and personal observations.",
+  },
+  {
+    title: "A shared point of view",
+    text: "Discover photo and video inspiration, follow people you enjoy and save good ideas privately. A reference is a starting point, not a standard to live up to.",
+  },
+];
+
+/** Motion is on unless the visitor asked for less of it or to save data. */
+const wantsMotion = () =>
+  typeof matchMedia === "function" &&
+  !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+  !(navigator as Navigator & { connection?: { saveData?: boolean } }).connection
+    ?.saveData;
+
 export default function AboutPage() {
+  const story = useRef<HTMLElement>(null);
+  const [motion] = useState(wantsMotion);
+  // How far the reader is through the story, 0–1.
+  const progress = useCallback(() => {
+    const node = story.current;
+    if (!node) return 0;
+    const box = node.getBoundingClientRect();
+    const run = box.height - innerHeight;
+    return run > 0 ? Math.min(1, Math.max(0, -box.top / run)) : 0;
+  }, []);
+
+  // The film reaches past the page's padding, so it meets the masthead and
+  // both sides of the app frame.
+  useLayoutEffect(() => {
+    const node = story.current;
+    const main = node?.closest("main");
+    if (!motion || !node || !main) return;
+    const bleed = () => {
+      const css = getComputedStyle(main);
+      node.style.setProperty("--bleed-top", css.paddingTop);
+      node.style.setProperty("--bleed-left", css.paddingLeft);
+      node.style.setProperty("--bleed-right", css.paddingRight);
+    };
+    bleed();
+    addEventListener("resize", bleed);
+    return () => removeEventListener("resize", bleed);
+  }, [motion]);
+
   return (
-    <article className="about-page">
-      <header className="about-hero">
-        <div>
-          <span className="eyebrow">ABOUT CHARETT</span>
-          <h1>
-            A little intention.
-            <br />
-            <em>A little more you.</em>
-          </h1>
-          <p>
-            A personal space for style, self-care and progress—with a coach to
-            talk to and a community to discover.
-          </p>
-          <span className="about-wordmark">C</span>
+    <article className={`about-page ${motion ? "has-motion" : "is-still"}`}>
+      <section
+        ref={story}
+        className="about-story"
+        aria-label="The story of CHARETT"
+      >
+        <div className="about-turn">
+          {motion ? (
+            <>
+              <TurnSequence progress={progress} />
+              <p className="about-wordmark" aria-hidden="true">
+                CHARETT
+              </p>
+            </>
+          ) : (
+            <img src={turnStill()} alt="" />
+          )}
         </div>
-        <img
-          src={asset("campaign")}
-          alt="AI fashion editorial inspiration with two fictional adults, not CHARETT customers"
-        />
-        <span className="hero-image-credit">
-          AI editorial · fictional inspiration
-        </span>
-      </header>
-      <section className="about-story">
-        <span className="eyebrow">WHY WE’RE HERE</span>
-        <h2>
-          Good guidance should
-          <br />
-          make room for <em>you.</em>
-        </h2>
-        <p>
-          Looking after yourself can bring together a lot of little decisions:
-          what to wear, how to build a routine, what to keep and what to try
-          next. CHARETT brings those decisions into one considered space.
-        </p>
-        <p>
-          It is for people of all genders exploring their own style and everyday
-          care. Your preferences lead. There is no single ideal face, body,
-          wardrobe or way to be.
-        </p>
+        <div className="about-chapters">
+          {motion && <div className="story-intro" aria-hidden="true" />}
+          {chapters.map((c, i) => {
+            const Heading = i === 0 ? "h1" : "h2";
+            return (
+              <div key={c.title} className="story-chapter" data-chapter={i}>
+                <div>
+                  <Heading>{c.title}</Heading>
+                  <p>{c.text}</p>
+                  {i === chapters.length - 1 && (
+                    <Link className="text-link" to="/categories">
+                      Find your starting point <ArrowUpRight size={16} />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
-      <section className="about-pillars">
-        <div>
-          <Sparkles />
-          <h3>A conversation</h3>
-          <p>
-            Ask your coach in your own words. Keep your preferences in one
-            shared profile and review suggestions before changing your plan.
-          </p>
-        </div>
-        <div>
-          <BookOpen />
-          <h3>A practical starting point</h3>
-          <p>
-            Find beginner guides alongside tools for your routines, wardrobe,
-            training and personal observations.
-          </p>
-        </div>
-        <div>
-          <Heart />
-          <h3>A shared point of view</h3>
-          <p>
-            Discover photo and video inspiration, follow people you enjoy and
-            save good ideas privately. A reference is a starting point, not a
-            standard to live up to.
-          </p>
-        </div>
+      <section className="about-values" aria-label="What CHARETT offers">
+        {values.map((v) => (
+          <div className="about-value" key={v.title}>
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
+          </div>
+        ))}
       </section>
       <section className="about-transparency">
-        <LockKeyhole size={24} />
         <div>
-          <span className="eyebrow">CLEAR FROM THE START</span>
           <h2>
-            Made to explore.
-            <br />
-            <em>Honest about the demo.</em>
+            {DEMO ? "Honest about what this is." : "Your data, your call."}
           </h2>
+          {DEMO && (
+            <p>
+              This is an interactive preview. Creators, brands, ads and social
+              activity are fictional. The coach gives sample replies, and
+              payments, shopping and accounts are simulated.
+            </p>
+          )}
           <p>
-            This version is an interactive demonstration. Creators and social
-            activity are fictional. The coach gives sample replies; AI analysis,
-            image generation, shopping, accounts and message delivery are
-            simulated.
+            Photos, profile edits, your journal and messages stay in this
+            browser tab and clear on reload. Your settings, streaks, plan,
+            training, food and weight logs are saved in this browser only —
+            never on a server.
           </p>
           <p>
-            Your uploaded photos, profile edits, journal and personal routines
-            stay in the current browser tab. Reload clears personal session
-            content. Only limited fictional social preferences and your clothing
-            theme may persist locally. Account-privacy controls demonstrate a
-            future workflow; they are not secure authentication.
-          </p>
-          <p>
-            The reference files are critically reviewed material, not verified
-            medical authority. We separate personal preference from treatment
-            claims. Editorial images do not depict the fictional creators or
-            achieved transformations.
+            The guides are general education, not medical advice. Hormones or
+            medication only through a doctor. Editorial photos and video are
+            licensed stock of models, not real transformations.
           </p>
           <Link className="text-link" to="/categories">
             Find your starting point <ArrowUpRight size={16} />

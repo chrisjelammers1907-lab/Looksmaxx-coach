@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, WandSparkles } from "lucide-react";
 import { useDemo } from "../lib/store";
+import { useCompleteRoutine } from "../lib/useCompleteRoutine";
 import type { Routine, TopicId } from "../lib/types";
-import { uid } from "../lib/domain";
+import { asset, topicName, uid } from "../lib/domain";
+import { topics } from "../lib/data";
 import {
   Area,
   Button,
@@ -13,26 +15,27 @@ import {
   SectionTitle,
   Select,
 } from "./ui";
-export default function Routines({ topic }: { topic: TopicId }) {
+export default function Routines({ topic }: { topic?: TopicId }) {
   const { state, update, toast } = useDemo();
+  // A routine is deleted on a second, explicit tap.
+  const [confirming, setConfirming] = useState<string | null>(null);
   const [editing, setEditing] = useState<Routine | null>(null);
   const [builder, setBuilder] = useState(false);
   const [done, setDone] = useState<string[]>([]);
-  const routines = state.routines.filter((r) => r.topic === topic);
+  const routines = state.routines.filter((r) => !topic || r.topic === topic);
+  // Finishing every step of a routine keeps the daily routine streak alive.
+  const completeRoutine = useCompleteRoutine();
   const blank = (): Routine => ({
     id: uid(),
-    topic,
+    topic: topic || "skincare",
     title: "",
-    time: topic === "skincare" ? "AM" : "Anytime",
+    time: !topic || topic === "skincare" ? "AM" : "Anytime",
     schedule: "Daily",
     steps: [],
   });
   return (
     <>
-      <SectionTitle
-        title="Rituals that fit your life"
-        subtitle="Private routines · Edit every step before making it yours."
-      >
+      <SectionTitle title="Routines">
         <div className="button-row">
           {topic === "skincare" && (
             <Button variant="ghost" onClick={() => setBuilder(true)}>
@@ -51,7 +54,10 @@ export default function Routines({ topic }: { topic: TopicId }) {
           <article className="routine-card" key={r.id}>
             <div className="routine-top">
               <span className="pill">{r.time}</span>
-              <span className="muted small-text">{r.schedule}</span>
+              <span className="muted small-text">
+                {!topic && `${topicName[r.topic]} · `}
+                {r.schedule}
+              </span>
             </div>
             <h3>{r.title}</h3>
             <ol className="routine-steps">
@@ -61,13 +67,17 @@ export default function Routines({ topic }: { topic: TopicId }) {
                     aria-label={`Complete ${step}`}
                     aria-pressed={done.includes(`${r.id}-${index}`)}
                     className={`step-number ${done.includes(`${r.id}-${index}`) ? "checked" : ""}`}
-                    onClick={() =>
-                      setDone((d) =>
-                        d.includes(`${r.id}-${index}`)
-                          ? d.filter((x) => x !== `${r.id}-${index}`)
-                          : [...d, `${r.id}-${index}`],
+                    onClick={() => {
+                      const key = `${r.id}-${index}`;
+                      const next = done.includes(key)
+                        ? done.filter((x) => x !== key)
+                        : [...done, key];
+                      setDone(next);
+                      if (
+                        r.steps.every((_, i) => next.includes(`${r.id}-${i}`))
                       )
-                    }
+                        completeRoutine(r.id);
+                    }}
                   >
                     {done.includes(`${r.id}-${index}`) ? (
                       <Check size={13} />
@@ -75,28 +85,73 @@ export default function Routines({ topic }: { topic: TopicId }) {
                       String(index + 1).padStart(2, "0")
                     )}
                   </button>
-                  <span>{step}</span>
+                  <span>
+                    {step}
+                    {r.stepProducts?.[index] && (
+                      <small className="step-product">
+                        {
+                          state.items.find(
+                            (i) => i.id === r.stepProducts![index],
+                          )?.name
+                        }
+                      </small>
+                    )}
+                  </span>
                 </li>
               ))}
             </ol>
+            {!!r.productIds?.length && (
+              <div className="routine-products" aria-label="Products used">
+                {state.items
+                  .filter((i) => r.productIds!.includes(i.id))
+                  .map((i) => (
+                    <span className="routine-product" key={i.id}>
+                      <img
+                        src={
+                          i.image.startsWith("data:") ? i.image : asset(i.image)
+                        }
+                        alt=""
+                      />
+                      <span>
+                        <small>{i.brand}</small>
+                        {i.name}
+                      </span>
+                    </span>
+                  ))}
+              </div>
+            )}
             <div className="card-controls">
               <button className="text-button" onClick={() => setEditing(r)}>
                 <Pencil size={13} />
                 Edit routine
               </button>
-              <button
-                className="icon-button compact"
-                aria-label={`Delete ${r.title}`}
-                onClick={() => {
-                  update((s) => ({
-                    ...s,
-                    routines: s.routines.filter((x) => x.id !== r.id),
-                  }));
-                  toast("Private routine deleted.");
-                }}
-              >
-                <Trash2 size={15} />
-              </button>
+              {confirming === r.id ? (
+                <button
+                  className="text-button danger-text"
+                  aria-label={`Confirm: delete ${r.title}`}
+                  onBlur={() => setConfirming(null)}
+                  autoFocus
+                  onClick={() => {
+                    update((s) => ({
+                      ...s,
+                      routines: s.routines.filter((x) => x.id !== r.id),
+                    }));
+                    setConfirming(null);
+                    toast("Private routine deleted.");
+                  }}
+                >
+                  <Trash2 size={13} />
+                  Delete for good
+                </button>
+              ) : (
+                <button
+                  className="icon-button compact"
+                  aria-label={`Delete ${r.title}`}
+                  onClick={() => setConfirming(r.id)}
+                >
+                  <Trash2 size={15} />
+                </button>
+              )}
             </div>
           </article>
         ))}
@@ -129,6 +184,21 @@ export default function Routines({ topic }: { topic: TopicId }) {
               toast("Routine saved. Your existing plan was not changed.");
             }}
           >
+            {!topic && (
+              <Select
+                label="Category"
+                value={editing.topic}
+                onChange={(e) =>
+                  setEditing({ ...editing, topic: e.target.value as TopicId })
+                }
+              >
+                {topics.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </Select>
+            )}
             <Field
               label="Routine name"
               required
@@ -159,6 +229,38 @@ export default function Routines({ topic }: { topic: TopicId }) {
                 hint="For example: Daily, or Mon, Wed, Fri"
               />
             </div>
+            {(() => {
+              const owned = state.items.filter(
+                (i) => i.topic === editing.topic,
+              );
+              const chosen = editing.productIds || [];
+              return owned.length ? (
+                <fieldset className="product-picker">
+                  <legend>Products used (optional)</legend>
+                  {owned.map((i) => (
+                    <label key={i.id} className="chip-check">
+                      <input
+                        type="checkbox"
+                        checked={chosen.includes(i.id)}
+                        onChange={() =>
+                          setEditing({
+                            ...editing,
+                            productIds: chosen.includes(i.id)
+                              ? chosen.filter((x) => x !== i.id)
+                              : [...chosen, i.id],
+                          })
+                        }
+                      />
+                      {i.name}
+                    </label>
+                  ))}
+                </fieldset>
+              ) : (
+                <p className="small-text muted">
+                  Add products to your shelf in this category to link them here.
+                </p>
+              );
+            })()}
             <Area
               label="Steps (one per line, in order)"
               required
@@ -167,6 +269,39 @@ export default function Routines({ topic }: { topic: TopicId }) {
                 setEditing({ ...editing, steps: e.target.value.split("\n") })
               }
             />
+            {!!editing.productIds?.length &&
+              editing.steps.filter((st) => st.trim()).length > 0 && (
+                <div className="step-product-list">
+                  {editing.steps
+                    .map((st, index) => ({ st, index }))
+                    .filter(({ st }) => st.trim())
+                    .map(({ st, index }) => (
+                      <Select
+                        key={index}
+                        label={`Product for “${st.trim()}”`}
+                        value={editing.stepProducts?.[index] || ""}
+                        onChange={(e) =>
+                          setEditing({
+                            ...editing,
+                            stepProducts: {
+                              ...editing.stepProducts,
+                              [index]: e.target.value,
+                            },
+                          })
+                        }
+                      >
+                        <option value="">No product</option>
+                        {state.items
+                          .filter((i) => editing.productIds!.includes(i.id))
+                          .map((i) => (
+                            <option key={i.id} value={i.id}>
+                              {i.name}
+                            </option>
+                          ))}
+                      </Select>
+                    ))}
+                </div>
+              )}
             <Notice icon="private">
               Your personal routine stays in this session. Sharing requires a
               separate post and explicit audience preview.
@@ -189,9 +324,8 @@ export default function Routines({ topic }: { topic: TopicId }) {
           title="A simple starting point"
           onClose={() => setBuilder(false)}
         >
-          <div className="eyebrow">SIMULATED ROUTINE BUILDER</div>
           <p>
-            Using your current demo profile preferences:{" "}
+            Based on your preferences:{" "}
             {state.profile.preferences || "none entered yet"}. Budget:{" "}
             {state.profile.currency} {state.profile.budget}. Owned products:{" "}
             {state.items
@@ -200,19 +334,13 @@ export default function Routines({ topic }: { topic: TopicId }) {
               .join(", ") || "none yet"}
             .
           </p>
-          <Notice>
-            This example favors simplicity. It does not establish suitability or
-            ingredient compatibility. Stop a product that irritates and seek
-            professional advice for persistent concerns.
-          </Notice>
           <ol className="plain-list">
-            <li>Gentle cleanse if needed.</li>
-            <li>Use a moisturizer you tolerate.</li>
-            <li>Apply broad-spectrum sunscreen following its label.</li>
+            <li>Gentle cleanse.</li>
+            <li>A moisturiser that suits your skin.</li>
+            <li>Sunscreen, SPF 30 or higher.</li>
           </ol>
           <p className="small-text">
-            No medication or treatment changes are suggested. Review the
-            editable copy before saving.
+            You can change every step before you save it.
           </p>
           <Button
             onClick={() => {
@@ -221,9 +349,9 @@ export default function Routines({ topic }: { topic: TopicId }) {
                 ...blank(),
                 title: "My simple morning",
                 steps: [
-                  "Gentle cleanse if needed",
-                  "Moisturize",
-                  "Apply sunscreen according to its label",
+                  "Gentle cleanse",
+                  "Moisturise",
+                  "Sunscreen, SPF 30 or higher",
                 ],
               });
             }}

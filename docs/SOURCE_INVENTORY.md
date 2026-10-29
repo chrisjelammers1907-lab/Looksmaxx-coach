@@ -13,7 +13,7 @@ All 15 PDFs were actually downloaded outside the repository to `/workspace/attac
 | Attachment               | Pages | Inspection and handling                                            |
 | ------------------------ | ----: | ------------------------------------------------------------------ |
 | Testosterone             |     1 | Unvalidated drug-related reference; excluded from demo advice      |
-| Clavicular's routine     |     4 | Third-party routine, not the owner's current routine; not imported |
+| Creator skincare routine |     4 | Third-party routine, not the owner's current routine; not imported |
 | Topical spironolactone   |     3 | Unvalidated medication claims; no treatment integration            |
 | GHK-Cu (Anti Aging)      |     5 | Unvalidated peptide claims; no treatment integration               |
 | Makeup                   |     4 | Third-party cosmetic reference; no owner facts inferred            |
@@ -57,4 +57,4 @@ AAD, FDA and NHS resources are listed as further reading. Direct current-page ve
 
 ## Original demo media added 22 October 2026
 
-Three fictional editorial images were generated specifically for this visual iteration (fashion campaign, beauty still life, outfit flat lay). They do not derive from owner photos or PDF imagery and are visibly labelled AI inspiration. The demo motion study now animates the fictional fashion campaign. Three original instrumentals were synthesized from a project-owned script without sampled recordings or third-party songs. These are real bundled media assets, distinct from the still-simulated in-app generation feature. See ASSET_CREDITS.md for filenames, provenance and limitations. No new personal facts, medical claims or reference-PDF instructions were adopted in this design iteration.
+Three fictional editorial images were generated for this iteration (fashion campaign, beauty still life, outfit flat lay); they were replaced on 25 October 2026 by licensed Pexels photography (see ASSET_CREDITS.md). The motion study now animates a licensed photo. Three original instrumentals were synthesized from a project-owned script without sampled recordings or third-party songs. These are real bundled media assets, distinct from the still-simulated in-app generation feature. See ASSET_CREDITS.md for filenames, provenance and limitations. No new personal facts, medical claims or reference-PDF instructions were adopted in this design iteration.

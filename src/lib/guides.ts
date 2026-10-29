@@ -2,355 +2,1272 @@ import type { TopicId } from "./types";
 export interface Guide {
   title: string;
   intro: string;
-  steps: { title: string; text: string }[];
-  remember: string;
-  references: { name: string; note: string }[];
-  reading: { label: string; url: string }[];
+  /** Heading for the glossary, e.g. "What each product does". */
+  productsTitle: string;
+  products: { name: string; does: string }[];
+  /** How to put it together, in order. */
+  routine: { title: string; text: string }[];
+  works: string[];
+  skip: string[];
+  /**
+   * What people use for faster results, told straight: what it really does
+   * (including when it works) and what it costs. Never doses or sources.
+   */
+  shortcuts?: { name: string; does: string; cost: string }[];
+  remember?: string;
 }
+
+/** Shown wherever a guide touches hormones, medication or prescriptions. */
+export const doctorNote = "Hormones or medication only through a doctor.";
+
 export const guides: Record<TopicId, Guide> = {
   skincare: {
     title: "Your first skincare routine",
     intro:
-      "Start with a routine you can repeat comfortably. More products do not automatically mean better care. This guide turns the everyday-care themes in the supplied skincare references into a simple starting point, without importing their medication protocols.",
-    steps: [
+      "Three products in the morning, two or three at night. Learn what each one does, then add one treatment at a time.",
+    productsTitle: "What each product does",
+    products: [
       {
-        title: "01 / Understand the three jobs",
-        text: "Cleansing removes makeup and surface buildup; moisturiser helps keep skin comfortable; sunscreen is for UV protection. Choose products for those jobs and your preferences, rather than buying every active ingredient mentioned online. A product’s full formula and your response matter more than a single marketing ingredient.",
+        name: "Cleanser",
+        does: "Removes oil, sweat, sunscreen and dirt. A gentle, non-foaming one keeps your skin barrier intact.",
       },
       {
-        title: "02 / Build your morning",
-        text: "Cleanse gently as needed, moisturise if needed, and apply sunscreen according to its label. Shade and protective clothing also matter. Start from products you already tolerate. The morning cleanser–moisturiser–sunscreen structure appears in the supplied Detailed Skin-Care Guide; its brand recommendations are personal examples, not verified shopping results.",
+        name: "Moisturiser",
+        does: "Holds water in your skin and repairs the barrier. Gel for oily skin, cream for dry skin.",
       },
       {
-        title: "03 / Keep the evening simple",
-        text: "Remove makeup and sunscreen gently and use a moisturiser you tolerate. Add optional products individually so you can track your response. Follow product instructions. This beginner routine does not require prescription acne treatment, a peel or a complicated layering schedule.",
+        name: "Sunscreen (SPF 30+)",
+        does: "Blocks UV, the main cause of dark marks, redness and early ageing. Mineral (zinc oxide) suits sensitive skin.",
       },
       {
-        title: "04 / Optional makeup, on your terms",
-        text: "The Makeup reference discusses tinted moisturiser for light coverage and concealer for smaller areas. Those are cosmetic choices, not acne treatments. Check the shade in daylight and blend edges gently. Use sunscreen as directed on its own label; do not assume mixing makeup or moisturiser into it preserves the stated protection. A cosmetic SPF label also does not replace correct application.",
+        name: "Retinoid (adapalene, retinol)",
+        does: "Speeds up cell turnover so pores clog less; also smooths texture over months. Use at night.",
       },
       {
-        title: "05 / Observe before changing",
-        text: "Use your journal for dates, products used and your own observations of comfort or irritation. A photo cannot establish a diagnosis. Pause a product that causes a reaction and seek suitable professional help for persistent or significant symptoms. Product compatibility cannot be established from a product name alone.",
+        name: "Prescription retinoid (tretinoin, tazarotene)",
+        does: "Stronger than retinol or adapalene and the best-studied for acne, marks and fine lines. Through a doctor; start slowly, it irritates at first.",
+      },
+      {
+        name: "Benzoyl peroxide",
+        does: "Kills acne bacteria. Good as a spot treatment or as a 5–10% wash for chest and back. Can bleach towels.",
+      },
+      {
+        name: "Salicylic acid (BHA)",
+        does: "Dissolves oil inside pores. Helps blackheads and oily skin.",
+      },
+      {
+        name: "Niacinamide",
+        does: "Calms redness, evens tone and fades marks left by spots.",
+      },
+      {
+        name: "Azelaic acid",
+        does: "Fades red and dark marks and calms breakouts; gentle enough for sensitive skin.",
+      },
+      {
+        name: "Vitamin C serum",
+        does: "Brightens and protects against daily damage. Morning, under sunscreen.",
+      },
+      {
+        name: "Glycolic or lactic acid (AHA)",
+        does: "Exfoliates the surface for smoother texture. Once a week to start.",
+      },
+      {
+        name: "Hyaluronic acid",
+        does: "Draws water into the skin for a plumper feel. Apply on damp skin, under moisturiser.",
+      },
+      {
+        name: "Copper peptides (GHK-Cu serum)",
+        does: "A cosmetic serum that may support repair and firmness. Small studies and a modest effect: a nice extra, not a fix.",
       },
     ],
-    remember:
-      "An online routine is somebody else’s experience. Prescription treatments and persistent skin problems need individual professional assessment; there is no guaranteed acne-free timeline.",
-    references: [
+    routine: [
       {
-        name: "Detailed Skin-Care Guide",
-        note: "Used for the AM/PM structure and product roles. Its drug combinations, doses, universal hormone claims and guaranteed outcomes were not adopted.",
+        title: "Morning",
+        text: "Cleanser (or just water) → vitamin C if you use it → moisturiser → sunscreen. Sunscreen always goes last.",
       },
       {
-        name: "Makeup",
-        note: "Used for the distinction between light coverage and targeted concealer. Its product endorsement and universal ‘acne safe’ claim are not established facts.",
+        title: "Evening",
+        text: "Cleanse after your shower → one treatment (retinoid, or an acid on a different night) → moisturiser. Retinoid and acids don’t go on the same night at first.",
       },
       {
-        name: "Clavicular’s routine",
-        note: "Reviewed as a third-party personal routine, not your current routine or a template everyone should copy.",
+        title: "Starting a retinoid",
+        text: "A pea-sized amount, two or three nights a week, on dry skin. Build up over a month. A short purge in the first weeks is normal.",
       },
       {
-        name: "Topical spironolactone; GHK-Cu (Anti Aging)",
-        note: "Reviewed as treatment-related references. No compounded recipe, treatment recommendation or result promise is included in this beginner guide.",
-      },
-    ],
-    reading: [
-      {
-        label: "American Academy of Dermatology · Skin care basics",
-        url: "https://www.aad.org/public/everyday-care/skin-care-basics",
+        title: "Combining treatments",
+        text: "Retinoid + niacinamide: fine. Benzoyl peroxide in the morning, retinoid at night: fine. Retinoid + strong acid on the same night: too much for most skin.",
       },
       {
-        label: "FDA · Sunscreen: how to help protect your skin",
-        url: "https://www.fda.gov/drugs/understanding-over-counter-medicines/sunscreen-how-help-protect-your-skin-sun",
+        title: "Marks and scars",
+        text: "Red or dark marks fade with azelaic acid, niacinamide and daily SPF. Pitted scars don’t fade with creams: chemical peels, microneedling or laser by a professional do.",
+      },
+      {
+        title: "Timing",
+        text: "Acne improves in 4–8 weeks, oil and texture in 8–12, fine lines in 3–6 months. Change one product at a time.",
       },
     ],
+    works: [
+      "Daily sunscreen, even on cloudy days",
+      "One active at a time, introduced slowly",
+      "Cleansing after the gym and after showering",
+      "A richer moisturiser on nights your skin feels tight",
+      "A dermatologist when acne leaves marks or keeps coming back",
+    ],
+    skip: [
+      "Harsh scrubs and alcohol-heavy toners",
+      "Five new products in the same week",
+      "Picking at spots — it leaves longer-lasting marks",
+      "Toothpaste, lemon or baking soda on skin",
+    ],
+    shortcuts: [
+      {
+        name: "Isotretinoin (Accutane)",
+        does: "The most effective treatment for severe or stubborn acne. It shrinks the oil glands, and for many people the acne stays away after the course.",
+        cost: "Dry lips, eyes and skin for months, higher liver values and cholesterol (so you get blood tests), rare mood changes, and it causes birth defects, so no pregnancy during or soon after. Only through a dermatologist.",
+      },
+      {
+        name: "Topical spironolactone",
+        does: "Blocks the hormone signal that drives oil in the skin, so there is less oil and fewer spots. Small studies look promising.",
+        cost: "Little long-term research, only made by compounding pharmacies, and the strength of unofficial creams is unknown. Ask a dermatologist.",
+      },
+      {
+        name: "Finasteride or dutasteride for oily skin",
+        does: "They lower DHT, the hormone behind oily skin and male hair loss, so skin can get less oily.",
+        cost: "Not an approved acne treatment. A minority of men get sexual side effects or low mood, and anyone who could be pregnant must not touch the tablets. Prescription only.",
+      },
+    ],
+    remember: `Persistent or painful acne belongs with a dermatologist. ${doctorNote}`,
   },
   clothing: {
     title: "Build a wardrobe that works together",
     intro:
-      "A useful wardrobe starts with what you wear, what fits comfortably and what you enjoy. Old money, Dark casual and Minimalist are optional visual directions—not rules about gender or status.",
-    steps: [
+      "A good wardrobe is a small set of pieces that combine with each other. Start from what fits, then fill the gaps.",
+    productsTitle: "What each piece does",
+    products: [
       {
-        title: "01 / Start with your own pieces",
-        text: "Add clothes you own before building a shopping list. Record size, fit notes, colour and the occasions you actually dress for. Build one complete outfit, including shoes, so a good-looking reference becomes something usable.",
+        name: "Plain tee or knit",
+        does: "The base layer of most outfits. Neutral colours make everything else easier.",
       },
       {
-        title: "02 / Compare colour, without a hierarchy",
-        text: "Try a small palette and compare combinations in similar light. The Coloring references prompted this colour-comparison idea. Preferences for contrast are subjective: no skin tone, ethnicity or eye colour is inherently better. Start with colours you enjoy and judge the whole outfit rather than a supposed universal ideal.",
+        name: "Overshirt or shirt",
+        does: "Adds structure to a tee and jeans; open as a layer or closed on its own.",
       },
       {
-        title: "03 / Use fit notes instead of guesses",
-        text: "Notice how shoulders, sleeve length, waist and movement feel. A label size is not a universal measurement. Save observations with the item; a selfie cannot guarantee fit or a tailoring result. Compare one change at a time.",
+        name: "Straight or tapered trousers",
+        does: "Balance the upper body. Straight is relaxed, tapered is sharper.",
       },
       {
-        title: "04 / Make inspiration practical",
-        text: "Save an outfit, inspect its separate pieces and copy it as an editable starting point. Substitute what you own. A style reference is inspiration, not a reason to replace your entire wardrobe.",
+        name: "Dark denim",
+        does: "Dresses up or down. Dark washes look cleaner than faded ones.",
       },
       {
-        title: "05 / Shop for an actual gap",
-        text: "Choose your country, currency and budget when shopping. Inspect item prices, source links and check dates. Unpriced pieces are not free; prices in different currencies should not be added without a stated conversion. CHARETT’s demo prices and stores are examples.",
+        name: "Outer layer (coat, jacket)",
+        does: "Sets the tone of the whole look. The piece people notice first.",
+      },
+      {
+        name: "Clean shoes",
+        does: "Finish the outfit. White or black leather sneakers go with almost everything.",
+      },
+      {
+        name: "Belt, watch, bag",
+        does: "Small details that make a simple outfit look considered.",
       },
     ],
-    remember:
-      "A style name should help you explore. It should never restrict who can wear something or imply a ranking of people.",
-    references: [
+    routine: [
       {
-        name: "Coloring; Coloring (additional reference)",
-        note: "Used as prompts for personal colour and contrast comparisons. Racial hierarchies, tanning-drug suggestions and guaranteed attractiveness claims were rejected. This wardrobe workflow is CHARETT’s own editorial material.",
+        title: "Fit first",
+        text: "Shoulder seams sit on your shoulder, sleeves end at the wrist, trousers break once or not at all. A cheap piece that fits beats an expensive one that doesn’t.",
+      },
+      {
+        title: "Three colours per outfit",
+        text: "Pick one main neutral (navy, black, grey, camel, white), one supporting neutral, and at most one accent.",
+      },
+      {
+        title: "Balance the shape",
+        text: "Loose top with slim bottoms, or fitted top with wider trousers. Loose on loose looks sloppy unless it’s deliberate.",
+      },
+      {
+        title: "Build outfits, not items",
+        text: "Before you buy, name three things you own that it goes with. If you can’t, skip it.",
+      },
+      {
+        title: "Pick a direction",
+        text: "Old money, dark casual and minimalist each have a colour set and a few key pieces. Choose one to start so your pieces combine.",
       },
     ],
-    reading: [],
+    works: [
+      "A tailor for trouser length and sleeve length",
+      "Neutral basics in a better fabric",
+      "Repeating outfits that work",
+      "Steaming or ironing before you go out",
+    ],
+    skip: [
+      "Big logos and loud graphics on everything",
+      "Buying a trend you’d only wear once",
+      "Sizes that are ‘almost right’",
+      "Worn-out shoes with a sharp outfit",
+    ],
   },
   hair: {
     title: "Find your next hair routine",
     intro:
-      "Separate the look you want from the maintenance it needs. A reference image is a useful conversation starter, not a prediction of your own result.",
-    steps: [
+      "Pick the cut first, then the products that hold it. Most hair needs only two or three products.",
+    productsTitle: "What each product does",
+    products: [
       {
-        title: "01 / Save two useful references",
-        text: "Choose a front and a side view where possible. Note what you like: length, fringe, volume, texture or colour. Look for references with maintenance you are comfortable with, while recognising that a photo cannot confirm hair texture or density.",
+        name: "Shampoo",
+        does: "Cleans oil and product from the scalp. Focus on the roots, not the lengths.",
       },
       {
-        title: "02 / Learn what your current routine does",
-        text: "Record your own washing, conditioning and styling preferences. Adjust around comfort and the products’ directions rather than a universal washing schedule. Be gentle when detangling and use heat tools according to their instructions.",
+        name: "Conditioner",
+        does: "Smooths the lengths and makes them easier to detangle. Mid-lengths to ends.",
       },
       {
-        title: "03 / Try colour thoughtfully",
-        text: "Compare shades in consistent lighting and keep edited inspiration separate from real progress. Follow the dye manufacturer’s instructions, including allergy-test instructions. Hair colour is not intended for eyelashes. A qualified stylist can help you understand maintenance and realistic options.",
+        name: "Ketoconazole shampoo",
+        does: "Calms dandruff and an itchy scalp. Twice a week, leave on for a few minutes.",
       },
       {
-        title: "04 / Keep a dated record",
-        text: "Use similar camera distance, lighting and angle for hair photos. Note any styling, extensions or editing. A visualization can illustrate an idea, but does not show achieved growth or prove that a haircut will suit you.",
+        name: "Minoxidil 5% (foam or solution)",
+        does: "Over the counter and proven to slow thinning and regrow some hair, mostly at the crown. It takes 4–6 months and only works while you keep using it.",
+      },
+      {
+        name: "Sea-salt spray",
+        does: "Adds texture and volume before blow-drying. Light hold, matte look.",
+      },
+      {
+        name: "Clay or paste",
+        does: "Matte, flexible hold for short to medium styles.",
+      },
+      {
+        name: "Pomade",
+        does: "Shine and a sleek finish; good for slick-backs and side parts.",
+      },
+      {
+        name: "Curl cream or leave-in",
+        does: "Defines curls and stops frizz. On wet hair, scrunch, don’t rub.",
+      },
+      {
+        name: "Heat protectant",
+        does: "Shields hair from blow-dryer and straightener damage.",
       },
     ],
-    remember:
-      "New or worrying hair loss belongs with a qualified professional. CHARETT does not prescribe a growth treatment from a photo.",
-    references: [
+    routine: [
       {
-        name: "Coloring",
-        note: "Used for the idea of comparing hair and brow colour with your overall style. Drug-assisted tanning, biological promises and a universal ‘best’ colouring were not adopted.",
+        title: "Choose the cut",
+        text: "Bring a front and a side photo to your barber or stylist and ask how much daily styling it needs.",
       },
       {
-        name: "Eyebrows; Eyelashes",
-        note: "Used to distinguish cosmetic styling preferences from hair-growth treatment claims; treatment instructions are not part of this hair guide.",
+        title: "Wash",
+        text: "Shampoo two to four times a week, conditioner every time. Oily scalp: more often. Curly or dry hair: less.",
+      },
+      {
+        title: "Style",
+        text: "Towel-dry → sea-salt spray or heat protectant → blow-dry in the direction you want → a fingertip of clay or pomade, warmed in your hands.",
+      },
+      {
+        title: "Keep the shape",
+        text: "Short cuts need a trim every 3–5 weeks, longer styles every 6–10.",
       },
     ],
-    reading: [
+    works: [
+      "Blow-drying for volume instead of more product",
+      "Using less product than you think",
+      "A cut that suits your hair type",
+      "Seeing a doctor early about thinning",
+    ],
+    skip: [
+      "Washing with hot water every day",
+      "High heat without protectant",
+      "Heavy gel on fine hair",
+      "Hair dye on brows or lashes",
+    ],
+    shortcuts: [
       {
-        label: "FDA · Hair dyes",
-        url: "https://www.fda.gov/cosmetics/cosmetic-products/hair-dyes",
+        name: "Finasteride or dutasteride",
+        does: "They stop or slow male-pattern hair loss in most men by lowering DHT. Together with minoxidil they work better still.",
+        cost: "Prescription only. A minority get sexual side effects or low mood, anyone who could be pregnant must not handle the tablets, and the loss comes back when you stop.",
       },
     ],
+    remember: `Thinning or a receding hairline is best seen early by a doctor. ${doctorNote}`,
   },
   gym: {
     title: "Begin with a repeatable training week",
     intro:
-      "The useful starting point is your current experience, schedule and preferences. A stranger’s medication or diet story cannot establish your training needs.",
-    steps: [
+      "Three sessions a week, a handful of exercises, a little heavier over time. That covers most of the progress a beginner can make.",
+    productsTitle: "What each part does",
+    products: [
       {
-        title: "01 / Plan a week you can repeat",
-        text: "Choose manageable sessions and recovery time around your current ability. For strength work, learn movements and use a comfortable load before progressing. An example schedule is editable; it is not a personalised prescription. Get individual advice if a condition or injury affects exercise.",
+        name: "Compound lifts",
+        does: "Squat, deadlift, bench, rows, overhead press: many muscles at once. The core of every session.",
       },
       {
-        title: "02 / Log what happened",
-        text: "Record exercise, sets, repetitions and load after a session. Compare like-for-like sessions and note changes in technique or equipment. Sets × repetitions × load is a simple volume summary, not a complete measure of fitness or recovery.",
+        name: "Accessory exercises",
+        does: "Curls, raises, lunges: fill in smaller muscles and weak points.",
       },
       {
-        title: "03 / Treat food numbers as estimates",
-        text: "Record portions and the source of calories or protein: a package label, a database entry or your own estimate. You can edit your targets. The demo’s starter targets are fictional values; they are not calculated requirements or a weight-loss prescription.",
+        name: "Progressive overload",
+        does: "A bit more weight or one more rep over time. This is what makes muscles grow.",
       },
       {
-        title: "04 / Make space for comfortable movement",
-        text: "Break up long periods of sitting and try comfortable mobility within your ability. No single ‘perfect posture’ needs to be held all day. Stop and seek appropriate help if movement causes concerning symptoms.",
+        name: "Rest days",
+        does: "Muscles grow while you recover, not while you train.",
       },
       {
-        title: "05 / Keep treatments out of beginner programming",
-        text: "The supplied hormone, steroid, peptide and weight-loss-drug documents are not workout plans. None establishes that you should use a substance or change a prescription. This guide imports no dosing, sourcing, stacking or rapid-weight-loss protocol from them.",
-      },
-    ],
-    remember:
-      "Training, food logs and progress photos provide different information. A calorie estimate or a short-term weight change does not establish body composition or medical need.",
-    references: [
-      {
-        name: "Testosterone; Anavar; MK677",
-        note: "Reviewed as unvalidated drug-related reference documents. They were not converted into beginner training recommendations.",
+        name: "Protein",
+        does: "Builds and repairs muscle. Spread it over your meals.",
       },
       {
-        name: "Mounjaro GLP-1 agonist",
-        note: "A third-party medication/weight anecdote, not evidence of your current needs or an individual nutrition target.",
+        name: "Creatine monohydrate",
+        does: "One of the best-studied supplements: a little more strength and reps over time. Optional.",
       },
       {
-        name: "DNP",
-        note: "Contains dangerous weight-loss claims. No use or dose advice is adopted; it is not an appropriate beginner fitness method.",
+        name: "Sleep",
+        does: "Seven to nine hours makes recovery, appetite and strength easier.",
       },
     ],
-    reading: [
+    routine: [
       {
-        label: "NHS · Exercise",
-        url: "https://www.nhs.uk/live-well/exercise/",
+        title: "Pick a split",
+        text: "Three days: full body each time. Four days: upper / lower / upper / lower. Plan it in the day planner and the sessions log themselves.",
       },
       {
-        label: "NHS · Eat well",
-        url: "https://www.nhs.uk/live-well/eat-well/",
+        title: "Build a session",
+        text: "Two or three compound lifts, then two accessories. 3 sets of 6–12 reps. Rest 1–3 minutes between sets.",
+      },
+      {
+        title: "Progress",
+        text: "When you hit the top of the rep range on all sets, add 2.5 kg (or 5 lb) next time.",
+      },
+      {
+        title: "Warm up",
+        text: "Five minutes of light movement, then one or two lighter sets of the first lift.",
       },
     ],
+    works: [
+      "The same plan for 8–12 weeks before switching",
+      "Logging every set so you know what to beat",
+      "Good form before heavy weight",
+      "Walking on rest days",
+    ],
+    skip: [
+      "Changing your program every week",
+      "Training to failure on every set",
+      "Skipping legs",
+      "Fat-burner pills: mostly caffeine, a small and short effect",
+    ],
+    shortcuts: [
+      {
+        name: "Testosterone and anabolic steroids (such as Anavar)",
+        does: "They work: more muscle and strength, faster, and less fat than training alone can give.",
+        cost: "They shut down your own testosterone, which can leave you infertile and low after you stop. Acne, hair loss, worse cholesterol and a strained heart are common, and tablets like Anavar strain the liver. Illegal without a prescription in many countries; testosterone only through a doctor for proven low levels.",
+      },
+      {
+        name: "MK-677 (ibutamoren)",
+        does: "It raises growth hormone and IGF-1: more appetite, deeper sleep and some size and weight gain.",
+        cost: "Not approved for use and sold as a research chemical. Water retention, tingling hands and higher blood sugar are common, and its long-term safety is unknown.",
+      },
+    ],
+    remember: `Get advice first if an injury or condition affects training. ${doctorNote}`,
   },
   grooming: {
-    title: "Brows, lashes and the finer details",
+    title: "Shave and beard, without the irritation",
     intro:
-      "Choose the details you personally want to maintain. Grooming can be subtle, expressive or minimal; there is no single ideal brow shape for everyone.",
-    steps: [
+      "A clean shave or a sharp beard line changes your face more than most products. The trick is preparation and a good neckline.",
+    productsTitle: "What each tool does",
+    products: [
       {
-        title: "01 / Observe before reshaping",
-        text: "Brush brows gently and look at their natural direction. If you want to tidy them, make small changes with clean tools and pause to compare. A reference can show a style you like without becoming a rule about masculinity, femininity or facial value.",
+        name: "Safety razor",
+        does: "One sharp blade: fewer ingrown hairs than multi-blade razors.",
       },
       {
-        title: "02 / Try a reversible cosmetic option",
-        text: "A brow pencil or gel can let you explore shape or colour before committing to a larger change. Use products according to their label and remove makeup gently. A darker brow is a preference, not an improvement everyone needs.",
+        name: "Electric trimmer",
+        does: "Beard length, stubble and the neck, where razor bumps start most.",
       },
       {
-        title: "03 / Be careful around the eyes",
-        text: "Use cosmetics intended for the eye area, keep applicators clean and do not share eye makeup. Stop using a product that causes irritation. Do not use ordinary hair dye on lashes, heat tools near the eyes, or assume an essential oil is safe because it is ‘natural’. Seek appropriate help for eye symptoms.",
+        name: "Shaving cream",
+        does: "Lets the blade glide and protects the skin.",
       },
       {
-        title: "04 / Separate styling from growth claims",
-        text: "Mascara, shaping and a professional styling service change appearance differently from a prescription treatment. The supplied lash document mixes those categories. It does not establish that oils or a serum will grow your lashes, nor that a prescription is suitable for you.",
+        name: "Aftershave balm",
+        does: "Calms the skin after shaving. Skip alcohol-heavy splashes.",
       },
       {
-        title: "05 / Keep facial-hair care manageable",
-        text: "Use clean tools and follow their directions. Record your own comfortable shaving or trimming routine. Leave irritated skin time to settle and seek professional advice for persistent problems. A photo cannot diagnose a skin condition.",
+        name: "Beard oil",
+        does: "Softens the hair and stops itch under a longer beard.",
+      },
+    ],
+    routine: [
+      {
+        title: "Prepare",
+        text: "Shave after a warm shower, or exfoliate gently first so the hairs stand up.",
+      },
+      {
+        title: "Shave",
+        text: "Cream → shave with the grain → rinse cool → balm → sunscreen in the morning.",
+      },
+      {
+        title: "Shape a beard",
+        text: "Trim to one length. Neckline one finger above the Adam’s apple, curving up behind the ears. Clean up the cheek line.",
+      },
+      {
+        title: "Keep it",
+        text: "Re-trim the lines every 3–4 days. Wash the beard with face wash, then a drop of oil.",
+      },
+    ],
+    works: [
+      "A fresh blade every 5–7 shaves",
+      "A sharp neckline",
+      "Balm instead of alcohol aftershave",
+      "Letting irritated skin rest a few days",
+    ],
+    skip: [
+      "Shaving against the grain on sensitive skin",
+      "Pressing hard with a dull blade",
+      "A neckline on the jawbone",
+      "Dry shaving without cream",
+    ],
+  },
+  makeup: {
+    title: "Makeup that looks like good skin",
+    intro:
+      "Good makeup doesn’t look like makeup. Even out redness, define brows and lashes, add a touch of colour — for women and men alike.",
+    productsTitle: "What each product does",
+    products: [
+      {
+        name: "Tinted moisturiser or skin tint",
+        does: "Evens out redness and tone with a sheer finish. The base for everything.",
+      },
+      {
+        name: "Foundation",
+        does: "More coverage than a tint. Choose by undertone, test on the jaw in daylight.",
+      },
+      {
+        name: "Concealer",
+        does: "Covers spots and under-eye shadow. Tap on only where needed.",
+      },
+      {
+        name: "Setting powder",
+        does: "Takes away shine on the T-zone. A light press, not a layer.",
+      },
+      {
+        name: "Brow gel or pencil",
+        does: "Holds brows in place and fills gaps with fine strokes.",
+      },
+      {
+        name: "Mascara",
+        does: "Lengthens and darkens lashes; opens up the eyes.",
+      },
+      {
+        name: "Bronzer and contour",
+        does: "Bronzer warms where the sun hits; contour adds shadow under cheekbones and along the jaw.",
+      },
+      {
+        name: "Lip and cheek tint",
+        does: "A natural flush of colour; one shade for both.",
+      },
+    ],
+    routine: [
+      {
+        title: "Prep",
+        text: "Moisturiser → sunscreen → wait a minute so the base doesn’t slide.",
+      },
+      {
+        title: "Base",
+        text: "Mix a little tinted moisturiser with moisturiser on your fingertips. Blend from the centre outwards, into the jaw and neck.",
+      },
+      {
+        title: "Correct",
+        text: "Concealer only on spots and the inner under-eye. Tap, don’t rub.",
+      },
+      {
+        title: "Define",
+        text: "Brush brows up and set them. Mascara on the top lashes, wiggling at the roots.",
+      },
+      { title: "Day look", text: "Stop here, or add tint on lips and cheeks." },
+      {
+        title: "Evening look",
+        text: "Add bronzer to cheekbones and temples, contour under the cheekbones, a darker lip or a soft smoky liner.",
+      },
+    ],
+    works: [
+      "Less product, blended well",
+      "Matching base to your neck, not your hand",
+      "Applying in daylight",
+      "Non-comedogenic products if you get spots",
+    ],
+    skip: [
+      "A base line at the jaw",
+      "Heavy powder on dry skin",
+      "Sleeping in makeup",
+      "Sharing mascara or eye products",
+    ],
+  },
+  face: {
+    title: "Face structure: what really changes it",
+    intro:
+      "Bone structure is mostly set as an adult. What you can change is everything around it: fat, posture, sleep, hair and how you frame your features.",
+    productsTitle: "What each lever does",
+    products: [
+      {
+        name: "Body fat",
+        does: "The biggest lever for a defined jaw and cheekbones. A few kilos less often shows first in the face.",
+      },
+      {
+        name: "Posture and head position",
+        does: "A forward head softens the jawline. Neck long and chin level shows it.",
+      },
+      {
+        name: "Sleep and salt",
+        does: "Short sleep and salty evenings cause puffiness around the eyes and cheeks.",
+      },
+      {
+        name: "Haircut and beard",
+        does: "Volume on top lengthens the face; a beard can square a soft jaw or balance a long chin.",
+      },
+      {
+        name: "Brows",
+        does: "Well-groomed brows frame the eye area and lift the face.",
+      },
+      {
+        name: "Makeup contour",
+        does: "Shadow under cheekbones and along the jaw creates definition for photos and evenings.",
+      },
+    ],
+    routine: [
+      {
+        title: "Eye area",
+        text: "Do yourself: 7–9 hours of sleep, less salt in the evening, a cold compress and caffeine eye cream for puffiness, SPF and sunglasses against fine lines, groomed brows. Doesn’t work: creams that promise to remove hollows or change eye shape. Specialist: under-eye hollows, droopy lids or dark circles from volume loss — only via a qualified specialist.",
+      },
+      {
+        title: "Maxilla & midface",
+        text: "Do yourself: a good posture with the tongue resting on the roof of the mouth and nasal breathing, a healthy weight, and hair or makeup that adds focus to the cheek area. Doesn’t work: promises that mewing reshapes an adult’s upper jaw, or face yoga for bone changes. Specialist: a recessed midface or breathing problems — orthodontics and jaw treatments are only via a qualified specialist.",
+      },
+      {
+        title: "Cheekbones (zygos)",
+        text: "Do yourself: lower body fat, contour or bronzer high on the cheekbone, and a haircut that doesn’t hide the sides of your face. Doesn’t work: gua sha or massage tools that claim to lift bone. Specialist: fillers or implants for cheek volume — only via a qualified specialist.",
+      },
+      {
+        title: "Jaw (mandible) & chin",
+        text: "Do yourself: lose fat around the neck, keep the head up, shape the beard with a clean neckline, and contour along the jaw for photos. Doesn’t work as promised: jaw exercisers and hard gum add a little chewing muscle at best and strain the jaw joint. Specialist: a weak chin or bite problems — orthodontics, fillers or surgery only via a qualified specialist.",
+      },
+    ],
+    works: [
+      "A healthy, lower body-fat percentage",
+      "Good posture and nasal breathing",
+      "A haircut and beard that frame your face",
+      "Good sleep and less salt at night",
+    ],
+    skip: [
+      "Jaw exercisers and chewing for hours",
+      "Gua sha or tools that promise to reshape bone",
+      "Rating your face with apps",
+      "Anything sold as a shortcut to a new face",
+    ],
+    remember: `Bone changes are never a home project. ${doctorNote}`,
+  },
+  colouring: {
+    title: "Find the colours that suit you",
+    intro:
+      "Your colouring is the mix of skin undertone, hair and eye colour, and the contrast between them. Work with it and you look healthier without changing anything.",
+    productsTitle: "What each part does",
+    products: [
+      {
+        name: "Undertone",
+        does: "Warm (golden), cool (pink) or neutral. Shows in which metals and whites flatter you.",
+      },
+      {
+        name: "Contrast",
+        does: "The difference between your hair, skin and eyes. High contrast suits bold combinations; low contrast suits tone-on-tone.",
+      },
+      {
+        name: "Tinted SPF",
+        does: "Protects from sun and evens tone. Tanning damage ages skin faster than anything.",
+      },
+      {
+        name: "Gradual self-tan",
+        does: "A light, believable glow without sun damage.",
+      },
+      {
+        name: "Hair and brow colour",
+        does: "Brows a shade close to your hair keep your face in balance.",
+      },
+    ],
+    routine: [
+      {
+        title: "Find your undertone",
+        text: "In daylight, hold a pure white and a cream top near your face, then gold and silver. Whatever makes your skin look even and your eyes brighter shows it: white and silver lean cool, cream and gold lean warm, both is neutral.",
+      },
+      {
+        title: "Find your contrast",
+        text: "Take a black-and-white photo. Big difference between hair and skin: high contrast. Similar greys: low.",
+      },
+      {
+        title: "Choose colours",
+        text: "Warm: cream, camel, olive, rust. Cool: pure white, navy, grey, burgundy. Neutral: most colours. Wear your best ones near your face.",
+      },
+      {
+        title: "A glow, safely",
+        text: "Self-tan two to three times a week on moisturised skin; keep it off brows and hairline. Daily SPF stays.",
+      },
+      {
+        title: "Colour from food",
+        text: "More fruit and vegetables, especially orange and red ones, adds a warm, healthy tint to the skin within weeks; in studies people rate it as healthier and more attractive. Food works better than high-dose pills.",
+      },
+      {
+        title: "Even out dark spots",
+        text: "On every skin tone, azelaic acid, niacinamide and daily SPF fade dark spots and marks. You even out your skin; you don’t change its tone.",
+      },
+      {
+        title: "Lips, teeth and eyes",
+        text: "A tinted lip balm and gentle exfoliation for lips, whitening through a dentist, and coloured contacts only when fitted by an optician — never from a costume shop.",
+      },
+    ],
+    works: [
+      "Testing colours under your chin in daylight",
+      "Self-tan instead of sunbeds",
+      "Brows close to your hair colour",
+      "Neutrals in your undertone as a base",
+    ],
+    skip: [
+      "Sunbeds and tanning without SPF",
+      "A “base tan” before a holiday: it protects about as much as SPF 3",
+      "Judging colour under shop lights",
+      "Rules that say one skin tone is better",
+    ],
+    shortcuts: [
+      {
+        name: "Melanotan II (MT2)",
+        does: "A tanning peptide: it does tan you with little sun, and it also lowers appetite.",
+        cost: "Not approved anywhere and sold unregulated, so what is in the vial is uncertain. Nausea and flushing are common; it darkens moles and freckles and can create new ones, which makes skin cancer harder to spot. Have your moles checked by a dermatologist.",
+      },
+      {
+        name: "Skin lighteners (hydroquinone, steroid creams, glutathione)",
+        does: "Hydroquinone does fade dark spots and melasma. Glutathione pills have weak evidence.",
+        cost: "Hydroquinone belongs in short, supervised courses: long use can cause a lasting blue-black darkening. Creams mixed with steroids thin the skin, and glutathione injections carry infection and allergy risks. For spots, not your skin tone, and through a dermatologist.",
       },
     ],
     remember:
-      "Prescription lash or hair treatments need individual assessment. This guide includes no medication regimen, DIY lash-dye procedure or transplant recommendation.",
-    references: [
+      "Every skin tone is good; colouring is about harmony, not a ranking.",
+  },
+  brows: {
+    title: "Brows and lashes",
+    intro:
+      "Brows frame the face and lashes open up the eyes. Shape a little, fill where needed, and set them so they stay.",
+    productsTitle: "What each tool does",
+    products: [
       {
-        name: "Eyebrows",
-        note: "Used for brow-shape, grooming and colour as subjects to explore. Gender stereotypes and claims of one universally ideal shape were not adopted.",
+        name: "Spoolie brush",
+        does: "Brushes brows into shape so you can see what to trim.",
       },
       {
-        name: "Eyelashes",
-        note: "Used to explain the difference between temporary cosmetics, services and treatment claims. Drug doses, heated-tool advice and unsupported oil-growth claims were rejected.",
+        name: "Small scissors",
+        does: "Trims long hairs without changing the shape.",
       },
       {
-        name: "Makeup",
-        note: "Used for optional, targeted cosmetic coverage; the source author’s personal product results are not general promises.",
+        name: "Tweezers",
+        does: "Removes strays between and under the brows, one hair at a time.",
       },
       {
-        name: "Socialmax / Low Inhib",
-        note: "Reviewed, but its drug-related social advice is not a grooming routine and was not adopted. Confidence is not tied to a required look or substance.",
+        name: "Brow gel",
+        does: "Holds brows in place; tinted gel fills light gaps.",
+      },
+      {
+        name: "Brow pencil",
+        does: "Fine, hair-like strokes where brows are sparse.",
+      },
+      {
+        name: "Mascara and lash curler",
+        does: "Curl first, then mascara at the roots for lift.",
+      },
+      {
+        name: "Brow tint kit",
+        does: "Darkens light brows for about four weeks. Made for brows, unlike hair dye.",
+      },
+      {
+        name: "Lash serum (peptides)",
+        does: "Cosmetic serums can make lashes look a little fuller over a few months; the drug serum below works far better.",
+      },
+      {
+        name: "Castor oil",
+        does: "Conditions lashes and brows. Any growth effect is small and unproven, but it does no harm.",
       },
     ],
-    reading: [
+    routine: [
       {
-        label: "FDA · Eye cosmetic safety",
-        url: "https://www.fda.gov/cosmetics/cosmetic-products/eye-cosmetic-safety",
+        title: "Map",
+        text: "Start in line with the edge of your nostril and end just past the outer corner of the eye. For a masculine look keep the brow fairly straight and low, with a neutral or slightly rising tilt; for a softer look, a gentle arch above the outer edge of the iris.",
+      },
+      {
+        title: "Trim",
+        text: "Brush up and trim what sticks out above the line.",
+      },
+      {
+        title: "Tweeze",
+        text: "Strays below and between only. Stop often and step back.",
+      },
+      {
+        title: "Set",
+        text: "Fill sparse spots with short strokes, then brush through with gel.",
+      },
+      {
+        title: "Tint",
+        text: "Light brows: a brow tint kit, a shade darker than your hair. Petroleum jelly around the brow, follow the timing on the kit and patch-test first. Lash tints at a salon: they sit right at the eye.",
+      },
+      {
+        title: "Lift",
+        text: "A lash lift curls lashes for six to eight weeks; with a tint they look longer and darker. Extensions add length and need refills every three to four weeks.",
       },
     ],
+    works: [
+      "Doing less than you planned",
+      "Strokes, not a solid block",
+      "A brow tint for light brows, at home or in a salon",
+      "Removing mascara every night",
+    ],
+    skip: [
+      "Thin, over-plucked brows",
+      "Hair dye on brows — use a brow tint",
+      "Heat tools near the eyes",
+      "Tinting your own lashes",
+    ],
+    shortcuts: [
+      {
+        name: "Bimatoprost (Latisse)",
+        does: "An approved lash-growth drug: lashes get longer, fuller and darker in two to four months.",
+        cost: "Prescription only. It can redden or itch the eyes, darken the eyelid skin and, in light eyes, rarely darken the iris for good. Lashes go back to normal when you stop.",
+      },
+      {
+        name: "Oral minoxidil",
+        does: "Low-dose tablets grow hair all over, including brows, beard and scalp.",
+        cost: "Prescription only and off-label. Unwanted body hair, fluid retention and a faster heartbeat are possible; not for anyone with a heart or blood-pressure condition.",
+      },
+      {
+        name: "Lash or brow transplant",
+        does: "Hairs from the scalp are moved to the lash line or brows and keep growing there.",
+        cost: "Expensive, months of healing, and the hairs grow like scalp hair, so they need trimming. Only with an experienced surgeon.",
+      },
+    ],
+    remember: `Drug serums and tablets for lash and brow growth go through a doctor. ${doctorNote}`,
+  },
+  nutrition: {
+    title: "Eat for how you want to look and feel",
+    intro:
+      "Your weight follows energy in versus energy out; your skin, energy and training follow what that food is made of.",
+    productsTitle: "What each part does",
+    products: [
+      { name: "Calories", does: "Set your direction: lose, maintain or gain." },
+      {
+        name: "Protein",
+        does: "Builds muscle and keeps you full. Some at every meal.",
+      },
+      { name: "Carbohydrates", does: "Fuel for training and your brain." },
+      { name: "Fat", does: "Needed for hormones and vitamins A, D, E and K." },
+      {
+        name: "Fibre and vegetables",
+        does: "Fullness and digestion for few calories.",
+      },
+      { name: "Water", does: "Thirst and hunger feel alike; drink first." },
+    ],
+    routine: [
+      {
+        title: "Set targets",
+        text: "Use the calorie calculator, then choose your carbs, protein and fat in your targets.",
+      },
+      {
+        title: "Build a plate",
+        text: "Half vegetables, a quarter protein, a quarter carbs, a thumb of fat.",
+      },
+      {
+        title: "Log",
+        text: "Scan or add what you eat for two weeks to learn your patterns.",
+      },
+      {
+        title: "Watch the trend",
+        text: "Weigh in a few mornings a week and look at the 7-day average, not one day.",
+      },
+    ],
+    works: [
+      "Protein at every meal",
+      "Planning the busy days",
+      "Scanning packaged food",
+      "Adjusting by 100–200 kcal at a time",
+    ],
+    skip: [
+      "Crash diets",
+      "Detox teas and cleanses: laxatives, so only water goes",
+      "Cutting out whole food groups",
+      "Judging on one weigh-in",
+    ],
+    remember:
+      "Under 18, pregnant, or with a medical condition or an eating disorder? Talk to a doctor first.",
+  },
+  body: {
+    title: "Body care, hands and nails",
+    intro:
+      "Smooth skin, clean nails and fresh hands are details people notice up close. Ten minutes a day covers it.",
+    productsTitle: "What each product does",
+    products: [
+      {
+        name: "Gentle body wash",
+        does: "Cleans without stripping. Exfoliating versions twice a week for rough patches.",
+      },
+      {
+        name: "Body lotion",
+        does: "Keeps skin soft; richest after the shower on damp skin.",
+      },
+      {
+        name: "Deodorant or antiperspirant",
+        does: "Deodorant masks odour; antiperspirant reduces sweat. Apply to clean, dry skin.",
+      },
+      {
+        name: "Nail file and clipper",
+        does: "Short, even nails; file in one direction.",
+      },
+      {
+        name: "Cuticle oil and hand cream",
+        does: "Soft cuticles and hands that don’t crack.",
+      },
+      { name: "Body SPF", does: "Arms, neck and hands age from the sun too." },
+    ],
+    routine: [
+      {
+        title: "Shower",
+        text: "Lukewarm water, gentle wash, exfoliate twice a week.",
+      },
+      {
+        title: "After",
+        text: "Pat dry, lotion within a few minutes, deodorant on dry skin.",
+      },
+      {
+        title: "Hands and nails",
+        text: "Weekly: clip, file and push back cuticles after a shower. Nightly: cuticle oil and hand cream.",
+      },
+      {
+        title: "Hair removal",
+        text: "Shave with the grain after exfoliating, or trim. Moisturise after; give irritated skin a break.",
+      },
+    ],
+    works: [
+      "Lotion on damp skin",
+      "Short, clean nails",
+      "SPF on hands and neck",
+      "Clean towels and sheets weekly",
+    ],
+    skip: [
+      "Very hot showers",
+      "Cutting cuticles",
+      "Scrubbing irritated skin",
+      "Antiperspirant on freshly shaved skin",
+    ],
+  },
+  sleep: {
+    title: "Sleep and recovery",
+    intro:
+      "Sleep is when skin repairs, muscles grow and appetite resets. Better sleep is the cheapest glow-up there is.",
+    productsTitle: "What each lever does",
+    products: [
+      {
+        name: "Wake-up time",
+        does: "A steady time, also at weekends, sets your body clock.",
+      },
+      {
+        name: "Daylight",
+        does: "Ten minutes outside in the morning helps you sleep at night.",
+      },
+      {
+        name: "Caffeine cut-off",
+        does: "Caffeine lasts hours; stop around eight hours before bed.",
+      },
+      {
+        name: "A dark, cool room",
+        does: "Around 18 °C, dark curtains or a mask.",
+      },
+      {
+        name: "Wind-down",
+        does: "Screens away and a calm routine tell your body it’s time.",
+      },
+      {
+        name: "Silk pillowcase",
+        does: "Less friction on hair and skin. Nice to have, not essential.",
+      },
+    ],
+    routine: [
+      {
+        title: "Morning",
+        text: "Same wake-up time, daylight within an hour, coffee after you’re up.",
+      },
+      {
+        title: "Afternoon",
+        text: "No caffeine after about 2 pm; a short walk beats a long nap.",
+      },
+      {
+        title: "Evening",
+        text: "Dim lights, screens away 30 minutes before bed, the same simple routine.",
+      },
+      {
+        title: "Recovery days",
+        text: "Light movement, enough protein and water, and an extra half hour of sleep after hard training.",
+      },
+    ],
+    works: [
+      "Seven to nine hours",
+      "Morning daylight",
+      "A cool, dark bedroom",
+      "Training earlier in the day",
+    ],
+    skip: [
+      "Catching up only at the weekend",
+      "Alcohol to fall asleep",
+      "Scrolling in bed",
+      "Sleeping pills as a habit: they stop helping and are hard to quit",
+    ],
+    remember:
+      "Snoring loudly, waking up tired every day or long-term insomnia is worth a visit to a doctor.",
+  },
+  presence: {
+    title: "Posture and presence",
+    intro:
+      "How you stand, look and speak is read before your face is. These habits are free and work from day one.",
+    productsTitle: "What each habit does",
+    products: [
+      {
+        name: "Posture",
+        does: "Shoulders back and down, chin level: taller, calmer and a clearer jawline.",
+      },
+      {
+        name: "Mobility",
+        does: "Five minutes for the upper back undoes hours at a desk.",
+      },
+      {
+        name: "Eye contact",
+        does: "Holding it a beat longer reads as confident and interested.",
+      },
+      {
+        name: "Voice",
+        does: "Slower and a little lower than feels natural sounds calm.",
+      },
+      {
+        name: "Photos of yourself",
+        does: "Light from the side, camera at eye level, chin slightly forward and down.",
+      },
+    ],
+    routine: [
+      {
+        title: "At the desk",
+        text: "Screen at eye level, feet flat, stand up every hour.",
+      },
+      {
+        title: "Move",
+        text: "Foam roller for the upper back, doorway chest stretch and shoulder rolls — five minutes.",
+      },
+      {
+        title: "In conversations",
+        text: "Face the person, keep eye contact while they talk, pause before you answer.",
+      },
+      {
+        title: "In photos",
+        text: "Turn slightly to the side, chin out and down, relax the shoulders.",
+      },
+      {
+        title: "Practise the fear",
+        text: "Make a ladder from easy to hard — asking a stranger the time, joining a conversation, speaking up in a group — and climb one step a few times a week until it feels dull. This is how social anxiety shrinks.",
+      },
+      {
+        title: "Steady your body",
+        text: "Before you walk in, breathe out longer than in: four counts in, six out, for a minute. It slows a racing heart and steadies your voice.",
+      },
+    ],
+    works: [
+      "Small breaks every hour",
+      "Strength training for the back",
+      "Slowing down when nervous",
+      "Small, repeated steps outside your comfort zone",
+      "Natural light for photos",
+    ],
+    skip: [
+      "Holding a stiff posture all day",
+      "Staring instead of looking",
+      "Filters on progress photos",
+      "Comparing yourself to edited images",
+    ],
+    shortcuts: [
+      {
+        name: "Anxiety medication (pregabalin, benzodiazepines, propranolol)",
+        does: "They work: pregabalin and benzodiazepines calm the mind within an hour, and propranolol stops shaking hands and a racing heart.",
+        cost: "Pregabalin and benzodiazepines are addictive, need more over time and are dangerous with alcohol, which can stop your breathing. Propranolol only treats the body, not the worry. Only through a doctor; therapy such as CBT gives lasting results.",
+      },
+    ],
+    remember:
+      "Persistent pain, numbness or an injury needs a physiotherapist or doctor.",
   },
   smile: {
     title: "Everyday care for your smile",
     intro:
-      "Build a manageable care routine, keep personal notes and use dental professionals for clinical questions. The supplied appearance references do not provide a reliable dental treatment guide.",
-    steps: [
+      "Two minutes, twice a day, plus cleaning between your teeth. That routine does most of the work.",
+    productsTitle: "What each product does",
+    products: [
       {
-        title: "01 / Keep the daily basics",
-        text: "Brush with fluoride toothpaste following suitable dental and product guidance. Clean between teeth with a suitable method. A dental professional can help with technique and the right tools for your circumstances.",
+        name: "Fluoride toothpaste",
+        does: "Strengthens enamel and prevents cavities. Spit, don’t rinse, after brushing.",
       },
       {
-        title: "02 / Make the routine practical",
-        text: "Keep your own products together, add reminders that fit your day and record comfort. A routine you can maintain is more useful than buying a large collection of products.",
+        name: "Soft or electric toothbrush",
+        does: "Removes plaque without hurting gums. Electric makes good technique easier.",
       },
       {
-        title: "03 / Separate appearance from health",
-        text: "Natural tooth colour varies. A photograph cannot diagnose decay, gum disease or whether whitening is appropriate. Avoid copying unverified bleaching or abrasive home-treatment instructions.",
+        name: "Floss or interdental brushes",
+        does: "Cleans between teeth, where a brush can’t reach.",
       },
       {
-        title: "04 / Know when a log is not enough",
-        text: "Persistent pain, bleeding, swelling or a concerning change deserves appropriate dental assessment. Your journal can help describe when something changed; it does not replace an examination.",
+        name: "Tongue scraper",
+        does: "Removes the coating behind most bad breath.",
+      },
+      {
+        name: "Whitening toothpaste",
+        does: "Polishes surface stains. It doesn’t change your natural tooth colour.",
+      },
+      {
+        name: "Mouthwash",
+        does: "Optional extra; doesn’t replace brushing or flossing.",
       },
     ],
-    remember:
-      "No whitening result, diagnosis or treatment outcome is promised by this demo.",
-    references: [
+    routine: [
       {
-        name: "Source coverage",
-        note: "No dedicated dental PDF was supplied. This is original general educational material, not a claim that the Looksmax references establish dental care.",
+        title: "Morning",
+        text: "Brush two minutes → tongue scraper. After breakfast is fine, but wait 30 minutes after acidic food.",
+      },
+      {
+        title: "Evening",
+        text: "Floss or interdental brush → brush two minutes → spit, don’t rinse.",
+      },
+      {
+        title: "Every few months",
+        text: "A new brush head every three months, and a check-up and cleaning at the dentist.",
       },
     ],
-    reading: [
-      {
-        label: "NHS · How to keep your teeth clean",
-        url: "https://www.nhs.uk/live-well/healthy-teeth-and-gums/how-to-keep-your-teeth-clean/",
-      },
+    works: [
+      "Cleaning between teeth daily",
+      "Water instead of soda between meals",
+      "A straw for coffee or tea if stains bother you",
+      "Professional whitening via a dentist",
+    ],
+    skip: [
+      "Brushing hard with a hard brush",
+      "Charcoal powders and DIY bleaching",
+      "Lemon or baking soda on teeth",
+      "Waiting until something hurts",
     ],
   },
   fragrance: {
     title: "Build your own scent vocabulary",
     intro:
-      "Start with how you experience a fragrance and when you want to wear it. A collection can be small, affordable and entirely personal.",
-    steps: [
+      "A few scents for different moments are better than a shelf full of the same thing.",
+    productsTitle: "What each type does",
+    products: [
       {
-        title: "01 / Record what you own",
-        text: "Add the name, size, purchase details if known and your own notes. Descriptions such as citrus, woody, floral or warm are useful vocabulary, not a rule about who may wear the scent.",
+        name: "Eau de toilette (EDT)",
+        does: "Lighter and fresher; good for daytime and warm weather.",
       },
       {
-        title: "02 / Compare your own impressions",
-        text: "Try a fragrance according to its directions if suitable for you. Note your first impression and how you perceive it later. Scent descriptions and perceived longevity vary; the demo cannot promise a fixed number of hours.",
+        name: "Eau de parfum (EDP)",
+        does: "Stronger and longer-lasting; evenings and colder days.",
       },
       {
-        title: "03 / Consider the setting",
-        text: "Think about the occasion, your comfort and other people’s space. Stronger is not automatically better. Avoid a product that causes irritation, and respect fragrance-free environments.",
+        name: "Fresh / citrus",
+        does: "Clean, energetic. Office, gym bag, summer.",
       },
       {
-        title: "04 / Shortlist before buying",
-        text: "Compare samples where available and set a budget. Record source, currency and date for prices. The demo’s brands, prices and shop cards are fictional examples, not current offers.",
+        name: "Woody / aromatic",
+        does: "Calm and grown-up. An easy all-rounder.",
+      },
+      {
+        name: "Warm / amber / vanilla",
+        does: "Rich and close to the skin. Evenings and winter.",
+      },
+      {
+        name: "Samples and decants",
+        does: "Let you wear a scent for a few days before committing to a full bottle.",
       },
     ],
-    remember:
-      "A scent does not guarantee attraction, confidence or a particular response from other people.",
-    references: [
+    routine: [
       {
-        name: "Source coverage",
-        note: "No dedicated fragrance PDF was supplied. This guide is original editorial guidance about collecting and personal preferences.",
+        title: "Build a small set",
+        text: "One fresh scent for daytime, one warm scent for evenings. Add a third only when you miss something.",
+      },
+      {
+        title: "Apply",
+        text: "On clean skin after a shower: neck and chest, two to four sprays. Don’t rub your wrists.",
+      },
+      {
+        title: "Test before buying",
+        text: "Spray on skin, not paper, and wait a few hours. The first minutes smell different from the rest of the day.",
       },
     ],
-    reading: [],
+    works: [
+      "Moisturised skin — scent lasts longer",
+      "Fewer sprays in small rooms",
+      "Matching the scent to the setting",
+      "Storing bottles away from sun and heat",
+    ],
+    skip: [
+      "Blind buying from hype alone",
+      "Six sprays before the office",
+      "Keeping bottles in the bathroom",
+      "Layering two strong scents",
+    ],
   },
   photos: {
     title: "Keep an honest progress journal",
     intro:
-      "Your journal is for your observations, not a score. It starts private, independently of your account’s visibility.",
-    steps: [
+      "Progress shows best in photos taken the same way every time. Keep them private unless you choose otherwise.",
+    productsTitle: "What each setting does",
+    products: [
       {
-        title: "01 / Date and describe",
-        text: "Record the date, topic and a neutral observation. Add the details you want to remember, such as products or styling used. Do not treat a short-term change in a photo as proof that one product caused it.",
+        name: "Same light",
+        does: "Daylight from a window, at the same time of day. Light changes skin and shape more than anything.",
       },
       {
-        title: "02 / Compare consistent images",
-        text: "Use similar lighting, camera distance, lens, pose and framing. Different conditions can change the appearance of skin, proportions and colour. Keep original progress separate from filtered, edited or generated inspiration.",
+        name: "Same distance and angle",
+        does: "Phone at chest height, same spot on the floor. Close lenses distort faces.",
       },
       {
-        title: "03 / Keep control of the audience",
-        text: "Every entry starts as Only me. Changing account privacy does not publish your journal. Audience changes are separate and deliberate. In this demo, personal uploaded originals remain in your tab and are excluded from public demo posts and shared recipient previews.",
+        name: "Front, side, back",
+        does: "Three angles show changes one photo misses.",
       },
       {
-        title: "04 / Understand the image frame",
-        text: "Feed photos use a 1080-pixel-wide portrait frame between 1350 and 1920 pixels high. Resize and framing preserve proportions. Enlarging a low-resolution source creates a larger file, not extra photographic detail. Private comparison photos retain their original proportions.",
+        name: "Notes with the photo",
+        does: "Date, products, training and sleep — so you can link changes to what you did.",
       },
       {
-        title: "05 / Review and remove",
-        text: "Compare two user-declared real progress entries and change or delete notes at any time. Reload clears personal session entries in this demo. An edited image is inspiration, not achieved progress or a clinical assessment.",
-      },
-    ],
-    remember:
-      "Account and journal privacy controls are local demonstrations, not production authentication or encrypted cloud storage.",
-    references: [
-      {
-        name: "Clavicular’s routine; Coloring; Eyelashes",
-        note: "Their personal anecdotes and transformation imagery prompted this distinction between references, claims and your own dated observations. Their images and claimed results are not used as CHARETT transformations.",
+        name: "Only me",
+        does: "Every entry starts private and stays private until you change it.",
       },
     ],
-    reading: [],
+    routine: [
+      {
+        title: "Set up once",
+        text: "Pick a spot, mark where you stand, and use a timer or a mirror at the same height.",
+      },
+      {
+        title: "Take them regularly",
+        text: "Every two to four weeks, in the morning, with the same clothes or none.",
+      },
+      {
+        title: "Compare",
+        text: "Put two photos side by side in the comparison tool, months apart rather than days.",
+      },
+    ],
+    works: [
+      "Monthly comparisons",
+      "Writing what changed in your routine",
+      "No filters on progress photos",
+      "Deleting what you don’t want to keep",
+    ],
+    skip: [
+      "Daily photos — changes are too small to see",
+      "Comparing different lighting",
+      "Edited images as ‘progress’",
+      "Posting before you’re ready",
+    ],
+  },
+};
+
+/** Extra guides that sit next to a topic’s beginner guide. */
+export const extraGuides: Record<
+  string,
+  Guide & { topic: TopicId; label: string }
+> = {
+  weight: {
+    topic: "nutrition",
+    label: "Weight guide",
+    title: "Lose, maintain or gain weight",
+    intro:
+      "Your weight follows the energy you eat versus the energy you use. Small, steady changes work better than big ones.",
+    productsTitle: "What each lever does",
+    products: [
+      {
+        name: "Calories",
+        does: "Eat less than you use to lose, the same to maintain, a little more to gain. Use the calorie calculator for a starting point.",
+      },
+      {
+        name: "Protein",
+        does: "Keeps you full and protects muscle while you lose. Some at every meal.",
+      },
+      {
+        name: "Carbohydrates",
+        does: "Fuel for training. Whole grains, fruit, potatoes and rice keep energy steady.",
+      },
+      {
+        name: "Fat",
+        does: "Needed for hormones and vitamin absorption. Olive oil, nuts, eggs, fish.",
+      },
+      {
+        name: "Fibre and vegetables",
+        does: "Volume for few calories: you feel full sooner.",
+      },
+      {
+        name: "Strength training",
+        does: "Tells your body to keep muscle, so the weight you lose is mostly fat.",
+      },
+      {
+        name: "Daily steps",
+        does: "Walking burns more over a week than most people expect.",
+      },
+      {
+        name: "Sleep",
+        does: "Short sleep raises hunger and cravings the next day.",
+      },
+    ],
+    routine: [
+      {
+        title: "Set your target",
+        text: "Use the calorie calculator, then set carbs, protein and fat yourself in your targets.",
+      },
+      {
+        title: "Losing",
+        text: "A deficit of about 300–500 kcal a day. Aim for roughly 0.5–1% of your body weight per week.",
+      },
+      {
+        title: "Maintaining",
+        text: "Eat at maintenance and watch your 7-day average. If it moves more than about 1 kg (2 lb) in a month, adjust by 100–200 kcal.",
+      },
+      {
+        title: "Gaining",
+        text: "A small surplus of about 200–300 kcal with strength training. Faster mostly adds fat.",
+      },
+      {
+        title: "Track the trend",
+        text: "Weigh in the morning, after the bathroom, a few times a week. Daily weight jumps with water and salt; the 7-day average is what counts.",
+      },
+      {
+        title: "Adjust",
+        text: "No change in the average after two to three weeks? Change calories by 100–200 kcal. Never below 1200 (women) or 1500 (men) without a doctor.",
+      },
+    ],
+    works: [
+      "Scanning or logging most of what you eat",
+      "Protein and vegetables at every meal",
+      "Planning meals for busy days",
+      "Patience: weeks, not days",
+    ],
+    skip: [
+      "Crash diets and skipping meals",
+      "Detox teas: laxatives, so you only lose water",
+      "Judging progress on one weigh-in",
+      "Cutting out a whole food group without reason",
+    ],
+    shortcuts: [
+      {
+        name: "GLP-1 medicines (semaglutide, tirzepatide / Mounjaro)",
+        does: "They work: much less hunger, and in studies people lost about 15–20% of their body weight.",
+        cost: "Prescription only. Nausea and stomach trouble are common, muscle goes too without protein and strength training, rare risks include gallbladder and pancreas problems, and most of the weight returns when you stop.",
+      },
+      {
+        name: "DNP (2,4-dinitrophenol)",
+        does: "It does burn fat fast, by turning the energy in food into heat.",
+        cost: "There is no safe amount: overheating can kill within hours, it has killed young and healthy people, and there is no antidote. Banned for human use. Never.",
+      },
+    ],
+    remember: `Under 18, pregnant, or living with a medical condition or an eating disorder? Talk to a doctor before changing your weight. ${doctorNote}`,
   },
 };

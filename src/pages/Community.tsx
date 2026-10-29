@@ -1,4 +1,5 @@
-import { useState } from "react";
+import HScroll from "../components/HScroll";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Link,
   useNavigate,
@@ -13,12 +14,11 @@ import {
   Pencil,
   Trash2,
   ArrowLeft,
-  SlidersHorizontal,
   Images,
   Film,
 } from "lucide-react";
 import { useDemo } from "../lib/store";
-import { seedItems, seedPosts, topics } from "../lib/data";
+import { clothingStyles, seedItems, seedPosts, topics } from "../lib/data";
 import type { Audience, Post, TopicId } from "../lib/types";
 import { totalPrice, uid, today, mayViewPost } from "../lib/domain";
 import {
@@ -28,14 +28,53 @@ import {
   Field,
   Modal,
   Notice,
-  PageHeader,
   Select,
   Tabs,
 } from "../components/ui";
 import { ItemBreakdown } from "../components/Items";
 import { PostCard } from "../components/Social";
-import { MediaPicker, PostMedia } from "../components/FeedMedia";
+import { MediaPicker, PostMedia, mediaLabel } from "../components/FeedMedia";
 import { SoundPicker } from "../components/Sounds";
+import StoriesRow from "../components/Stories";
+import { topicPhoto } from "../lib/editorial";
+import { SponsoredPost } from "../components/Ads";
+import { AD_EVERY, ads } from "../lib/ads";
+import { limitsOf } from "../lib/plans";
+import { DEMO } from "../lib/demo";
+/** Short chip names for the feed filters, in category order. */
+const chipLabel: Partial<Record<TopicId, string>> = {
+  skincare: "Skincare",
+  makeup: "Makeup",
+  face: "Face",
+  colouring: "Colouring",
+  brows: "Brows",
+  smile: "Smile",
+  hair: "Hair",
+  grooming: "Beard",
+  gym: "Training",
+  nutrition: "Nutrition",
+  body: "Body",
+  sleep: "Sleep",
+  presence: "Presence",
+  clothing: "Outfits",
+  fragrance: "Fragrance",
+};
+/** Editorial photos a post can use; personal uploads stay private. */
+const editorialChoices: Record<string, string> = {
+  "photo-feed-sunday": "Sunday in white",
+  "photo-home-hero": "Neutral tones, two people",
+  "photo-feed-linen": "Linen set",
+  "photo-feed-lounge": "Lounge in linen",
+  "photo-feed-cuff": "Cuff and watch",
+  "photo-feed-night": "Leather after dark",
+  motion: "Motion study · video",
+  "photo-skincare": "Skincare",
+  "photo-hair": "Hair",
+  "photo-gym": "Training",
+  "photo-grooming": "Shaving",
+  "photo-smile": "Smile",
+  "photo-fragrance": "Fragrance",
+};
 function CommunityContent() {
   const { state, update, toast } = useDemo();
   const { id } = useParams();
@@ -50,7 +89,7 @@ function CommunityContent() {
       : topics.find((t) => t.id === params.get("topic"))?.id || "",
     title: outfit?.title || "",
     body: "",
-    image: "campaign",
+    image: "photo-feed-sunday",
     items: outfit
       ? state.items
           .filter((i) => outfit.itemIds.includes(i.id))
@@ -76,6 +115,20 @@ function CommunityContent() {
     params.get("format") === "reels" ? "reels" : "photos",
   );
   const [showFilters, setShowFilters] = useState(false);
+  // Photos/Reels sticks just under the feed header, so it stays in reach.
+  const feedHeader = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = feedHeader.current;
+    if (!node) return;
+    const sync = () =>
+      node.parentElement?.style.setProperty(
+        "--feed-header-h",
+        `${node.offsetHeight}px`,
+      );
+    const resize = new ResizeObserver(sync);
+    resize.observe(node);
+    return () => resize.disconnect();
+  }, []);
   const [query, setQuery] = useState("");
   const [topic, setTopic] = useState(params.get("topic") || "all");
   const [style, setStyle] = useState(params.get("style") || "all");
@@ -94,6 +147,27 @@ function CommunityContent() {
       setParams(params);
     }
   };
+  const save = (asDraft: boolean) => {
+    const saved = { ...draft, draft: asDraft || undefined };
+    update((s) => ({
+      ...s,
+      posts: s.posts.some((p) => p.id === saved.id)
+        ? s.posts.map((p) => (p.id === saved.id ? saved : p))
+        : [saved, ...s.posts],
+    }));
+    close();
+    toast(
+      asDraft
+        ? "Draft saved. Only you can see it."
+        : saved.audience === "private"
+          ? "Private session post saved."
+          : DEMO
+            ? "Fictional post published locally. No real network activity."
+            : "Posted.",
+    );
+    navigate(`/post/${saved.id}`);
+  };
+  const showAds = limitsOf(state).ads;
   const visible = state.posts
     .filter((p) =>
       format === "reels"
@@ -101,7 +175,11 @@ function CommunityContent() {
         : p.media?.kind !== "video" && p.format !== "reel",
     )
     .filter(
-      (p) => p.audience !== "private" && mayViewPost(p, "you", state.blocked),
+      (p) =>
+        p.audience !== "private" &&
+        !p.draft &&
+        !state.muted.includes(p.author) &&
+        mayViewPost(p, "you", state.blocked),
     )
     .filter(
       (p) =>
@@ -163,11 +241,9 @@ function CommunityContent() {
             setPreview(true);
           }}
         >
-          <Notice>
-            LOCAL SOCIAL DEMO · Only fictional example content belongs here.
-            Your real photos, personal routines, intake, logs and private notes
-            stay private. Only fictional examples can be shared publicly in this
-            demo.
+          <Notice icon="private">
+            Your private photos, routines, logs and notes are never posted. Only
+            what you add here is shared.
           </Notice>
           <Field
             label="Post title (optional)"
@@ -206,40 +282,31 @@ function CommunityContent() {
                     draft.format === "reel" && e.target.value !== "motion"
                       ? [
                           e.target.value,
-                          e.target.value === "ritual" ? "tailoring" : "ritual",
+                          e.target.value === "photo-feed-linen"
+                            ? "photo-feed-lounge"
+                            : "photo-feed-linen",
                         ]
                       : undefined,
                   image:
-                    e.target.value === "motion" ? "campaign" : e.target.value,
+                    e.target.value === "motion"
+                      ? "photo-feed-motion"
+                      : e.target.value,
                   media:
                     e.target.value === "motion"
                       ? {
                           kind: "video",
                           src: "motion",
-                          poster: "campaign",
+                          poster: "photo-feed-motion",
                           width: 1080,
                           height: 1350,
                           origin: "editorial",
-                          label: "AI editorial motion study",
+                          label: "Motion study",
                         }
                       : undefined,
                 })
               }
             >
-              {Object.entries({
-                campaign: "AI editorial · cream & forest tailoring",
-                ritual: "AI editorial · beauty still life",
-                tailoring: "AI editorial · Sunday outfit flat lay",
-                hero: "Licensed style reference",
-                motion: "Editorial motion study · video",
-                style: "Fashion inspiration",
-                skin: "Skincare reference",
-                hair: "Hair reference",
-                gym: "Training space",
-                grooming: "Grooming reference",
-                smile: "Smile care",
-                fragrance: "Fragrance reference",
-              }).map(([v, label]) => (
+              {Object.entries(editorialChoices).map(([v, label]) => (
                 <option value={v} key={v}>
                   {label}
                 </option>
@@ -253,10 +320,8 @@ function CommunityContent() {
               }
             >
               <option value="private">Only me · private</option>
-              <option value="followers">
-                Followers · simulated restricted audience
-              </option>
-              <option value="public">Public · fictional demo community</option>
+              <option value="followers">Followers only</option>
+              <option value="public">Public · everyone</option>
             </Select>
           </div>
           {draft.media?.kind !== "video" && (
@@ -274,7 +339,9 @@ function CommunityContent() {
                       draft.media?.origin !== "private-upload"
                         ? [
                             draft.image,
-                            draft.image === "ritual" ? "tailoring" : "ritual",
+                            draft.image === "photo-feed-linen"
+                              ? "photo-feed-lounge"
+                              : "photo-feed-linen",
                           ]
                         : undefined,
                   });
@@ -296,15 +363,9 @@ function CommunityContent() {
                     }
                   >
                     <option value="">Choose an editorial photo</option>
-                    <option value="ritual">
-                      AI editorial · beauty still life
-                    </option>
-                    <option value="tailoring">
-                      AI editorial · outfit flat lay
-                    </option>
-                    <option value="campaign">
-                      AI editorial · cream & forest
-                    </option>
+                    <option value="photo-feed-linen">Linen set</option>
+                    <option value="photo-feed-lounge">Lounge in linen</option>
+                    <option value="photo-feed-cuff">Cuff and watch</option>
                   </Select>
                 )}
             </div>
@@ -320,8 +381,8 @@ function CommunityContent() {
           {draft.media?.origin === "private-upload" &&
             draft.audience !== "private" && (
               <p className="error" role="alert">
-                Personal test uploads stay private. Choose Only me or remove the
-                upload to share a fictional editorial example.
+                Personal uploads stay private. Choose Only me, or pick an
+                editorial image to post publicly.
               </p>
             )}
           <SoundPicker
@@ -339,9 +400,9 @@ function CommunityContent() {
                   setDraft({
                     ...draft,
                     topic: e.target.value as TopicId,
-                    image:
-                      topics.find((t) => t.id === e.target.value)?.image ||
-                      "hero",
+                    image: e.target.value
+                      ? topicPhoto(e.target.value as TopicId)
+                      : "photo-feed-sunday",
                     style: e.target.value === "clothing" ? state.style : "",
                   })
                 }
@@ -369,7 +430,7 @@ function CommunityContent() {
                     });
                 }}
               >
-                <option value="">Choose a fictional example</option>
+                <option value="">Choose an editorial image</option>
                 {seedPosts.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.title}
@@ -384,9 +445,11 @@ function CommunityContent() {
                 onChange={(e) => setDraft({ ...draft, style: e.target.value })}
               >
                 <option value="">Not applicable</option>
-                <option value="old-money">Old money</option>
-                <option value="dark-casual">Dark casual</option>
-                <option value="minimalist">Minimalist</option>
+                {clothingStyles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.label}
+                  </option>
+                ))}
               </Select>
               <Select
                 label="Occasion"
@@ -477,17 +540,17 @@ function CommunityContent() {
         <>
           <Notice icon={draft.audience === "private" ? "private" : "info"}>
             {draft.audience === "public"
-              ? "Public: title, caption, selected editorial media, tags, structured item details and routine steps below will be visible in the local demo."
+              ? "Everyone can see the title, caption, media, tags, items and steps below."
               : draft.audience === "followers"
-                ? "Followers: simulated restricted audience. Rich-card sending is disabled because recipient access is not established."
-                : "Only you: this post remains private and cannot be delivered through a shared card."}{" "}
-            Your intake and original private routines are excluded. Private test
-            media can only be saved to Only me.
+                ? "Only your followers can see this post. It can’t be sent in chats."
+                : "Only you can see this post."}{" "}
+            Your intake and private routines are never included.
           </Notice>
           <PostMedia post={draft} />
           <h3>{draft.title}</h3>
           <p className="small-text">
-            Posting as {state.profile.name} · local demo profile. Your private
+            Posting as {state.profile.name}
+            {mediaLabel(draft) && ` · ${mediaLabel(draft)}`}. Your private
             profile photo is excluded.
           </p>
           <p className="preserve-text">{draft.body}</p>
@@ -517,26 +580,15 @@ function CommunityContent() {
             <Button variant="secondary" onClick={() => setPreview(false)}>
               Back to edit
             </Button>
-            <Button
-              onClick={() => {
-                update((s) => ({
-                  ...s,
-                  posts: s.posts.some((p) => p.id === draft.id)
-                    ? s.posts.map((p) => (p.id === draft.id ? draft : p))
-                    : [draft, ...s.posts],
-                }));
-                close();
-                toast(
-                  draft.audience === "private"
-                    ? "Private session post saved."
-                    : "Fictional post published locally. No real network activity.",
-                );
-                navigate(`/post/${draft.id}`);
-              }}
-            >
+            <Button variant="ghost" onClick={() => save(true)}>
+              Save as draft
+            </Button>
+            <Button onClick={() => save(false)}>
               {draft.audience === "private"
                 ? "Save private post"
-                : "Publish demo post"}
+                : DEMO
+                  ? "Publish demo post"
+                  : "Publish"}
             </Button>
           </div>
         </>
@@ -546,18 +598,30 @@ function CommunityContent() {
   if (id)
     return (
       <div className="community-detail">
-        <Link to="/" className="text-link">
+        <Link to="/" className="text-link back-link">
           <ArrowLeft size={15} />
-          Back to your feed
+          Back to feed
         </Link>
+        <h1 className="visually-hidden">Post details</h1>
         {mayViewPost(current, "you", state.blocked) && current ? (
           <>
-            <PageHeader
-              eyebrow="THE COMMUNITY EDIT"
-              title="A shared point of view."
-            />
             {current.author === "you" && (
               <div className="button-row own-post-actions">
+                {current.draft && (
+                  <Button
+                    onClick={() => {
+                      update((s) => ({
+                        ...s,
+                        posts: s.posts.map((p) =>
+                          p.id === current.id ? { ...p, draft: undefined } : p,
+                        ),
+                      }));
+                      toast("Draft published.");
+                    }}
+                  >
+                    Publish draft
+                  </Button>
+                )}
                 <Button
                   variant="secondary"
                   onClick={() => {
@@ -589,7 +653,7 @@ function CommunityContent() {
         {composerModal}
         {deletePost && (
           <Modal
-            title="Remove this demo post?"
+            title={DEMO ? "Remove this demo post?" : "Remove this post?"}
             onClose={() => setDeletePost(false)}
           >
             <p>
@@ -614,51 +678,58 @@ function CommunityContent() {
         )}
       </div>
     );
+  const chips = [
+    ...clothingStyles.map((s) => ({ kind: "style", id: s.id, label: s.label })),
+    ...topics
+      .filter((t) => t.id !== "photos")
+      .map((t) => ({ kind: "topic", id: t.id, label: chipLabel[t.id] })),
+  ];
   return (
-    <div className="explore-page">
-      <section className="feed-intro">
-        <div>
-          <span className="eyebrow">STYLE · SELF-CARE · PROGRESS</span>
-          <h1>
-            Your daily <em>edit.</em>
-          </h1>
+    <div
+      className={`explore-page ${format === "reels" && visible.length ? "reels-mode" : ""}`}
+    >
+      <h1 className="visually-hidden">Your daily edit.</h1>
+      <StoriesRow />
+      <div className="feed-header" ref={feedHeader}>
+        <span className="feed-header-spacer" aria-hidden="true" />
+        <div className="feed-tabs">
+          <Tabs
+            value={feed}
+            onChange={setFeed}
+            tabs={[
+              { id: "for-you", label: "For You" },
+              { id: "following", label: "Following" },
+            ]}
+          />
         </div>
-        <p>
-          Personal style, everyday care and your own progress. Find inspiration,
-          build routines and try the AI Coach demo.
-        </p>
-      </section>
-      <div className="feed-bar">
-        <Tabs
-          value={feed}
-          onChange={setFeed}
-          tabs={[
-            { id: "for-you", label: "For You" },
-            { id: "following", label: "Following" },
-          ]}
-        />
-        <div className="feed-bar-actions">
-          <Button
-            variant="secondary"
+        <div className="feed-header-actions">
+          <button
+            type="button"
+            className={`icon-button ${showFilters ? "active" : ""}`}
             aria-expanded={showFilters}
             aria-label="Search and filter posts"
             onClick={() => setShowFilters(!showFilters)}
           >
-            <SlidersHorizontal size={17} />
-            <span className="desktop-filter-label">Search & filters</span>
-          </Button>
-          <Button
+            <Search size={20} strokeWidth={1.7} />
+          </button>
+          <button
+            type="button"
+            className="icon-button create-button"
+            aria-label="Create a post"
             onClick={() => {
               setDraft(makePost());
               setComposer(true);
               setPreview(false);
             }}
           >
-            <Plus size={17} /> Create a post
-          </Button>
+            <Plus size={20} strokeWidth={1.7} />
+            <span className="create-label" aria-hidden="true">
+              New post
+            </span>
+          </button>
         </div>
       </div>
-      <div className="feed-format-bar">
+      <div className="feed-format-row">
         <div
           className="feed-format-tabs"
           role="tablist"
@@ -698,19 +769,48 @@ function CommunityContent() {
                 }
               }}
             >
-              <Icon size={16} /> {label}
+              <Icon size={15} /> {label}
             </button>
           ))}
         </div>
-        <span className="feed-format-note">
-          {format === "photos"
-            ? "Still moments, considered details."
-            : "Motion & photo stories. Play a sound or swipe a slideshow."}
-        </span>
       </div>
-      <p className="feed-disclosure">
-        Demo feed · Fictional creators, local interactions and sample ordering.
-      </p>
+      <div className="feed-chips">
+        <HScroll
+          className="chip-scroller"
+          aria-label="Filter by style or topic"
+        >
+          <button
+            type="button"
+            className="chip"
+            aria-pressed={topic === "all" && style === "all"}
+            onClick={() => {
+              setTopic("all");
+              setStyle("all");
+            }}
+          >
+            All
+          </button>
+          {chips.map((chip) => {
+            const active =
+              chip.kind === "style" ? style === chip.id : topic === chip.id;
+            return (
+              <button
+                key={chip.id}
+                type="button"
+                className="chip"
+                aria-pressed={active}
+                onClick={() =>
+                  chip.kind === "style"
+                    ? setStyle(active ? "all" : chip.id)
+                    : setTopic(active ? "all" : chip.id)
+                }
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </HScroll>
+      </div>
       {showFilters && (
         <section
           className="feed-filter-panel"
@@ -758,9 +858,9 @@ function CommunityContent() {
                 onChange={(e) => setStyle(e.target.value)}
               >
                 <option value="all">All styles</option>
-                {["old-money", "dark-casual", "minimalist"].map((v) => (
-                  <option key={v} value={v}>
-                    {v.replace("-", " ")}
+                {clothingStyles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.label}
                   </option>
                 ))}
               </Select>
@@ -794,6 +894,7 @@ function CommunityContent() {
               <Field
                 label={`Max total (${state.profile.currency})`}
                 type="number"
+                inputMode="decimal"
                 min="0"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
@@ -805,16 +906,27 @@ function CommunityContent() {
       )}
       {showFilters && (
         <div className="feed-count">
-          {visible.length} demo {visible.length === 1 ? "post" : "posts"}
+          {visible.length}
+          {DEMO ? " demo" : ""} {visible.length === 1 ? "post" : "posts"}
         </div>
       )}
+      <h2 className="visually-hidden">
+        {format === "reels" ? "Reels" : "Photos"}
+      </h2>
       {visible.length ? (
         <div
           className={`community-grid feed-grid ${format}-feed`}
           data-format={format}
         >
-          {visible.map((p) => (
-            <PostCard key={p.id} post={p} />
+          {visible.map((p, i) => (
+            <Fragment key={p.id}>
+              <PostCard post={p} />
+              {showAds && format === "photos" && (i + 1) % AD_EVERY === 0 && (
+                <SponsoredPost
+                  ad={ads[((i + 1) / AD_EVERY - 1) % ads.length]}
+                />
+              )}
+            </Fragment>
           ))}
         </div>
       ) : (
@@ -844,7 +956,7 @@ function CommunityContent() {
         >
           {feed === "saved"
             ? "Save posts with the bookmark to see them here."
-            : "Try another topic or follow a fictional creator."}
+            : "Try another topic or follow someone new."}
         </Empty>
       )}
       {composerModal}

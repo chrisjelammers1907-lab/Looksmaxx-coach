@@ -21,7 +21,7 @@ describe("outfit price accounting", () => {
   });
   it("keeps a partial subtotal explicit", () =>
     expect(totalPrice([seedItems[0], { ...seedItems[1], price: null }])).toBe(
-      "€59.00 + unpriced items",
+      "From €59.00",
     ));
   it("never adds mixed currencies", () =>
     expect(
@@ -56,6 +56,11 @@ describe("access and purchase boundaries", () => {
       false,
     );
     expect(mayViewPost(seedPosts[0], "you", ["mira"])).toBe(false);
+    // Drafts stay with their author and can never be shared.
+    const draft = { ...seedPosts[0], draft: true };
+    expect(mayViewPost(draft, "mira")).toBe(true);
+    expect(mayViewPost(draft, "noor")).toBe(false);
+    expect(maySharePost(draft)).toBe(false);
   });
 });
 describe("meaningful workout and coach behavior", () => {
@@ -73,7 +78,7 @@ describe("meaningful workout and coach behavior", () => {
     });
     expect(result.text).toContain("Try a simpler wardrobe");
     expect(result.text).toContain("The linen shirt");
-    expect(result.text).toContain("has not been analyzed");
+    expect(result.text).toContain("haven’t judged");
     expect(result.proposal).toContain("owned pieces");
     expect(JSON.stringify(state)).toBe(before);
   });
@@ -83,8 +88,9 @@ describe("meaningful workout and coach behavior", () => {
       hasPhoto: false,
       state: makeInitialState(),
     });
-    expect(result.text).toContain("cannot diagnose");
-    expect(result.text).toContain("qualified clinician");
+    expect(result.text).toContain("can’t diagnose");
+    expect(result.text).toContain("through a doctor");
+    expect(result.text).not.toMatch(/unvalidated|uploaded treatment/);
   });
 });
 
@@ -130,6 +136,28 @@ describe("second-version privacy and format invariants", () => {
     expect(inferCoachTopic("My skin feels dry", "clothing")).toBe("skincare");
     expect(inferCoachTopic("Review my photo", "clothing")).toBe("clothing");
     expect(inferCoachTopic("Which hair colour should I try?")).toBe("hair");
-    expect(inferCoachTopic("Help me with my eyebrow shape")).toBe("grooming");
+    expect(inferCoachTopic("Help me with my eyebrow shape")).toBe("brows");
+    expect(inferCoachTopic("How do I fix my beard neckline?")).toBe("grooming");
+    expect(inferCoachTopic("Does mewing change my jaw?")).toBe("face");
   });
+});
+
+describe("coach topic routing", () => {
+  it.each([
+    ["What shoes go with chinos?", "clothing"],
+    ["Which handbag goes with this outfit?", "clothing"],
+    ["How do I look more handsome?", undefined],
+    ["I want a tank top outfit", "clothing"],
+    ["Tips for my tan suit", "clothing"],
+    ["Best foundation pieces for a capsule wardrobe", "clothing"],
+    ["How do I look confident in my outfit?", "clothing"],
+    ["How do I lose weight?", "nutrition"],
+    ["Hair colouring ideas", "hair"],
+    ["Is mewing real?", "face"],
+    ["Which foundation suits me?", "makeup"],
+    ["My chin looks weak", "face"],
+    ["Self-tan streaks on my legs", "colouring"],
+    ["My hands are dry", "body"],
+    ["How do I build confidence when I speak?", "presence"],
+  ])("%s → %s", (text, topic) => expect(inferCoachTopic(text)).toBe(topic));
 });

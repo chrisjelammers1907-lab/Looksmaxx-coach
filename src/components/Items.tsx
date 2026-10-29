@@ -27,37 +27,27 @@ export function ItemBreakdown({ items }: { items: Item[] }) {
       {items.map((i) => (
         <div className="breakdown-row" key={i.id}>
           <img
+            loading="lazy"
+            decoding="async"
             src={
               i.image.startsWith("data:") ? i.image : asset(i.image || "shirt")
             }
             alt=""
           />
           <div>
+            {i.brand && <small className="breakdown-brand">{i.brand}</small>}
             <strong>{i.name}</strong>
-            <small>
-              {i.brand || "Brand not provided"} ·{" "}
-              {i.store || "Store not provided"}
-            </small>
-            <small>
-              {i.size} {i.notes && `· ${i.notes}`}
-            </small>
-            <small>
-              {i.checkedAt
-                ? `Example price checked ${i.checkedAt}`
-                : "Price date unknown"}
-            </small>
-            {safePurchaseUrl(i.url) ? (
+            {(i.size || i.notes) && (
+              <small>{[i.size, i.notes].filter(Boolean).join(" · ")}</small>
+            )}
+            {safePurchaseUrl(i.url) && (
               <a
                 href={safePurchaseUrl(i.url)!}
                 target="_blank"
                 rel="noreferrer"
               >
-                User-provided purchase link <ExternalLink size={12} />
+                Shop <ExternalLink size={12} />
               </a>
-            ) : (
-              <span className="muted small-text">
-                Shopping demo · Purchase link unavailable
-              </span>
             )}
           </div>
           <span>
@@ -132,9 +122,10 @@ export default function Items({
             <article className="product-card" key={i.id}>
               <div className="product-image">
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={i.image.startsWith("data:") ? i.image : asset(i.image)}
                   alt={`${i.name} — ${i.image.startsWith("data:") ? "private upload" : "editorial reference"}`}
-                  loading="lazy"
                 />
                 {i.image.startsWith("data:") && (
                   <span className="image-tag">Private photo</span>
@@ -203,7 +194,8 @@ export default function Items({
                 </div>
                 {shortlist && (
                   <Button
-                    variant="ghost"
+                    variant="secondary small"
+                    className="shortlist-button"
                     onClick={() =>
                       update((s) => ({
                         ...s,
@@ -287,6 +279,7 @@ export default function Items({
               <Field
                 label="Price (leave blank if unknown)"
                 type="number"
+                inputMode="decimal"
                 min="0"
                 step="0.01"
                 value={editing.price ?? ""}

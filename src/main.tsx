@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import "@fontsource/dm-sans/latin-400.css";
@@ -7,23 +7,30 @@ import "@fontsource/dm-sans/latin-600.css";
 import "@fontsource/cormorant-garamond/latin-400.css";
 import "@fontsource/cormorant-garamond/latin-500.css";
 import "@fontsource/cormorant-garamond/latin-400-italic.css";
+import "@fontsource/anton/latin-400.css";
+import "./tokens.css";
 import "./styles.css";
 import "./v2.css";
 import "./editorial.css";
 import "./refinement.css";
+import "./premium.css";
 import { DemoProvider } from "./lib/store";
+import { installImageFallback } from "./lib/imageFallback";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import Categories from "./pages/Categories";
-import Guide from "./pages/Guide";
-import About from "./pages/About";
-import Topic from "./pages/Topic";
-import Clothing from "./pages/Clothing";
+const Categories = lazy(() => import("./pages/Categories"));
+const Guide = lazy(() => import("./pages/Guide"));
+const About = lazy(() => import("./pages/About"));
+const Topic = lazy(() => import("./pages/Topic"));
+const Clothing = lazy(() => import("./pages/Clothing"));
 import Community from "./pages/Community";
-import Profile from "./pages/Profile";
-import Messages from "./pages/Messages";
-import Coach from "./pages/Coach";
-import Plan from "./pages/Plan";
+const Profile = lazy(() => import("./pages/Profile"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Coach = lazy(() => import("./pages/Coach"));
+const Plan = lazy(() => import("./pages/Plan"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Plans = lazy(() => import("./pages/Plans"));
+installImageFallback();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -34,6 +41,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="categories" element={<Categories />} />
             <Route path="about" element={<About />} />
             <Route path="topics/:topic/guide" element={<Guide />} />
+            <Route path="topics/:topic/guide/:slug" element={<Guide />} />
             <Route path="topics/clothing" element={<Clothing />} />
             <Route path="topics/:topic" element={<Topic />} />
             <Route path="explore" element={<Community />} />
@@ -43,11 +51,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="messages" element={<Messages />} />
             <Route path="coach" element={<Coach />} />
             <Route path="plan" element={<Plan />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="plans" element={<Plans />} />
             <Route
               path="*"
               element={
                 <div className="empty">
-                  <h1>This page has moved.</h1>
+                  <h1>Page not found</h1>
+                  <p>The link may be old, or the page no longer exists.</p>
                   <Link to="/" className="button">
                     Back to your space
                   </Link>

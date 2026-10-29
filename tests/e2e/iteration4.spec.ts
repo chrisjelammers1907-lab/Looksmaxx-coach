@@ -67,16 +67,18 @@ test("the framed site fits small phones, tablets and desktop with visible side g
   }
 });
 
-test("category images navigate and Photos/Reels keep Following independent", async ({
+test("category list navigates and Photos/Reels keep Following independent", async ({
   page,
 }) => {
   await open(page);
-  const rail = page.getByRole("navigation", {
-    name: "Browse categories",
-    exact: true,
-  });
-  await expect(rail.getByRole("link")).toHaveCount(8);
-  await rail.locator('a[href="/topics/hair"]').click();
+  // Home no longer repeats the category row; Categories groups 16 topics.
+  await expect(page.locator(".category-strip")).toHaveCount(0);
+  await go(page, "/categories");
+  await expect(page.locator(".category-row")).toHaveCount(16);
+  await page
+    .getByRole("region", { name: "Hair" })
+    .locator('a.category-row[href="/topics/hair"]')
+    .click();
   await expect(page).toHaveURL(/\/topics\/hair$/);
   await go(page, "/");
   await expect(
@@ -127,19 +129,16 @@ test("category images navigate and Photos/Reels keep Following independent", asy
   const caption = await photo.locator(".post-caption").boundingBox();
   expect(picture).not.toBeNull();
   expect(caption).not.toBeNull();
-  expect(caption!.x).toBeGreaterThanOrEqual(picture!.x);
-  expect(caption!.y).toBeGreaterThanOrEqual(picture!.y);
-  expect(caption!.x + caption!.width).toBeLessThanOrEqual(
-    picture!.x + picture!.width + 1,
-  );
-  expect(caption!.y + caption!.height).toBeLessThanOrEqual(
-    picture!.y + picture!.height + 1,
-  );
+  // Photo captions sit below the image, Instagram-style; reels keep overlays.
+  expect(caption!.y).toBeGreaterThanOrEqual(picture!.y + picture!.height);
+  await expect(photo.locator(".post-media .post-caption")).toHaveCount(0);
   const like = photo.getByRole("button", {
     name: "Like The art of a simple Sunday",
     exact: true,
   });
+  const before = await like.locator(".action-count").textContent();
   await like.click();
+  await expect(like.locator(".action-count")).not.toHaveText(before!);
   await expect(like).toHaveAttribute("aria-pressed", "true");
   const save = photo.getByRole("button", {
     name: "Save The art of a simple Sunday privately",
@@ -164,7 +163,7 @@ test("photo reels have accessible slideshow controls and keep their chosen sound
   const counter = card.locator(".slide-controls").getByRole("status");
   await expect(counter).toHaveText("1 / 3");
   await card
-    .getByRole("button", { name: "Play sound After hours", exact: true })
+    .getByRole("button", { name: "Turn sound on for reels", exact: true })
     .click();
   const audio = card.locator("audio");
   await expect
@@ -207,7 +206,7 @@ test("photo reels have accessible slideshow controls and keep their chosen sound
     await cdp.detach();
   }
   await card
-    .getByRole("button", { name: "Pause sound After hours", exact: true })
+    .getByRole("button", { name: "Turn sound off for reels", exact: true })
     .click();
   const scan = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -224,7 +223,7 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
   page,
 }) => {
   await open(page);
-  await go(page, "/profile");
+  await go(page, "/profile?settings=privacy");
   await page.getByLabel("Account visibility").selectOption("public");
   await go(page, "/");
   await page
@@ -240,7 +239,9 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
     .getByRole("dialog")
     .getByRole("combobox", { name: "Post format", exact: true })
     .selectOption("reel");
-  await page.getByLabel("Second slideshow photo").selectOption("tailoring");
+  await page
+    .getByLabel("Second slideshow photo")
+    .selectOption("photo-feed-linen");
   await page.getByLabel("Audience", { exact: true }).selectOption("public");
   await page
     .getByRole("button", { name: "Preview audience & content" })
@@ -301,7 +302,7 @@ test("a new photo reel can be previewed, shared locally, changed to Photos, and 
     .selectOption("reel");
   await page
     .getByLabel("Add a private test photo or video")
-    .setInputFiles("public/assets/hair.jpg");
+    .setInputFiles("tests/fixtures/portrait.jpg");
   await expect(page.getByAltText("Private feed photo preview")).toBeVisible();
   await expect(page.getByLabel("Second slideshow photo")).toHaveCount(0);
   await expect(

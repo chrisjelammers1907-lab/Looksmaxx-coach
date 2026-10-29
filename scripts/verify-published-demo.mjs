@@ -94,14 +94,12 @@ try {
     await expect(page.locator(".feed-grid .post-card")).toHaveCount(0);
     await page.getByRole("tab", { name: "For You", exact: true }).click();
     await expect(page.locator(".feed-grid video")).toHaveCount(1);
-    const clipCard = page
-      .locator(".post-card")
-      .filter({
-        has: page.getByRole("heading", {
-          name: "A moment in motion",
-          exact: true,
-        }),
-      });
+    const clipCard = page.locator(".post-card").filter({
+      has: page.getByRole("heading", {
+        name: "A moment in motion",
+        exact: true,
+      }),
+    });
     const clip = clipCard.locator("video");
     await clipCard
       .getByRole("button", { name: "Play sound Golden hour", exact: true })
@@ -119,14 +117,12 @@ try {
     await expect
       .poll(() => videoSound.evaluate((node) => node.paused))
       .toBe(true);
-    const slides = page
-      .locator(".post-card")
-      .filter({
-        has: page.getByRole("heading", {
-          name: "Three details, one mood",
-          exact: true,
-        }),
-      });
+    const slides = page.locator(".post-card").filter({
+      has: page.getByRole("heading", {
+        name: "Three details, one mood",
+        exact: true,
+      }),
+    });
     await slides
       .getByRole("button", {
         name: "Next photo in Three details, one mood",
@@ -198,7 +194,7 @@ try {
         .getByRole("link", { name: /Beginner’s guide/ })
         .click();
       await expect(
-        page.getByRole("heading", { name: "Where this guide comes from" }),
+        page.getByRole("heading", { name: "Put it together" }),
       ).toBeVisible();
       expect((await page.reload()).status()).toBe(200);
       await nav.getByRole("link", { name: "Home", exact: true }).click();
@@ -302,6 +298,7 @@ try {
       .getByRole("navigation", { name: "Profile menu" })
       .getByRole("link", { name: "My profile", exact: true })
       .click();
+    await page.getByRole("link", { name: "Settings", exact: true }).click();
     await expect(page.getByLabel("Account visibility")).toHaveValue("private");
     await page.getByLabel("Open profile and menu").click();
     await page

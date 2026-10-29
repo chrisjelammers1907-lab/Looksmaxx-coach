@@ -1,3 +1,5 @@
+import HScroll from "./HScroll";
+import { extraGuides } from "../lib/guides";
 import {
   useEffect,
   useRef,
@@ -13,10 +15,11 @@ import {
   Plus,
   ImagePlus,
   LockKeyhole,
-  Sparkles,
+  Info,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
+import Monogram from "./Monogram";
 let modalCount = 0;
 let previousBodyOverflow = "";
 let previousRootInert = false;
@@ -32,22 +35,23 @@ export function Button({
     </button>
   );
 }
+/** A page title; `meta` is factual context (a date), set under the title. */
 export function PageHeader({
-  eyebrow,
   title,
+  meta,
   description,
   action,
 }: {
-  eyebrow: string;
   title: string;
+  meta?: string;
   description?: string;
   action?: ReactNode;
 }) {
   return (
     <header className="page-header">
       <div>
-        <div className="eyebrow">{eyebrow}</div>
         <h1>{title}</h1>
+        {meta && <p className="page-meta">{meta}</p>}
         {description && <p>{description}</p>}
       </div>
       {action}
@@ -104,7 +108,7 @@ export function Notice({
 }) {
   return (
     <div className={`notice ${icon}`}>
-      {icon === "private" ? <LockKeyhole size={16} /> : <Sparkles size={16} />}
+      {icon === "private" ? <LockKeyhole size={16} /> : <Info size={16} />}
       <span>{children}</span>
     </div>
   );
@@ -120,7 +124,7 @@ export function Empty({
 }) {
   return (
     <div className="empty">
-      <span className="empty-mark">C</span>
+      <Monogram size={44} />
       <h3>{title}</h3>
       <p>{children}</p>
       {action}
@@ -133,7 +137,7 @@ export function SectionTitle({
   children,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   children?: ReactNode;
 }) {
   return (
@@ -152,6 +156,13 @@ export function TopicLinks({ topic }: { topic: string }) {
       <Link to={`/topics/${topic}/guide`}>
         <BookOpen size={16} /> Beginner’s guide <ArrowUpRight size={16} />
       </Link>
+      {Object.entries(extraGuides)
+        .filter(([, g]) => g.topic === topic)
+        .map(([key, g]) => (
+          <Link key={key} to={`/topics/${topic}/guide/${key}`}>
+            <BookOpen size={16} /> {g.label} <ArrowUpRight size={16} />
+          </Link>
+        ))}
     </div>
   );
 }
@@ -160,11 +171,17 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  bare = false,
+  sheet = false,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  /** Renders without the standard heading, for full-bleed viewers. */
+  bare?: boolean;
+  /** Slides up from the bottom on phones, like a social app sheet. */
+  sheet?: boolean;
 }) {
   const panel = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
@@ -223,21 +240,23 @@ export function Modal({
     >
       <div
         ref={panel}
-        className={`modal ${wide ? "wide" : ""}`}
+        className={`modal ${wide ? "wide" : ""} ${bare ? "bare" : ""} ${sheet ? "sheet" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
       >
-        <div className="modal-heading">
-          <h2>{title}</h2>
-          <button
-            className="icon-button"
-            aria-label="Close dialog"
-            onClick={onClose}
-          >
-            <X />
-          </button>
-        </div>
+        {!bare && (
+          <div className="modal-heading">
+            <h2>{title}</h2>
+            <button
+              className="icon-button"
+              aria-label="Close dialog"
+              onClick={onClose}
+            >
+              <X />
+            </button>
+          </div>
+        )}
         {children}
       </div>
     </div>,
@@ -254,7 +273,7 @@ export function Tabs({
   onChange: (id: string) => void;
 }) {
   return (
-    <div
+    <HScroll
       className="tabs"
       role="tablist"
       onKeyDown={(event) => {
@@ -290,23 +309,27 @@ export function Tabs({
           {t.label}
         </button>
       ))}
-    </div>
+    </HScroll>
   );
 }
 export function ImageInput({
   label = "Choose a private photo",
   onImage,
+  iconOnly = false,
 }: {
   label?: string;
   onImage: (data: string) => void;
+  iconOnly?: boolean;
 }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   return (
-    <div>
+    <div className={iconOnly ? "image-input icon-only" : undefined}>
       <label className="upload">
-        <ImagePlus size={22} />
-        <span>{loading ? "Reading photo…" : label}</span>
+        <ImagePlus size={iconOnly ? 20 : 22} strokeWidth={iconOnly ? 1.7 : 2} />
+        <span className={iconOnly ? "visually-hidden" : undefined}>
+          {loading ? "Reading photo…" : label}
+        </span>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
