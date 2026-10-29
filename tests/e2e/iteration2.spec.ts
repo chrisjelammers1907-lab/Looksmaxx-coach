@@ -246,7 +246,7 @@ test("coach follows natural questions across topics without category or style fi
     .fill("What should I wear this weekend?");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.locator(".chat-message.coach").last()).toContainText(
-    "ABOUT CLOTHING & STYLE",
+    "Build one complete outfit",
   );
   await expect(page.locator(".chat-message.coach").last()).toContainText(
     "The linen shirt",
@@ -256,7 +256,7 @@ test("coach follows natural questions across topics without category or style fi
     .fill("My skin feels dry, what should I start with?");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.locator(".chat-message.coach").last()).toContainText(
-    "ABOUT SKINCARE",
+    "Keep it to cleanse, moisturise and SPF",
   );
   await page
     .locator(".chat-message.coach")

@@ -318,3 +318,10 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - Out: the wrist-vein undertone test, a single brow arch for everyone, "no brow tint at home", and anything filed under "doesn't work" that does work.
   - In: prescription retinoids, marks and scars, copper peptides, minoxidil, a masculine and a softer brow map, brow tint and lash lift, colour from food, dark spots on every skin tone, lips, teeth and lenses, and steps against social anxiety.
   - New on seven guides: **What people use, and what it costs** — isotretinoin, spironolactone, finasteride/dutasteride, MT2, skin lighteners, steroids and Anavar, MK-677, GLP-1s, DNP, anxiety medication, bimatoprost, oral minoxidil and transplants. Each says what it really does (including that it works) and what it costs; never doses, schedules or sources (a unit test checks).
+- **Pre-launch audit.**
+  - Every route at 390 and 1440 px, light and dark: no console errors, failed requests, broken images, dead internal links or horizontal scroll; one `h1` per page; axe 0 violations.
+  - Tabs carry the page's name ("Skincare · CHARETT", "Mira Laurent · CHARETT") instead of the URL slug. The 404 says "Page not found" (it said "This page has moved").
+  - `index.html`: no slogan in the title and no "demo" in the description; social preview tags, an apple-touch icon and a web manifest (`public/icon-*.png`, `manifest.webmanifest`). The build also writes `404.html`, so a shared deep link opens the app on any static host.
+  - The coach speaks plainly (no "ABOUT SKINCARE", "Owned items in this context"), never claims to have judged a photo, and points medication questions to the guide's shortcuts and a doctor.
+  - Copy: the Plus welcome no longer says "without limits"; Signature promises "photos", not "photo feedback" the coach can't give; the coach's limit prompt reads from the plan table; category intros say what the page does instead of slogans.
+  - Spelling checked over all visible text (unknown words are terms, names or British spelling).

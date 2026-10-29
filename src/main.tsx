@@ -57,7 +57,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               path="*"
               element={
                 <div className="empty">
-                  <h1>This page has moved.</h1>
+                  <h1>Page not found</h1>
+                  <p>The link may be old, or the page no longer exists.</p>
                   <Link to="/" className="button">
                     Back to your space
                   </Link>

@@ -104,6 +104,12 @@ html = html.replace(
   'href="./favicon.svg"',
   `href="data:image/svg+xml;base64,${fs.readFileSync(path.join(root, "public/favicon.svg")).toString("base64")}"`,
 );
+html = html.replace(
+  'href="./icon-180.png"',
+  `href="data:image/png;base64,${fs.readFileSync(path.join(root, "public/icon-180.png")).toString("base64")}"`,
+);
+// A single file cannot carry a web manifest; installing needs the hosted site.
+html = html.replace(/\s*<link rel="manifest"[^>]*>/, "");
 if (scripts !== 1 || styles !== 1)
   throw new Error(
     `Unexpected build shape: ${scripts} scripts, ${styles} styles`,

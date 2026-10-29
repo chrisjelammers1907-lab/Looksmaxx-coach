@@ -417,7 +417,7 @@ test("coach photo example and inspected plan proposal", async ({ page }) => {
     .setInputFiles("tests/fixtures/portrait.jpg");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(
-    page.getByText(/Your attached photo has not been analyzed/),
+    page.getByText(/I haven’t judged yours/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Inspect proposed change" }).click();
   await expect(

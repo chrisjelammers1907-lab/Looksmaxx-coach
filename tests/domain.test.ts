@@ -78,7 +78,7 @@ describe("meaningful workout and coach behavior", () => {
     });
     expect(result.text).toContain("Try a simpler wardrobe");
     expect(result.text).toContain("The linen shirt");
-    expect(result.text).toContain("has not been analyzed");
+    expect(result.text).toContain("haven’t judged");
     expect(result.proposal).toContain("owned pieces");
     expect(JSON.stringify(state)).toBe(before);
   });
@@ -88,8 +88,9 @@ describe("meaningful workout and coach behavior", () => {
       hasPhoto: false,
       state: makeInitialState(),
     });
-    expect(result.text).toContain("cannot diagnose");
-    expect(result.text).toContain("qualified clinician");
+    expect(result.text).toContain("can’t diagnose");
+    expect(result.text).toContain("through a doctor");
+    expect(result.text).not.toMatch(/unvalidated|uploaded treatment/);
   });
 });
 

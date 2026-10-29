@@ -1,5 +1,4 @@
 import type { DemoState, TopicId } from "./types";
-import { topicName } from "./domain";
 import { guides } from "./guides";
 import { DEMO } from "./demo";
 export interface CoachRequest {
@@ -86,12 +85,11 @@ export const demoCoach: CoachingService = {
       text,
       entryTopic || [...state.chat].reverse().find((m) => m.guide)?.guide,
     );
-    const owned =
-      state.items
-        .filter((item) => !topic || item.topic === topic)
-        .slice(0, 4)
-        .map((item) => item.name)
-        .join(", ") || "No relevant items entered yet";
+    const ownedNames = state.items
+      .filter((item) => !topic || item.topic === topic)
+      .slice(0, 4)
+      .map((item) => item.name)
+      .join(", ");
     const medical =
       /medicat|dnp|steroid|testosterone|spironolactone|dos(e|age)|diagnos|ghk|mk.?677|mounjaro|anavar|attractiveness score|bone measur/i.test(
         text,
@@ -163,8 +161,37 @@ export const demoCoach: CoachingService = {
               ? "Review two saved hairstyle references"
               : "Spend five minutes reviewing my personal routine";
     const priceQuestion = /budget|buy|shop|cost|price|afford/i.test(text);
+    const advice = topic
+      ? specific[topic]
+      : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words.";
+    const context = [
+      state.profile.goals &&
+        `Your goal: ${state.profile.goals.replace(/\.$/, "")}.`,
+      ownedNames && `You already have: ${ownedNames}.`,
+      priceQuestion &&
+        `Your budget: ${state.profile.currency} ${state.profile.budget}.${DEMO ? " Demo prices are examples, not live offers." : ""}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const reply = [
+      opening,
+      medical &&
+        `I can’t diagnose, score faces or advise on medication and doses.${guide?.shortcuts?.length ? " The guide for this category says straight what these shortcuts do and what they cost." : ""} Treatment goes through a doctor.`,
+      advice,
+      context,
+      (topic && nextQuestion[topic]) || "What would you like to work on first?",
+      hasPhoto &&
+        "I can’t look at photos yet, so I haven’t judged yours. Tell me what you see or what you would like to change.",
+      fileName &&
+        `${fileName} stays in this session. ${DEMO ? "I can’t read files yet, so tell me" : "Tell me"} what you would like to know about it.`,
+      DEMO
+        ? `Sample coach · These replies are written for this preview from your words and what you have saved; this is not live AI yet.${guide ? " The guide for this category goes deeper." : ""}`
+        : guide && "The guide for this category goes deeper.",
+    ]
+      .filter(Boolean)
+      .join("\n\n");
     return {
-      text: `${opening}\n\n${medical ? "I cannot diagnose, score attractiveness, infer bone measurements, or recommend medication/dose changes. The uploaded treatment references are unvalidated. Discuss treatment questions with a qualified clinician.\n\n" : ""}${topic ? `ABOUT ${topicName[topic].toUpperCase()}\n` : "YOUR NEXT STEP\n"}${topic ? specific[topic] : "Choose one small change that connects to your goal. Start with what you own and a routine that fits your week. You can ask about style, care, training or a specific next step in your own words."}\n\nYour stated goal: ${state.profile.goals || "Not provided"}.\nOwned items in this context: ${owned}.${priceQuestion ? `\nYour saved budget: ${state.profile.currency} ${state.profile.budget}.${DEMO ? " Demo prices are examples, not live offers." : ""}` : ""}\n\n${(topic ? nextQuestion[topic] : undefined) || "What would you like to work on first?"}${hasPhoto ? "\n\nPHOTO FEEDBACK EXAMPLE · Your attached photo has not been analyzed. No feature measurement or diagnosis is inferred." : ""}${fileName ? `\n\nATTACHED FILE · ${fileName} stays in this session. ${DEMO ? "This demo coach does not read file contents yet, so tell me" : "Tell me"} what you would like to know about it.` : ""}${DEMO ? `\n\nSimulated coach · This sample uses message keywords and your session context; it is not a live AI assessment.${guide ? " The guide for this category goes deeper." : ""}` : guide ? "\n\nThe guide for this category goes deeper." : ""}`,
+      text: reply,
       proposal,
       guide: topic,
     };

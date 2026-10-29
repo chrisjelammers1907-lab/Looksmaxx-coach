@@ -19,6 +19,17 @@ const nav = [
   { to: "/plan", label: "My Plan", icon: ListChecks },
   { to: "/messages", label: "Messages", icon: MessageCircle },
 ];
+const sectionTitles: Record<string, string> = {
+  "/categories": "Categories",
+  "/about": "About",
+  "/explore": "Explore",
+  "/profile": "Profile",
+  "/messages": "Messages",
+  "/coach": "AI Coach",
+  "/plan": "My Plan",
+  "/settings": "Settings",
+  "/plans": "Membership",
+};
 export default function Layout() {
   const { state } = useDemo();
   const location = useLocation();
@@ -26,8 +37,34 @@ export default function Layout() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (menu.current) menu.current.open = false;
-    document.title = `CHARETT — ${location.pathname === "/" ? "For You" : location.pathname.split("/").filter(Boolean).at(-1)?.replaceAll("-", " ")}`;
   }, [location.pathname, location.search]);
+  // The tab shows the page's name: a fixed name for the main sections, the
+  // page's own heading for a category, guide, profile or post.
+  useEffect(() => {
+    const section = sectionTitles[location.pathname];
+    const name = () =>
+      section ??
+      document.querySelector("main h1")?.textContent?.trim().replace(/\.$/, "");
+    const set = () => {
+      const title = name();
+      document.title = title ? `${title} · CHARETT` : "CHARETT";
+    };
+    if (location.pathname === "/") {
+      document.title = "CHARETT";
+      return;
+    }
+    set();
+    // Pages load lazily, so follow the heading once it appears.
+    const main = document.getElementById("main");
+    const watch = new MutationObserver(set);
+    if (main && !section)
+      watch.observe(main, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    return () => watch.disconnect();
+  }, [location.pathname]);
   const active = (to: string) =>
     to === "/categories" && location.pathname.startsWith("/topics/");
   return (

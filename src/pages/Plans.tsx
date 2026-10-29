@@ -39,7 +39,9 @@ export default function PlansPage() {
     toast(
       plan.id === "free"
         ? "You’re on Free now."
-        : `Welcome to ${plan.name}. Enjoy CHARETT without limits.`,
+        : plan.id === "plus"
+          ? "Welcome to Plus. No ads, more time with your coach and food scanning."
+          : "Welcome to Signature. No limits, and your streaks are protected.",
     );
   };
   return (

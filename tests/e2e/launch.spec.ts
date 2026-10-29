@@ -561,6 +561,23 @@ test("reels play by themselves, muted, with one sound switch", async ({
   expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(false);
 });
 
+test("every tab has a real name", async ({ page }) => {
+  for (const [path, title] of [
+    ["/", "CHARETT"],
+    ["/coach", "AI Coach · CHARETT"],
+    ["/plans", "Membership · CHARETT"],
+    ["/topics/skincare", "Skincare · CHARETT"],
+    ["/profile/mira", "Mira Laurent · CHARETT"],
+    ["/no-such-page", "Page not found · CHARETT"],
+  ]) {
+    await open(page, path);
+    await expect(page).toHaveTitle(title);
+  }
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Page not found" }),
+  ).toBeVisible();
+});
+
 test("the About frames never load on other pages", async ({ page }) => {
   const frames: string[] = [];
   page.on("request", (r) => {

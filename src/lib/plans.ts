@@ -86,7 +86,7 @@ export const plans: Plan[] = [
     tagline: "No limits, and your streaks are protected.",
     features: [
       "Everything in Plus",
-      "Unlimited coach messages and photo feedback",
+      "Unlimited coach messages and photos",
       "Train every day and scan without limits",
       "Streak protection: one missed day won’t break a streak",
     ],

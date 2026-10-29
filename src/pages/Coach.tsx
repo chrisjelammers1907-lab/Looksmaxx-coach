@@ -15,6 +15,7 @@ import { today, uid } from "../lib/domain";
 import {
   coachLeft,
   coachUsage,
+  limits,
   limitsOf,
   nextPlan,
   planOf,
@@ -224,7 +225,7 @@ export default function CoachPage() {
             >
               {nextPlan(state)} gives you{" "}
               {state.subscription.plan === "free"
-                ? "50 a day"
+                ? `${limits.plus.coachMessages} a day`
                 : "unlimited messages"}{" "}
               — or come back tomorrow.
             </UpgradeCard>

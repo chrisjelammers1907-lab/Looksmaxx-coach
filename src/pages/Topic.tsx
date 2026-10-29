@@ -51,21 +51,20 @@ function TopicContent() {
   const topicId = topic.id as TopicId;
   const intro: Record<string, string> = {
     skincare:
-      "Fewer steps. More intention. Build a ritual that feels good to return to.",
-    hair: "A shape, a texture, a little self-expression. Find a look that feels like you.",
-    gym: "Strength for your everyday. A considered approach to movement and nourishment.",
-    grooming: "A clean shave or a sharp beard line — without the irritation.",
-    smile: "Good everyday habits, with room for your own observations.",
-    fragrance:
-      "A personal collection of notes, memories and quiet impressions.",
-    photos: "Your private record. Honest observations, at your own pace.",
+      "Your morning and evening routine, the products you own and what to add next.",
+    hair: "Find a cut that suits you, keep your routine and compare styles.",
+    gym: "Plan your training week, log your sessions and watch your lifts go up.",
+    grooming: "A clean shave or a sharp beard line, without the irritation.",
+    smile: "Daily care for your teeth and gums, and notes on what you notice.",
+    fragrance: "Your scent collection, when to wear what, and your own notes.",
+    photos: "Private progress photos and notes, compared over months.",
     makeup:
       "A little goes a long way. Even skin, defined brows and a touch of colour.",
     face: "What actually changes the eye area, midface, cheekbones, jaw and chin — and what doesn’t.",
     colouring:
-      "Find your undertone and contrast, then let colour work for you.",
-    brows: "The frame of your face. Shape a little, set them well.",
-    nutrition: "Your targets, your food and your weight — in one calm place.",
+      "Find your undertone and contrast, then the colours that suit you.",
+    brows: "Shape, fill and set your brows, and care for your lashes.",
+    nutrition: "Your targets, food log and weight in one place.",
     body: "Skin from the neck down, hands, feet and nails.",
     sleep: "Better sleep shows up in your skin, your training and your mood.",
     presence:

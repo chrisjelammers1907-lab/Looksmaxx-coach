@@ -333,7 +333,7 @@ test("chats send stickers and photos, the coach accepts files", async ({
     "skin-notes.pdf",
   );
   await expect(page.locator(".chat-message.coach").last()).toContainText(
-    "does not read file contents",
+    "can’t read files yet",
   );
 });
 
@@ -743,7 +743,7 @@ test("plus has 50 coach messages a day; signature has no limit", async ({
     "50 messages and 5 photos a day",
   );
   await expect(page.locator(".plan-signature")).toContainText(
-    "Unlimited coach messages and photo feedback",
+    "Unlimited coach messages and photos",
   );
   await page.getByRole("button", { name: "Choose Signature" }).click();
   await page.getByRole("button", { name: "Start Signature" }).click();
