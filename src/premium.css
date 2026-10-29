@@ -1679,7 +1679,10 @@ h4 {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 28px 8px 12px;
+  padding: 44px 12px 20px;
+}
+.coach-page .coach-welcome > .monogram {
+  margin-bottom: 24px;
 }
 .coach-page .coach-welcome h2 {
   font-size: clamp(30px, 3.4vw, 40px);
@@ -1691,7 +1694,7 @@ h4 {
 }
 .coach-page .coach-welcome > p {
   max-width: 420px;
-  margin: 12px auto 0;
+  margin: 16px auto 0;
   font-size: 14.5px;
   line-height: 1.6;
   color: var(--muted);
@@ -1700,13 +1703,13 @@ h4 {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  max-width: 520px;
-  margin: 24px auto 0;
+  gap: 12px;
+  max-width: 540px;
+  margin: 36px auto 0;
 }
 .coach-page .prompt-chips > button {
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 44px;
+  padding: 10px 18px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);
   background: var(--porcelain);
@@ -1966,7 +1969,7 @@ h4 {
     padding: 6px 12px;
   }
   .coach-page .coach-welcome {
-    padding-top: 18px;
+    padding-top: 32px;
   }
 }
 /* The espresso clothing theme keeps its own warm accents on dark surfaces. */
@@ -7378,8 +7381,24 @@ details > summary::-webkit-details-marker {
 }
 @media (max-width: 700px) {
   .topic-photo-strip {
-    height: 150px;
+    height: 176px;
     margin-bottom: 14px;
+  }
+}
+/* Wide screens: the photo stands beside the title at 3:2, so a portrait
+   photo keeps its subject instead of becoming a 4:1 sliver. */
+@media (min-width: 701px) {
+  .topic-intro:has(.topic-photo-strip) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 38%);
+    align-items: end;
+    gap: clamp(24px, 4vw, 56px);
+    margin-bottom: 24px;
+  }
+  .topic-intro .topic-photo-strip {
+    height: auto;
+    aspect-ratio: 3 / 2;
+    margin: 0;
   }
 }
 
@@ -7725,5 +7744,57 @@ details > summary::-webkit-details-marker {
   }
   .is-still .about-chapters {
     grid-row: 2;
+  }
+}
+
+/* ---------- Round 8: guides tell the truth about shortcuts ---------- */
+.guide-shortcuts > p {
+  max-width: 62ch;
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.guide-shortcuts ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.guide-shortcuts li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.guide-shortcuts h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.guide-shortcuts dl {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 8px 16px;
+  margin: 0;
+}
+.guide-shortcuts dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--forest-text);
+}
+.guide-shortcuts dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.guide-shortcuts dt:nth-of-type(2) {
+  color: var(--danger);
+}
+@media (max-width: 700px) {
+  .guide-shortcuts dl {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .guide-shortcuts dd + dt {
+    margin-top: 10px;
   }
 }

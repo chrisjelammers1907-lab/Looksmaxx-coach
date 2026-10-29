@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight } from "lucide-react";
 import { topicGroups, topics } from "../lib/data";
 import { asset } from "../lib/domain";
-import { topicPhoto } from "../lib/editorial";
+import { focusStyle, topicPhoto } from "../lib/editorial";
 
 export default function CategoriesPage() {
   return (
@@ -30,6 +30,7 @@ export default function CategoriesPage() {
                       <img
                         className="category-photo"
                         src={asset(topicPhoto(t.id))}
+                        style={focusStyle(topicPhoto(t.id))}
                         alt=""
                         loading="lazy"
                       />

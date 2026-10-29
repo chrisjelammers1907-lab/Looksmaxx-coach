@@ -1,4 +1,5 @@
 import HScroll from "./HScroll";
+import { focusStyle } from "../lib/editorial";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -39,7 +40,9 @@ export function StoryCard({ story }: { story: Story }) {
     <div
       className={`story-card ${story.image ? "has-image" : `bg-${story.background || "forest"}`}`}
     >
-      {story.image && <img src={asset(story.image)} alt="" />}
+      {story.image && (
+        <img src={asset(story.image)} style={focusStyle(story.image)} alt="" />
+      )}
       {story.text && <p className="story-text">{story.text}</p>}
     </div>
   );

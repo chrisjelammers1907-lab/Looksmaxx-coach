@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { focusStyle } from "../lib/editorial";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -214,7 +215,13 @@ export function LinkedCard({
     );
   return (
     <Link className="linked-card" to={`/post/${post.id}`}>
-      <img loading="lazy" decoding="async" src={asset(post.image)} alt="" />
+      <img
+        loading="lazy"
+        decoding="async"
+        src={asset(post.image)}
+        style={focusStyle(post.image)}
+        alt=""
+      />
       <div>
         <span>{topicName[post.topic] || "Community"}</span>
         <strong>{post.title}</strong>

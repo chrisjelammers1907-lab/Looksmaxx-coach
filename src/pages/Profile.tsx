@@ -1,4 +1,5 @@
 import HScroll from "../components/HScroll";
+import { focusStyle } from "../lib/editorial";
 import { useState } from "react";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import {
@@ -67,7 +68,16 @@ function ProfileGrid({
             key={p.id}
             aria-label={`${p.title}${p.draft ? " · draft" : ""}`}
           >
-            {image ? <img src={image} alt="" loading="lazy" /> : <Film />}
+            {image ? (
+              <img
+                src={image}
+                style={p.media ? undefined : focusStyle(p.image)}
+                alt=""
+                loading="lazy"
+              />
+            ) : (
+              <Film />
+            )}
             <span className="profile-tile-badges" aria-hidden="true">
               {p.draft && <span className="tile-label">Draft</span>}
               {p.audience === "private" && <LockKeyhole size={15} />}

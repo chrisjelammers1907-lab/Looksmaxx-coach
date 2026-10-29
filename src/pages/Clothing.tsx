@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { focusStyle } from "../lib/editorial";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -129,7 +130,11 @@ export default function ClothingPage() {
                 <ArrowUpRight size={18} />
               </Button>
             </div>
-            <img src={asset(`photo-style-${state.style}`)} alt="" />
+            <img
+              src={asset(`photo-style-${state.style}`)}
+              style={focusStyle(`photo-style-${state.style}`)}
+              alt=""
+            />
           </section>
           <div className="quick-grid">
             <button onClick={() => setView("wardrobe")}>
@@ -319,6 +324,7 @@ export default function ClothingPage() {
                 loading="lazy"
                 decoding="async"
                 src={asset(`photo-style-${state.style}`)}
+                style={focusStyle(`photo-style-${state.style}`)}
                 alt={`${theme.label} outfit`}
               />
               <div>

@@ -27,7 +27,7 @@ import Items from "../components/Items";
 import Routines from "../components/Routines";
 import Gym, { PostureCard } from "./Gym";
 import Photos from "./Photos";
-import { topicPhoto } from "../lib/editorial";
+import { focusStyle, topicPhoto } from "../lib/editorial";
 import Nutrition from "../components/Nutrition";
 import { DEMO } from "../lib/demo";
 function TopicContent() {
@@ -85,12 +85,18 @@ function TopicContent() {
   ];
   return (
     <div className={`topic-page atmosphere-${topic.id}`} key={topic.id}>
-      <PageHeader title={topic.title} description={intro[topic.id]} />
-      {topic.id !== "photos" && (
-        <figure className="topic-photo-strip">
-          <img src={asset(topicPhoto(topic.id))} alt="" />
-        </figure>
-      )}
+      <div className="topic-intro">
+        <PageHeader title={topic.title} description={intro[topic.id]} />
+        {topic.id !== "photos" && (
+          <figure className="topic-photo-strip">
+            <img
+              src={asset(topicPhoto(topic.id))}
+              style={focusStyle(topicPhoto(topic.id))}
+              alt=""
+            />
+          </figure>
+        )}
+      </div>
       <TopicLinks topic={topic.id} />
       {topic.id === "gym" ? (
         <Gym />
@@ -248,6 +254,7 @@ function TopicContent() {
                         loading="lazy"
                         decoding="async"
                         src={asset(ref.image)}
+                        style={focusStyle(ref.image)}
                         alt={ref.text}
                       />
                       <div>
@@ -355,6 +362,7 @@ function TopicContent() {
             <div className="visual-result">
               <img
                 src={asset("photo-feed-hair")}
+                style={focusStyle("photo-feed-hair")}
                 alt="Reference portrait for the colour preview"
               />
               <span className="image-tag">

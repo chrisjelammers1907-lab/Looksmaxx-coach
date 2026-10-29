@@ -48,3 +48,18 @@ export function trainingStreak(sessions: TrainingSession[]) {
   }
   return count;
 }
+
+/**
+ * Demo only: a sample chat streak stays as seeded until the visitor chats in
+ * that thread, so a returning visitor still sees it. Any streak the visitor
+ * built or broke (a different count) is theirs and stays as saved.
+ */
+export function keepDemoStreaks(
+  saved: Record<string, Streak>,
+  seed: Record<string, Streak>,
+) {
+  const kept = { ...saved };
+  for (const [id, streak] of Object.entries(seed))
+    if (!kept[id] || kept[id].count === streak.count) kept[id] = streak;
+  return kept;
+}

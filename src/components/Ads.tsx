@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { focusStyle } from "../lib/editorial";
 import { ChevronRight } from "lucide-react";
 import { useDemo } from "../lib/store";
 import { asset } from "../lib/domain";
@@ -23,7 +24,13 @@ export function SponsoredPost({ ad }: { ad: Ad }) {
         </span>
       </div>
       <div className="post-media sponsored-media">
-        <img loading="lazy" decoding="async" src={asset(ad.image)} alt="" />
+        <img
+          loading="lazy"
+          decoding="async"
+          src={asset(ad.image)}
+          style={focusStyle(ad.image)}
+          alt=""
+        />
       </div>
       <button
         type="button"

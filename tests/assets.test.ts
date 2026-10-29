@@ -32,3 +32,16 @@ describe("photos the app builds at runtime", () => {
     expect(fs.existsSync(`public/assets/${key}.jpg`)).toBe(true),
   );
 });
+
+describe("photo focus", () => {
+  it("knows where the subject sits in every editorial photo", async () => {
+    const { readdirSync } = await import("node:fs");
+    const { photoFocus } = await import("../src/lib/editorial");
+    const photos = readdirSync("public/assets")
+      .filter((name) => /^photo-.*\.jpg$/.test(name))
+      .map((name) => name.replace(/\.jpg$/, ""));
+    expect(photos.filter((key) => !photoFocus[key])).toEqual([]);
+    for (const value of Object.values(photoFocus))
+      expect(value).toMatch(/^\d{1,3}% \d{1,3}%$/);
+  });
+});

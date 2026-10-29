@@ -9,6 +9,11 @@ export interface Guide {
   routine: { title: string; text: string }[];
   works: string[];
   skip: string[];
+  /**
+   * What people use for faster results, told straight: what it really does
+   * (including when it works) and what it costs. Never doses or sources.
+   */
+  shortcuts?: { name: string; does: string; cost: string }[];
   remember?: string;
 }
 
@@ -39,6 +44,10 @@ export const guides: Record<TopicId, Guide> = {
         does: "Speeds up cell turnover so pores clog less; also smooths texture over months. Use at night.",
       },
       {
+        name: "Prescription retinoid (tretinoin, tazarotene)",
+        does: "Stronger than retinol or adapalene and the best-studied for acne, marks and fine lines. Through a doctor; start slowly, it irritates at first.",
+      },
+      {
         name: "Benzoyl peroxide",
         does: "Kills acne bacteria. Good as a spot treatment or as a 5–10% wash for chest and back. Can bleach towels.",
       },
@@ -66,6 +75,10 @@ export const guides: Record<TopicId, Guide> = {
         name: "Hyaluronic acid",
         does: "Draws water into the skin for a plumper feel. Apply on damp skin, under moisturiser.",
       },
+      {
+        name: "Copper peptides (GHK-Cu serum)",
+        does: "A cosmetic serum that may support repair and firmness. Small studies and a modest effect: a nice extra, not a fix.",
+      },
     ],
     routine: [
       {
@@ -85,6 +98,10 @@ export const guides: Record<TopicId, Guide> = {
         text: "Retinoid + niacinamide: fine. Benzoyl peroxide in the morning, retinoid at night: fine. Retinoid + strong acid on the same night: too much for most skin.",
       },
       {
+        title: "Marks and scars",
+        text: "Red or dark marks fade with azelaic acid, niacinamide and daily SPF. Pitted scars don’t fade with creams: chemical peels, microneedling or laser by a professional do.",
+      },
+      {
         title: "Timing",
         text: "Acne improves in 4–8 weeks, oil and texture in 8–12, fine lines in 3–6 months. Change one product at a time.",
       },
@@ -94,12 +111,30 @@ export const guides: Record<TopicId, Guide> = {
       "One active at a time, introduced slowly",
       "Cleansing after the gym and after showering",
       "A richer moisturiser on nights your skin feels tight",
+      "A dermatologist when acne leaves marks or keeps coming back",
     ],
     skip: [
       "Harsh scrubs and alcohol-heavy toners",
       "Five new products in the same week",
       "Picking at spots — it leaves longer-lasting marks",
       "Toothpaste, lemon or baking soda on skin",
+    ],
+    shortcuts: [
+      {
+        name: "Isotretinoin (Accutane)",
+        does: "The most effective treatment for severe or stubborn acne. It shrinks the oil glands, and for many people the acne stays away after the course.",
+        cost: "Dry lips, eyes and skin for months, higher liver values and cholesterol (so you get blood tests), rare mood changes, and it causes birth defects, so no pregnancy during or soon after. Only through a dermatologist.",
+      },
+      {
+        name: "Topical spironolactone",
+        does: "Blocks the hormone signal that drives oil in the skin, so there is less oil and fewer spots. Small studies look promising.",
+        cost: "Little long-term research, only made by compounding pharmacies, and the strength of unofficial creams is unknown. Ask a dermatologist.",
+      },
+      {
+        name: "Finasteride or dutasteride for oily skin",
+        does: "They lower DHT, the hormone behind oily skin and male hair loss, so skin can get less oily.",
+        cost: "Not an approved acne treatment. A minority of men get sexual side effects or low mood, and anyone who could be pregnant must not touch the tablets. Prescription only.",
+      },
     ],
     remember: `Persistent or painful acne belongs with a dermatologist. ${doctorNote}`,
   },
@@ -192,6 +227,10 @@ export const guides: Record<TopicId, Guide> = {
         does: "Calms dandruff and an itchy scalp. Twice a week, leave on for a few minutes.",
       },
       {
+        name: "Minoxidil 5% (foam or solution)",
+        does: "Over the counter and proven to slow thinning and regrow some hair, mostly at the crown. It takes 4–6 months and only works while you keep using it.",
+      },
+      {
         name: "Sea-salt spray",
         does: "Adds texture and volume before blow-drying. Light hold, matte look.",
       },
@@ -240,7 +279,14 @@ export const guides: Record<TopicId, Guide> = {
       "Washing with hot water every day",
       "High heat without protectant",
       "Heavy gel on fine hair",
-      "Box dye on lashes or brows",
+      "Hair dye on brows or lashes",
+    ],
+    shortcuts: [
+      {
+        name: "Finasteride or dutasteride",
+        does: "They stop or slow male-pattern hair loss in most men by lowering DHT. Together with minoxidil they work better still.",
+        cost: "Prescription only. A minority get sexual side effects or low mood, anyone who could be pregnant must not handle the tablets, and the loss comes back when you stop.",
+      },
     ],
     remember: `Thinning or a receding hairline is best seen early by a doctor. ${doctorNote}`,
   },
@@ -307,7 +353,19 @@ export const guides: Record<TopicId, Guide> = {
       "Changing your program every week",
       "Training to failure on every set",
       "Skipping legs",
-      "Fat burners and pre-workout with mega doses",
+      "Fat-burner pills: mostly caffeine, a small and short effect",
+    ],
+    shortcuts: [
+      {
+        name: "Testosterone and anabolic steroids (such as Anavar)",
+        does: "They work: more muscle and strength, faster, and less fat than training alone can give.",
+        cost: "They shut down your own testosterone, which can leave you infertile and low after you stop. Acne, hair loss, worse cholesterol and a strained heart are common, and tablets like Anavar strain the liver. Illegal without a prescription in many countries; testosterone only through a doctor for proven low levels.",
+      },
+      {
+        name: "MK-677 (ibutamoren)",
+        does: "It raises growth hormone and IGF-1: more appetite, deeper sleep and some size and weight gain.",
+        cost: "Not approved for use and sold as a research chemical. Water retention, tingling hands and higher blood sugar are common, and its long-term safety is unknown.",
+      },
     ],
     remember: `Get advice first if an injury or condition affects training. ${doctorNote}`,
   },
@@ -490,7 +548,7 @@ export const guides: Record<TopicId, Guide> = {
       },
       {
         title: "Jaw (mandible) & chin",
-        text: "Do yourself: lose fat around the neck, keep the head up, shape the beard with a clean neckline, and contour along the jaw for photos. Doesn’t work: jaw exercisers and hard gum to “build” the jaw — they can strain the jaw joint. Specialist: a weak chin or bite problems — orthodontics, fillers or surgery only via a qualified specialist.",
+        text: "Do yourself: lose fat around the neck, keep the head up, shape the beard with a clean neckline, and contour along the jaw for photos. Doesn’t work as promised: jaw exercisers and hard gum add a little chewing muscle at best and strain the jaw joint. Specialist: a weak chin or bite problems — orthodontics, fillers or surgery only via a qualified specialist.",
       },
     ],
     works: [
@@ -537,7 +595,7 @@ export const guides: Record<TopicId, Guide> = {
     routine: [
       {
         title: "Find your undertone",
-        text: "Look at your wrist veins in daylight: green leans warm, blue leans cool, both is neutral. Gold or silver: which looks better against your skin?",
+        text: "In daylight, hold a pure white and a cream top near your face, then gold and silver. Whatever makes your skin look even and your eyes brighter shows it: white and silver lean cool, cream and gold lean warm, both is neutral.",
       },
       {
         title: "Find your contrast",
@@ -551,6 +609,18 @@ export const guides: Record<TopicId, Guide> = {
         title: "A glow, safely",
         text: "Self-tan two to three times a week on moisturised skin; keep it off brows and hairline. Daily SPF stays.",
       },
+      {
+        title: "Colour from food",
+        text: "More fruit and vegetables, especially orange and red ones, adds a warm, healthy tint to the skin within weeks; in studies people rate it as healthier and more attractive. Food works better than high-dose pills.",
+      },
+      {
+        title: "Even out dark spots",
+        text: "On every skin tone, azelaic acid, niacinamide and daily SPF fade dark spots and marks. You even out your skin; you don’t change its tone.",
+      },
+      {
+        title: "Lips, teeth and eyes",
+        text: "A tinted lip balm and gentle exfoliation for lips, whitening through a dentist, and coloured contacts only when fitted by an optician — never from a costume shop.",
+      },
     ],
     works: [
       "Testing colours under your chin in daylight",
@@ -560,9 +630,21 @@ export const guides: Record<TopicId, Guide> = {
     ],
     skip: [
       "Sunbeds and tanning without SPF",
-      "Tanning injections or pills",
+      "A “base tan” before a holiday: it protects about as much as SPF 3",
       "Judging colour under shop lights",
       "Rules that say one skin tone is better",
+    ],
+    shortcuts: [
+      {
+        name: "Melanotan II (MT2)",
+        does: "A tanning peptide: it does tan you with little sun, and it also lowers appetite.",
+        cost: "Not approved anywhere and sold unregulated, so what is in the vial is uncertain. Nausea and flushing are common; it darkens moles and freckles and can create new ones, which makes skin cancer harder to spot. Have your moles checked by a dermatologist.",
+      },
+      {
+        name: "Skin lighteners (hydroquinone, steroid creams, glutathione)",
+        does: "Hydroquinone does fade dark spots and melasma. Glutathione pills have weak evidence.",
+        cost: "Hydroquinone belongs in short, supervised courses: long use can cause a lasting blue-black darkening. Creams mixed with steroids thin the skin, and glutathione injections carry infection and allergy risks. For spots, not your skin tone, and through a dermatologist.",
+      },
     ],
     remember:
       "Every skin tone is good; colouring is about harmony, not a ranking.",
@@ -597,11 +679,23 @@ export const guides: Record<TopicId, Guide> = {
         name: "Mascara and lash curler",
         does: "Curl first, then mascara at the roots for lift.",
       },
+      {
+        name: "Brow tint kit",
+        does: "Darkens light brows for about four weeks. Made for brows, unlike hair dye.",
+      },
+      {
+        name: "Lash serum (peptides)",
+        does: "Cosmetic serums can make lashes look a little fuller over a few months; the drug serum below works far better.",
+      },
+      {
+        name: "Castor oil",
+        does: "Conditions lashes and brows. Any growth effect is small and unproven, but it does no harm.",
+      },
     ],
     routine: [
       {
         title: "Map",
-        text: "Brows start above the inner corner of the eye, arch above the outer edge of the iris, and end at a line from nose to outer eye corner.",
+        text: "Start in line with the edge of your nostril and end just past the outer corner of the eye. For a masculine look keep the brow fairly straight and low, with a neutral or slightly rising tilt; for a softer look, a gentle arch above the outer edge of the iris.",
       },
       {
         title: "Trim",
@@ -615,21 +709,45 @@ export const guides: Record<TopicId, Guide> = {
         title: "Set",
         text: "Fill sparse spots with short strokes, then brush through with gel.",
       },
+      {
+        title: "Tint",
+        text: "Light brows: a brow tint kit, a shade darker than your hair. Petroleum jelly around the brow, follow the timing on the kit and patch-test first. Lash tints at a salon: they sit right at the eye.",
+      },
+      {
+        title: "Lift",
+        text: "A lash lift curls lashes for six to eight weeks; with a tint they look longer and darker. Extensions add length and need refills every three to four weeks.",
+      },
     ],
     works: [
       "Doing less than you planned",
       "Strokes, not a solid block",
-      "A brow tint at a salon for very light brows",
+      "A brow tint for light brows, at home or in a salon",
       "Removing mascara every night",
     ],
     skip: [
       "Thin, over-plucked brows",
-      "Hair dye on brows or lashes at home",
+      "Hair dye on brows — use a brow tint",
       "Heat tools near the eyes",
-      "Oils that promise lash growth",
+      "Tinting your own lashes",
     ],
-    remember:
-      "Lash or brow serums with active drugs need a doctor. Hormones or medication only through a doctor.",
+    shortcuts: [
+      {
+        name: "Bimatoprost (Latisse)",
+        does: "An approved lash-growth drug: lashes get longer, fuller and darker in two to four months.",
+        cost: "Prescription only. It can redden or itch the eyes, darken the eyelid skin and, in light eyes, rarely darken the iris for good. Lashes go back to normal when you stop.",
+      },
+      {
+        name: "Oral minoxidil",
+        does: "Low-dose tablets grow hair all over, including brows, beard and scalp.",
+        cost: "Prescription only and off-label. Unwanted body hair, fluid retention and a faster heartbeat are possible; not for anyone with a heart or blood-pressure condition.",
+      },
+      {
+        name: "Lash or brow transplant",
+        does: "Hairs from the scalp are moved to the lash line or brows and keep growing there.",
+        cost: "Expensive, months of healing, and the hairs grow like scalp hair, so they need trimming. Only with an experienced surgeon.",
+      },
+    ],
+    remember: `Drug serums and tablets for lash and brow growth go through a doctor. ${doctorNote}`,
   },
   nutrition: {
     title: "Eat for how you want to look and feel",
@@ -676,7 +794,7 @@ export const guides: Record<TopicId, Guide> = {
     ],
     skip: [
       "Crash diets",
-      "Fat burners and detox teas",
+      "Detox teas and cleanses: laxatives, so only water goes",
       "Cutting out whole food groups",
       "Judging on one weigh-in",
     ],
@@ -801,7 +919,7 @@ export const guides: Record<TopicId, Guide> = {
       "Catching up only at the weekend",
       "Alcohol to fall asleep",
       "Scrolling in bed",
-      "Sleeping pills without a doctor",
+      "Sleeping pills as a habit: they stop helping and are hard to quit",
     ],
     remember:
       "Snoring loudly, waking up tired every day or long-term insomnia is worth a visit to a doctor.",
@@ -850,11 +968,20 @@ export const guides: Record<TopicId, Guide> = {
         title: "In photos",
         text: "Turn slightly to the side, chin out and down, relax the shoulders.",
       },
+      {
+        title: "Practise the fear",
+        text: "Make a ladder from easy to hard — asking a stranger the time, joining a conversation, speaking up in a group — and climb one step a few times a week until it feels dull. This is how social anxiety shrinks.",
+      },
+      {
+        title: "Steady your body",
+        text: "Before you walk in, breathe out longer than in: four counts in, six out, for a minute. It slows a racing heart and steadies your voice.",
+      },
     ],
     works: [
       "Small breaks every hour",
       "Strength training for the back",
       "Slowing down when nervous",
+      "Small, repeated steps outside your comfort zone",
       "Natural light for photos",
     ],
     skip: [
@@ -862,6 +989,13 @@ export const guides: Record<TopicId, Guide> = {
       "Staring instead of looking",
       "Filters on progress photos",
       "Comparing yourself to edited images",
+    ],
+    shortcuts: [
+      {
+        name: "Anxiety medication (pregabalin, benzodiazepines, propranolol)",
+        does: "They work: pregabalin and benzodiazepines calm the mind within an hour, and propranolol stops shaking hands and a racing heart.",
+        cost: "Pregabalin and benzodiazepines are addictive, need more over time and are dangerous with alcohol, which can stop your breathing. Propranolol only treats the body, not the worry. Only through a doctor; therapy such as CBT gives lasting results.",
+      },
     ],
     remember:
       "Persistent pain, numbness or an injury needs a physiotherapist or doctor.",
@@ -1118,9 +1252,21 @@ export const extraGuides: Record<
     ],
     skip: [
       "Crash diets and skipping meals",
-      "Detox teas, fat burners and ‘miracle’ pills",
+      "Detox teas: laxatives, so you only lose water",
       "Judging progress on one weigh-in",
       "Cutting out a whole food group without reason",
+    ],
+    shortcuts: [
+      {
+        name: "GLP-1 medicines (semaglutide, tirzepatide / Mounjaro)",
+        does: "They work: much less hunger, and in studies people lost about 15–20% of their body weight.",
+        cost: "Prescription only. Nausea and stomach trouble are common, muscle goes too without protein and strength training, rare risks include gallbladder and pancreas problems, and most of the weight returns when you stop.",
+      },
+      {
+        name: "DNP (2,4-dinitrophenol)",
+        does: "It does burn fat fast, by turning the energy in food into heat.",
+        cost: "There is no safe amount: overheating can kill within hours, it has killed young and healthy people, and there is no antidote. Banned for human use. Never.",
+      },
     ],
     remember: `Under 18, pregnant, or living with a medical condition or an eating disorder? Talk to a doctor before changing your weight. ${doctorNote}`,
   },

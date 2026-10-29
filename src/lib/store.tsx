@@ -12,6 +12,7 @@ import { releasePrivateMedia } from "./media";
 import { autoLog } from "./training";
 import { today, uid } from "./domain";
 import { DEMO } from "./demo";
+import { keepDemoStreaks } from "./streaks";
 const STORAGE_KEY = "charett-demo-v1";
 /** Training, nutrition and weight logs persist in this browser, as the owner chose. */
 const TRAINING_KEY = "charett-training-v1";
@@ -140,8 +141,12 @@ function load(): DemoState {
         files: Number(saved.coachUsage.files) || 0,
         scans: Number(saved.coachUsage.scans) || 0,
       };
-    if (isRecord(saved.chatStreaks))
-      initial.chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
+    if (isRecord(saved.chatStreaks)) {
+      const chatStreaks = saved.chatStreaks as DemoState["chatStreaks"];
+      initial.chatStreaks = DEMO
+        ? keepDemoStreaks(chatStreaks, initial.chatStreaks)
+        : chatStreaks;
+    }
     if (isRecord(saved.routineStreak))
       initial.routineStreak = saved.routineStreak as DemoState["routineStreak"];
     if (isRecord(saved.routineLog))

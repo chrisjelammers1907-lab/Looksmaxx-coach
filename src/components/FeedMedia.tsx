@@ -16,6 +16,7 @@ import { Button, Select } from "./ui";
 import { claimPlayback, findSound } from "../lib/sounds";
 import { reelSound, useReelMuted } from "../lib/reelSound";
 import { DEMO } from "../lib/demo";
+import { focusOf } from "../lib/editorial";
 const editorialPhotos = new Map<string, Promise<string>>();
 /** The line under the handle, like a location on Instagram. */
 export function mediaLabel(post: Post) {
@@ -121,9 +122,14 @@ export function PostMedia({
     if (!editorialPhotos.has(cacheKey))
       editorialPhotos.set(
         cacheKey,
-        normaliseFeedPhoto(asset(currentImage), isReel ? 1920 : 1350).then(
-          (result) => result.src,
-        ),
+        normaliseFeedPhoto(
+          asset(currentImage),
+          isReel ? 1920 : 1350,
+          ...(focusOf(currentImage).split(" ").map(parseFloat) as [
+            number,
+            number,
+          ]),
+        ).then((result) => result.src),
       );
     editorialPhotos
       .get(cacheKey)!

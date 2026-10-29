@@ -4,7 +4,7 @@ import { extraGuides, guides } from "../lib/guides";
 import { topics } from "../lib/data";
 import { asset } from "../lib/domain";
 import { Empty } from "../components/ui";
-import { topicPhoto } from "../lib/editorial";
+import { focusStyle, topicPhoto } from "../lib/editorial";
 import Monogram from "../components/Monogram";
 export default function GuidePage() {
   const { topic, slug } = useParams();
@@ -32,6 +32,9 @@ export default function GuidePage() {
     { id: "guide-products", label: guide.productsTitle },
     { id: "guide-routine", label: "Put it together" },
     { id: "guide-works", label: "What works and what doesn’t" },
+    ...(guide.shortcuts?.length
+      ? [{ id: "guide-shortcuts", label: "What people use" }]
+      : []),
     { id: "guide-coach", label: "Make it yours" },
   ];
   return (
@@ -47,7 +50,11 @@ export default function GuidePage() {
             {guide.products.length} essentials · {guide.routine.length} steps
           </span>
         </div>
-        <img src={asset(topicPhoto(entry.id))} alt="" />
+        <img
+          src={asset(topicPhoto(entry.id))}
+          style={focusStyle(topicPhoto(entry.id))}
+          alt=""
+        />
       </header>
       <div className="guide-layout">
         <nav aria-label="Guide chapters" className="guide-contents">
@@ -116,6 +123,29 @@ export default function GuidePage() {
               </div>
             </div>
           </section>
+          {guide.shortcuts?.length ? (
+            <section id="guide-shortcuts" className="guide-shortcuts">
+              <h2>What people use, and what it costs</h2>
+              <p>
+                Straight answers about the shortcuts you see online: what they
+                really do and what they cost you. We don’t give doses or
+                sources.
+              </p>
+              <ul>
+                {guide.shortcuts.map((item) => (
+                  <li key={item.name}>
+                    <h3>{item.name}</h3>
+                    <dl>
+                      <dt>What it does</dt>
+                      <dd>{item.does}</dd>
+                      <dt>The cost</dt>
+                      <dd>{item.cost}</dd>
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
           {guide.remember && (
             <aside className="guide-remember">
               <BookOpen size={22} />

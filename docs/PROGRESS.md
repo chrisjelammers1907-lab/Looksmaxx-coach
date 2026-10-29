@@ -308,3 +308,13 @@ Three design-skill packs are now project skills in `.claude/skills/` (Impeccable
   - AI Coach: the coach's mark sits beside the first line of each reply, with 12px between them.
   - Home: Photos/Reels sticks just under the feed header, so you can switch without scrolling back up.
   - Reels play by themselves once mostly in view and pause as they leave it, muted at first. One sound switch (`src/lib/reelSound.ts`) turns sound on or off for every reel. The big play button stays out of the picture while a reel plays; with reduced motion nothing autoplays.
+
+## Eighth round — before launch — 29 October 2026
+
+- **AI Coach welcome:** the mark, question, intro and suggestions have room between them.
+- **Chat streaks:** they were never removed; a returning visitor's saved demo streaks had simply expired after days without a message. In the demo, a sample streak stays as seeded until you chat in that thread (`keepDemoStreaks`).
+- **Photos show their subject.** Every editorial photo has a focus point (`photoFocus` in `src/lib/editorial.ts`, usually the face) that every crop keeps in view: round thumbnails, strips, guide heroes, style heroes, stories, ads, profile tiles and the 4:5 feed crop. A unit test fails if a photo has none. On wide screens the category photo stands beside the title at 3:2 instead of a 4:1 sliver.
+- **Guides, from the owner's PDFs, told straight.**
+  - Out: the wrist-vein undertone test, a single brow arch for everyone, "no brow tint at home", and anything filed under "doesn't work" that does work.
+  - In: prescription retinoids, marks and scars, copper peptides, minoxidil, a masculine and a softer brow map, brow tint and lash lift, colour from food, dark spots on every skin tone, lips, teeth and lenses, and steps against social anxiety.
+  - New on seven guides: **What people use, and what it costs** — isotretinoin, spironolactone, finasteride/dutasteride, MT2, skin lighteners, steroids and Anavar, MK-677, GLP-1s, DNP, anxiety medication, bimatoprost, oral minoxidil and transplants. Each says what it really does (including that it works) and what it costs; never doses, schedules or sources (a unit test checks).
